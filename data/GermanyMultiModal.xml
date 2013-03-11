@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<networkConfiguration>
+	<edge>
+		<name>streets</name>
+		<query querytype="SQL">highway IS NOT NULL</query>
+	</edge>
+	<edge>
+		<name>railway</name>
+		<query querytype="SQL">railway IS NOT NULL</query>
+	</edge>
+	<junction>
+		<name>bus_stops</name>
+		<query querytype="SQL">highway = 'bus_stop'</query>
+	</junction>
+	<turn>
+		<name>osm_turns</name>
+		<query querytype="OSM">type=restriction</query>
+	</turn>
+	<connectivity>
+		<group>
+			<name>streets</name>
+		<group>
+	</connectivity>
+	<network>
+		<network_attribute>
+			<name>Distance</name>
+			<cost useAsDefault='true'>
+				<units>esriNAUMeters</units>
+				<datatype>double</datatype>
+				<evaluator_attributes>
+					<source>streets</source>
+					<direction>From-To</direction>
+					<Field script_type='VBScript'>
+						<key>[m_length]</key>
+					</Field>
+				</evaluator_attributes>
+				<evaluator_attributes>
+					<source>streets</source>
+					<direction>To-From</direction>
+					<Field script_type='VBScript'>
+						<key>[m_length]</key>
+					</Field>
+				</evaluator_attributes>
+			</cost>
+		</network_attribute>
+	</network>
+</networkConfiguration>

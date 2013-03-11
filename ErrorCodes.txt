@@ -1,0 +1,40 @@
+120001 - unable to delete existing layer file
+120002 - error in creating combined layer file
+120003 - target extension already exists
+120004 - general execute error in copy layer extension
+120005 - tag collection field not found
+120007 - general execute error in combine attributes
+120008 - general execute error in create network dataset
+120009 - error in webrequest = download
+120010 - base name already exists / dataset
+120011 - unable to determine feature workspace
+120012 - can't find config file
+120013 - config file deserialize error
+120014 - unable to generate point feature class - null pointer
+120015 - unable to generate line feature class - null pointer
+120016 - unable to generate polygon feature class - null pointer
+120017 - unable to generate relation table - null pointer
+120018 - unable to generate revision table - null pointer
+120019 - general execute error download
+120020 - enable osm extension error
+120021 - unable to generate output osm file
+120022 - unable to open point feature class
+120023 - unable to open line feature class
+120024 - unable to open polygon feature class
+120025 - unable to open relation table
+120026 - general execute error export
+120027 - unable to open source comparison feature class
+120028 - unable to open match feature class
+120029 - problem accessing osm file
+120030 - osm file doesn't exist
+120031 - problem unpacking memory conservation parameter
+120032 - base name already exists
+120033 - uable to create feature dataset. Does the target database exist?
+120048 - NullPointer - 
+120050 = general execute error in add extension
+120051 - itertive parse osm document error
+120053 - unable to open table for attibute selector
+120054 - general execute error in attribute selector
+120100 - general node load error
+120101 - general way load error
+120102 - general relation load error

@@ -1,0 +1,40 @@
+<#@ Template Language="C#" HostSpecific="True" Inherits="DynamicTransform" #>
+<#@ assembly name="System.Web.Mvc" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="EnvDTE" #>
+<# 
+	var viewModel = (CodeType)Model.ViewModel; 
+	var actionMethodInfo = ((CodeType)Model.Controller).VisibleMembers().OfType<CodeFunction>().FirstOrDefault(x => x.Name == Model.ActionMethod);
+	var defaultActionMethodArgs = actionMethodInfo == null ? null : actionMethodInfo.Parameters.OfType<CodeParameter>().Select(x => x.Type.CodeType != null && x.Type.CodeType.Kind == vsCMElement.vsCMElementClass ? "null" : "default(" + x.Type.AsString + ")");
+#>
+[TestMethod]
+public void <#= Model.TestMethod #>()
+{
+	// Arrange
+	var controller = new <#= ((EnvDTE.CodeType)Model.Controller).Name #>();
+
+	// Act
+<# if (actionMethodInfo == null) { #>
+
+	// Assert
+<# } else if (actionMethodInfo.Type.IsType<System.Web.Mvc.ViewResult>()) { #>
+	var viewResult = controller.<#= Model.ActionMethod #>(<#= string.Join(", ", defaultActionMethodArgs.ToArray()) #>);
+	var viewModel = <# if (viewModel != null) { #>(<#= viewModel.Name #>)<# } #>viewResult.Model;
+
+	// Assert
+	// Assert.AreEqual("expected value", viewModel.SomeProperty);
+<# } else if (actionMethodInfo.Type.IsType<System.Web.Mvc.RedirectToRouteResult>()) { #>
+	var redirectToRouteResult = controller.<#= Model.ActionMethod #>(<#= string.Join(", ", defaultActionMethodArgs.ToArray()) #>);
+
+	// Assert
+	//Assert.AreEqual("ActionName", redirectToRouteResult.RouteValues["action"]);
+<# } else if (actionMethodInfo.Type.IsType<System.Web.Mvc.ActionResult>()) { #>
+	var actionResult = controller.<#= Model.ActionMethod #>(<#= string.Join(", ", defaultActionMethodArgs.ToArray()) #>);
+
+	// Assert
+<# } else { #>
+
+	// Assert
+<# } #>
+	Assert.Inconclusive(); // Todo: Make assertions, then remove this line
+}

@@ -1,0 +1,81 @@
+﻿@{
+    ViewBag.Title = "Success";    
+}
+
+
+<link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.0/js/dojo/dijit/themes/claro/claro.css">
+      <script type="text/javascript">
+          var djConfig = {
+              parseOnLoad: true
+          };
+    </script>
+    <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.0"></script>
+     <script type="text/javascript">
+         dojo.require("esri.map");
+         dojo.require("esri.layers.osm");
+
+         var map, osmLayer;
+         var dynamicMapServiceLayer;
+
+         function init() {
+
+             dynamicMapServiceLayer = "@ViewBag.ResultMapServer";
+             if (dynamicMapServiceLayer.length > 5)
+             {
+                 var map = new esri.Map("map");
+
+                 dojo.connect(map, "onLayersAddResult", function (results) {
+                     map.setExtent(results[0].layer.fullExtent);
+                 });
+
+                 var osmLayer = new esri.layers.OpenStreetMapLayer();
+                 map.addLayer(osmLayer);
+
+                 dynamicMapServiceLayer = new esri.layers.ArcGISDynamicMapServiceLayer("@ViewBag.ResultMapServer");
+                 map.addLayers([dynamicMapServiceLayer]);
+                 
+             }
+             else
+             {     
+                 dojo.style(dojo.byId('map'), { display: 'none' });
+             }
+             
+         }
+                  
+         dojo.addOnLoad(init); 
+
+        </script>
+
+
+<div class="title">
+<h2>@ViewBag.TitleReturn</h2>
+<div class="back-link">@Html.ActionLink("< Back to list", "Index", "Home")</div>
+</div>
+
+<div class="info">@ViewBag.Success</div>
+
+    <div style="float: left; width: 36em;">
+        <h3>Content</h3>
+
+            <div id="map" style="width: 36em; height: 30em; border: 1px solid #000;" class="claro"></div>
+        
+            <div id="osmCopy" style="color: black; right: 10px; bottom: 10px; z-index: 999;"></div>
+
+        </div>
+
+        <div style="float: left; margin-left: 2em; width: 26em;">
+        <h3>Links</h3>
+            <div class="editor-label">Feature Service: <a href="@ViewBag.Result" title="ServiceLink">@ViewBag.Result</a></div>
+            <div class="editor-label">Map Service: <a href="@ViewBag.ResultMapServer" title="ServiceLink">@ViewBag.ResultMapServer</a></div>
+
+            <div class="button-container">
+            <a href="@ViewBag.EditingUrl" title="Editing">Edit Feature Service</a> | <a href="@ViewBag.ArcGIS_Com" title="ArcGIS.com">ArcGIS.COM</a>
+            </div>
+        </div>
+
+        <div class="clear"></div>
+
+
+
+
+

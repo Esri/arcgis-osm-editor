@@ -1,0 +1,79 @@
+<#@ Template Language="C#" HostSpecific="True" Inherits="DynamicTransform" #>
+<#@ Output extension="aspx" #>
+<# var viewDataType = (EnvDTE.CodeType) Model.ViewDataType; #>
+<#
+string mvcViewDataTypeGenericString = (viewDataType != null) ? "<" + viewDataType.FullName + ">" : "<dynamic>";
+int CPHCounter = 1;
+#>
+<# if(Model.IsContentPage) { #>
+<%@ Page Title="" Language="C#" MasterPageFile="~<#= Model.Layout #>" Inherits="System.Web.Mvc.ViewPage<#= mvcViewDataTypeGenericString #>" %>
+
+<#
+    foreach(string cphid in Model.SectionNames) {
+        if(cphid.Equals("TitleContent", StringComparison.OrdinalIgnoreCase)) {
+#>
+<asp:Content ID="Content<#= CPHCounter #>" ContentPlaceHolderID="<#= cphid #>" runat="server">
+    <#= Model.ViewName #>
+</asp:Content>
+
+<#
+            CPHCounter++;
+        }
+    }
+#>
+<asp:Content ID="Content<#= CPHCounter #>" ContentPlaceHolderID="<#= Model.PrimarySectionName #>" runat="server">
+
+    <h2><#= Model.ViewName #></h2>
+
+<#
+} else {
+#>
+<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<#= mvcViewDataTypeGenericString #>" %>
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <title><#= Model.ViewName #></title>
+</head>
+<body>
+<#
+    PushIndent("    ");
+}
+#>
+<#
+if(!Model.IsContentPage) {
+#>
+<div>
+    
+</div>
+<#
+}
+#>
+<#
+// The following code closes the asp:Content tag used in the case of a master page and the body and html tags in the case of a regular view page
+#>
+<#
+if(Model.IsContentPage) {
+#>
+</asp:Content>
+<#
+    foreach(string cphid in Model.SectionNames) {
+        if(!cphid.Equals("TitleContent", StringComparison.OrdinalIgnoreCase) && !cphid.Equals(Model.PrimarySectionName, StringComparison.OrdinalIgnoreCase)) {
+            CPHCounter++;
+#>
+
+<asp:Content ID="Content<#= CPHCounter #>" ContentPlaceHolderID="<#= cphid #>" runat="server">
+</asp:Content>
+<#
+        }
+    }
+#>
+<#
+} else if(!Model.IsContentPage) {
+    ClearIndent();
+#>
+</body>
+</html>
+<#
+}
+#>

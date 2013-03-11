@@ -1,0 +1,321 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="OSMEditor_FeatureInspector_morethan2000" xml:space="preserve">
+    <value>The feature you created contains more than 2000 nodes. In order to generate OSM conform data you need to split the data separate geometries. If you press OK please use the split tool to split the geometry into smaller segments, otherwise the current feature will be deleted.</value>
+  </data>
+  <data name="OSMEditor_FeatureInspector_multipart" xml:space="preserve">
+    <value>The feature geometry contains multiple parts. If you press OK you need to take this geometry through the multipart to singlepart geoporcessing tool, otherwise the current feature will be deleted.</value>
+  </data>
+  <data name="OSMEditor_FeatureInspector_geometryconflictcaption" xml:space="preserve">
+    <value>Geometry Conflict</value>
+  </data>
+  <data name="OSMEditor_FeatureInspector_relationconflictcaption" xml:space="preserve">
+    <value>Relation Conflict</value>
+  </data>
+  <data name="OSMEditor_FeatureInspector_relationconflictmessage" xml:space="preserve">
+    <value>The feature (OSMID: {0}) you are attempting to delete is a member of a relation (OSMID: {1}). If you continue, the editor will remove the feature from the relation, otherwise the delete operation will be undone.</value>
+  </data>
+  <data name="OSMEditor_FeatureInspector_relationsconflictmessage" xml:space="preserve">
+    <value>The feature (OSMID: {0}) you are attempting to delete is a member of relations (OSMIDs: {1}). If you continue, the editor will remove the feature from the relations, otherwise the delete operation will be undone.</value>
+  </data>
+  <data name="OSMEditor_FeatureInspector_multipartchangeconflictmessage" xml:space="preserve">
+    <value>The feature (OSMID: {0}) you are attempting to change is a member of relation ({1}). This action is currently not supported and the edit operation is aborted.</value>
+  </data>
+  <data name="OSMEditor_FeatureInspector_multipartdeleteconflictmessage" xml:space="preserve">
+    <value>The feature (OSMID: {0}) you are attempting to delete is a member of relation ({1}). This action is currently not supported and the edit operation is aborted.</value>
+  </data>
+  <data name="OSMEditor_FeatureInspector_multipartchangeparentconflictmessage" xml:space="preserve">
+    <value>The feature (OSMID: {0}) you are attempting to change is a relation. This action is currently not supported and the edit operation is aborted.</value>
+  </data>
+  <data name="OSMEditor_FeatureInspector_multipartdeleteparentconflictmessage" xml:space="preserve">
+    <value>The feature (OSMID: {0}) you are attempting to delete is a relation. This action is currently not supported and the edit operation is aborted.</value>
+  </data>
+  <data name="OSMEditor_FeatureInspector_pointmemberofrelation" xml:space="preserve">
+    <value>You are attempting to delete a point that is referenced by a relation (OSMID: {0}). This action is currently not supported and the edit operation is aborted.</value>
+  </data>
+  <data name="OSMEditor_FeatureInspector_pointnumber_exceeeded_in_ring" xml:space="preserve">
+    <value>The polygon geometry exceeds the number of allowed points ({0}) in geometry part {1}.</value>
+  </data>
+  <data name="OSMEditor_FeatureInspector_relationidtext" xml:space="preserve">
+    <value>Relation ID: </value>
+  </data>
+  <data name="OSMEditor_FeatureInspector_polygonidtext" xml:space="preserve">
+    <value>Polygon ID: </value>
+  </data>
+  <data name="OSMEditor_FeatureInspector_polylineidtext" xml:space="preserve">
+    <value>Polyline ID: </value>
+  </data>
+  <data name="OSMEditor_FeatureInspector_pointidtext" xml:space="preserve">
+    <value>Point ID:</value>
+  </data>
+  <data name="OSMEditor_FeatureInspector_operationmenu" xml:space="preserve">
+    <value>OSM Attribute Change</value>
+  </data>
+  <data name="OSMEditor_FeatureInspector_operationwarningcaption" xml:space="preserve">
+    <value>Edit operation in progress</value>
+  </data>
+  <data name="OSMEditor_FeatureInspector_operationwarningtext" xml:space="preserve">
+    <value>You need to finish the current operation first, before you can change any attributes. </value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_category" xml:space="preserve">
+    <value>OpenStreetMap</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_message" xml:space="preserve">
+    <value>Open the OpenStreetMap Conflict Editor</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_caption" xml:space="preserve">
+    <value>OSM Conflict Editor</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_tooltip" xml:space="preserve">
+    <value>Open the OpenStreetMap Conflict Editor</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_formtitle" xml:space="preserve">
+    <value>OSM Conflict Editor</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_norevisionTables_title" xml:space="preserve">
+    <value>Missing Information</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_norevisionTables" xml:space="preserve">
+    <value>No revision tables found in current data frame. Please be sure to have OSM feature classes or revision tables loaded.</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_osmtypedescription_unk" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_osmtypedescription_pt" xml:space="preserve">
+    <value>Point</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_osmtypedescription_ln" xml:space="preserve">
+    <value>Line</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_osmtypedescription_ply" xml:space="preserve">
+    <value>Polygon</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_osmtypedescription_relation" xml:space="preserve">
+    <value>Relation</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_prepareCollectData" xml:space="preserve">
+    <value>Preparing and collecting data differences</value>
+  </data>
+  <data name="OSMEditor_OSMPropertyPage_tabtitle" xml:space="preserve">
+    <value>OpenStreetMap</value>
+  </data>
+  <data name="OSMEditor_OSMPropertyPage_labelBaseURL" xml:space="preserve">
+    <value>OSM base URL:</value>
+  </data>
+  <data name="OSMEditor_OSMPropertyPage_labelOSMDomains" xml:space="preserve">
+    <value>OSM Domains:</value>
+  </data>
+  <data name="OSMEditor_OSMPropertyPage_labelOSMFeatures" xml:space="preserve">
+    <value>OSM Features:</value>
+  </data>
+  <data name="OSMEditor_OSMPropertyPage_fileselect_title_domain" xml:space="preserve">
+    <value>Select OSM Domain XML File</value>
+  </data>
+  <data name="OSMEditor_OSMPropertyPage_fileselect_title_feature" xml:space="preserve">
+    <value>Select OSM Feature XML File</value>
+  </data>
+  <data name="OSMEditor_OSMPropertyPage_fileselect_buttoncaption" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="OSMEditor_GxFilterXmlFiles_description" xml:space="preserve">
+    <value>XML Files</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_error404_deletelocal" xml:space="preserve">
+    <value>Delete local feature</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_error409_keepLocalGeometryAttributes" xml:space="preserve">
+    <value>Keep local geometry and local attributes</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_error409_keepLocalGeometryServerAttributes" xml:space="preserve">
+    <value>Keep local geometry and server attributes</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_error409_keepLocalAttributesServerGeometry" xml:space="preserve">
+    <value>Keep local attributes and server geometry</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_error409_keepServerGeometryServerAttributes" xml:space="preserve">
+    <value>Keep server geometry and server attributes</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_error410_deletelocal" xml:space="preserve">
+    <value>Delete local feature</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_error_UnknownSolution" xml:space="preserve">
+    <value>No known solution for this error</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_error_clearRevisionStatus" xml:space="preserve">
+    <value>Reset the current revision status</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_error_removeRevisionIncident" xml:space="preserve">
+    <value>Remove the revision incident</value>
+  </data>
+  <data name="OSMEditor_Extension_storesettingsproblem" xml:space="preserve">
+    <value>Error storing OSM settings</value>
+  </data>
+  <data name="OSMEditor_OSMToolbar_Caption" xml:space="preserve">
+    <value>OpenStreetMap</value>
+  </data>
+  <data name="OSMEditor_OSMToolbarCmd_caption" xml:space="preserve">
+    <value>OpenStreetMap</value>
+  </data>
+  <data name="OSMEditor_OSMToolbarCmd_message" xml:space="preserve">
+    <value>Open/Close the OSM Toolbar</value>
+  </data>
+  <data name="OSMEditor_OSMToolbarCmd_tooltip" xml:space="preserve">
+    <value>Open/Close the OSM Toolbar</value>
+  </data>
+  <data name="OSMEditor_Authentication_UI_labelusername" xml:space="preserve">
+    <value>User name</value>
+  </data>
+  <data name="OSMEditor_Authentication_UI_labelpassword" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="OSMEditor_LicenseAlertDialog_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="OSMEditor_LicenseAlertDialog_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="OSMEditor_LicenseAlertDialog_Title" xml:space="preserve">
+    <value>OSM License Confirmation</value>
+  </data>
+  <data name="OSMEditor_LicenseAlertDialog_LicenseAlert" xml:space="preserve">
+    <value>
+
+You are about to edit data that is licensed under the Open Database License 1.0 from OpenStreetMap - see http://www.osmfoundation.org/wiki/License/Contributor_Terms. 
+
+When you press the OK button you are agreeing that you are the original creator for the new data and that you have all the necessary permissions should you derive (copy/trace/duplicate/import) data from existing data sources. If in doubt, please press Cancel and obtain legal advice about data licensing or post a question at the OSM legal-talk list.
+
+Selecting the OK button will start your edit session and pressing the Cancel button will end the edit session.</value>
+  </data>
+  <data name="OSMEditor_LicenseAlertDialog_LicenseAlertLink" xml:space="preserve">
+    <value>109,59,http://www.osmfoundation.org/wiki/License/Contributor_Terms;503,15,http://lists.openstreetmap.org/listinfo/legal-talk</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_osmattributes_header" xml:space="preserve">
+    <value>OSM Attributes</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_localOSMFeature_header" xml:space="preserve">
+    <value>Local OSM Feature</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_serverOSMFeature_header" xml:space="preserve">
+    <value>Server OSM Feature</value>
+  </data>
+  <data name="OSMEditor_ConflictEditor_genericConflictOpMessage" xml:space="preserve">
+    <value>Conflict Operation</value>
+  </data>
+</root>

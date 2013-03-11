@@ -1,0 +1,11 @@
+<#@ Template Language="VB" HostSpecific="True" Inherits="DynamicTransform" #>
+<#@ Output Extension="vb" #>
+<# If CType(Model.Controller, EnvDTE.CodeType).Namespace IsNot Nothing Then #>
+Imports <#= CType(Model.Controller, EnvDTE.CodeType).Namespace.FullName #>
+
+<# End If #>
+<#= If(T4Scaffolding.Namespaces.BeginVb(Model.Namespace, Model.DefaultNamespace), "") #>
+	<TestClass>
+    Public Class <#= Model.ClassName #>
+    End Class
+<#= If(T4Scaffolding.Namespaces.EndVb(Model.Namespace, Model.DefaultNamespace), "") #>

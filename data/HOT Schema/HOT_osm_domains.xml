@@ -1,0 +1,302 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<OSMDomains>
+  <domain name="highway">
+    <domainvalue value="primary">
+      <geometrytype>line</geometrytype>
+      <description>Administrative classification in the UK, generally linking larger towns.</description>
+    </domainvalue>
+    <domainvalue value="primary_junction">
+      <geometrytype>line</geometrytype>
+      <description>The link roads (sliproads/ramps) leading to/from a primary road from/to a primary road or lower class highway.</description>
+    </domainvalue>
+    <domainvalue value="secondary">
+      <geometrytype>line</geometrytype>
+      <description>Administrative classification in the UK, generally linking smaller towns and villages</description>
+    </domainvalue>
+    <domainvalue value="secondary_junction">
+      <geometrytype>line</geometrytype>
+      <description>The link roads (sliproads/ramps) leading to/from a secondary road from/to a secondary road or lower class highway.</description>
+    </domainvalue>
+    <domainvalue value="tertiary">
+      <geometrytype>line</geometrytype>
+      <description>A "C" road in the UK. Generally for use on roads wider than 4 metres (13') in width, and for faster/wider minor roads that aren't A or B roads. In the UK, they tend to have dashed lines down the middle, whereas unclassified roads don't.</description>
+    </domainvalue>
+    <domainvalue value="unclassified">
+      <geometrytype>line</geometrytype>
+      <description>No administrative classification. Unclassified roads typically form the lowest form of the interconnecting grid network. Note: This is not a marker for roads where we still need to choose a highway tag (see highway=road for roads that require classification).</description>
+    </domainvalue>
+    <domainvalue value="residential">
+      <geometrytype>line</geometrytype>
+      <description>Roads accessing or around residential areas but which are not a classified or unclassified highway.</description>
+    </domainvalue>
+    <domainvalue value="service">
+      <geometrytype>line</geometrytype>
+      <description>Generally for access to a building, motorway service station, beach, campsite, industrial estate, business park, etc.. This is also commonly used for access to parking and trash collection. Sometimes called an alley, particularly in the US. Use with service=*, e.g. service=parking_aisle to mark a service way inside a amenity=parking</description>
+    </domainvalue>
+    <domainvalue value="track">
+      <geometrytype>line</geometrytype>
+      <description>Roads for agricultural use, gravel roads in the forest etc.; usually unpaved/unsealed but may occasionally apply to paved tracks as well, see tracktype=* for more guidance.</description>
+    </domainvalue>
+    <domainvalue value="footway">
+      <geometrytype>line</geometrytype>
+      <description>For designated footpaths; i.e., mainly/exclusively for pedestrians. This includes walking tracks and gravel paths. If bicycles are allowed as well, you can indicate this by adding a bicycle=yes tag. Should not be used for paths where the primary or intended usage is unknown.</description>
+    </domainvalue>
+    <domainvalue value="mini_roundabout">
+      <geometrytype>point</geometrytype>
+      <description>Very small roundabouts only, larger ones should be junction=roundabout. Rendered as anti-clockwise by default. To render clockwise add the tag direction=clockwise.</description>
+    </domainvalue>
+    <domainvalue value="turning_circle">
+      <geometrytype>point</geometrytype>
+      <description>A turning circle is a rounded, widened area usually, but not necessarily, at the end of a road to facilitate easier turning of a vehicle.</description>
+    </domainvalue>
+  </domain>
+  <domain name="bridge">
+    <domainvalue value="arch">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <description/>
+    </domainvalue>
+    <domainvalue value="beam">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <description/>
+    </domainvalue>
+    <domainvalue value="truss">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <description/>
+    </domainvalue>
+    <domainvalue value="floating">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <description/>
+    </domainvalue>
+    <domainvalue value="suspension">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <description/>
+    </domainvalue>
+    <domainvalue value="culvert">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <description/>
+    </domainvalue>
+    <domainvalue value="culvert_round">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <description/>
+    </domainvalue>
+    <domainvalue value="culvert_box">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <description/>
+    </domainvalue>
+    <domainvalue value="yes">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <description/>
+    </domainvalue>
+  </domain>
+  <domain name="health_facility">
+    <domainvalue value="specialized_hospital">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+    <domainvalue value="hospital">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+    <domainvalue value="field_hospital">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+    <domainvalue value="health_center">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+    <domainvalue value="dispensary">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+    <domainvalue value="other">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+    <domainvalue value="unspecified">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+  </domain>
+  <domain name="building">
+    <domainvalue value="warehouse">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A building for storage. See also landuse=commercial and landuse=industrial.</description>
+    </domainvalue>
+  </domain>
+  <domain name="amenity">
+    <domainvalue value="fuel">
+      <geometrytype>point</geometrytype>
+      <description></description>
+    </domainvalue>
+  </domain>
+  <domain name="aeroway">
+    <domainvalue value="aerodrome">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>An Aerodrome (UK), Airport (US), see also military=airfield</description>
+    </domainvalue>
+    <domainvalue value="airport">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+    <domainvalue value="airfield">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+    <domainvalue value="airstrip">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+     <domainvalue value="fixed_helipad">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+    <domainvalue value="improvised_helipad">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+    <domainvalue value="unspecified">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+  </domain>
+  <domain name="port">
+    <domainvalue value="sea_port">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description/>
+    </domainvalue>
+        <domainvalue value="river_port">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description/>
+    </domainvalue>
+    <domainvalue value="lake_port">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description/>
+    </domainvalue>
+    <domainvalue value="beaching">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description/>
+    </domainvalue>
+    <domainvalue value="bank">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description/>
+    </domainvalue>
+    <domainvalue value="pier">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description/>
+    </domainvalue>
+    <domainvalue value="ramp">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description/>
+    </domainvalue>
+    <domainvalue value="anchorage">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description/>
+    </domainvalue>
+    <domainvalue value="unspecified">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description/>
+    </domainvalue>
+  </domain>
+  <domain name="idp_camp_type">
+    <domainvalue value="organized_camp">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description />
+    </domainvalue>
+    <domainvalue value="spontaneous_camp">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description />
+    </domainvalue>
+    <domainvalue value="unspecified">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description />
+    </domainvalue>
+  </domain>
+  <domain name="barrier">
+    <domainvalue value="bridge_damage">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <description/>
+    </domainvalue>
+    <domainvalue value="road_damage">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <description/>
+    </domainvalue>
+    <domainvalue value="landslide_mudslide">
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description/>
+    </domainvalue>
+    <domainvalue value="debris">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+    <domainvalue value="checkpoint">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+    <domainvalue value="roadblock">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+    <domainvalue value="unspecified">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+  </domain>
+</OSMDomains>

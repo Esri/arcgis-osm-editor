@@ -1,0 +1,101 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Editor", "OSMEditor\Editor.csproj", "{F61D0824-AA24-4DE2-B39F-FB41B5145418}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoProcessing", "OSMGeoProcessing\GeoProcessing.csproj", "{1989B9C3-1F7F-41D2-864C-A4E6D9FDD3C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSMClassExtension", "OSMClassExtension\OSMClassExtension.csproj", "{80E0E365-7C75-4718-8956-8036E219FFF7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Desktop", "Desktop", "{B872BAA6-C871-4D2D-877B-221050AE0080}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{C42C6DBF-113B-4C0E-BA35-357A088ED422}"
+	ProjectSection(SolutionItems) = preProject
+		ErrorCodes.txt = ErrorCodes.txt
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSMUtilities", "OSMUtilities\OSMUtilities.csproj", "{A39DF625-C9EA-4719-9A59-1FE8D1F3D2C5}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 5
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs08
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = OSMEditor\\Editor.csproj
+		SccProjectTopLevelParentUniqueName1 = OSMEditor32.sln
+		SccProjectName1 = OSMEditor
+		SccLocalPath1 = OSMEditor
+		SccProjectUniqueName2 = OSMGeoProcessing\\GeoProcessing.csproj
+		SccProjectTopLevelParentUniqueName2 = OSMEditor32.sln
+		SccProjectName2 = OSMGeoProcessing
+		SccLocalPath2 = OSMGeoProcessing
+		SccProjectUniqueName3 = OSMClassExtension\\OSMClassExtension.csproj
+		SccProjectTopLevelParentUniqueName3 = OSMEditor32.sln
+		SccProjectName3 = OSMClassExtension
+		SccLocalPath3 = OSMClassExtension
+		SccProjectUniqueName4 = OSMUtilities\\OSMUtilities.csproj
+		SccProjectTopLevelParentUniqueName4 = OSMEditor32.sln
+		SccProjectName4 = OSMUtilities
+		SccLocalPath4 = OSMUtilities
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F61D0824-AA24-4DE2-B39F-FB41B5145418}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F61D0824-AA24-4DE2-B39F-FB41B5145418}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F61D0824-AA24-4DE2-B39F-FB41B5145418}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F61D0824-AA24-4DE2-B39F-FB41B5145418}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F61D0824-AA24-4DE2-B39F-FB41B5145418}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F61D0824-AA24-4DE2-B39F-FB41B5145418}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F61D0824-AA24-4DE2-B39F-FB41B5145418}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F61D0824-AA24-4DE2-B39F-FB41B5145418}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F61D0824-AA24-4DE2-B39F-FB41B5145418}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F61D0824-AA24-4DE2-B39F-FB41B5145418}.Release|x86.ActiveCfg = Release|Any CPU
+		{1989B9C3-1F7F-41D2-864C-A4E6D9FDD3C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1989B9C3-1F7F-41D2-864C-A4E6D9FDD3C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1989B9C3-1F7F-41D2-864C-A4E6D9FDD3C9}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{1989B9C3-1F7F-41D2-864C-A4E6D9FDD3C9}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{1989B9C3-1F7F-41D2-864C-A4E6D9FDD3C9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1989B9C3-1F7F-41D2-864C-A4E6D9FDD3C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1989B9C3-1F7F-41D2-864C-A4E6D9FDD3C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1989B9C3-1F7F-41D2-864C-A4E6D9FDD3C9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{1989B9C3-1F7F-41D2-864C-A4E6D9FDD3C9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{1989B9C3-1F7F-41D2-864C-A4E6D9FDD3C9}.Release|x86.ActiveCfg = Release|Any CPU
+		{80E0E365-7C75-4718-8956-8036E219FFF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80E0E365-7C75-4718-8956-8036E219FFF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80E0E365-7C75-4718-8956-8036E219FFF7}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{80E0E365-7C75-4718-8956-8036E219FFF7}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{80E0E365-7C75-4718-8956-8036E219FFF7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{80E0E365-7C75-4718-8956-8036E219FFF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80E0E365-7C75-4718-8956-8036E219FFF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80E0E365-7C75-4718-8956-8036E219FFF7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{80E0E365-7C75-4718-8956-8036E219FFF7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{80E0E365-7C75-4718-8956-8036E219FFF7}.Release|x86.ActiveCfg = Release|Any CPU
+		{A39DF625-C9EA-4719-9A59-1FE8D1F3D2C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A39DF625-C9EA-4719-9A59-1FE8D1F3D2C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A39DF625-C9EA-4719-9A59-1FE8D1F3D2C5}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{A39DF625-C9EA-4719-9A59-1FE8D1F3D2C5}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{A39DF625-C9EA-4719-9A59-1FE8D1F3D2C5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A39DF625-C9EA-4719-9A59-1FE8D1F3D2C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A39DF625-C9EA-4719-9A59-1FE8D1F3D2C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A39DF625-C9EA-4719-9A59-1FE8D1F3D2C5}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{A39DF625-C9EA-4719-9A59-1FE8D1F3D2C5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{A39DF625-C9EA-4719-9A59-1FE8D1F3D2C5}.Release|x86.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F61D0824-AA24-4DE2-B39F-FB41B5145418} = {B872BAA6-C871-4D2D-877B-221050AE0080}
+		{80E0E365-7C75-4718-8956-8036E219FFF7} = {C42C6DBF-113B-4C0E-BA35-357A088ED422}
+		{1989B9C3-1F7F-41D2-864C-A4E6D9FDD3C9} = {C42C6DBF-113B-4C0E-BA35-357A088ED422}
+		{A39DF625-C9EA-4719-9A59-1FE8D1F3D2C5} = {C42C6DBF-113B-4C0E-BA35-357A088ED422}
+	EndGlobalSection
+EndGlobal

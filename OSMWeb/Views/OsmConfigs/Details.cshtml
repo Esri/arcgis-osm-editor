@@ -1,0 +1,29 @@
+@model OSMWeb.Models.OsmConfig
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>Please provide the information requested below.</legend>
+
+    <div class="display-label">Username</div>
+    <div class="display-field">@Model.Username</div>
+
+    <div class="display-label">Password</div>
+    <div class="display-field">@Model.Password</div>
+
+    <div class="display-label">FeatureDataSet</div>
+    <div class="display-field">@Model.FeatureDataSet</div>
+
+    <div class="display-label">Extent</div>
+    <div class="display-field">@Model.Extent</div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
+
+

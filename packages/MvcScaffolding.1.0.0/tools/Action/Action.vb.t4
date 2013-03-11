@@ -1,0 +1,10 @@
+<#@ Template Language="VB" HostSpecific="True" Inherits="DynamicTransform" #>
+<# Dim viewModel = CType(Model.ViewModel, EnvDTE.CodeType) #>
+
+Public Function <#= Model.Action #>() As ViewResult
+<# If viewModel Is Nothing Then #>
+	Return View()
+<# Else #>
+	Return View(New <#= viewModel.Name #>())
+<# End If #>
+End Function

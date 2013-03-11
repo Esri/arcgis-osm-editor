@@ -1,0 +1,15 @@
+﻿<#@ Template Language="VB" HostSpecific="True" Inherits="DynamicTransform" #>
+<#@ Output extension="vbhtml" #>
+<# Dim viewDataType = CType(Model.ViewDataType, EnvDTE.CodeType) #>
+<# If viewDataType IsNot Nothing Then #>
+@ModelType <#= viewDataType.FullName #>
+
+<# End If #>
+@Code
+    ViewData("Title") = "<#= Model.ViewName #>"
+<#	If Not String.IsNullOrEmpty(Model.Layout) #>
+		Layout = "<#= Model.Layout #>"
+<# End If #>
+End Code
+
+<h2><#= Model.ViewName #></h2>

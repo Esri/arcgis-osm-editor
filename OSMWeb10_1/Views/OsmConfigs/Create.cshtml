@@ -1,0 +1,223 @@
+﻿<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=7,IE=9" />
+    <!--The viewport meta tag is used to improve the presentation and behavior of the samples 
+      on iOS devices-->
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <title>OpenStreetMap- default options</title>
+    <link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.0/js/dojo/dijit/themes/claro/claro.css">
+    <script type="text/javascript">
+        var djConfig = {
+            parseOnLoad: true
+        };
+    </script>
+    <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.0"></script>
+    <script type="text/javascript">
+        dojo.require("esri.map");
+        dojo.require("esri.layers.osm");
+
+        var map, osmLayer;
+
+        function init() {
+            //setup the copyright text http://www.openstreetmap.org/copyright
+            var copyrightText = '&#169; <a href="http://www.openstreetmap.org/" target="_blank">OpenStreetMap</a> contributors, '
+                    + '<a href="http://creativecommons.org/licenses/by-sa/2.1/" target="_blank">CC-BY-SA</a>';
+
+            dojo.byId('osmCopy').innerHTML = copyrightText;
+            var extent = new esri.geometry.Extent({ "xmin": -13061264.517, "ymin": 4014099.337, "xmax": -13058581.839, "ymax": 4015740.198, "spatialReference": { "wkid": 102100} });
+            map = new esri.Map("map", { extent: extent, logo: false });
+
+            osmLayer = new esri.layers.OpenStreetMapLayer();
+            map.addLayer(osmLayer);
+            dojo.connect(map, "onExtentChange", showExtent);
+            map.panDown();
+            map.panUp();
+
+            // Get the position if browser supports HTML 5
+            requestPosition();
+        }
+
+        function showExtent(extent, delta, levelChange, lod) {
+            var s = "";
+            s = "" + extent.xmin.toFixed(2) + ","
+           + "" + extent.ymin.toFixed(2) + ","
+           + "" + extent.xmax.toFixed(2) + ","
+           + "" + extent.ymax.toFixed(2);
+            dojo.byId("Extent").value = s;
+
+            console.log(esri.geometry.webMercatorToGeographic(extent).getHeight() * esri.geometry.webMercatorToGeographic(extent).getWidth());
+            if ((esri.geometry.webMercatorToGeographic(extent).getHeight() * esri.geometry.webMercatorToGeographic(extent).getWidth()) > 0.25) {
+                dojo.byId("CreateButton").disabled = "disabled";
+            } else {
+                dojo.byId("CreateButton").disabled = false;
+            }
+        }
+
+        function showMessage(mycontrol) {
+            dojo.byId("CreateButton").setAttribute("disabled", true);
+            dojo.byId("CreateButton").value = "Please wait ...";
+
+        }
+
+        function requestPosition() {
+            map.graphics.clear();
+
+            //request the location using getCurrentPosition and check to see if the browser supports geolocation
+            //If you want to continously update the location, use watchPosition
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(zoomToLocation, errorCallback, { maximumAge: 0, timeout: 30000, enableHighAccuracy: true });
+            }
+            else {
+                //alert("Geolocation not supported on your browser.");
+            }
+        }
+
+        function zoomToLocation(position) {
+            //zoom to the users location and add a graphic
+            var pt = esri.geometry.geographicToWebMercator(new esri.geometry.Point(position.coords.longitude, position.coords.latitude));
+            var attributes = { lat: position.coords.latitude.toFixed(6), long: position.coords.longitude.toFixed(6) };
+            var infoTemplate = new esri.InfoTemplate("Your Location", "Lat: ${lat} <br />Long: ${long}");
+            var symbol = new esri.symbol.PictureMarkerSymbol('../images/bluedot.png', 40, 40);
+            graphic = new esri.Graphic(pt, symbol, attributes, infoTemplate);
+            map.graphics.add(graphic);
+            graphic.setGeometry(pt);
+            map.centerAndZoom(pt, 16);
+
+        }
+
+        function errorCallback(error) {
+            // Ignoring error
+        }
+
+
+
+        //dojo.byId("CreateButton").onClick = "showMessage"
+
+        dojo.addOnLoad(init);
+
+        $(document).ready(function () {
+            $("#isSynchronized").click(function () {
+                if ($('#isSynchronized:checked').val() !== undefined) {
+                    $("#OSM-container").slideDown('fast');
+                } else {
+                    $("#OSM-container").slideUp('fast');
+                }
+            });
+            $("#CreateButton").click(function () {
+                $(this).val("Creating...");
+                //$(this).attr("disabled", "disabled");
+
+                //return true;
+            });
+        });
+
+    </script>
+</head>
+@model OSMWeb.Models.OsmConfig
+@{
+    ViewBag.Title = "Create";
+}
+
+<div class="title">
+<h2>Create new Feature Service</h2>
+<div class="back-link">@Html.ActionLink("< Back to list", "Index")</div>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+
+    @Html.Partial("_CreateOrEdit", Model)
+
+    <div style="float: left; width: 36em;">
+        <h3>What</h3>
+
+      <div class="info">Zoom and pan the map to the area for which you want to retrieve data from OpenStreetMap. More data takes longer to download.</div>
+        <div id="map" style="width: 36em; height: 30em; border: 1px solid #000;" class="claro"></div>
+        
+        <div id="osmCopy" style="color: black; right: 10px; bottom: 10px; z-index: 999;"></div>
+        
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Extent)
+        </div>
+        <div class="editor-field" style="width: 34em">
+            @Html.TextBoxFor(model => model.Extent, new { style = "width: 200px" })
+            @Html.ValidationMessageFor(model => model.Extent)
+        </div>
+    </div>
+
+    
+    <div style="float: left; margin-left: 2em; width: 26em;">
+        <h3>How</h3>
+      <div class="info">
+        What should the service be <strong>named</strong>? What data should be <strong>symbolized</strong> (using the template dropdown below)? Do you want to <strong>synchronize</strong> with OpenStreetMap?
+      </div>
+
+                    <div class="editor-label">
+            @Html.LabelFor(model => model.FeatureDataSet)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.FeatureDataSet)
+            @Html.ValidationMessageFor(model => model.FeatureDataSet)
+        </div>
+                <div class="editor-label">
+            @Html.LabelFor(model => model.MxdTemplate)
+        </div>
+        <div class="editor-field">
+            @{
+    var mxdList = @ViewBag.mxdList as IEnumerable<SelectListItem>;
+            }
+            @Html.DropDownListFor(model => model.MxdTemplate, mxdList)
+        </div>
+
+        <div class="editor-label">
+        <input type="checkbox" id="isSynchronized" /> Synchronize with OpenStreetMap?
+        </div>
+        <div style="display: none;" id="OSM-container">
+        
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Username)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Username)
+            @Html.ValidationMessageFor(model => model.Username)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Password)
+        </div>
+        <div class="editor-field">
+            @Html.PasswordFor(model => model.Password)
+            @Html.ValidationMessageFor(model => model.Password)
+        </div>
+        <div class="editor-label">
+            <font color="red">@ViewBag.AlphaCheck</font>
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.RefreshInterval)
+        </div>
+        <div class="editor-field">
+            @{ var refreshList = @ViewBag.refreshList as IEnumerable<SelectListItem>;
+            }
+            @Html.DropDownListFor(model => model.RefreshInterval, refreshList)
+        </div>
+
+        </div>
+
+        <div class="button-container">
+        @*Make sure this return true makes a request and postback on all browsers*@
+        <div style="float: left;">
+        <input type="submit" id="CreateButton" value="Create service" />
+        </div>
+        <div style="float: left; font-size: 1.2em; margin: 0.3em 1em;">
+        @Html.ActionLink("Cancel", "Index")
+        </div>
+        <br />
+        @*<img src="/Images/ajax-loader.gif"  />*@
+        </div>
+
+    </div>
+        
+}
+
+<div style="clear: both;"></div>

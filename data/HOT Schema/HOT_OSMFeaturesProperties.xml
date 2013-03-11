@@ -1,0 +1,2496 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<osmfeatures xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+  <baseInfoURI>http://wiki.openstreetmap.org/wiki/</baseInfoURI>
+  <osmfeature id="4" name="highway=primary" displayname="Primary" infoURL="http://wiki.openstreetmap.org/wiki/Humanitarian_OSM_Tags/Humanitarian_Data_Model#Highway.2F_Road">
+    <tag ref="name" optional="true" />
+    <tag ref="source" optional="true" />
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="lanes" optional="true" />
+    <tag ref="surface" optional="true" />
+  </osmfeature>
+  <osmfeature id="5" name="highway=primary_junction" displayname="Primary Junction" infoURL="http://wiki.openstreetmap.org/wiki/Humanitarian_OSM_Tags/Humanitarian_Data_Model#Highway.2F_Road">
+    <tag ref="name" optional="true" />
+    <tag ref="source" optional="true" />
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="lanes" optional="true" />
+    <tag ref="surface" optional="true" />
+  </osmfeature>
+  <osmfeature id="6" name="highway=secondary" displayname="Secondary" infoURL="http://wiki.openstreetmap.org/wiki/Humanitarian_OSM_Tags/Humanitarian_Data_Model#Highway.2F_Road">
+    <tag ref="name" optional="true" />
+    <tag ref="source" optional="true" />
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="lanes" optional="true" />
+    <tag ref="surface" optional="true" />
+  </osmfeature>
+  <osmfeature id="7" name="highway=secondary_junction" displayname="Secondary Junction" infoURL="http://wiki.openstreetmap.org/wiki/Tag:highway%3Dsecondary_link">
+    <tag ref="oneway" value="yes" optional="true" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" optional="true" />
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="lanes" optional="true" />
+    <tag ref="surface" optional="true" />
+  </osmfeature>
+  <osmfeature id="8" name="highway=tertiary" displayname="Tertiary" infoURL="http://wiki.openstreetmap.org/wiki/Tag:highway%3Dtertiary">
+    <tag ref="access" value="yes" optional="false" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" optional="true" />
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="lanes" optional="true" />
+    <tag ref="surface" optional="true" />
+  </osmfeature>
+  <osmfeature id="9" name="highway=unclassified" displayname="Unclassified" infoURL="http://wiki.openstreetmap.org/wiki/Tag:highway%3Dunclassified">
+    <tag ref="name" optional="true" />
+    <tag ref="source" optional="true" />
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="lanes" optional="true" />
+    <tag ref="surface" optional="true" />
+  </osmfeature>
+  <osmfeature id="11" name="highway=residential" displayname="Residential" infoURL="http://wiki.openstreetmap.org/wiki/Tag:highway%3Dresidential">
+    <tag ref="oneway" optional="true" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" optional="true" />
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="lanes" optional="true" />
+    <tag ref="surface" optional="true" />
+  </osmfeature>
+  <osmfeature id="13" name="highway=service" infoURL="http://wiki.openstreetmap.org/wiki/Tag:highway%3Dservice">
+    <tag ref="name" optional="true" />
+    <tag value="service" optional="true" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" optional="true" />
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="lanes" optional="true" />
+    <tag ref="surface" optional="true" />
+  </osmfeature>
+  <osmfeature id="14" name="highway=track" infoURL="http://wiki.openstreetmap.org/wiki/Tag:highway%3Dtrack">
+    <tag ref="tracktype" optional="true" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" optional="true" />
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="lanes" optional="true" />
+    <tag ref="surface" optional="true" />
+  </osmfeature>
+  <osmfeature id="15" name="highway=footway" infoURL="http://wiki.openstreetmap.org/wiki/Tag:highway%3Dpedestrian">
+    <tag ref="name" optional="true" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" optional="true" />
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="lanes" optional="true" />
+    <tag ref="surface" optional="true" />
+  </osmfeature>
+  <osmfeature id="25" name="highway=mini_roundabout">
+    <tag ref="name" optional="true" />
+    <tag ref="direction" optional="true" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" optional="true" />
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="lanes" optional="true" />
+    <tag ref="surface" optional="true" />
+  </osmfeature>
+  <osmfeature id="27" name="highway=turning_circle">
+    <tag ref="name" optional="true" />
+    <tag ref="source" optional="true" />
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="lanes" optional="true" />
+    <tag ref="surface" optional="true" />
+  </osmfeature>
+  <osmfeature id="28" name="bridge=arch">
+    <tag ref="length" />
+    <tag ref="width" />
+    <tag ref="maxweight" />
+    <tag ref="barrier:bypass" />
+    <tag ref="transportation_use_category" />
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="surface" optional="true" />
+    <tag ref="base_material" optional="true" />
+    <tag ref="source" />
+    <tag ref="note" />
+   </osmfeature>
+  <osmfeature id="29" name="bridge=beam">
+    <tag ref="length" />
+    <tag ref="width" />
+    <tag ref="maxweight" />
+    <tag ref="barrier:bypass" />
+    <tag ref="transportation_use_category" />
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="surface" optional="true" />
+    <tag ref="base_material" optional="true" />
+    <tag ref="source" />
+    <tag ref="note" />
+  </osmfeature>
+  <osmfeature id="30" name="bridge=truss">
+    <tag ref="length" />
+    <tag ref="width" />
+    <tag ref="maxweight" />
+    <tag ref="barrier:bypass" />
+    <tag ref="transportation_use_category" />
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="surface" optional="true" />
+    <tag ref="base_material" optional="true" />
+    <tag ref="source" />
+    <tag ref="note" />
+  </osmfeature>
+  <osmfeature id="31" name="bridge=floating">
+    <tag ref="length" />
+    <tag ref="width" />
+    <tag ref="maxweight" />
+    <tag ref="barrier:bypass" />
+    <tag ref="transportation_use_category" />
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="surface" optional="true" />
+    <tag ref="base_material" optional="true" />
+    <tag ref="source" />
+    <tag ref="note" />
+  </osmfeature>
+  <osmfeature id="32" name="bridge=suspension">
+    <tag ref="length" />
+    <tag ref="width" />
+    <tag ref="maxweight" />
+    <tag ref="barrier:bypass" />
+    <tag ref="transportation_use_category" />
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="surface" optional="true" />
+    <tag ref="base_material" optional="true" />
+    <tag ref="source" />
+    <tag ref="note" />
+  </osmfeature>
+  <osmfeature id="33" name="bridge=culvert">
+    <tag ref="length" />
+    <tag ref="width" />
+    <tag ref="maxweight" />
+    <tag ref="barrier:bypass" />
+    <tag ref="transportation_use_category" />
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="surface" optional="true" />
+    <tag ref="base_material" optional="true" />
+    <tag ref="source" />
+    <tag ref="note" />
+  </osmfeature>
+  <osmfeature id="34" name="bridge=culvert_round">
+    <tag ref="length" />
+    <tag ref="width" />
+    <tag ref="maxweight" />
+    <tag ref="barrier:bypass" />
+    <tag ref="transportation_use_category" />
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="surface" optional="true" />
+    <tag ref="base_material" optional="true" />
+    <tag ref="source" />
+    <tag ref="note" />
+  </osmfeature>
+  <osmfeature id="35" name="bridge=culvert_box">
+    <tag ref="length" />
+    <tag ref="width" />
+    <tag ref="maxweight" />
+    <tag ref="barrier:bypass" />
+    <tag ref="transportation_use_category" />
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="surface" optional="true" />
+    <tag ref="base_material" optional="true" />
+    <tag ref="source" />
+    <tag ref="note" />
+  </osmfeature>
+  <osmfeature id="36" name="bridge=yes">
+    <tag ref="length" />
+    <tag ref="width" />
+    <tag ref="maxweight" />
+    <tag ref="barrier:bypass" />
+    <tag ref="transportation_use_category" />
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="surface" optional="true" />
+    <tag ref="base_material" optional="true" />
+    <tag ref="source" />
+    <tag ref="note" />
+  </osmfeature>
+  <osmfeature id="40" name="barrier=bridge_damage" >
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="source" />
+    <tag ref="note" />
+  </osmfeature>
+  <osmfeature id="41" name="barrier=road_damage">
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="source" />
+    <tag ref="note" />
+  </osmfeature>
+  <osmfeature id="42" name="barrier=landslide_mudslide">
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="source" />
+    <tag ref="note" />
+  </osmfeature>
+  <osmfeature id="43" name="barrier=debris" >
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="source" />
+    <tag ref="note" />
+  </osmfeature>
+  <osmfeature id="44" name="barrier=checkpoint" >
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="source" />
+    <tag ref="note" />
+  </osmfeature>
+  <osmfeature id="45" name="barrier=roadblock">
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="source" />
+    <tag ref="note" />
+  </osmfeature>
+  <osmfeature id="46" name="barrier=unspecified">
+    <tag ref="operational_status" optional="true" />
+    <tag ref="operational_status:reliability" optional="true" />
+    <tag ref="practicablity" optional="true" />
+    <tag ref="practicablity:foot" optional="true" />
+    <tag ref="practicablity:bicycle" optional="true" />
+    <tag ref="practicablity:motor_vehicle" optional="true" />
+    <tag ref="practicablity:motorbike" optional="true" />
+    <tag ref="practicablity:4wd" optional="true" />
+    <tag ref="practicablity:goods" optional="true" />
+    <tag ref="practicablity:hgv" optional="true" />
+    <tag ref="practicablity:lory" optional="true" />
+    <tag ref="source" />
+    <tag ref="note" />
+  </osmfeature>
+  <osmfeature id="59" name="health_facility=specialized_hospital">
+    <tag ref="damaged" optional="true" />
+    <tag ref="health_facility:bed" optional="true" />
+    <tag ref="health_facility:construction_description" optional="true" />
+    <tag ref="health_facility:medical_service_description" optional="true" />
+    <tag ref="health_facility:capacity_description" optional="true" />
+    <tag ref="name" optional="true" />
+    <tag ref="operator" />
+    <tag ref="operator:id" />
+    <tag ref="operational_status" />
+    <tag ref="source" />
+  </osmfeature>
+  <osmfeature id="60" name="health_facility=hospital">
+    <tag ref="damaged" optional="true" />
+    <tag ref="health_facility:bed" optional="true" />
+    <tag ref="health_facility:construction_description" optional="true" />
+    <tag ref="health_facility:medical_service_description" optional="true" />
+    <tag ref="health_facility:capacity_description" optional="true" />
+    <tag ref="name" optional="true" />
+    <tag ref="operator" />
+    <tag ref="operator:id" />
+    <tag ref="operational_status" />
+    <tag ref="source" />
+  </osmfeature>
+  <osmfeature id="61" name="health_facility=field_hospital">
+    <tag ref="damaged" optional="true" />
+    <tag ref="health_facility:bed" optional="true" />
+    <tag ref="health_facility:construction_description" optional="true" />
+    <tag ref="health_facility:medical_service_description" optional="true" />
+    <tag ref="health_facility:capacity_description" optional="true" />
+    <tag ref="name" optional="true" />
+    <tag ref="operator" />
+    <tag ref="operator:id" />
+    <tag ref="operational_status" />
+    <tag ref="source" />
+  </osmfeature>
+  <osmfeature id="62" name="health_facility=health_center">
+    <tag ref="damaged" optional="true" />
+    <tag ref="health_facility:bed" optional="true" />
+    <tag ref="health_facility:construction_description" optional="true" />
+    <tag ref="health_facility:medical_service_description" optional="true" />
+    <tag ref="health_facility:capacity_description" optional="true" />
+    <tag ref="name" optional="true" />
+    <tag ref="operator" />
+    <tag ref="operator:id" />
+    <tag ref="operational_status" />
+    <tag ref="source" />
+  </osmfeature>
+  <osmfeature id="63" name="health_facility=dispensary">
+    <tag ref="damaged" optional="true" />
+    <tag ref="health_facility:bed" optional="true" />
+    <tag ref="health_facility:construction_description" optional="true" />
+    <tag ref="health_facility:medical_service_description" optional="true" />
+    <tag ref="health_facility:capacity_description" optional="true" />
+    <tag ref="name" optional="true" />
+    <tag ref="operator" />
+    <tag ref="operator:id" />
+    <tag ref="operational_status" />
+    <tag ref="source" />
+  </osmfeature>
+  <osmfeature id="64" name="health_facility=other">
+    <tag ref="damaged" optional="true" />
+    <tag ref="health_facility:bed" optional="true" />
+    <tag ref="health_facility:construction_description" optional="true" />
+    <tag ref="health_facility:medical_service_description" optional="true" />
+    <tag ref="health_facility:capacity_description" optional="true" />
+    <tag ref="name" optional="true" />
+    <tag ref="operator" />
+    <tag ref="operator:id" />
+    <tag ref="operational_status" />
+    <tag ref="source" />
+  </osmfeature>
+  <osmfeature id="65" name="health_facility=unspecified">
+    <tag ref="damaged" optional="true" />
+    <tag ref="health_facility:bed" optional="true" />
+    <tag ref="health_facility:construction_description" optional="true" />
+    <tag ref="health_facility:medical_service_description" optional="true" />
+    <tag ref="health_facility:capacity_description" optional="true" />
+    <tag ref="name" optional="true" />
+    <tag ref="operator" />
+    <tag ref="operator:id" />
+    <tag ref="operational_status" />
+    <tag ref="source" />
+  </osmfeature>
+  <osmfeature id="90" name="aeroway=aerodome">
+    <tag ref="iata" />
+    <tag ref="icao" />
+    <tag ref="aeroway_practicability_description" />
+    <tag ref="length" />
+    <tag ref="width" />
+    <tag ref="aeroway:helipad_type" />
+    <tag ref="surface" />
+    <tag ref="operational_status" />
+    <tag ref="operational_status:reliability" />
+    <tag ref="humanitarian_use" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" />
+    <tag ref="operator" />
+    <tag ref="cargo_handling_description" />
+    <tag ref="cargo_storage_description" />
+    <tag ref="note" optional="true" />
+  </osmfeature>
+  <osmfeature id="91" name="aeroway=airport">
+    <tag ref="iata" />
+    <tag ref="icao" />
+    <tag ref="aeroway_practicability_description" />
+    <tag ref="length" />
+    <tag ref="width" />
+    <tag ref="aeroway:helipad_type" />
+    <tag ref="surface" />
+    <tag ref="operational_status" />
+    <tag ref="operational_status:reliability" />
+    <tag ref="humanitarian_use" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" />
+    <tag ref="operator" />
+    <tag ref="cargo_handling_description" />
+    <tag ref="cargo_storage_description" />
+    <tag ref="note" optional="true" />
+  </osmfeature>
+  <osmfeature id="92" name="aeroway=airfield">
+    <tag ref="iata" />
+    <tag ref="icao" />
+    <tag ref="aeroway_practicability_description" />
+    <tag ref="length" />
+    <tag ref="width" />
+    <tag ref="aeroway:helipad_type" />
+    <tag ref="surface" />
+    <tag ref="operational_status" />
+    <tag ref="operational_status:reliability" />
+    <tag ref="humanitarian_use" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" />
+    <tag ref="operator" />
+    <tag ref="cargo_handling_description" />
+    <tag ref="cargo_storage_description" />
+    <tag ref="note" optional="true" />
+  </osmfeature>
+  <osmfeature id="93" name="aeroway=airstrip" >
+    <tag ref="iata" />
+    <tag ref="icao" />
+    <tag ref="aeroway_practicability_description" />
+    <tag ref="length" />
+    <tag ref="width" />
+    <tag ref="aeroway:helipad_type" />
+    <tag ref="surface" />
+    <tag ref="operational_status" />
+    <tag ref="operational_status:reliability" />
+    <tag ref="humanitarian_use" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" />
+    <tag ref="operator" />
+    <tag ref="cargo_handling_description" />
+    <tag ref="cargo_storage_description" />
+    <tag ref="note" optional="true" />
+  </osmfeature>
+  <osmfeature id="94" name="aeroway=fixed_helipad">
+    <tag ref="iata" />
+    <tag ref="icao" />
+    <tag ref="aeroway_practicability_description" />
+    <tag ref="length" />
+    <tag ref="width" />
+    <tag ref="aeroway:helipad_type" />
+    <tag ref="surface" />
+    <tag ref="operational_status" />
+    <tag ref="operational_status:reliability" />
+    <tag ref="humanitarian_use" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" />
+    <tag ref="operator" />
+    <tag ref="cargo_handling_description" />
+    <tag ref="cargo_storage_description" />
+    <tag ref="note" optional="true" />
+  </osmfeature>
+  <osmfeature id="95" name="aeroway=improvised_helipad">
+    <tag ref="iata" />
+    <tag ref="icao" />
+    <tag ref="aeroway_practicability_description" />
+    <tag ref="length" />
+    <tag ref="width" />
+    <tag ref="aeroway:helipad_type" />
+    <tag ref="surface" />
+    <tag ref="operational_status" />
+    <tag ref="operational_status:reliability" />
+    <tag ref="humanitarian_use" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" />
+    <tag ref="operator" />
+    <tag ref="cargo_handling_description" />
+    <tag ref="cargo_storage_description" />
+    <tag ref="note" optional="true" />
+  </osmfeature>
+  <osmfeature id="96" name="aeroway=unspecified">
+    <tag ref="iata" />
+    <tag ref="icao" />
+    <tag ref="aeroway_practicability_description" />
+    <tag ref="length" />
+    <tag ref="width" />
+    <tag ref="aeroway:helipad_type" />
+    <tag ref="surface" />
+    <tag ref="operational_status" />
+    <tag ref="operational_status:reliability" />
+    <tag ref="humanitarian_use" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" />
+    <tag ref="operator" />
+    <tag ref="cargo_handling_description" />
+    <tag ref="cargo_storage_description" />
+    <tag ref="note" optional="true" />
+  </osmfeature>
+  <osmfeature id="100" name="port=sea_port" >
+    <tag ref="operational_status" />
+    <tag ref="operational_status:reliability" />
+    <tag ref="humanitarian_use" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" />
+    <tag ref="operator" />
+    <tag ref="cargo_handling_description" />
+    <tag ref="cargo_storage_description" />
+    <tag ref="note" optional="true" />
+  </osmfeature>
+  <osmfeature id="101" name="port=river_port" >
+    <tag ref="operational_status" />
+    <tag ref="operational_status:reliability" />
+    <tag ref="humanitarian_use" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" />
+    <tag ref="operator" />
+    <tag ref="cargo_handling_description" />
+    <tag ref="cargo_storage_description" />
+    <tag ref="note" optional="true" />
+  </osmfeature>
+  <osmfeature id="102" name="port=lake_port" >
+    <tag ref="operational_status" />
+    <tag ref="operational_status:reliability" />
+    <tag ref="humanitarian_use" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" />
+    <tag ref="operator" />
+    <tag ref="cargo_handling_description" />
+    <tag ref="cargo_storage_description" />
+    <tag ref="note" optional="true" />
+  </osmfeature>
+  <osmfeature id="103" name="port=beaching" >
+    <tag ref="operational_status" />
+    <tag ref="operational_status:reliability" />
+    <tag ref="humanitarian_use" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" />
+    <tag ref="operator" />
+    <tag ref="cargo_handling_description" />
+    <tag ref="cargo_storage_description" />
+    <tag ref="note" optional="true" />
+  </osmfeature>
+  <osmfeature id="104" name="port=bank" >
+    <tag ref="operational_status" />
+    <tag ref="operational_status:reliability" />
+    <tag ref="humanitarian_use" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" />
+    <tag ref="operator" />
+    <tag ref="cargo_handling_description" />
+    <tag ref="cargo_storage_description" />
+    <tag ref="note" optional="true" />
+  </osmfeature>
+  <osmfeature id="105" name="port=pier" >
+    <tag ref="operational_status" />
+    <tag ref="operational_status:reliability" />
+    <tag ref="humanitarian_use" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" />
+    <tag ref="operator" />
+    <tag ref="cargo_handling_description" />
+    <tag ref="cargo_storage_description" />
+    <tag ref="note" optional="true" />
+  </osmfeature>
+  <osmfeature id="106" name="port=ramp" >
+    <tag ref="operational_status" />
+    <tag ref="operational_status:reliability" />
+    <tag ref="humanitarian_use" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" />
+    <tag ref="operator" />
+    <tag ref="cargo_handling_description" />
+    <tag ref="cargo_storage_description" />
+    <tag ref="note" optional="true" />
+  </osmfeature>
+  <osmfeature id="107" name="port=anchorage" >
+    <tag ref="operational_status" />
+    <tag ref="operational_status:reliability" />
+    <tag ref="humanitarian_use" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" />
+    <tag ref="operator" />
+    <tag ref="cargo_handling_description" />
+    <tag ref="cargo_storage_description" />
+    <tag ref="note" optional="true" />
+  </osmfeature>
+<osmfeature id="108" name="port=unspecified" >
+    <tag ref="operational_status" />
+    <tag ref="operational_status:reliability" />
+    <tag ref="humanitarian_use" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" />
+    <tag ref="operator" />
+    <tag ref="cargo_handling_description" />
+    <tag ref="cargo_storage_description" />
+    <tag ref="note" optional="true" />
+  </osmfeature> 
+  <osmfeature id="155" name="building=warehouse">
+    <tag ref="warehouse_type_description" />
+    <tag ref="operational_status" />
+    <tag ref="operational_status:reliability" />
+    <tag ref="humanitarian_use" />
+    <tag ref="name" optional="true" />
+    <tag ref="source" />
+    <tag ref="operator" />
+    <tag ref="cargo_handling_description" />
+    <tag ref="cargo_storage_description" />
+    <tag ref="annotation:cargo_storage_cubic_meter" />
+    <tag ref="annotation:cargo_storage_square_meter" />
+    <tag ref="annotation:cargo_storage_ton" />
+    <tag ref="note" optional="true" />
+</osmfeature>
+  <osmfeature id="405" name="amenity=fuel">
+    <tag ref="name" optional="true" />
+    <tag ref="operator" optional="true" />
+    <tag ref="operational_status" />
+    <tag ref="operational_status:reliability" />
+    <tag ref="amenity:fuel_type" />
+    <tag ref="fuel_storage_capacity_description" />
+    <tag ref="fuel_storage_description" />
+    <tag ref="source" />
+    <tag ref="note" optional="true" />
+  </osmfeature>
+  <osmfeature id="406" name="idp_camp_type=organized_camp">
+    <tag ref="assessment" optional="true" />
+    <tag ref="assessment_description" />
+    <tag ref="operational_status" />
+    <tag ref="operational_status:reliability" />
+    <tag ref="population" />
+    <tag ref="area_estimate" />
+    <tag ref="idp:camp_condition" />
+    <tag ref="idp:structural_safety" />
+    <tag ref="idp:drainage_type" />
+    <tag ref="access_to_potable_water" />
+    <tag ref="access_to_grey_water" />
+    <tag ref="water_source_description" />
+    <tag ref="water_access_source" />
+    <tag ref="water_access_tank_bladder" />
+    <tag ref="tank_bladder_description" />
+    <tag ref="tank_bladder_number" />
+    <tag ref="water_access_well" />
+    <tag ref="well_description" />
+    <tag ref="well_number" />
+    <tag ref="water_access_truck" />
+    <tag ref="access_pit_toilet" />
+    <tag ref="access_portable_toilet" />
+    <tag ref="practicability" />
+    <tag ref="source" />
+    <tag ref="note" optional="true" />
+  </osmfeature>
+  <osmfeature id="407" name="idp_camp_type=spontaneous_camp">
+    <tag ref="name" optional="true" />
+    <tag ref="operator" optional="true" />
+    <tag ref="operational_status" />
+    <tag ref="operational_status:reliability" />
+    <tag ref="amenity:fuel_type" />
+    <tag ref="fuel_storage_capacity_description" />
+    <tag ref="fuel_storage_description" />
+    <tag ref="source" />
+    <tag ref="note" optional="true" />
+  </osmfeature>
+  <osmfeature id="408" name="idp_camp_type=unspecified">
+    <tag ref="name" optional="true" />
+    <tag ref="operator" optional="true" />
+    <tag ref="operational_status" />
+    <tag ref="operational_status:reliability" />
+    <tag ref="amenity:fuel_type" />
+    <tag ref="fuel_storage_capacity_description" />
+    <tag ref="fuel_storage_description" />
+    <tag ref="source" />
+    <tag ref="note" optional="true" />
+  </osmfeature>
+  <osmtags>
+    <tagkey name="source" tagtype="tag_list">
+      <tagvalue name="extrapolation" />
+      <tagvalue name="knowledge" />
+      <tagvalue name="historical" />
+      <tagvalue name="image" />
+      <tagvalue name="survey" />
+      <tagvalue name="voice" />
+    </tagkey>
+    <tagkey name="place" tagtype="tag_list">
+      <tagvalue name="continent" />
+      <tagvalue name="country" />
+      <tagvalue name="state" />
+      <tagvalue name="region" />
+      <tagvalue name="county" />
+      <tagvalue name="city" />
+      <tagvalue name="town" />
+      <tagvalue name="village" />
+      <tagvalue name="hamlet" />
+      <tagvalue name="suburb" />
+      <tagvalue name="locality" />
+      <tagvalue name="island" />
+    </tagkey>
+    <tagkey name="internet_access" tagtype="tag_list">
+      <tagvalue name="public" />
+      <tagvalue name="service" />
+      <tagvalue name="terminal" />
+      <tagvalue name="wired" />
+      <tagvalue name="wlan" />
+    </tagkey>
+    <tagkey name="sac_scale" tagtype="tag_list">
+      <tagvalue name="hiking" displayname="Hiking" infoURL="http://wiki.openstreetmap.org/wiki/Key:sac_scale"/>
+      <tagvalue name="mountain_hiking" displayname="Mountain Hiking" infoURL="http://wiki.openstreetmap.org/wiki/Key:sac_scale" />
+      <tagvalue name="demanding_mountain_hiking" displayname="Demanding Mountain Hiking" infoURL="http://wiki.openstreetmap.org/wiki/Key:sac_scale" />
+      <tagvalue name="alpine_hiking" displayname="Alpine Hiking" infoURL="http://wiki.openstreetmap.org/wiki/Key:sac_scale" />
+      <tagvalue name="demanding_alpine_hiking" displayname="Demanding Alpine Hiking" infoURL="http://wiki.openstreetmap.org/wiki/Key:sac_scale" />
+      <tagvalue name="difficult_alpine_hiking" displayname="Difficult Alpine Hiking" infoURL="http://wiki.openstreetmap.org/wiki/Key:sac_scale" />
+    </tagkey>
+    <tagkey name="surface" tagtype="tag_list">
+      <tagvalue name="paved" displayname="Paved" infoURL="http://wiki.openstreetmap.org/wiki/Tag:surface%3Dpaved"/>
+      <tagvalue name="unpaved" displayname="Unpaved" infoURL="http://wiki.openstreetmap.org/wiki/Tag:surface%3Dunpaved" />
+      <tagvalue name="compacted" displayname="Compacted" infoURL="http://wiki.openstreetmap.org/wiki/Tag:surface%3Dcompacted" />
+      <tagvalue name="gravel" displayname="Gravel" infoURL="http://wiki.openstreetmap.org/wiki/Tag:surface%3Dgravel" />
+      <tagvalue name="pebblestone" displayname="Pebblestone" infoURL="http://wiki.openstreetmap.org/wiki/Tag:surface%3Dpebblestone" />
+      <tagvalue name="cobblestone" displayname="Cobblestone" infoURL="http://wiki.openstreetmap.org/wiki/Tag:surface%3Dcobblestone" />
+      <tagvalue name="cobblestone:flattened" displayname="Flattened Cobblestone" infoURL="http://wiki.openstreetmap.org/wiki/Tag:surface%3Dcobblestone:flattened" />
+      <tagvalue name="paving_stones" displayname="Paving Stones" infoURL="http://wiki.openstreetmap.org/wiki/Tag:surface%3Dpaving_stones" />
+      <tagvalue name="paving_stones:30" displayname="Paving Stones (30cm sides)" infoURL="http://wiki.openstreetmap.org/wiki/Tag:surface%3Dpaving_stones:30" />
+      <tagvalue name="paving_stones:20" displayname="Paving Stones (20cm sides)" infoURL="http://wiki.openstreetmap.org/wiki/Tag:surface%3Dpaving_stones:20" />
+      <tagvalue name="grass_paver" displayname="Grass Paver" infoURL="http://wiki.openstreetmap.org/wiki/Tag:surface%3Dgrass_paver" />
+      <tagvalue name="ground" displayname="Ground" infoURL="http://wiki.openstreetmap.org/wiki/Tag:surface%3Dground" />
+      <tagvalue name="earth" displayname="Earth" infoURL="http://wiki.openstreetmap.org/wiki/Tag:surface%3Dearth" />
+      <tagvalue name="mud" displayname="Mud" infoURL="http://wiki.openstreetmap.org/wiki/Tag:surface%3Dmud" />
+      <tagvalue name="grass" displayname="Grass" infoURL="http://wiki.openstreetmap.org/wiki/Tag:surface%3Dgrass" />
+      <tagvalue name="sand" displayname="Sand" infoURL="http://wiki.openstreetmap.org/wiki/Tag:surface%3Dsand" />
+      <tagvalue name="asphalt" displayname="Asphalt" infoURL="http://wiki.openstreetmap.org/wiki/Tag:surface%3Dasphalt" />
+      <tagvalue name="concrete" displayname="Concrete" infoURL="http://wiki.openstreetmap.org/wiki/Tag:surface%3Dconcrete" />
+      <tagvalue name="metal" displayname="Metal" infoURL="http://wiki.openstreetmap.org/wiki/Tag:surface%3Dmetal" />
+      <tagvalue name="wood" displayname="Wood" infoURL="http://wiki.openstreetmap.org/wiki/Tag:surface%3Dwood" />
+      <tagvalue name="dirt" displayname="Dirt" infoURL="http://wiki.openstreetmap.org/wiki/Tag:surface%3Ddirt" />
+      <tagvalue name="ice_road" displayname="Ice Road" infoURL="http://wiki.openstreetmap.org/wiki/Tag:surface%3Dice_road" />
+    </tagkey>
+    <tagkey name="oneway" tagtype="tag_list">
+      <tagvalue name="yes" displayname="Yes" infoURL="http://wiki.openstreetmap.org/wiki/Tag:oneway%3Dyes" />
+      <tagvalue name="no" displayname="No" infoURL="http://wiki.openstreetmap.org/wiki/Tag:oneway%3Dno" />
+      <tagvalue name="-1" displayname="Reverse" infoURL="http://wiki.openstreetmap.org/wiki/Tag:oneway%3D-1" />
+    </tagkey>
+    <tagkey name="access" tagtype="tag_list" infoURL="http://wiki.openstreetmap.org/wiki/Key:access">
+      <tagvalue name="unknown" displayname="Unkown" />
+      <tagvalue name="yes" displayname="Yes" infoURL="http://wiki.openstreetmap.org/wiki/Tag:access%3Dyes"/>
+      <tagvalue name="designated" displayname="Designated" infoURL="http://wiki.openstreetmap.org/wiki/Tag:access%3Ddesignated"/>
+      <tagvalue name="official" displayname="Official" infoURL="http://wiki.openstreetmap.org/wiki/Tag:access%3Dofficial"/>
+      <tagvalue name="destination" displayname="Destination" />
+      <tagvalue name="agricultural" displayname="Agricultural" />
+      <tagvalue name="forestry" displayname="Forestry" />
+      <tagvalue name="delivery" displayname="Delivery" />
+      <tagvalue name="permissive" displayname="Permissive" />
+      <tagvalue name="private" displayname="Private" />
+      <tagvalue name="no" displayname="No" />
+    </tagkey>
+    <tagkey name="motorcar" tagtype="tag_list">
+      <tagvalue name="unknown" displayname="Unkown" />
+      <tagvalue name="yes" displayname="Yes" />
+      <tagvalue name="designated" displayname="Designated" />
+      <tagvalue name="official" displayname="Official" />
+      <tagvalue name="destination" displayname="Destination" />
+      <tagvalue name="agricultural" displayname="Agricultural" />
+      <tagvalue name="forestry" displayname="Forestry" />
+      <tagvalue name="delivery" displayname="Delivery" />
+      <tagvalue name="permissive" displayname="Permissive" />
+      <tagvalue name="private" displayname="Private" />
+      <tagvalue name="no" displayname="No" />
+    </tagkey>
+    <tagkey name="hgv" tagtype="tag_list" infoURL="http://wiki.openstreetmap.org/wiki/Key:hgv">
+      <tagvalue name="unknown" />
+      <tagvalue name="yes" />
+      <tagvalue name="designated" />
+      <tagvalue name="official" />
+      <tagvalue name="destination" />
+      <tagvalue name="agricultural" />
+      <tagvalue name="forestry" />
+      <tagvalue name="delivery" />
+      <tagvalue name="permissive" />
+      <tagvalue name="private" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="name" tagtype="tag_string" infoURL="http://wiki.openstreetmap.org/wiki/Key:name" />
+    <tagkey name="ref" displayname="Reference" tagtype="tag_string" infoURL="http://wiki.openstreetmap.org/wiki/Key:ref" />
+    <tagkey name="lanes" tagtype="tag_integer" />
+    <tagkey name="cycleway" tagtype="tag_list">
+      <tagvalue name="lane" />
+      <tagvalue name="track" />
+      <tagvalue name="opposite_lane" />
+      <tagvalue name="opposite_track" />
+      <tagvalue name="opposite" />
+    </tagkey>
+    <tagkey name="lit" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="automatic" />
+      <tagvalue name="no" />
+      <tagvalue name="disused" />
+    </tagkey>
+    <tagkey name="footway" tagtype="tag_list">
+      <tagvalue name="both" />
+      <tagvalue name="left" />
+      <tagvalue name="right" />
+      <tagvalue name="none" />
+    </tagkey>
+    <tagkey name="abutters" tagtype="tag_list">
+      <tagvalue name="commercial" />
+      <tagvalue name="industrial" />
+      <tagvalue name="mixed" />
+      <tagvalue name="residential" />
+      <tagvalue name="retail" />
+    </tagkey>
+    <tagkey name="maxspeed" tagtype="tag_double" displayname="Maximum Speed" infoURL="http://wiki.openstreetmap.org/wiki/Key:maxspeed" />
+    <tagkey name="service" tagytpe="list">
+      <tagvalue name="parking_aisle" />
+      <tagvalue name="driveway" />
+      <tagvalue name="alley" />
+      <tagvalue name="emergency_access" />
+      <tagvalue name="yard" />
+      <tagvalue name="siding" />
+      <tagvalue name="spur" />
+    </tagkey>
+    <tagkey name="tracktype" tagytpe="list">
+      <tagvalue name="grade1" />
+      <tagvalue name="grade2" />
+      <tagvalue name="grade3" />
+      <tagvalue name="grade4" />
+      <tagvalue name="grade5" />
+    </tagkey>
+    <tagkey name="area" tagtype="tag_list">
+      <tagvalue name="yes" />
+    </tagkey>
+    <tagkey name="reference" tagtype="tag_string" />
+    <tagkey name="operator" tagtype="tag_string" />
+    <tagkey name="emergency" tagtype="tag_list">
+      <tagvalue name="destination" />
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="psv" tagtype="tag_string" displayname="Public Service Vehicle" />
+    <tagkey name="bicycle" tagtype="tag_list">
+      <tagvalue name="unknown" displayname="Unkown" />
+      <tagvalue name="yes" displayname="Yes" />
+      <tagvalue name="designated" displayname="Designated" />
+      <tagvalue name="official" displayname="Official" />
+      <tagvalue name="destination" displayname="Destination" />
+      <tagvalue name="agricultural" displayname="Agricultural" />
+      <tagvalue name="forestry" displayname="Forestry" />
+      <tagvalue name="delivery" displayname="Delivery" />
+      <tagvalue name="permissive" displayname="Permissive" />
+      <tagvalue name="private" displayname="Private" />
+      <tagvalue name="no" displayname="No" />
+    </tagkey>
+    <tagkey name="cycleway" tagtype="tag_list">
+      <tagvalue name="lane" />
+      <tagvalue name="track" />
+      <tagvalue name="opposite_lane" />
+      <tagvalue name="opposite_track" />
+      <tagvalue name="opposite" />
+    </tagkey>
+    <tagkey name="foot" tagtype="tag_list">
+      <tagvalue name="unknown" displayname="Unkown" />
+      <tagvalue name="yes" displayname="Yes" />
+      <tagvalue name="designated" displayname="Designated" />
+      <tagvalue name="official" displayname="Official" />
+      <tagvalue name="destination" displayname="Destination" />
+      <tagvalue name="agricultural" displayname="Agricultural" />
+      <tagvalue name="forestry" displayname="Forestry" />
+      <tagvalue name="delivery" displayname="Delivery" />
+      <tagvalue name="permissive" displayname="Permissive" />
+      <tagvalue name="private" displayname="Private" />
+      <tagvalue name="no" displayname="No" />
+    </tagkey>
+    <tagkey name="horse" tagtype="tag_list">
+      <tagvalue name="unknown" displayname="Unkown" />
+      <tagvalue name="yes" displayname="Yes" />
+      <tagvalue name="designated" displayname="Designated" />
+      <tagvalue name="official" displayname="Official" />
+      <tagvalue name="destination" displayname="Destination" />
+      <tagvalue name="agricultural" displayname="Agricultural" />
+      <tagvalue name="forestry" displayname="Forestry" />
+      <tagvalue name="delivery" displayname="Delivery" />
+      <tagvalue name="permissive" displayname="Permissive" />
+      <tagvalue name="private" displayname="Private" />
+      <tagvalue name="no" displayname="No" />
+    </tagkey>
+    <tagkey name="step_count" tagtype="tag_integer" />
+    <tagkey name="tactile_paving" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+      <tagvalue name="incorrect" />
+    </tagkey>
+    <tagkey name="direction" tagtype="tag_list">
+      <tagvalue name="clockwise" />
+      <tagvalue name="anticlockwise" />
+    </tagkey>
+    <tagkey name="stop" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="both" />
+      <tagvalue name="all" />
+    </tagkey>
+    <tagkey name="traggic_signals:sound" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="traggic_signals:vibration" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="crossing" tagtype="tag_list">
+      <tagvalue name="traffic_signals" />
+      <tagvalue name="uncontrolled" />
+      <tagvalue name="island" />
+      <tagvalue name="no" />
+      <tagvalue name="unmarked" />
+      <tagvalue name="unknown" />
+    </tagkey>
+    <tagkey name="wheelchair" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+      <tagvalue name="limited" />
+      <tagvalue name="only" />
+      <tagvalue name="designated" />
+    </tagkey>
+    <tagkey name="incline" tagtype="tag_list">
+      <tagvalue name="up" />
+      <tagvalue name="down" />
+      <tagvalue name="N/a" />
+    </tagkey>
+    <tagkey name="FIXME" tagtype="tag_string" />
+    <tagkey name="layer" tagtype="tag_integer" />
+    <tagkey name="depth" tagtype="tag_double" />
+    <tagkey name="length" tagtype="tag_double" />
+    <tagkey name="height" tagtype="tag_double" />
+    <tagkey name="width" tagtype="tag_double" />
+    <tagkey name="shelter" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="bench" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="construction" tagtype="tag_list">
+      <tagvalue name="yes" />
+    </tagkey>
+    <tagkey name="emergency_telephone_code" tagtype="tag_string" />
+    <tagkey name="traffic_calming" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="bump" />
+      <tagvalue name="chicane" />
+      <tagvalue name="cushion" />
+      <tagvalue name="hump" />
+      <tagvalue name="rumble_strip" />
+      <tagvalue name="table" />
+      <tagvalue name="choker" />
+    </tagkey>
+    <tagkey name="fence_type" tagtype="tag_list">
+      <tagvalue name="barbed_wire" />
+      <tagvalue name="electric" />
+      <tagvalue name="hedge" />
+      <tagvalue name="pole (wood)" />
+      <tagvalue name="chain" />
+      <tagvalue name="split_rail" />
+    </tagkey>
+    <tagkey name="two_sided" tagtype="tag_list">
+      <tagvalue name="yes" />
+    </tagkey>
+    <tagkey name="fee" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+      <tagvalue name="interval" />
+    </tagkey>
+    <tagkey name="toll" tagtype="tag_list">
+      <tagvalue name="yes" />
+    </tagkey>
+    <tagkey name="boat" tagtype="tag_list">
+      <tagvalue name="unknown" />
+      <tagvalue name="yes" />
+      <tagvalue name="designated" />
+      <tagvalue name="permissive" />
+      <tagvalue name="private" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="lock" tagtype="tag_list">
+      <tagvalue name="yes" />
+    </tagkey>
+    <tagkey name="tunnel" tagtype="tag_list">
+      <tagvalue name="yes" />
+    </tagkey>
+    <tagkey name="bridge" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="aqueduct" />
+      <tagvalue name="viaduct" />
+      <tagvalue name="swing" />
+    </tagkey>
+    <tagkey name="dock" tagtype="tag_list">
+      <tagvalue name="tidal" />
+      <tagvalue name="drydock" />
+      <tagvalue name="floating" />
+    </tagkey>
+    <tagkey name="building" tagtype="tag_list">
+      <tagvalue name="yes" />
+    </tagkey>
+    <tagkey name="mooring" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="private" />
+      <tagvalue name="no" />
+      <tagvalue name="commercial" />
+    </tagkey>
+    <tagkey name="gauge" tagtype="tag_double" />
+    <tagkey name="cutting" tagtype="tag_list">
+      <tagvalue name="yes" />
+    </tagkey>
+    <tagkey name="electrified" tagtype="tag_list">
+      <tagvalue name="contact_line" />
+      <tagvalue name="rail" />
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="embankment" tagtype="tag_list">
+      <tagvalue name="yes" />
+    </tagkey>
+    <tagkey name="frequency" tagtype="tag_double" />
+    <tagkey name="usage" tagtype="tag_list">
+      <tagvalue name="main" />
+      <tagvalue name="branch" />
+      <tagvalue name="industrial" />
+      <tagvalue name="military" />
+      <tagvalue name="tourism" />
+    </tagkey>
+    <tagkey name="voltage" tagtype="tag_double" />
+    <tagkey name="cables" tagtype="tag_integer" />
+    <tagkey name="wires" tagtype="tag_list">
+      <tagvalue name="single" />
+      <tagvalue name="double" />
+      <tagvalue name="triple" />
+      <tagvalue name="quad" />
+    </tagkey>
+    <tagkey name="power_source" tagtype="tag_list">
+      <tagvalue name="biofuel" />
+      <tagvalue name="coal" />
+      <tagvalue name="gas" />
+      <tagvalue name="oil" />
+      <tagvalue name="waste" />
+      <tagvalue name="hydro" />
+      <tagvalue name="tidal" />
+      <tagvalue name="wave" />
+      <tagvalue name="geothermal" />
+      <tagvalue name="nuclear" />
+      <tagvalue name="fusion" />
+      <tagvalue name="wind" />
+      <tagvalue name="photovoltaic" />
+      <tagvalue name="solar-thermal" />
+    </tagkey>
+    <tagkey name="power_rating" tagtype="tag_string" />
+    <tagkey name="cutline" tagtype="tag_list">
+      <tagvalue name="border" />
+      <tagvalue name="section" />
+      <tagvalue name="firebreak" />
+    </tagkey>
+    <tagkey name="disused" tagtype="tag_list">
+      <tagvalue name="yes" />
+    </tagkey>
+    <tagkey name="resource" tagtype="tag_list">
+      <tagvalue name="Aggregate" />
+      <tagvalue name="Antimony" />
+      <tagvalue name="Arsenic" />
+      <tagvalue name="Asbestos" />
+      <tagvalue name="Barite" />
+      <tagvalue name="Bastnäsite" />
+      <tagvalue name="Bauxite" />
+      <tagvalue name="Bentonite" />
+      <tagvalue name="Beryl" />
+      <tagvalue name="Bismuth" />
+      <tagvalue name="Bitumen" />
+      <tagvalue name="Borax" />
+      <tagvalue name="Boron" />
+      <tagvalue name="Bromide" />
+      <tagvalue name="Caesium" />
+      <tagvalue name="Chromite" />
+      <tagvalue name="Coal" />
+      <tagvalue name="Cobalt" />
+      <tagvalue name="Copper" />
+      <tagvalue name="Diamond" />
+      <tagvalue name="Diatomite" />
+      <tagvalue name="Dimension Stone" />
+      <tagvalue name="Dolomite" />
+      <tagvalue name="Feldspar" />
+      <tagvalue name="Fluorite" />
+      <tagvalue name="Garnet" />
+      <tagvalue name="Gold" />
+      <tagvalue name="Graphite" />
+      <tagvalue name="Gypsum" />
+      <tagvalue name="Ilmenite" />
+      <tagvalue name="Iodine" />
+      <tagvalue name="Iron Ore" />
+      <tagvalue name="Jade" />
+      <tagvalue name="Kaolin" />
+      <tagvalue name="Lanthanum" />
+      <tagvalue name="Lead" />
+      <tagvalue name="Limestone" />
+      <tagvalue name="Lithium" />
+      <tagvalue name="Magnesite" />
+      <tagvalue name="Magnesium" />
+      <tagvalue name="Marble" />
+      <tagvalue name="Mercury" />
+      <tagvalue name="Mica" />
+      <tagvalue name="Molybdenite" />
+      <tagvalue name="Monazite" />
+      <tagvalue name="Nickel" />
+      <tagvalue name="Niobium" />
+      <tagvalue name="Oil Sand" />
+      <tagvalue name="Oil Shale" />
+      <tagvalue name="Opal" />
+      <tagvalue name="Palladium" />
+      <tagvalue name="Peat" />
+      <tagvalue name="Perlite" />
+      <tagvalue name="Phospate" />
+      <tagvalue name="Potash" />
+      <tagvalue name="Platinum" />
+      <tagvalue name="Radium" />
+      <tagvalue name="Ruby" />
+      <tagvalue name="Rubidium" />
+      <tagvalue name="Rutile" />
+      <tagvalue name="Salt" />
+      <tagvalue name="Sapphire" />
+      <tagvalue name="Scandium" />
+      <tagvalue name="Silica" />
+      <tagvalue name="Silver" />
+      <tagvalue name="Soda ash" />
+      <tagvalue name="Spongolite" />
+      <tagvalue name="Strontium" />
+      <tagvalue name="Sulphur" />
+      <tagvalue name="Talc" />
+      <tagvalue name="Terbium" />
+      <tagvalue name="Tantalum" />
+      <tagvalue name="Tin" />
+      <tagvalue name="Topaz" />
+      <tagvalue name="Tungsten" />
+      <tagvalue name="Uranium" />
+      <tagvalue name="Vanadium" />
+      <tagvalue name="Vermiculite" />
+      <tagvalue name="Wollastonite" />
+      <tagvalue name="Yttrium" />
+      <tagvalue name="Zeolites" />
+      <tagvalue name="Zinc" />
+      <tagvalue name="Zircon" />
+    </tagkey>
+    <tagkey name="location" tagtype="tag_list">
+      <tagvalue name="underground" />
+      <tagvalue name="underwater" />
+      <tagvalue name="overground" />
+    </tagkey>
+    <tagkey name="type" tagtype="tag_list">
+      <tagvalue name="water" />
+      <tagvalue name="oil" />
+      <tagvalue name="gas" />
+      <tagvalue name="sewage" />
+      <tagvalue name="slurry" />
+      <tagvalue name="dormant" />
+      <tagvalue name="extinct" />
+      <tagvalue name="stratovolcano" />
+      <tagvalue name="shield" />
+      <tagvalue name="scoria" />
+      <tagvalue name="route">
+        <applyto>route=bus</applyto>
+      </tagvalue>
+    </tagkey>
+    <tagkey name="tower:type" tagtype="tag_list">
+      <tagvalue name="communication" />
+      <tagvalue name="observation" />
+    </tagkey>
+    <tagkey name="tower:construction" tagtype="tag_list">
+      <tagvalue name="lattice" />
+      <tagvalue name="freestanding" />
+      <tagvalue name="dish" />
+      <tagvalue name="dome" />
+      <tagvalue name="concealed" />
+    </tagkey>
+    <tagkey name="capacity" tagtype="tag_integer" />
+    <tagkey name="building:use" tagtype="tag_list">
+      <tagvalue name="shop" />
+      <tagvalue name="residential" />
+      <tagvalue name="office" />
+      <tagvalue name="decorative" />
+      <tagvalue name="commcercial" />
+      <tagvalue name="industrial" />
+    </tagkey>
+    <tagkey name="building:roof" tagtype="tag_list">
+      <tagvalue name="tile" />
+      <tagvalue name="slate" />
+      <tagvalue name="flat" />
+      <tagvalue name="concrete" />
+      <tagvalue name="tar_paper" />      
+    </tagkey>
+    <tagkey name="addr:housenumber" tagtype="tag_string" />
+    <tagkey name="addr:housename" tagtype="tag_string" />
+    <tagkey name="addr:street" tagtype="tag_string" />
+    <tagkey name="addr:postcode" tagtype="tag_string" />
+    <tagkey name="addr:city" tagtype="tag_string" />
+    <tagkey name="addr:country" tagtype="tag_list">
+      <tagvalue name="AD" />
+      <tagvalue name="AE" />
+      <tagvalue name="AF" />
+      <tagvalue name="AG" />
+      <tagvalue name="AI" />
+      <tagvalue name="AL" />
+      <tagvalue name="AM" />
+      <tagvalue name="AN" />
+      <tagvalue name="AO" />
+      <tagvalue name="AQ" />
+      <tagvalue name="Co" />
+      <tagvalue name="AR" />
+      <tagvalue name="AS" />
+      <tagvalue name="AT" />
+      <tagvalue name="AU" />
+      <tagvalue name="AW" />
+      <tagvalue name="AX" />
+      <tagvalue name="AZ" />
+      <tagvalue name="BA" />
+      <tagvalue name="BB" />
+      <tagvalue name="BD" />
+      <tagvalue name="BE" />
+      <tagvalue name="BF" />
+      <tagvalue name="BG" />
+      <tagvalue name="BH" />
+      <tagvalue name="BI" />
+      <tagvalue name="BJ" />
+      <tagvalue name="BL" />
+      <tagvalue name="BM" />
+      <tagvalue name="BN" />
+      <tagvalue name="BO" />
+      <tagvalue name="BR" />
+      <tagvalue name="BS" />
+      <tagvalue name="BT" />
+      <tagvalue name="BV" />
+      <tagvalue name="BW" />
+      <tagvalue name="BY" />
+      <tagvalue name="BZ" />
+      <tagvalue name="CA" />
+      <tagvalue name="CC" />
+      <tagvalue name="CD" />
+      <tagvalue name="CF" />
+      <tagvalue name="CG" />
+      <tagvalue name="CH" />
+      <tagvalue name="CI" />
+      <tagvalue name="CK" />
+      <tagvalue name="CL" />
+      <tagvalue name="CM" />
+      <tagvalue name="CN" />
+      <tagvalue name="CO" />
+      <tagvalue name="CR" />
+      <tagvalue name="CU" />
+      <tagvalue name="CV" />
+      <tagvalue name="CX" />
+      <tagvalue name="CY" />
+      <tagvalue name="CZ" />
+      <tagvalue name="DE" />
+      <tagvalue name="DJ" />
+      <tagvalue name="DK" />
+      <tagvalue name="DM" />
+      <tagvalue name="DO" />
+      <tagvalue name="DZ" />
+      <tagvalue name="EC" />
+      <tagvalue name="EE" />
+      <tagvalue name="EG" />
+      <tagvalue name="EH" />
+      <tagvalue name="ER" />
+      <tagvalue name="ES" />
+      <tagvalue name="ET" />
+      <tagvalue name="FI" />
+      <tagvalue name="FJ" />
+      <tagvalue name="FK" />
+      <tagvalue name="FM" />
+      <tagvalue name="FO" />
+      <tagvalue name="FR" />
+      <tagvalue name="GA" />
+      <tagvalue name="GB" />
+      <tagvalue name="UK" />
+      <tagvalue name="GD" />
+      <tagvalue name="GE" />
+      <tagvalue name="GF" />
+      <tagvalue name="GG" />
+      <tagvalue name="GH" />
+      <tagvalue name="GI" />
+      <tagvalue name="GL" />
+      <tagvalue name="GM" />
+      <tagvalue name="GN" />
+      <tagvalue name="GP" />
+      <tagvalue name="GQ" />
+      <tagvalue name="GR" />
+      <tagvalue name="GS" />
+      <tagvalue name="GT" />
+      <tagvalue name="GU" />
+      <tagvalue name="GW" />
+      <tagvalue name="GY" />
+      <tagvalue name="HK" />
+      <tagvalue name="HM" />
+      <tagvalue name="HN" />
+      <tagvalue name="HR" />
+      <tagvalue name="HT" />
+      <tagvalue name="HU" />
+      <tagvalue name="ID" />
+      <tagvalue name="IE" />
+      <tagvalue name="IL" />
+      <tagvalue name="IM" />
+      <tagvalue name="IN" />
+      <tagvalue name="IO" />
+      <tagvalue name="IQ" />
+      <tagvalue name="IR" />
+      <tagvalue name="IS" />
+      <tagvalue name="IT" />
+      <tagvalue name="JE" />
+      <tagvalue name="JM" />
+      <tagvalue name="JO" />
+      <tagvalue name="JP" />
+      <tagvalue name="KE" />
+      <tagvalue name="KG" />
+      <tagvalue name="KH" />
+      <tagvalue name="KI" />
+      <tagvalue name="KM" />
+      <tagvalue name="KN" />
+      <tagvalue name="KP" />
+      <tagvalue name="KR" />
+      <tagvalue name="KW" />
+      <tagvalue name="KY" />
+      <tagvalue name="KZ" />
+      <tagvalue name="LA" />
+      <tagvalue name="LB" />
+      <tagvalue name="LC" />
+      <tagvalue name="LI" />
+      <tagvalue name="LK" />
+      <tagvalue name="LR" />
+      <tagvalue name="LS" />
+      <tagvalue name="LT" />
+      <tagvalue name="LU" />
+      <tagvalue name="LV" />
+      <tagvalue name="LY" />
+      <tagvalue name="MA" />
+      <tagvalue name="MC" />
+      <tagvalue name="MD" />
+      <tagvalue name="ME" />
+      <tagvalue name="MF" />
+      <tagvalue name="MG" />
+      <tagvalue name="MH" />
+      <tagvalue name="MK" />
+      <tagvalue name="ML" />
+      <tagvalue name="MM" />
+      <tagvalue name="MN" />
+      <tagvalue name="MO" />
+      <tagvalue name="MP" />
+      <tagvalue name="MQ" />
+      <tagvalue name="MR" />
+      <tagvalue name="MS" />
+      <tagvalue name="MT" />
+      <tagvalue name="MU" />
+      <tagvalue name="MV" />
+      <tagvalue name="MW" />
+      <tagvalue name="MX" />
+      <tagvalue name="MY" />
+      <tagvalue name="MZ" />
+      <tagvalue name="NA" />
+      <tagvalue name="NC" />
+      <tagvalue name="NE" />
+      <tagvalue name="NF" />
+      <tagvalue name="NG" />
+      <tagvalue name="NI" />
+      <tagvalue name="NL" />
+      <tagvalue name="NO" />
+      <tagvalue name="NP" />
+      <tagvalue name="NR" />
+      <tagvalue name="NU" />
+      <tagvalue name="NZ" />
+      <tagvalue name="OM" />
+      <tagvalue name="PA" />
+      <tagvalue name="PE" />
+      <tagvalue name="PF" />
+      <tagvalue name="PG" />
+      <tagvalue name="PH" />
+      <tagvalue name="PK" />
+      <tagvalue name="PL" />
+      <tagvalue name="PM" />
+      <tagvalue name="PN" />
+      <tagvalue name="PR" />
+      <tagvalue name="PS" />
+      <tagvalue name="PT" />
+      <tagvalue name="PW" />
+      <tagvalue name="PY" />
+      <tagvalue name="QA" />
+      <tagvalue name="RE" />
+      <tagvalue name="RO" />
+      <tagvalue name="RS" />
+      <tagvalue name="RU" />
+      <tagvalue name="RW" />
+      <tagvalue name="SA" />
+      <tagvalue name="SB" />
+      <tagvalue name="SC" />
+      <tagvalue name="SD" />
+      <tagvalue name="SE" />
+      <tagvalue name="SG" />
+      <tagvalue name="SH" />
+      <tagvalue name="SI" />
+      <tagvalue name="SJ" />
+      <tagvalue name="SK" />
+      <tagvalue name="SL" />
+      <tagvalue name="SM" />
+      <tagvalue name="SN" />
+      <tagvalue name="SO" />
+      <tagvalue name="SR" />
+      <tagvalue name="ST" />
+      <tagvalue name="SV" />
+      <tagvalue name="SY" />
+      <tagvalue name="SZ" />
+      <tagvalue name="TC" />
+      <tagvalue name="TD" />
+      <tagvalue name="TF" />
+      <tagvalue name="TG" />
+      <tagvalue name="TH" />
+      <tagvalue name="TJ" />
+      <tagvalue name="TK" />
+      <tagvalue name="TL" />
+      <tagvalue name="TM" />
+      <tagvalue name="TN" />
+      <tagvalue name="TO" />
+      <tagvalue name="TR" />
+      <tagvalue name="TT" />
+      <tagvalue name="TV" />
+      <tagvalue name="TW" />
+      <tagvalue name="TZ" />
+      <tagvalue name="UA" />
+      <tagvalue name="UG" />
+      <tagvalue name="UM" />
+      <tagvalue name="US" />
+      <tagvalue name="UY" />
+      <tagvalue name="UZ" />
+      <tagvalue name="VA" />
+      <tagvalue name="VC" />
+      <tagvalue name="VE" />
+      <tagvalue name="VG" />
+      <tagvalue name="VI" />
+      <tagvalue name="VN" />
+      <tagvalue name="VU" />
+      <tagvalue name="WF" />
+      <tagvalue name="WS" />
+      <tagvalue name="YE" />
+      <tagvalue name="YT" />
+      <tagvalue name="ZA" />
+      <tagvalue name="ZM" />
+      <tagvalue name="ZW" />
+     </tagkey>
+    <tagkey name="addr:interpolation" tagtype="tag_list">
+      <tagvalue name="all" />
+      <tagvalue name="even" />
+      <tagvalue name="odd" />
+      <tagvalue name="alphabetic" />
+    </tagkey>
+    <tagkey name="addr:inclusion">
+      <tagvalue name="actual" />
+      <tagvalue name="estimate" />
+      <tagvalue name="potential" />
+    </tagkey>
+    <tagkey name="religion" tagtype="tag_list">
+      <tagvalue name="bahai" />
+      <tagvalue name="buddhist" />
+      <tagvalue name="christian" />
+      <tagvalue name="hindu" />
+      <tagvalue name="jain" />
+      <tagvalue name="jewish" />
+      <tagvalue name="multifaith" />
+      <tagvalue name="muslim" />
+      <tagvalue name="scientologist" />
+      <tagvalue name="shinto" />
+      <tagvalue name="sikh" />
+      <tagvalue name="spiritualist" />
+      <tagvalue name="taoist" />
+      <tagvalue name="unitarian" />
+      <tagvalue name="zoroastrian" />
+    </tagkey>
+    <tagkey name="denomination" tagtype="tag_string" />
+    <tagkey name="barrier" tagtype="tag_list">
+      <tagvalue name="bollard" />
+      <tagvalue name="hedge" />
+      <tagvalue name="fence" />
+      <tagvalue name="wall" />
+      <tagvalue name="retainig_wall" />
+      <tagvalue name="city_wall" />
+    </tagkey>
+    <tagkey name="sport" tagtype="tag_list">
+      <tagvalue name="9pin" />
+      <tagvalue name="10pin" />
+      <tagvalue name="archery" />
+      <tagvalue name="athletics" />
+      <tagvalue name="australian_football" />
+      <tagvalue name="baseball" />
+      <tagvalue name="basketball" />
+      <tagvalue name="beachvolleyball" />
+      <tagvalue name="boules" />
+      <tagvalue name="bowls" />
+      <tagvalue name="canoe" />
+      <tagvalue name="chess" />
+      <tagvalue name="climbing" />
+      <tagvalue name="cricket" />
+      <tagvalue name="cricket_nets" />
+      <tagvalue name="croquet" />
+      <tagvalue name="cycling" />
+      <tagvalue name="diving" />
+      <tagvalue name="dog_racing" />
+      <tagvalue name="equestrian" />
+      <tagvalue name="golf" />
+      <tagvalue name="gymnastics" />
+      <tagvalue name="hockey" />
+      <tagvalue name="horse_racing" />
+      <tagvalue name="ice_stock" />
+      <tagvalue name="korfball" />
+      <tagvalue name="lacrosse" />
+      <tagvalue name="motor" />
+      <tagvalue name="multi" />
+      <tagvalue name="orientiering" />
+      <tagvalue name="paddle_tennis" />
+      <tagvalue name="paragliding" />
+      <tagvalue name="pelota" />
+      <tagvalue name="racquet" />
+      <tagvalue name="rowing" />
+      <tagvalue name="rugby" />
+      <tagvalue name="shooting" />
+      <tagvalue name="skating" />
+      <tagvalue name="skateboard" />
+      <tagvalue name="skiing" />
+      <tagvalue name="soccer" />
+      <tagvalue name="swimming" />
+      <tagvalue name="table_tennis" />
+      <tagvalue name="team_handball" />
+      <tagvalue name="tennis" />
+      <tagvalue name="toboggan" />
+      <tagvalue name="volleyball" />
+    </tagkey>
+    <tagkey name="cuisine" tagtype="tag_list">
+      <tagvalue name="bagel" />
+      <tagvalue name="barbecue" />
+      <tagvalue name="bougatsa" />
+      <tagvalue name="burger" />
+      <tagvalue name="chicken" />
+      <tagvalue name="coffee_shop" />
+      <tagvalue name="crepe" />
+      <tagvalue name="couscous" />
+      <tagvalue name="curry" />
+      <tagvalue name="donut" />
+      <tagvalue name="fish_and_chips" />
+      <tagvalue name="friture" />
+      <tagvalue name="ice_cream" />
+      <tagvalue name="kebab" />
+      <tagvalue name="noodle" />
+      <tagvalue name="pasta" />
+      <tagvalue name="pie" />
+      <tagvalue name="pizza" />
+      <tagvalue name="poutine" />
+      <tagvalue name="sandwich" />
+      <tagvalue name="sausage" />
+      <tagvalue name="savory_pancake" />
+      <tagvalue name="sea_food" />
+      <tagvalue name="steak_house" />
+      <tagvalue name="sushi" />
+      <tagvalue name="vegan" />
+      <tagvalue name="vegetarian" />
+      <tagvalue name="african" />
+      <tagvalue name="arabian" />
+      <tagvalue name="argentinian" />
+      <tagvalue name="asian" />
+      <tagvalue name="balkans" />
+      <tagvalue name="brazilian" />
+      <tagvalue name="chinese" />
+      <tagvalue name="french" />
+      <tagvalue name="german" />
+      <tagvalue name="greek" />
+      <tagvalue name="indian" />
+      <tagvalue name="italian" />
+      <tagvalue name="japanese" />
+      <tagvalue name="korean" />
+      <tagvalue name="lebanese" />
+      <tagvalue name="mexican" />
+      <tagvalue name="spanish" />
+      <tagvalue name="thai" />
+      <tagvalue name="turkish" />
+      <tagvalue name="regional" />
+      <tagvalue name="bavarian" />
+      <tagvalue name="sichuan" />
+      <tagvalue name="kantoneese" />
+      <tagvalue name="hunan" />
+      <tagvalue name="shandong" />
+      <tagvalue name="kyo_ryouri" />
+      <tagvalue name="okinawa_ryouri" />
+      <tagvalue name="capixaba" />
+      <tagvalue name="baiana" />
+      <tagvalue name="gaucho" />
+      <tagvalue name="mineira" />
+    </tagkey>
+    <tagkey name="opening_hours" tagtype="tag_string" />
+    <tagkey name="cargo" tagtype="tag_string" />
+    <tagkey name="covered" tagtype="tag_list">
+      <tagvalue name="yes" />
+    </tagkey>
+    <tagkey name="network" tagtype="tag_string" />
+    <tagkey name="maxheight" tagtype="tag_double" />
+    <tagkey name="maxstay" tagtype="tag_string" />
+    <tagkey name="bic" tagtype="tag_string" />
+    <tagkey name="dispensing" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="url" tagtype="tag_string" />
+    <tagkey name="drinkable" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+      <tagvalue name="mineral" />
+    </tagkey>
+    <tagkey name="theatre:genre" tagtype="tag_list">
+      <tagvalue name="drama" />
+      <tagvalue name="comedy" />
+      <tagvalue name="opera" />
+      <tagvalue name="musical" />
+      <tagvalue name="ballet" />
+      <tagvalue name="philharmonic" />
+      <tagvalue name="chamber_music" />
+      <tagvalue name="cabaret" />
+      <tagvalue name="boulevard" />
+      <tagvalue name="stand_up_comedy" />
+      <tagvalue name="political" />
+      <tagvalue name="varieté" />
+      <tagvalue name="figure" />
+      <tagvalue name="puppet" />
+      <tagvalue name="marionette" />
+      <tagvalue name="shadow_play" />
+    </tagkey>
+    <tagkey name="backrest" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="support" tagtype="tag_list">
+      <tagvalue name="pole" />
+      <tagvalue name="wall_mounted" />
+      <tagvalue name="billboarded" />
+      <tagvalue name="ground" />
+    </tagkey>
+    <tagkey name="display" tagtype="tag_list">
+      <tagvalue name="analog" />
+      <tagvalue name="digital" />
+      <tagvalue name="sundial" />
+      <tagvalue name="unorthodox" />
+    </tagkey>
+    <tagkey name="visibility" tagtype="tag_list">
+      <tagvalue name="house" />
+      <tagvalue name="street" />
+      <tagvalue name="area" />
+    </tagkey>
+    <tagkey name="date" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="thermometer" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="barometer" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="hygrometer" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="country" tagtype="tag_list">
+      <tagvalue name="AD" />
+      <tagvalue name="AE" />
+      <tagvalue name="AF" />
+      <tagvalue name="AG" />
+      <tagvalue name="AI" />
+      <tagvalue name="AL" />
+      <tagvalue name="AM" />
+      <tagvalue name="AN" />
+      <tagvalue name="AO" />
+      <tagvalue name="AQ" />
+      <tagvalue name="Co" />
+      <tagvalue name="AR" />
+      <tagvalue name="AS" />
+      <tagvalue name="AT" />
+      <tagvalue name="AU" />
+      <tagvalue name="AW" />
+      <tagvalue name="AX" />
+      <tagvalue name="AZ" />
+      <tagvalue name="BA" />
+      <tagvalue name="BB" />
+      <tagvalue name="BD" />
+      <tagvalue name="BE" />
+      <tagvalue name="BF" />
+      <tagvalue name="BG" />
+      <tagvalue name="BH" />
+      <tagvalue name="BI" />
+      <tagvalue name="BJ" />
+      <tagvalue name="BL" />
+      <tagvalue name="BM" />
+      <tagvalue name="BN" />
+      <tagvalue name="BO" />
+      <tagvalue name="BR" />
+      <tagvalue name="BS" />
+      <tagvalue name="BT" />
+      <tagvalue name="BV" />
+      <tagvalue name="BW" />
+      <tagvalue name="BY" />
+      <tagvalue name="BZ" />
+      <tagvalue name="CA" />
+      <tagvalue name="CC" />
+      <tagvalue name="CD" />
+      <tagvalue name="CF" />
+      <tagvalue name="CG" />
+      <tagvalue name="CH" />
+      <tagvalue name="CI" />
+      <tagvalue name="CK" />
+      <tagvalue name="CL" />
+      <tagvalue name="CM" />
+      <tagvalue name="CN" />
+      <tagvalue name="CO" />
+      <tagvalue name="CR" />
+      <tagvalue name="CU" />
+      <tagvalue name="CV" />
+      <tagvalue name="CX" />
+      <tagvalue name="CY" />
+      <tagvalue name="CZ" />
+      <tagvalue name="DE" />
+      <tagvalue name="DJ" />
+      <tagvalue name="DK" />
+      <tagvalue name="DM" />
+      <tagvalue name="DO" />
+      <tagvalue name="DZ" />
+      <tagvalue name="EC" />
+      <tagvalue name="EE" />
+      <tagvalue name="EG" />
+      <tagvalue name="EH" />
+      <tagvalue name="ER" />
+      <tagvalue name="ES" />
+      <tagvalue name="ET" />
+      <tagvalue name="FI" />
+      <tagvalue name="FJ" />
+      <tagvalue name="FK" />
+      <tagvalue name="FM" />
+      <tagvalue name="FO" />
+      <tagvalue name="FR" />
+      <tagvalue name="GA" />
+      <tagvalue name="GB" />
+      <tagvalue name="UK" />
+      <tagvalue name="GD" />
+      <tagvalue name="GE" />
+      <tagvalue name="GF" />
+      <tagvalue name="GG" />
+      <tagvalue name="GH" />
+      <tagvalue name="GI" />
+      <tagvalue name="GL" />
+      <tagvalue name="GM" />
+      <tagvalue name="GN" />
+      <tagvalue name="GP" />
+      <tagvalue name="GQ" />
+      <tagvalue name="GR" />
+      <tagvalue name="GS" />
+      <tagvalue name="GT" />
+      <tagvalue name="GU" />
+      <tagvalue name="GW" />
+      <tagvalue name="GY" />
+      <tagvalue name="HK" />
+      <tagvalue name="HM" />
+      <tagvalue name="HN" />
+      <tagvalue name="HR" />
+      <tagvalue name="HT" />
+      <tagvalue name="HU" />
+      <tagvalue name="ID" />
+      <tagvalue name="IE" />
+      <tagvalue name="IL" />
+      <tagvalue name="IM" />
+      <tagvalue name="IN" />
+      <tagvalue name="IO" />
+      <tagvalue name="IQ" />
+      <tagvalue name="IR" />
+      <tagvalue name="IS" />
+      <tagvalue name="IT" />
+      <tagvalue name="JE" />
+      <tagvalue name="JM" />
+      <tagvalue name="JO" />
+      <tagvalue name="JP" />
+      <tagvalue name="KE" />
+      <tagvalue name="KG" />
+      <tagvalue name="KH" />
+      <tagvalue name="KI" />
+      <tagvalue name="KM" />
+      <tagvalue name="KN" />
+      <tagvalue name="KP" />
+      <tagvalue name="KR" />
+      <tagvalue name="KW" />
+      <tagvalue name="KY" />
+      <tagvalue name="KZ" />
+      <tagvalue name="LA" />
+      <tagvalue name="LB" />
+      <tagvalue name="LC" />
+      <tagvalue name="LI" />
+      <tagvalue name="LK" />
+      <tagvalue name="LR" />
+      <tagvalue name="LS" />
+      <tagvalue name="LT" />
+      <tagvalue name="LU" />
+      <tagvalue name="LV" />
+      <tagvalue name="LY" />
+      <tagvalue name="MA" />
+      <tagvalue name="MC" />
+      <tagvalue name="MD" />
+      <tagvalue name="ME" />
+      <tagvalue name="MF" />
+      <tagvalue name="MG" />
+      <tagvalue name="MH" />
+      <tagvalue name="MK" />
+      <tagvalue name="ML" />
+      <tagvalue name="MM" />
+      <tagvalue name="MN" />
+      <tagvalue name="MO" />
+      <tagvalue name="MP" />
+      <tagvalue name="MQ" />
+      <tagvalue name="MR" />
+      <tagvalue name="MS" />
+      <tagvalue name="MT" />
+      <tagvalue name="MU" />
+      <tagvalue name="MV" />
+      <tagvalue name="MW" />
+      <tagvalue name="MX" />
+      <tagvalue name="MY" />
+      <tagvalue name="MZ" />
+      <tagvalue name="NA" />
+      <tagvalue name="NC" />
+      <tagvalue name="NE" />
+      <tagvalue name="NF" />
+      <tagvalue name="NG" />
+      <tagvalue name="NI" />
+      <tagvalue name="NL" />
+      <tagvalue name="NO" />
+      <tagvalue name="NP" />
+      <tagvalue name="NR" />
+      <tagvalue name="NU" />
+      <tagvalue name="NZ" />
+      <tagvalue name="OM" />
+      <tagvalue name="PA" />
+      <tagvalue name="PE" />
+      <tagvalue name="PF" />
+      <tagvalue name="PG" />
+      <tagvalue name="PH" />
+      <tagvalue name="PK" />
+      <tagvalue name="PL" />
+      <tagvalue name="PM" />
+      <tagvalue name="PN" />
+      <tagvalue name="PR" />
+      <tagvalue name="PS" />
+      <tagvalue name="PT" />
+      <tagvalue name="PW" />
+      <tagvalue name="PY" />
+      <tagvalue name="QA" />
+      <tagvalue name="RE" />
+      <tagvalue name="RO" />
+      <tagvalue name="RS" />
+      <tagvalue name="RU" />
+      <tagvalue name="RW" />
+      <tagvalue name="SA" />
+      <tagvalue name="SB" />
+      <tagvalue name="SC" />
+      <tagvalue name="SD" />
+      <tagvalue name="SE" />
+      <tagvalue name="SG" />
+      <tagvalue name="SH" />
+      <tagvalue name="SI" />
+      <tagvalue name="SJ" />
+      <tagvalue name="SK" />
+      <tagvalue name="SL" />
+      <tagvalue name="SM" />
+      <tagvalue name="SN" />
+      <tagvalue name="SO" />
+      <tagvalue name="SR" />
+      <tagvalue name="ST" />
+      <tagvalue name="SV" />
+      <tagvalue name="SY" />
+      <tagvalue name="SZ" />
+      <tagvalue name="TC" />
+      <tagvalue name="TD" />
+      <tagvalue name="TF" />
+      <tagvalue name="TG" />
+      <tagvalue name="TH" />
+      <tagvalue name="TJ" />
+      <tagvalue name="TK" />
+      <tagvalue name="TL" />
+      <tagvalue name="TM" />
+      <tagvalue name="TN" />
+      <tagvalue name="TO" />
+      <tagvalue name="TR" />
+      <tagvalue name="TT" />
+      <tagvalue name="TV" />
+      <tagvalue name="TW" />
+      <tagvalue name="TZ" />
+      <tagvalue name="UA" />
+      <tagvalue name="UG" />
+      <tagvalue name="UM" />
+      <tagvalue name="US" />
+      <tagvalue name="UY" />
+      <tagvalue name="UZ" />
+      <tagvalue name="VA" />
+      <tagvalue name="VC" />
+      <tagvalue name="VE" />
+      <tagvalue name="VG" />
+      <tagvalue name="VI" />
+      <tagvalue name="VN" />
+      <tagvalue name="VU" />
+      <tagvalue name="WF" />
+      <tagvalue name="WS" />
+      <tagvalue name="YE" />
+      <tagvalue name="YT" />
+      <tagvalue name="ZA" />
+      <tagvalue name="ZM" />
+      <tagvalue name="ZW" />
+    </tagkey>
+    <tagkey name="is_in" tagtype="tag_string" />
+    <tagkey name="collection_times" tagtype="tag_string" />
+    <tagkey name="vending" tagtype="tag_list">
+      <tagvalue name="public_transportation_tickets" />
+      <tagvalue name="public_transportation_plans" />
+      <tagvalue name="parking_tickets" />
+      <tagvalue name="food" />
+      <tagvalue name="drinks" />
+      <tagvalue name="sweets" />
+      <tagvalue name="cigarettes" />
+      <tagvalue name="photos" />
+      <tagvalue name="animal_food" />
+      <tagvalue name="news_papers" />
+      <tagvalue name="toys" />
+      <tagvalue name="stamps" />
+      <tagvalue name="SIM_cards" />
+      <tagvalue name="telephone_vouchers" />
+      <tagvalue name="vouchers" />
+      <tagvalue name="condoms" />
+      <tagvalue name="tampons" />
+      <tagvalue name="excrement_bags" />
+      <tagvalue name="bicycle_tube" />
+    </tagkey>
+    <tagkey name="massage" tagtype="tag_list">
+      <tagvalue name="thai" />
+      <tagvalue name="acupressure" />
+      <tagvalue name="anma" />
+      <tagvalue name="ayurvedic" />
+      <tagvalue name="balinese" />
+      <tagvalue name="barefoot_deep" />
+      <tagvalue name="bowen" />
+      <tagvalue name="breema" />
+      <tagvalue name="champissage" />
+      <tagvalue name="deep_tissue" />
+      <tagvalue name="esalen" />
+      <tagvalue name="hilot" />
+      <tagvalue name="hoffman" />
+      <tagvalue name="lomi_lomi" />
+      <tagvalue name="medical" />
+      <tagvalue name="meso_american" />
+      <tagvalue name="myofascial" />
+      <tagvalue name="myomassology" />
+      <tagvalue name="postural_integration" />
+      <tagvalue name="raynor" />
+      <tagvalue name="reflexology" />
+      <tagvalue name="russian" />
+      <tagvalue name="shiatsu" />
+      <tagvalue name="stone" />
+      <tagvalue name="structural_integration" />
+      <tagvalue name="swedish" />
+      <tagvalue name="traditional_chinese" />
+      <tagvalue name="trager" />
+      <tagvalue name="trigger_point" />
+      <tagvalue name="visceral" />
+      <tagvalue name="watsu" />
+    </tagkey>
+    <tagkey name="tourism" tagtype="tag_list">
+      <tagvalue name="yes" />
+    </tagkey>
+    <tagkey name="website" tagtype="tag_string" />
+    <tagkey name="wikipedia" tagtype="tag_string" />
+    <tagkey name="power_supply" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="description" tagtype="tag_string" />
+    <tagkey name="zoo" tagtype="tag_string">
+      <tagvalue name="petting_zoo" />
+      <tagvalue name="enclosure" />
+    </tagkey>
+    <tagkey name="historic" tagtype="tag_list">
+      <tagvalue name="yes" />
+    </tagkey>
+    <tagkey name="basin" tagtype="tag_list">
+      <tagvalue name="infiltration" />
+    </tagkey>
+    <tagkey name="wood" tagtype="tag_list">
+      <tagvalue name="coniferous" />
+      <tagvalue name="deciduous" />
+      <tagvalue name="mixed" />
+      <tagvalue name="shrubs" />
+    </tagkey>
+    <tagkey name="bunker_type" tagtype="tag_list">
+      <tagvalue name="pillbox" />
+    </tagkey>
+    <tagkey name="wetland" tagtype="tag_list">
+      <tagvalue name="swamp" />
+      <tagvalue name="bog" />
+      <tagvalue name="marsh" />
+      <tagvalue name="reedbed" />
+      <tagvalue name="saltern" />
+      <tagvalue name="saltmarsh" />
+      <tagvalue name="tidalflat" />
+      <tagvalue name="mangrove" />
+    </tagkey>
+    <tagkey name="tidal" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name ="managed" tagtype="tag_string" />
+    <tagkey name="seasonal" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="ramsar" tagtype="tag_list">
+      <tagvalue name="yes" />
+    </tagkey>
+    <tagkey name="ele" tagtype="tag_double" />
+    <tagkey name="status" tagtype="tag_list">
+      <tagvalue name="status" />
+    </tagkey>
+    <tagkey name="network" tagtype="tag_string" />
+    <tagkey name="trail_visibility" tagtype="tag_list">
+      <tagvalue name="excellent" />
+      <tagvalue name="good" />
+      <tagvalue name="intermediate" />
+      <tagvalue name="bad" />
+      <tagvalue name="horrible" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="mtb:scale" tagtype="tag_list">
+      <tagvalue name="0" />
+      <tagvalue name="1" />
+      <tagvalue name="2" />
+      <tagvalue name="3" />
+      <tagvalue name="4" />
+      <tagvalue name="5" />
+    </tagkey>
+    <tagkey name="admin_level" tagtype="tag_list">
+      <tagvalue name="1" />
+      <tagvalue name="2" />
+      <tagvalue name="3" />
+      <tagvalue name="4" />
+      <tagvalue name="5" />
+      <tagvalue name="6" />
+      <tagvalue name="7" />
+      <tagvalue name="8" />
+      <tagvalue name="9" />
+      <tagvalue name="10" />
+    </tagkey>
+    <tagkey name="border_type" tagtype="tag_list">
+      <tagvalue name="baseline" />
+      <tagvalue name="territorial" />
+      <tagvalue name="contiguous" />
+      <tagvalue name="eez" />
+      <tagvalue name="IALA" />
+    </tagkey>
+    <tagkey name="boundary" tagtype="tag_list">
+      <tagvalue name="administrative" />
+      <tagvalue name="civil" />
+      <tagvalue name="political" />
+      <tagvalue name="maritime" />
+      <tagvalue name="national_park" />
+    </tagkey>
+    <tagkey name="operational_status" tagtype="tag_list">
+      <tagvalue name="operational" />
+      <tagvalue name="restricted" />
+      <tagvalue name="closed" />
+      <tagvalue name="unspecified" />
+    </tagkey>
+    <tagkey name="operational_status:reliability" tagtype="tag_list">
+      <tagvalue name="reported" />
+      <tagvalue name="confirmed" />
+      <tagvalue name="unspecified" />
+    </tagkey>
+    <tagkey name="practicability:foot" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="only" />
+    </tagkey>
+    <tagkey name="practicability:bicycle" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="only" />
+    </tagkey>
+    <tagkey name="practicability:motor_vehicle" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="only" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="practicability:motorbike" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="only" />
+    </tagkey>
+    <tagkey name="practicability:4wd" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+      <tagvalue name="only" />
+    </tagkey>
+    <tagkey name="practicability:goods" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+      <tagvalue name="only" />
+    </tagkey>
+    <tagkey name="practicability:hgv" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+      <tagvalue name="only" />
+    </tagkey>
+    <tagkey name="practicability:lory" tagtype="tag_list">
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+      <tagvalue name="only" />
+    </tagkey>
+    <tagkey name="practicability" tagtype="tag_list">
+      <tagvalue name="unspecified" />
+    </tagkey>
+    <tagkey name="annotation:note" tagtype="tag_string" />
+    <tagkey name="annotation:cargo_handling_description" tagtype="tag_string" />
+    <tagkey name="cargo_storage_description" tagtype="tag_string" />
+    <tagkey name="annotation:cargo_storage_cubic_meter" displayname="Storage Capacity (cubic meters)" tagtype="tag_string" />
+    <tagkey name="annotation:cargo_storage_square_meter"  displayname="Storage Capacity (square meter)" tagtype="tag_string" />
+    <tagkey name="annotation:cargo_storage_ton" displayname="Storage Capacity (ton)" tagtype="tag_string" />
+    <tagkey name="registry_name" tagtype="tag_string" />
+    <tagkey name="barrier:bypass" tagtype="tag_list" >
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="transportation_use_category" tagtype="tag_list" >
+      <tagvalue name="road" />
+      <tagvalue name="rail" />
+      <tagvalue name="road_rail" />
+      <tagvalue name="canal" />
+      <tagvalue name="pipeline" />
+      <tagvalue name="cabling" />
+      <tagvalue name="unspecified" />
+    </tagkey>
+    <tagkey name="base_material" tagtype="tag_list" >
+      <tagvalue name="wood" />
+      <tagvalue name="concrete" />
+      <tagvalue name="stone" />
+      <tagvalue name="metal" />
+      <tagvalue name="pvc" />
+      <tagvalue name="unspecified" />
+    </tagkey>
+    <tagkey name="damaged" tagtype="tag_list" >
+      <tagvalue name="yes" />
+      <tagvalue name="completely" />
+    </tagkey>
+    <tagkey name="operator:id" tagtype="tag_string" />
+    <tagkey name="iata" tagtype="tag_string" />
+    <tagkey name="icao" tagtype="tag_string" />
+    <tagkey name="aeroway_practicability_description" tagtype="tag_string" />
+    <tagkey name="aeroway:helipad_type" tagtype="tag_list" >
+      <tagvalue name="purpose-built" />
+      <tagvalue name="sports_field/park" />
+      <tagvalue name="agricultural_field" />
+      <tagvalue name="car_park" />
+      <tagvalue name="rooftop" />
+      <tagvalue name="open_land" />
+      <tagvalue name="unspecified" />
+    </tagkey>
+    <tagkey name="humanitarian_use" tagtype="tag_list" >
+      <tagvalue name="entry_point" />
+      <tagvalue name="primary_hub" />
+      <tagvalue name="secondary_hub" />
+      <tagvalue name="final_delivery_point" />
+      <tagvalue name="operationally_significant_location" />
+      <tagvalue name="unspecified" />
+    </tagkey>
+    <tagkey name="cargo_handling_description" tagtype="tag_string" />
+    <tagkey name="cargo_storage_description" tagtype="tag_string" />
+    <tagkey name="amenity:fuel_type" tagtype="tag_list" >
+      <tagvalue name="fuel_supply" />
+      <tagvalue name="fuel_deport" />
+    </tagkey>
+    <tagkey name="fuel_storage_capacity_description" tagtype="tag_string" />
+    <tagkey name="fuel_storage_description" tagtype="tag_string" />
+    <tagkey name="assessment" tagtype="tag_list" >
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="assessment_description" tagtype="tag_string" />
+    <tagkey name="area_estimate" tagtype="tag_string" />
+    <tagkey name="idp:camp_condition" tagtype="tag_list">
+      <tagvalue name="building" />
+      <tagvalue name="tents" />
+      <tagvalue name="sheets" />
+      <tagvalue name="none" />
+      <tagvalue name="unspecified" />
+    </tagkey>
+    <tagkey name="idp:structural_safety" tagtype="tag_list">
+      <tagvalue name="open_area" />
+      <tagvalue name="25%_enclosed_area" />
+      <tagvalue name="50%_enclosed_area" />
+      <tagvalue name="75%_enclosed_area" />
+      <tagvalue name="fully_enclosed_area" />
+      <tagvalue name="non_enclosed_building" />
+      <tagvalue name="enclosed_building" />
+      <tagvalue name="unspecified" />
+    </tagkey>
+    <tagkey name="idp:drainage_type" tagtype="tag_list">
+      <tagvalue name="open_area" />
+      <tagvalue name="existing_functioning_drains" />
+      <tagvalue name="existing_blocked_drains" />
+      <tagvalue name="non_existing_drains" />
+      <tagvalue name="site_in_a_depression" />
+      <tagvalue name="unspecified" />
+    </tagkey>
+    <tagkey name="access_to_potable_water" tagtype="tag_list" >
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="access_to_grey_water"  tagtype="tag_list" >
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="water_source_description" tagtype="tag_string" />
+    <tagkey name="water_access_source"  tagtype="tag_list" >
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="water_access_tank_bladder"  tagtype="tag_list" >
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="tank_bladder_description" tagtype="tag_string" />
+    <tagkey name="tank_bladder_number" tagtype="tag_string" />
+    <tagkey name="water_access_well"  tagtype="tag_list" >
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="well_description" tagtype="tag_string" />
+    <tagkey name="well_number" tagtype="tag_string" />
+    <tagkey name="water_access_truck"  tagtype="tag_list" >
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="access_pit_toilet"  tagtype="tag_list" >
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="access_portable_toilet"  tagtype="tag_list" >
+      <tagvalue name="yes" />
+      <tagvalue name="no" />
+    </tagkey>
+    <tagkey name="practicability"  tagtype="tag_list" >
+      <tagvalue name="air_only" />
+      <tagvalue name="non-motorized" />
+      <tagvalue name="motorbike" />
+      <tagvalue name="2wd_car" />
+      <tagvalue name="4wd_less_than_3.5MT" />
+      <tagvalue name="light_truck_less_than_10MT" />
+      <tagvalue name="heavy_truck_less_than_20MT" />
+      <tagvalue name="truck_+_trailer_greater_than_20MT" />
+      <tagvalue name="unspecified" />
+    </tagkey>
+</osmtags>
+  <osmlists>
+  </osmlists>
+</osmfeatures>  

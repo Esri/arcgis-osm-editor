@@ -1,0 +1,11 @@
+<#@ Template Language="VB" HostSpecific="True" Inherits="DynamicTransform" #>
+<# Dim viewModel = CType(Model.ViewModel, EnvDTE.CodeType) #>
+
+<HttpPost, ActionName("<#= Model.Action #>")>
+Public Function <#= Model.Action #>Post(<# If viewModel IsNot Nothing Then #>ByVal <#= viewModel.Name.ToLower() #> As <#= viewModel.Name #><# End If #>) As ActionResult
+    If ModelState.IsValid Then
+	    Return RedirectToAction("Index")
+	Else
+		Return View(<# If viewModel IsNot Nothing Then #><#= viewModel.Name.ToLower() #><# End If #>)
+	End If
+End Function

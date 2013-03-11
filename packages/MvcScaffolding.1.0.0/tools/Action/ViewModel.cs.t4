@@ -1,0 +1,13 @@
+<#@ Template Language="C#" HostSpecific="True" Inherits="DynamicTransform" #>
+<#@ Output Extension="cs" #>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace <#= Model.Namespace #>
+{
+    public class <#= Model.ClassName #>
+    {
+		// Add properties here
+    }
+}

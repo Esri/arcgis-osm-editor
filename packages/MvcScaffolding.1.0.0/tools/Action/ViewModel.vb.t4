@@ -1,0 +1,7 @@
+<#@ Template Language="VB" HostSpecific="True" Inherits="DynamicTransform" #>
+<#@ Output Extension="vb" #>
+<#= T4Scaffolding.Namespaces.BeginVb(Model.Namespace, Model.DefaultNamespace) #>
+    Public Class <#= Model.ClassName #>
+		' Add properties here
+    End Class
+<#= T4Scaffolding.Namespaces.EndVb(Model.Namespace, Model.DefaultNamespace) #>

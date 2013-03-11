@@ -1,0 +1,493 @@
+﻿@model OSMWeb.Models.OpenStreetMapCredentials
+           
+@{
+    Layout = null;
+}
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+    <meta http-equiv="X-UA-Compatible" content="IE=7, IE=8 ,IE=9" /> 
+    <title>  
+      ArcGIS Editor for OpenStreetMap
+    </title> 
+    <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.0/js/dojo/dijit/themes/claro/claro.css"> 
+    <script type="text/javascript">
+        dojoConfig = {
+            parseOnLoad: true
+        }; 
+    </script> 
+    <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.0"> 
+    </script> 
+
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/dojo/1.6/dojox/layout/resources/ExpandoPane.css" />
+<style type="text/css">	    
+html,body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+} 
+ 
+     
+#templatePickerPane { 
+    width:225px; 
+    overflow:hidden; 
+    margin: 0 0 0.5em 0;
+} 
+
+#servicesPane 
+{
+    margin: 0 0 0.5em 0;    
+}
+ 
+.panelHeader {   
+    margin: 0.5em; 
+
+} 
+.panelHeader h2
+{
+    background: none repeat scroll 0 0 #E5EBEF;
+    color: #000000;
+    font-size: 1em;
+    font-weight: normal;
+    padding: 2px 5px;
+}
+
+#map {
+    margin: 0 0.5em 0.5em 0.5em;
+    background: #FFF;
+}
+      
+      /*Added by Yiwei Ma*/
+      .esriOverviewMap.ovwBR .ovwContainer {
+        border: 1px solid #000000;
+        bottom: 10px;
+        padding: 2px;
+        right: 10px;
+      }
+      
+      #map .map_button .dijitButtonNode{
+        margin-top:2px;
+        font-size:12px;
+        width:60px;
+        height:15px!important;
+      }
+
+      #templatePickerPane .dojoxExpandoTitle{
+        font-size:14px;
+        min-height:25px;
+      }
+      
+    
+
+#map 
+{
+    padding: 0;
+}
+
+#legendDiv 
+{
+    height: 100px;
+    overflow: auto;
+}
+      
+      #accordion .dijitContentPane {
+        overflow-x:hidden;
+      }	  
+      
+      #accordion .dojoxGridScrollbox {
+        overflow-x:hidden;
+      }
+      
+      #templatePickerPane .groupLabel {
+        font-size:0px;
+      }
+            
+      #templatePickerPane .itemSymbol image {
+        display: block;
+        width:30px;
+      }
+      
+      
+      .dialog_button .dijitButtonNode{
+          width:60px;
+      }
+      .dialog_label {
+          width:60px; 
+          display: block; 
+          margin-left:5px;
+          float:left;
+      } 
+      
+      .dialoginput{
+          float:left; 
+          width:180px;
+          padding:0; 
+          margin-left:10px;
+      }
+      
+      .dialog_panel, .dialog_panel .dijitBorderContainer-dijitContentPane {
+          background: rgb(255, 255, 255) transparent !important;
+          background: rgba(255, 255, 255, 0.6) !important;
+          filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99FFFFFF, endColorstr=#99FFFFFF) !important;
+          -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99FFFFFF, endColorstr=#99FFFFFF)" !important;
+      }
+      
+      .claro .dijitDialogUnderlay  { background-color:#000; }
+
+      .esriAttributeInspector {height:800px;width:500px;} 
+
+      
+      .dj_ie .infowindow .window .top .right .user .content,.dj_ie .simpleInfoWindow .content { 
+      position:relative; 
+      } 
+
+      .templatePicker { 
+        padding-bottom:5px; 
+        padding-top:5px; 
+        height:300px;      
+      } 
+      
+      .dijitButtonText 
+      {
+          font-size: 0.9em;
+      }
+    </style> 
+
+    <script type="text/javascript">
+        dojo.require("esri.dijit.editing.Editor-all");
+        dojo.require("dijit.layout.BorderContainer");
+        dojo.require("dijit.layout.ContentPane");
+        dojo.require("esri.SnappingManager");
+        dojo.require("esri.layers.osm");
+       
+        dojo.require("esri.dijit.OverviewMap");
+        dojo.require("dijit.TitlePane");
+        dojo.require("dijit.form.Button");
+        dojo.require("dijit.form.TextBox");
+        dojo.require("dijit.form.CheckBox");
+        dojo.require("dojox.layout.ExpandoPane");
+        dojo.require("dijit.layout.AccordionContainer");
+        dojo.require("dijit.MenuBar");
+        dojo.require("dijit.PopupMenuBarItem");
+        dojo.require("dijit.Menu");
+        dojo.require("dijit.MenuItem");
+        dojo.require("dijit.PopupMenuItem");
+        dojo.require("dijit.Dialog");
+        dojo.require("esri.dijit.Legend");
+        dojo.require("esri.arcgis.utils");
+        dojo.require("esri.dijit.BasemapGallery");
+
+        dojo.require("esri.dijit.AttributeInspector-all");
+        
+        var map, resizeTimer;
+        var loading;
+        var basemapGallery;
+
+         function init() {
+            var copyrightText= '&#169; <a href="http://www.openstreetmap.org/" target="_blank">OpenStreetMap</a> contributors, ' 
+                    + '<a href="http://creativecommons.org/licenses/by-sa/2.0/" target="_blank">CC-BY-SA</a>'; 
+ 
+            dojo.byId('osmCopy').innerHTML = copyrightText;
+
+            //snapping is enabled for this sample - change the tooltip to reflect this 
+
+            esri.bundle.toolbars.draw.start = esri.bundle.toolbars.draw.start + "<br/>Press <b>CTRL</b> to enable snapping";
+            esri.bundle.toolbars.draw.addPoint = esri.bundle.toolbars.draw.addPoint + "<br/>Press <b>CTRL</b> to enable snapping";
+
+            //This sample requires a proxy page to handle communications with the ArcGIS Server services. You will need to   
+            //replace the url below with the location of a proxy on your machine. See the 'Using the proxy page' help topic  
+            //for details on setting up a proxy page. 
+
+            esri.config.defaults.io.proxyUrl = "proxy.ashx";
+            //This service is for development and testing purposes only. We recommend that you create your own geometry service for use within your applications 
+
+            esri.config.defaults.geometryService = new esri.tasks.GeometryService("http://sampleserver3.arcgisonline.com/arcgis/rest/services/Geometry/GeometryServer");
+
+
+
+            map = new esri.Map("map");
+
+     
+            
+            // Change Basemaps
+            basemapGallery = new esri.dijit.BasemapGallery({ 
+                  showArcGISBasemaps: true, 
+                  map: map 
+                }); 
+
+             // Add basemaps
+            /*dojo.connect(basemapGallery,"onLoad",function(){ 
+                 dojo.forEach(basemapGallery.basemaps, function(basemap) {             
+                  //Add a menu item for each basemap, when the menu items are selected 
+                  dijit.byId("basemapMenu").addChild(new dijit.MenuItem({ 
+                    label: basemap.title, 
+                    onClick: dojo.hitch(this, function() { 
+                      this.basemapGallery.select(basemap.id); 
+                    }) 
+                  })); 
+                }); 
+                }); */
+
+            
+            dojo.connect(map, "onLoad", function () {
+                dojo.connect(dijit.byId('map'), 'resize', function () {resizeMap()});
+   
+                
+                var requestHandle = esri.request({
+                    url: "@ViewBag.FeatureService",
+                    content: { "f": "json" },
+                    handleAs: "json",
+                    callbackParamName: "callback",
+                    load: requestSucceeded,
+                    error: requestFailed
+                }, { useProxy: false });
+
+                function requestSucceeded(data) {
+                    console.log(data);
+                    var layersArray = [];
+                    dojo.forEach(data.layers, function (layer) {
+                        console.log(layer.id);
+                        var theLayer = new esri.layers.FeatureLayer("@ViewBag.FeatureService/" + layer.id, {
+                            mode: esri.layers.FeatureLayer.MODE_ONDEMAND,
+                            outFields: ["*"]
+                        });
+                        layersArray.push(theLayer);
+                    });
+                    var nlyrs = [];
+                    for (var i = layersArray.length - 1; i >= 0; i--) {
+                        nlyrs.push(layersArray[i]);
+                    }
+                    map.addLayers(nlyrs);
+                    //map.addLayers(layersArray);
+                    //display the attribute inspector in the info window.
+                    
+                    map.infoWindow.resize(700, 900);
+                    
+                }
+            });
+            
+            //map onload ends
+            
+            dojo.connect(map, "onLayersAddResult", initEditing);
+
+var legendLayers = [];
+
+dojo.connect(map, 'onLayerAddResult', function (results) {
+    //add check box
+    var layerName = results.id;
+    var checkBox = new dijit.form.CheckBox({
+        name: "checkBox" + results.id,
+        value: results.id,
+        checked: results.visible,
+        onChange: function (evt) {
+            var clayer = map.getLayer(this.value);
+            if (clayer.visible) {
+                clayer.hide();
+            } else {
+                clayer.show();
+            }
+            this.checked = clayer.visible;
+        }
+    });
+
+    // do not show editor layers
+    if (layerName.indexOf("graphicsLayer") === -1) {
+        //add the check box and label to the toc
+        dojo.place(checkBox.domNode, dojo.byId("legendDivTitle"), "after");
+        var checkLabel = dojo.create('label', { 'for': checkBox.name, innerHTML: " " + layerName }, checkBox.domNode, "after");
+        dojo.place("<br />", checkLabel, "after");
+    }
+});
+
+
+            var osmLayer = new esri.layers.OpenStreetMapLayer();
+            map.addLayer(osmLayer);
+
+            function requestFailed(err) {
+                console.log(err);
+            }
+            
+        }
+        // End init func
+        
+function toggle(id) {
+    var layer = map.getLayer(id);
+    if (layer.visible) {
+        layer.hide();
+    } else {
+        layer.show();
+    }
+}
+
+     
+        function initEditing(results) {
+            //Set initial extent
+            var theExtent = null;
+            dojo.forEach(results, function (result) {
+                if (theExtent) {
+                    theExtent.union(result.layer.fullExtent);
+                } else {
+                    theExtent = result.layer.fullExtent;
+                }
+            });
+            map.setExtent(theExtent);
+
+            var featureLayerInfos = dojo.map(results, function (result) {
+                return {
+                    'featureLayer': result.layer
+                };
+            });
+
+            var settings = {
+                map: map,
+                layerInfos: featureLayerInfos
+            };
+
+            var params = {
+                settings: settings
+            };
+
+            var editorWidget = new esri.dijit.editing.Editor(params, 'editorDiv');
+            var options = { snapKey: dojo.keys.copyKey };
+            map.enableSnapping(options);
+            editorWidget.startup();
+        }
+        
+        
+        //Handle resize of browser 
+
+        function resizeMap() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function () {
+                map.resize();
+                map.reposition();
+            }, 500);
+        }
+        
+        //
+        function getWindowContent(graphic) {
+
+            var bc = new dijit.layout.BorderContainer({
+             style:"width:300px;height:100%;"
+            });
+          
+            var cp1 = new dijit.layout.ContentPane({
+              region:"top",
+              style:"width:290px; padding:5px;",
+              class:"dialog_panel",
+              content: '<div><style type="text/css"> label {width:60px; display: block; margin-left:5px;'+
+                       'float:left;} .dialoginput{float:left; width:180px;padding:0; margin-left:10px;}</style>'+
+                       '<label class="dialog_label">Type:  </label>' +
+                       '<select dojoType="dijit.form.ComboBox" class="dialoginput"></select><br/><br/>'+
+                       '<label class="dialog_label">Name:</label>'+
+                       '<input type="text" dojoType="dijit.form.TextBox" class="dialoginput"></input></div>'
+            });
+            bc.addChild(cp1);			
+            
+            var cp2 = new dijit.layout.ContentPane({
+              region:"middle",
+              style:"max-height: 210px; width:290px; padding:0; overflow:hidden !important; background-color:transparent; border:none;",
+              content: '<label class="dialog_label">Attributes:</label><br/>'+
+                       '<div class="dialog_panel" style="width:288px; max-height:190px; overflow:auto;'+
+                       'display:block; border: 1px solid #B5BCC7;" padding:8px; id="attrInspector">'+					    
+                       '</div>'
+            });
+            bc.addChild(cp2);
+            
+            var cp3 = new dijit.layout.ContentPane({
+              region:"bottom",
+              style:"height: 30px; background-color:transparent; border:none;",
+              content: '<div><button class="dialog_button" dojoType="dijit.form.Button" type="button">Delete</button>'+
+                       '<button class="dialog_button" dojoType="dijit.form.Button" type="button" style="margin-left:50px;">Add</button>'+
+                       '<button class="dialog_button" dojoType="dijit.form.Button" type="button">Cancel</button></div>'
+            });
+            bc.addChild(cp3);
+            
+            return bc.domNode;
+          }
+
+        function addMapService() {
+            
+            var imageParameters = new esri.layers.ImageParameters(); 
+            imageParameters.format = "PNG24";  //set the image type to PNG24, note default is PNG8. 
+            var dynamicMapServiceLayer = new esri.layers.ArcGISDynamicMapServiceLayer(dijit.byId("add_input").value, {"opacity":0.5, "imageParameters":imageParameters}); 
+
+            
+            map.addLayer(dynamicMapServiceLayer); 
+        }
+        dojo.addOnLoad(init);
+        
+    </script>
+    
+    <script language='javascript'>
+        function showTutorial() {
+            alert("Function not implemented in this beta release.");            
+
+        }
+        function hideTutorial() {
+            dijit.byId("turorial_dialog").hide();
+        }  
+    </script>
+ 
+</head>
+    <body class="claro"> 
+    <div id="mainWindow" data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="design:'headline',gutters:false" style="width:100%; height:100%;">
+
+    <div id="header" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'top'">
+        <img alt="OpenStreetMap Editor Logo" id="osmLogo" height="64" width="64" src="@Url.Content("~/Images/osm_logo.png")" />
+        <h1>ArcGIS Editor for OpenStreetMap </h1>
+        <div class="version">Version 2.0 Beta</div>
+        <!--Menu added by Yiwei Ma-->
+        <ul>
+            <li><a href="~/../">Service List</a></li>
+            <li class="separator"></li>
+            <li><a href="http://esriosmeditor.codeplex.com/wikipage?title=Editing%20Features">Help</a>
+
+            </li>
+        </ul>
+    </div>
+      
+      <div id="map" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'">     
+        <div id="osmCopy" style="position:absolute; color:black;font-weight:bold;left:10px; bottom:10px; z-Index:999;"></div>
+      </div> 
+      
+        <div data-dojo-type="dojox.layout.ExpandoPane" id="templatePickerPane" data-dojo-props="region:'left', title:'Features & Services', style:'background-color:#FFFFFF;'">        
+     
+
+            <div class="panelHeader">              
+                <h2>Features to edit:</h2>
+                <div style="padding:10px;" id="editorDiv"></div>  
+            </div>	
+
+            <div class="panelHeader">              
+                <h2>Add ArcGIS Server service:</h2>
+                <input type="text" id="add_input" dojoType="dijit.form.TextBox" style="width: 155px; height: 24px; margin-top:3px;">
+                <button id="addDynamicMap" dojoType="dijit.form.Button" style="color:#333;" onclick="addMapService();">Add</button>               
+            </div> 
+            <div class="panelHeader" id="legendDiv">
+                <h2 id="legendDivTitle">Current layers:</h2>
+            </div>        
+    </div>
+        </div>	
+
+    <!--tutorial window-->
+     <div dojoType="dijit.Dialog" id="turorial_dialog" class="dijitDialog" title="Tutorial" 
+     style="width:940px; height: 630px; background-color:#FFF;">
+      <p style="padding:5px;">Some greeting and introduction here...</p>
+      <div align="center" style="background:url(images/tutorial_video_shade.png) center bottom no-repeat; padding-bottom:30px; height:100%; border-bottom:#333 dashed 1px;">
+        <div>
+       <video controls preload WIDTH="800" HEIGHT="450" >
+         <source src="videos/MyVideo.MP4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>         
+       </video>       
+        </div>
+      </div>
+      <button id="Dialog_Button" dojoType="dijit.form.Button" onclick="hideTutorial();" style="margin-top:10px; float:right">Skip tutorial</button>
+     </div>
+
+   </body>
+
+  </html>

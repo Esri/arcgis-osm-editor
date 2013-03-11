@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="OSMFeaturesProperties" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:attribute name="tagtype">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="tag_list" />
+        <xs:enumeration value="tag_integer" />
+        <xs:enumeration value="tag_double" />
+        <xs:enumeration value="tag_string" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:attribute>
+  
+  <xs:element name="tagvalue">
+    <xs:complexType>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+      <xs:attribute name="displayname" type="xs:string" use="optional" />
+      <xs:attribute name="infoURL" type="xs:anyURI"  use="optional"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="tagkey">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="tagvalue" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+      <xs:attribute name="editable" type="xs:boolean" use="optional" />
+      <xs:attribute ref="tagtype" use="required"/>
+      <xs:attribute name="displayname" type="xs:string" use="optional"/>
+      <xs:attribute name="infoURL" type="xs:anyURI" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="tag">
+    <xs:complexType>
+      <xs:attribute name="ref" type="xs:string" use="required" />
+      <xs:attribute name="value" type="xs:string" use="optional" />
+      <xs:attribute name="optional" type="xs:boolean" use="optional" />
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="osmfeature">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="tag" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:integer" use="optional"/>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+      <xs:attribute name="displayname" type="xs:string" use="optional"/>
+      <xs:attribute name="infoURL" type="xs:anyURI" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="baseInfoURI" type="xs:anyURI" />
+
+  <xs:element name="osmtags">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="tagkey" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+
+  <xs:element name="osmfeatures">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="baseInfoURI" />
+        <xs:element ref="osmfeature" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element ref="osmtags" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

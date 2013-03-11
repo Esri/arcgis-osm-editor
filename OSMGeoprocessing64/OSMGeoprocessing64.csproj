@@ -1,0 +1,295 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A16E03A2-50B7-4A65-9944-7952D2761773}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ESRI.ArcGIS.OSM.GeoProcessing</RootNamespace>
+    <AssemblyName>OSMGeoprocessing64</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Debug\OSMGeoprocessing.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Release\OSMGeoprocessing.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\OSMGeoProcessing\ActiveXCtrlHelper.cs">
+      <Link>ActiveXCtrlHelper.cs</Link>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\AuthenticationDataTypeFactory.cs">
+      <Link>AuthenticationDataTypeFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\BasicAuthenticationCtrl.cs">
+      <Link>BasicAuthenticationCtrl.cs</Link>
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\BasicAuthenticationCtrl.Designer.cs">
+      <Link>BasicAuthenticationCtrl.Designer.cs</Link>
+      <DependentUpon>BasicAuthenticationCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\GPCombineLayers.cs">
+      <Link>GPCombineLayers.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\GPCopyLayerExtensions.cs">
+      <Link>GPCopyLayerExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\HttpBasicDataType.cs">
+      <Link>HttpBasicDataType.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\HttpBasicGPValue.cs">
+      <Link>HttpBasicGPValue.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\NetworkDataset\NetworkConfig.cs">
+      <Link>NetworkDataset\NetworkConfig.cs</Link>
+      <DependentUpon>NetworkConfig.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\NetworkDataset\NetworkDataset.cs">
+      <Link>NetworkDataset\NetworkDataset.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\NetworkDataset\NetworkDatasetXML.cs">
+      <Link>NetworkDataset\NetworkDatasetXML.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\NetworkDataset\NetworkTurns.cs">
+      <Link>NetworkDataset\NetworkTurns.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\NetworkDataset\RunTaskManager.cs">
+      <Link>NetworkDataset\RunTaskManager.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\OSMFeatureThemes.cs">
+      <Link>OSMFeatureThemes.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\OSMGPAddExtension.cs">
+      <Link>OSMGPAddExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\OSMGPAttributeSelector.cs">
+      <Link>OSMGPAttributeSelector.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\OSMGPCombineAttributes.cs">
+      <Link>OSMGPCombineAttributes.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\OSMGPCreateNetworkDataset.cs">
+      <Link>OSMGPCreateNetworkDataset.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\OSMGPDiffLoader.cs">
+      <Link>OSMGPDiffLoader.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\OSMGPDownload.cs">
+      <Link>OSMGPDownload.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\OSMGPExport2OSM.cs">
+      <Link>OSMGPExport2OSM.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\OSMGPFactory.cs">
+      <Link>OSMGPFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\OSMGPFeatureComparison.cs">
+      <Link>OSMGPFeatureComparison.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\OSMGPFileLoader.cs">
+      <Link>OSMGPFileLoader.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\OSMGPRemoveExtension.cs">
+      <Link>OSMGPRemoveExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\OSMGPSymbolizer.cs">
+      <Link>OSMGPSymbolizer.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\OSMGPUpload.cs">
+      <Link>OSMGPUpload.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\OsmRest\HttpUtils.cs">
+      <Link>OsmRest\HttpUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\OsmRest\SerializeUtils.cs">
+      <Link>OsmRest\SerializeUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\OSMToolHelper.cs">
+      <Link>OSMToolHelper.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\OSMGeoProcessing\BasicAuthenticationCtrl.resx">
+      <Link>BasicAuthenticationCtrl.resx</Link>
+      <DependentUpon>BasicAuthenticationCtrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\OSMGeoProcessing\OSMGPToolsStrings.resx">
+      <Link>OSMGPToolsStrings.resx</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="ESRI.ArcGIS.Carto, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="ESRI.ArcGIS.DataManagementTools, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ESRI.ArcGIS.DataSourcesFile, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="ESRI.ArcGIS.DataSourcesGDB, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="ESRI.ArcGIS.DataSourcesRaster, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="ESRI.ArcGIS.Display, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="ESRI.ArcGIS.Geodatabase, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="ESRI.ArcGIS.Geometry, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="ESRI.ArcGIS.Geoprocessing, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="ESRI.ArcGIS.GeoprocessingUI, Version=10.1.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="ESRI.ArcGIS.Geoprocessor, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ESRI.ArcGIS.System, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="ESRI.ArcGIS.SystemUI, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OSMClassExtension64\OSMClassExtension64.csproj">
+      <Project>{534CAEF4-0F82-4EC1-A7D2-70748B125F66}</Project>
+      <Name>OSMClassExtension64</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OSMUtilities64\OSMUtilities64.csproj">
+      <Project>{32729333-B5EE-414D-B820-E57D13BA5987}</Project>
+      <Name>OSMUtilities64</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\OSMGeoProcessing\NetworkDataset\NetworkConfig.xsd">
+      <Link>NetworkDataset\NetworkConfig.xsd</Link>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="..\OSMGeoProcessing\OSMFeatureThemes.xsd">
+      <Link>OSMFeatureThemes.xsd</Link>
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="..\OSMGeoProcessing\NetworkDataset\SampleXML\Sample.xml">
+      <Link>NetworkDataset\SampleXML\Sample.xml</Link>
+    </None>
+    <None Include="..\OSMGeoProcessing\NetworkDataset\SampleXML\SampleMultiModal.xml">
+      <Link>NetworkDataset\SampleXML\SampleMultiModal.xml</Link>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <!--<PreBuildEvent>"$(CommonProgramFiles)\ArcGIS\bin\esriRegasm.exe" $(TargetPath) /u /p:Server /s</PreBuildEvent>-->
+  </PropertyGroup>
+  <PropertyGroup>
+    <!--<PostBuildEvent>"$(CommonProgramFiles)\ArcGIS\bin\esriRegasm.exe" $(TargetPath) /p:Server /s</PostBuildEvent>-->
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>"$(ProgramW6432)\Common Files\ArcGIS\bin\esriRegasm.exe" $(TargetPath) /p:Server /s</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

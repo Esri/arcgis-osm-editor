@@ -1,0 +1,15 @@
+<#@ Template Language="C#" HostSpecific="True" Inherits="DynamicTransform" #>
+<#@ Output Extension="cs" #>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using <#= ((EnvDTE.CodeType)Model.Controller).Namespace.FullName #>;
+
+namespace <#= Model.Namespace #>
+{
+	[TestClass]
+    public class <#= Model.ClassName #>
+    {
+    }
+}

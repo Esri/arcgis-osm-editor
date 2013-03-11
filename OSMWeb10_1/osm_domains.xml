@@ -1,0 +1,1931 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<OSMDomains>
+  <domain name="highway">
+    <domainvalue value="motorway">
+      <description>A restricted access major divided highway, normally with 2 or more running lanes plus emergency hard shoulder. Equivalent to the Freeway, Autobahn, etc..</description>
+      <geometrytype>line</geometrytype>
+    </domainvalue>
+    <domainvalue value="motorway_link">
+      <geometrytype>line</geometrytype>
+      <description>The link roads (sliproads/ramps) leading to/from a motorway from/to a motorway or lower class highway. Normally with the same motorway restrictions.</description>
+    </domainvalue>
+    <domainvalue value="trunk">
+      <geometrytype>line</geometrytype>
+      <description>Important roads that aren't motorways. Typically maintained by central, not local government. Need not necessarily be a divided highway. In the UK, all green signed A roads are, in OSM, classed as 'trunk'.</description>
+    </domainvalue>
+    <domainvalue value="trunk_link">
+      <geometrytype>line</geometrytype>
+      <description>The link roads (sliproads/ramps) leading to/from a trunk road from/to a trunk road or lower class highway.</description>
+    </domainvalue>
+    <domainvalue value="primary">
+      <geometrytype>line</geometrytype>
+      <description>Administrative classification in the UK, generally linking larger towns.</description>
+    </domainvalue>
+    <domainvalue value="primary_link">
+      <geometrytype>line</geometrytype>
+      <description>The link roads (sliproads/ramps) leading to/from a primary road from/to a primary road or lower class highway.</description>
+    </domainvalue>
+    <domainvalue value="secondary">
+      <geometrytype>line</geometrytype>
+      <description>Administrative classification in the UK, generally linking smaller towns and villages</description>
+    </domainvalue>
+    <domainvalue value="secondary_link">
+      <geometrytype>line</geometrytype>
+      <description>The link roads (sliproads/ramps) leading to/from a secondary road from/to a secondary road or lower class highway.</description>
+    </domainvalue>
+    <domainvalue value="tertiary">
+      <geometrytype>line</geometrytype>
+      <description>A "C" road in the UK. Generally for use on roads wider than 4 metres (13') in width, and for faster/wider minor roads that aren't A or B roads. In the UK, they tend to have dashed lines down the middle, whereas unclassified roads don't.</description>
+    </domainvalue>
+    <domainvalue value="unclassified">
+      <geometrytype>line</geometrytype>
+      <description>No administrative classification. Unclassified roads typically form the lowest form of the interconnecting grid network. Note: This is not a marker for roads where we still need to choose a highway tag (see highway=road for roads that require classification).</description>
+    </domainvalue>
+    <domainvalue value="road">
+      <geometrytype>line</geometrytype>
+      <description>A road of unknown classification. This is intended as a temporary tag to mark a road until it has been properly surveyed. Once it has been surveyed, the classification should be updated to the appropriate value.</description>
+    </domainvalue>
+    <domainvalue value="residential">
+      <geometrytype>line</geometrytype>
+      <description>Roads accessing or around residential areas but which are not a classified or unclassified highway.</description>
+    </domainvalue>
+    <domainvalue value="living_street">
+      <geometrytype>line</geometrytype>
+      <description>A street where pedestrians have priority over cars, children can play on the street, maximum speed is low. In the UK this is called "Home Zone".</description>
+    </domainvalue>
+    <domainvalue value="service">
+      <geometrytype>line</geometrytype>
+      <description>Generally for access to a building, motorway service station, beach, campsite, industrial estate, business park, etc.. This is also commonly used for access to parking and trash collection. Sometimes called an alley, particularly in the US. Use with service=*, e.g. service=parking_aisle to mark a service way inside a amenity=parking</description>
+    </domainvalue>
+    <domainvalue value="track">
+      <geometrytype>line</geometrytype>
+      <description>Roads for agricultural use, gravel roads in the forest etc.; usually unpaved/unsealed but may occasionally apply to paved tracks as well, see tracktype=* for more guidance.</description>
+    </domainvalue>
+    <domainvalue value="pedestrian">
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>For roads used mainly/exclusively for pedestrians/shopping areas. Also for tagging squares and plazas (in which case, add area=yes.</description>
+    </domainvalue>
+    <domainvalue value="raceway">
+      <geometrytype>line</geometrytype>
+      <description>A course or track for racing</description>
+    </domainvalue>
+    <domainvalue value="services">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A service station to get food and eat something, often found at motorways</description>
+    </domainvalue>
+    <domainvalue value="bus_guideway">
+      <geometrytype>line</geometrytype>
+      <description>A busway where the vehicle guided by the way (though not a railway) and is not suitable for other traffic. Please note: this is not a normal bus lane, use access=no, psv=yes instead!</description>
+    </domainvalue>
+    <domainvalue value="path">
+      <geometrytype>line</geometrytype>
+      <description>A non-specific or shared-use path</description>
+    </domainvalue>
+    <domainvalue value="cycleway">
+      <geometrytype>line</geometrytype>
+      <description>For designated cycleways; i.e., mainly/exclusively for bicycles. Add foot=* only if default-access-restrictions do not apply.</description>
+    </domainvalue>
+    <domainvalue value="footway">
+      <geometrytype>line</geometrytype>
+      <description>For designated footpaths; i.e., mainly/exclusively for pedestrians. This includes walking tracks and gravel paths. If bicycles are allowed as well, you can indicate this by adding a bicycle=yes tag. Should not be used for paths where the primary or intended usage is unknown.</description>
+    </domainvalue>
+    <domainvalue value="bridleway">
+      <geometrytype>line</geometrytype>
+      <description>For horses, (in the UK, these are rights of way for pedestrians, horse-riders and cyclists). Equivalent to highway=path + horse=designated.</description>
+    </domainvalue>
+    <domainvalue value="byway">
+      <geometrytype>line</geometrytype>
+      <description>An unmade path/track which usually allows vehicles as well as foot, horse and cycle traffic (in the UK, there are byways which allow motor vehicles, and restricted byways which allow non-mechanically propelled vehicles)</description>
+    </domainvalue>
+    <domainvalue value="steps">
+      <geometrytype>line</geometrytype>
+      <description>For flights of steps (stairs) on footways. Use with step_count=* to indicate the number of steps</description>
+    </domainvalue>
+    <domainvalue value="mini_roundabout">
+      <geometrytype>point</geometrytype>
+      <description>Very small roundabouts only, larger ones should be junction=roundabout. Rendered as anti-clockwise by default. To render clockwise add the tag direction=clockwise.</description>
+    </domainvalue>
+    <domainvalue value="stop">
+      <geometrytype>point</geometrytype>
+      <description>A stop sign</description>
+    </domainvalue>
+    <domainvalue value="traffic_signals">
+      <geometrytype>point</geometrytype>
+      <description>Lights that control the traffic</description>
+    </domainvalue>
+    <domainvalue value="crossing">
+      <geometrytype>point</geometrytype>
+      <description>Pedestrians can cross a street here; e.g., zebra crossing</description>
+    </domainvalue>
+    <domainvalue value="motorway_junction">
+      <geometrytype>point</geometrytype>
+      <description>Indicates a junction (UK) or exit (US). ref=* should be set to the exit number or junction identifier. (Some roads - e.g., the A14 - also carry junction numbers, so the tag may be encountered elsewhere despite its name)</description>
+    </domainvalue>
+    <domainvalue value="ford">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <description>The road crosses through stream or river, vehicles must enter any water</description>
+    </domainvalue>
+    <domainvalue value="bus_stop">
+      <geometrytype>point</geometrytype>
+      <description>A small bus stop. Larger stations should be tagged as amenity=bus_station instead.</description>
+    </domainvalue>
+    <domainvalue value="platform">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>The passenger platform of a bus stop or station.</description>
+    </domainvalue>
+    <domainvalue value="turning_circle">
+      <geometrytype>point</geometrytype>
+      <description>A turning circle is a rounded, widened area usually, but not necessarily, at the end of a road to facilitate easier turning of a vehicle.</description>
+    </domainvalue>
+    <domainvalue value="construction">
+      <geometrytype>line</geometrytype>
+      <description>For roads under construction, use with construction=*</description>
+    </domainvalue>
+    <domainvalue value="proposed">
+      <geometrytype>line</geometrytype>
+      <description>For planned roads, use with proposed=*</description>
+    </domainvalue>
+    <domainvalue value="emergency_access_point">
+      <geometrytype>point</geometrytype>
+      <description>Sign number which can be used to define you current position in case of an emergency. Use with ref=NUMBER_ON_THE_SIGN</description>
+    </domainvalue>
+    <domainvalue value="speed_camera">
+      <geometrytype>point</geometrytype>
+      <description>A fixed road-side or overhead speed camera.</description>
+    </domainvalue>
+    <domainvalue value="passing_place">
+      <geometrytype>point</geometrytype>
+      <description>The location of a passing space</description>
+    </domainvalue>
+  </domain>
+  <domain name="building">
+    <domainvalue value="yes">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Use Building attributes </description>
+    </domainvalue>
+    <domainvalue value="apartments">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A residential building containing many apartments (not just a house converted into flats) </description>
+    </domainvalue>
+    <domainvalue value="barn">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+    <domainvalue value="block">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>eg office block, block of flats </description>
+    </domainvalue>
+    <domainvalue value="brewery">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+    <domainvalue value="castle">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Historic castle. preferably not too ruined... Consider whether historic=castle is better when you're tagging. </description>
+    </domainvalue>
+    <domainvalue value="convent">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A community of nuns, historic or in use. Considering adding historic=* metadata for ruins or convents no longer in use. See also monastery below. </description>
+    </domainvalue>
+    <domainvalue value="city_hall">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Consider whether amenity=townhall fits better when tagging. </description>
+    </domainvalue>
+    <domainvalue value="detached">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A residential building that stands alone. NOTE: building=house, below, might be less ambiguous. Consider giving a house name or number using the Karlsruhe schema too. </description>
+    </domainvalue>
+    <domainvalue value="factory">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>An industrial facility for manufacture of goods. See also landuse=industrial. </description>
+    </domainvalue>
+    <domainvalue value="glasshouse">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>For growing plants, usually in nurseries or large horticultural centres rather than little greenhouses in gardens and on allotments. </description>
+    </domainvalue>
+    <domainvalue value="hall">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>eg Parliament, churches (add label use= for civic etc) </description>
+    </domainvalue>
+    <domainvalue value="house">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Alternative to detached (above). Consider giving a house name or number using the Karlsruhe schema too. </description>
+    </domainvalue>
+    <domainvalue value="hut">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>in villages </description>
+    </domainvalue>
+    <domainvalue value="monastery">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A community of monks. See also convent above; the same considerations about historic=* should apply. </description>
+    </domainvalue>
+    <domainvalue value="monument">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Consider using the established historic=monument or historic=memorial as well (or instead). building=monument is good for very large monuments you can currently walk around in. </description>
+    </domainvalue>
+    <domainvalue value="oast_house">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description> building for drying hops in preparation for the brewing process. See wikipedia:Oast house. </description>
+    </domainvalue>
+    <domainvalue value="office">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+    <domainvalue value="palace">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A large building made for royalty or aristocracy which may be inhabited or available for people to visit </description>
+    </domainvalue>
+    <domainvalue value="pavilion">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>For example a cricket pavilion. NOTE: 'clubhouse' might be better: see below for discussion. </description>
+    </domainvalue>
+    <domainvalue value="semi">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>(I.e. "semi-detached") A residential building comprising two houses attached on one wall </description>
+    </domainvalue>
+    <domainvalue value="shed">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Small wooden shack-like structures, for tool storage or similar. </description>
+    </domainvalue>
+    <domainvalue value="stadium">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Sports stadium, amphitheatre, etc. leisure=stadium is probably more established. </description>
+    </domainvalue>
+    <domainvalue value="store">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Out-of-town supermarket, department store, corner shop, etc. Consider adding shop=supermarket, shop=convenience or whatever to say what type of shop it is. </description>
+    </domainvalue>
+    <domainvalue value="terrace">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Residential buildings attached to one another </description>
+    </domainvalue>
+    <domainvalue value="tower">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>eg 1 Canada Sq, Docklands </description>
+    </domainvalue>
+    <domainvalue value="train_station">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>e.g. See Kings cross on osmarender layer. It should probably encloses a railway=station and perhaps other transport nodes (if it's active). </description>
+    </domainvalue>
+    <domainvalue value="warehouse">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A building for storage. See also landuse=commercial and landuse=industrial.</description>
+    </domainvalue>
+  </domain>
+  <domain name="natural">
+    <domainvalue value="bay">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Bay (Other languages)</description>
+    </domainvalue>
+    <domainvalue value="beach">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Beach: sand, gravel or pebble (Other languages)</description>
+    </domainvalue>
+    <domainvalue value="cave_entrance">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>The entrance to a cave.</description>
+    </domainvalue>
+    <domainvalue value="cliff">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Rock face. For a linear way, the top of the cliff should be to the left of the cliff, and the bottom on the right side</description>
+    </domainvalue>
+    <domainvalue value="coastline">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>The coastline should run clockwise around water and anti-clockwise around land, i.e. land on the left side and water on the right side of the way (that is, according to the sequence of nodes in the way), for it to show correctly. As the sole exception coastlines do not have to form closed ways, they merely have to connect up (head to tail) to form complete closed polygons.</description>
+    </domainvalue>
+    <domainvalue value="fell">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Bare upper lying uncultivated land principally covered with grass and often grazed.</description>
+    </domainvalue>
+    <domainvalue value="glacier">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Areas (or peaks) covered with ice throughout the year</description>
+    </domainvalue>
+    <domainvalue value="heath">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Bare lower lying uncultivated land with bushes but little or no tree cover. Note. This is not for parks whose name is "Something Heath"</description>
+    </domainvalue>
+    <domainvalue value="land">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Land that exists within another area, such as a lake. (i.e an island). Keep water on the right and land on the left side in relation to sequence of nodes in the Way. See Relations/Multipolygon for islands in lakes</description>
+    </domainvalue>
+    <domainvalue value="marsh">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>waterlogged area (on Wikipedia) Deprecated. Use natural=wetland, wetland=* instead.</description>
+    </domainvalue>
+    <domainvalue value="mud">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>(Other languages)</description>
+    </domainvalue>
+    <domainvalue value="peak">
+      <geometrytype>point</geometrytype>
+      <description>top of a hill or mountain (summit)</description>
+    </domainvalue>
+    <domainvalue value="scree">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Loose rock</description>
+    </domainvalue>
+    <domainvalue value="scrub">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Uncultivated land covered with bushes or stunted trees</description>
+    </domainvalue>
+    <domainvalue value="spring">
+      <geometrytype>point</geometrytype>
+      <description>A place where ground water flows naturally from the ground ((hydrology, land) (3596) Other languages)</description>
+    </domainvalue>
+    <domainvalue value="tree">
+      <geometrytype>point</geometrytype>
+      <description>Lone or significant trees.</description>
+    </domainvalue>
+    <domainvalue value="volcano">
+      <geometrytype>point</geometrytype>
+      <description>A volcano, either dormant, extinct or active</description>
+    </domainvalue>
+    <domainvalue value="water">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Lakes, etc.</description>
+    </domainvalue>
+    <domainvalue value="wetland">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>waterlogged area (on Wikipedia)</description>
+    </domainvalue>
+    <domainvalue value="wood">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Natural woodland (trees). See also landuse=forest.</description>
+    </domainvalue>
+  </domain>
+  <domain name="waterway">
+    <domainvalue value="stream">
+      <geometrytype>line</geometrytype>
+      <description>A naturally-formed waterway that is too thin to be classed as a river. An active person should be able to jump over it.</description>
+    </domainvalue>
+    <domainvalue value="river">
+      <geometrytype>line</geometrytype>
+      <description>For narrow rivers which will be rendered as a line. For larger rivers (defined as more than 12m across) see waterway=riverbank (Other languages).</description>
+    </domainvalue>
+    <domainvalue value="riverbank">
+      <geometrytype>polygon</geometrytype>
+      <description>Used for larger rivers, to define an area between the opposite riverbanks.</description>
+    </domainvalue>
+    <domainvalue value="canal">
+      <geometrytype>line</geometrytype>
+      <description>An artificial open waterway used for transportation, waterpower, or irrigation.(Other languages).</description>
+    </domainvalue>
+    <domainvalue value="ditch">
+      <geometrytype>line</geometrytype>
+      <description>A small to moderate depression created to channel water.</description>
+    </domainvalue>
+    <domainvalue value="drain">
+      <geometrytype>line</geometrytype>
+      <description>An artificial waterway for carrying storm water or industrial discharge.</description>
+    </domainvalue>
+    <domainvalue value="dock">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>An 'enclosed' area of water used for loading, unloading, building or repairing ships.</description>
+    </domainvalue>
+    <domainvalue value="lock_gate">
+      <geometrytype>point</geometrytype>
+      <description>In normal circumstances, use lock=yes. But for very large locks, it may be more appropriate to tag the gates at each end using this tag.</description>
+    </domainvalue>
+    <domainvalue value="turning_point">
+      <geometrytype>point</geometrytype>
+      <description>A place to turn the driving direction for vessels, where the boats are longer than the river/canal is wide. Use maxlength=* to denote the maximum length of the vessel.</description>
+    </domainvalue>
+    <domainvalue value="boatyard">
+      <geometrytype>point</geometrytype>
+      <description>Boat yard - a place for constructing, repairing and storing vessels out of the water.</description>
+    </domainvalue>
+    <domainvalue value="weir">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <description>A barrier built across a river, sometimes to divert water for industrial purposes. Water can still flow over the top.</description>
+    </domainvalue>
+    <domainvalue value="dam">
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A wall built across a river or stream to impound the water. A dam normally does not have water flowing over the top of it.</description>
+    </domainvalue>
+  </domain>
+  <domain name="amenity">
+    <domainvalue value="restaurant">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Restaurant (not fast food, see amenity=fast_food). The kind of food served can be tagged with cuisine=*.</description>
+    </domainvalue>
+    <domainvalue value="food_court">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>An area with several different restaurant food counters and a shared eating area. Commonly found in malls, airports, etc.</description>
+    </domainvalue>
+    <domainvalue value="fast_food">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Fast Food Restaurant (see also amenity=restaurant). The kind of food served can be tagged with cuisine=*.</description>
+    </domainvalue>
+    <domainvalue value="drinking_water">
+      <geometrytype>point</geometrytype>
+      <description>A source of drinking water</description>
+    </domainvalue>
+    <domainvalue value="bbq">
+      <geometrytype>point</geometrytype>
+      <description>A public grill for cooking meat or vegetables, most typically to eat outdoors. You may want to include a fuel=wood/gas/electric key.</description>
+    </domainvalue>
+    <domainvalue value="pub">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A place selling beer and other alcoholic drinks; may also provide food or accommodation (UK). See description of amenity=bar and amenity=pub for distinction between bar and pub</description>
+    </domainvalue>
+    <domainvalue value="bar">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A place selling alcoholic drinks. See description of amenity=bar and amenity=pub for distinction between bar and pub</description>
+    </domainvalue>
+    <domainvalue value="cafe">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A cafe</description>
+    </domainvalue>
+    <domainvalue value="biergarten">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Beer garden in Wikipedia</description>
+    </domainvalue>
+    <domainvalue value="kindergarten">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>For children too young for a regular school (also known as playschool or nursery school).</description>
+    </domainvalue>
+    <domainvalue value="school">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>school and grounds</description>
+    </domainvalue>
+    <domainvalue value="college">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>a College campus or buildings</description>
+    </domainvalue>
+    <domainvalue value="library">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A public library (municipal, university, ...) to borrow books from.</description>
+    </domainvalue>
+    <domainvalue value="university">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>a University campus or buildings</description>
+    </domainvalue>
+    <domainvalue value="ferry_terminal">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Ferry terminal/stop. A place where people/cars/etc. can board and leave a ferry.</description>
+    </domainvalue>
+    <domainvalue value="bicycle_parking">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Parking for bicycles</description>
+    </domainvalue>
+    <domainvalue value="bicycle_rental">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Rent a bicycle</description>
+    </domainvalue>
+    <domainvalue value="bus_station">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Bus Station (this is a big station, a bus stop is highway=bus_stop)</description>
+    </domainvalue>
+    <domainvalue value="car_rental">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Rent a car</description>
+    </domainvalue>
+    <domainvalue value="car_sharing">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Share a car</description>
+    </domainvalue>
+    <domainvalue value="car_wash">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Wash a car</description>
+    </domainvalue>
+    <domainvalue value="fuel">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Petrol station; gas station; marine fuel; ... Streets to petrol stations are often tagged highway=service.</description>
+    </domainvalue>
+    <domainvalue value="grit_bin">
+      <geometrytype>point</geometrytype>
+      <description>A container that hold grit or a mixture from salt and grit.</description>
+    </domainvalue>
+    <domainvalue value="parking">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Car Park. Nodes and areas (without access tag) will get a parking symbol. Areas will be colored. Streets on car parking are often tagged highway=service and service=parking_aisle.</description>
+    </domainvalue>
+    <domainvalue value="taxi">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A place where taxis wait for passengers.</description>
+    </domainvalue>
+    <domainvalue value="atm">
+      <geometrytype>point</geometrytype>
+      <description>an ATM or cash point</description>
+    </domainvalue>
+    <domainvalue value="bank">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>a bank (for a bank that also has an ATM, it is preferred that a separate node for each ATM is added)</description>
+    </domainvalue>
+    <domainvalue value="bureau_de_change">
+      <geometrytype>point</geometrytype>
+      <description>Bureau de change, Currency exchange, Wechsel, Cambio - a place to change foreign bank notes and travellers cheques</description>
+    </domainvalue>
+    <domainvalue value="pharmacy">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Pharmacy</description>
+    </domainvalue>
+    <domainvalue value="hospital">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Often used in conjunction with emergency=* to note whether or not the hospital has emergency facilities)</description>
+    </domainvalue>
+    <domainvalue value="baby_hatch">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>a place where you can drop a baby anonymously for adoption</description>
+    </domainvalue>
+    <domainvalue value="dentist">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A dentist practice / surgery.</description>
+    </domainvalue>
+    <domainvalue value="doctors">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A doctors practice / surgery.</description>
+    </domainvalue>
+    <domainvalue value="veterinary">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A place where a veterinary surgeon (vet) practices.</description>
+    </domainvalue>
+    <domainvalue value="architect_office">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>an office where an architect works</description>
+    </domainvalue>
+    <domainvalue value="arts_centre">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>an arts centre</description>
+    </domainvalue>
+    <domainvalue value="cinema">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>a cinema</description>
+    </domainvalue>
+    <domainvalue value="fountain">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A fountain for cultural / decorational / recreational purposes.</description>
+    </domainvalue>
+    <domainvalue value="nightclub">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>a nightclub</description>
+    </domainvalue>
+    <domainvalue value="stripclub">
+      <geometrytype>point</geometrytype>
+      <description>A place that offers striptease or lapdancing (for sexual services use amenity=brothel).</description>
+    </domainvalue>
+    <domainvalue value="studio">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>TV radio or recording studio</description>
+    </domainvalue>
+    <domainvalue value="theatre">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>a theatre or opera house</description>
+    </domainvalue>
+    <domainvalue value="bench">
+      <geometrytype>point</geometrytype>
+      <description>a bench to sit down and relax a bit</description>
+    </domainvalue>
+    <domainvalue value="brothel">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>a brothel</description>
+    </domainvalue>
+    <domainvalue value="clock">
+      <geometrytype>point</geometrytype>
+      <description>a public visible clock</description>
+    </domainvalue>
+    <domainvalue value="courthouse">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>a place where justice is dispensed</description>
+    </domainvalue>
+    <domainvalue value="crematorium">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+    <domainvalue value="embassy">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>An embassy</description>
+    </domainvalue>
+    <domainvalue value="emergency_phone">
+      <geometrytype>point</geometrytype>
+      <description>A telephone dedicated to emergency calls</description>
+    </domainvalue>
+    <domainvalue value="fire_hydrant">
+      <geometrytype>point</geometrytype>
+      <description>A fire hydrant</description>
+    </domainvalue>
+    <domainvalue value="fire_station">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A Fire station</description>
+    </domainvalue>
+    <domainvalue value="grave_yard">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A (smaller) place of burial, often you'll find a church nearby. Large places should be landuse=cemetery instead.</description>
+    </domainvalue>
+    <domainvalue value="hunting_stand">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A hunting stand</description>
+    </domainvalue>
+    <domainvalue value="marketplace">
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A place where trade is regulated, e.g. a square.</description>
+    </domainvalue>
+    <domainvalue value="place_of_worship">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A church, mosque, or temple, etc. Note that you also need religion=*, usually denomination=* and preferably name=* as well as amenity=place_of_worship. See the article for details.</description>
+    </domainvalue>
+    <domainvalue value="police">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A Police station</description>
+    </domainvalue>
+    <domainvalue value="post_box">
+      <geometrytype>point</geometrytype>
+      <description>Alternative mail-carriers can be tagged via operator=*</description>
+    </domainvalue>
+    <domainvalue value="post_office">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Post office building with postal services</description>
+    </domainvalue>
+    <domainvalue value="prison">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>a prison</description>
+    </domainvalue>
+    <domainvalue value="public_building">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+    <domainvalue value="recycling">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>recycling facilities (bottle banks etc.)</description>
+    </domainvalue>
+    <domainvalue value="sauna">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A small room or house to experience dry or wet heat sessions.</description>
+    </domainvalue>
+    <domainvalue value="shelter">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shelter against bad weather for hiker, cyclists, ...</description>
+    </domainvalue>
+    <domainvalue value="telephone">
+      <geometrytype>point</geometrytype>
+      <description>Public telephone</description>
+    </domainvalue>
+    <domainvalue value="toilets">
+      <geometrytype>point</geometrytype>
+      <description>Public toilets (might require a fee)</description>
+    </domainvalue>
+    <domainvalue value="townhall">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A town hall building</description>
+    </domainvalue>
+    <domainvalue value="vending_machine">
+      <geometrytype>point</geometrytype>
+      <description>A machine selling goods, tickets ...</description>
+    </domainvalue>
+    <domainvalue value="waste_basket">
+      <geometrytype>point</geometrytype>
+      <description>A waste basket is a single small container for depositing garbage that is easily accesible for pedestrians.</description>
+    </domainvalue>
+    <domainvalue value="waste_disposal">
+      <geometrytype>point</geometrytype>
+      <description>A place where canal boaters, caravaners etc. can dispose of rubbish (trash/waste).</description>
+    </domainvalue>
+  </domain>
+  <domain name="landuse">
+    <domainvalue value="allotments">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A piece of land given over to local residents for growing vegetables and flowers.</description>
+    </domainvalue>
+    <domainvalue value="basin">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>An area of water that drains into a river. Together with basin=infiltration for rainwater infiltration basins.</description>
+    </domainvalue>
+    <domainvalue value="brownfield">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Describes land scheduled for new development where old buildings have been demolished and cleared</description>
+    </domainvalue>
+    <domainvalue value="cemetery">
+      <geometrytype>polygon</geometrytype>
+      <description>Place for burials. You can add religion=* (values listed in the place of worship page). Smaller places (e.g. with a church nearby) may use amenity=grave_yard instead.</description>
+    </domainvalue>
+    <domainvalue value="commercial">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Predominantly offices, business parks, etc.</description>
+    </domainvalue>
+    <domainvalue value="construction">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>"Under construction" site, should become something different once the construction is finished</description>
+    </domainvalue>
+    <domainvalue value="farm">
+      <geometrytype>polygon</geometrytype>
+      <description>An area of farmland used for tillage and pasture (animals, crops, vegetables, flowers, fruit growing).</description>
+    </domainvalue>
+    <domainvalue value="farmyard">
+      <geometrytype>polygon</geometrytype>
+      <description>An area of land with farm buildings like farmhouse, dwellings, farmsteads, sheds, stables, barns, equipment sheds, feed bunkers, etc. plus the open space in between them and the shrubbery/trees around them.</description>
+    </domainvalue>
+    <domainvalue value="forest">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Managed forest or woodland plantation (Other languages). See also natural=wood.</description>
+    </domainvalue>
+    <domainvalue value="garages">
+      <geometrytype>polygon</geometrytype>
+      <description>One level buildings with boxes commonly for cars, usually made of brick and metal. Usualy this area belong to garage cooperative with own name, chairman, budget, rules, security, etc.</description>
+    </domainvalue>
+    <domainvalue value="grass">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>For grassland.</description>
+    </domainvalue>
+    <domainvalue value="greenfield">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Describes land scheduled for new development where there have been no buildings before</description>
+    </domainvalue>
+    <domainvalue value="greenhouse_horticulture">
+      <geometrytype>polygon</geometrytype>
+      <description>Area used for growing plants in greenhouses</description>
+    </domainvalue>
+    <domainvalue value="industrial">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Predominantly workshops, factories or warehouses</description>
+    </domainvalue>
+    <domainvalue value="landfill">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Place where waste is dumped. Other languages</description>
+    </domainvalue>
+    <domainvalue value="meadow">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>An area of land primarily vegetated by grass and other non-woody plants (Other Languages).</description>
+    </domainvalue>
+    <domainvalue value="military">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>For land areas owned/used by the military for whatever purpose</description>
+    </domainvalue>
+    <domainvalue value="orchard">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>intentional planting of trees or shrubs maintained for food production</description>
+    </domainvalue>
+    <domainvalue value="quarry">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Surface mineral extraction (Other languages)</description>
+    </domainvalue>
+    <domainvalue value="railway">
+      <geometrytype>polygon</geometrytype>
+      <description>Area for railway use, generally off-limits to the general public</description>
+    </domainvalue>
+    <domainvalue value="recreation_ground">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>An open green space for general recreation, which may include pitches, nets and so on, usually municipal but possibly also private to colleges or companies</description>
+    </domainvalue>
+    <domainvalue value="reservoir">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Stores water, may be covered or uncovered; for a covered reservoir see also man_made=reservoir_covered (Other languages)</description>
+    </domainvalue>
+    <domainvalue value="residential">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Predominantly houses or apartment buildings</description>
+    </domainvalue>
+    <domainvalue value="retail">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Predominantly shops</description>
+    </domainvalue>
+    <domainvalue value="salt_pond">
+      <geometrytype>polygon</geometrytype>
+      <description>A place where sea water is evaporated to extract its salt</description>
+    </domainvalue>
+    <domainvalue value="village_green">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>An area of common land, usually grass, in the centre of a village (quintessentially English - defined separately from 'common land' under the Commons Registration Act 1965 and the Commons Act 2006).</description>
+    </domainvalue>
+    <domainvalue value="vineyard">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A piece of land where grapes are grown.</description>
+    </domainvalue>
+    <domainvalue value="wood">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Managed or preserved woodland. Not actively or regularly forested. See also landuse=forest, natural=wood.</description>
+    </domainvalue>
+  </domain>
+  <domain name="place">
+    <domainvalue value="continent">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>One of the continents: Asia, Africa, North America, South America, Antarctica, Europe, Australia (from largest in size to smallest)</description>
+    </domainvalue>
+    <domainvalue value="country">
+      <geometrytype>point</geometrytype>
+      <description>country (on areas and ways, border_type=nation is used instead)</description>
+    </domainvalue>
+    <domainvalue value="state">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>state</description>
+    </domainvalue>
+    <domainvalue value="region">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>region</description>
+    </domainvalue>
+    <domainvalue value="county">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>county</description>
+    </domainvalue>
+    <domainvalue value="city">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>As defined by national/state/provincial government. Often over 100,000 people</description>
+    </domainvalue>
+    <domainvalue value="town">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>As defined by national/state/provincial government. Generally smaller than a city, between 10,000 and 100,000 people</description>
+    </domainvalue>
+    <domainvalue value="village">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>As defined by national/state/provincial government. Generally smaller than a town, below 10,000 people</description>
+    </domainvalue>
+    <domainvalue value="hamlet">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>As defined by national/state/provincial government. Generally smaller than a village, just a few houses</description>
+    </domainvalue>
+    <domainvalue value="suburb">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Named area of town or city. Often a suburb is its own municipality, with separate government, and should be tagged as such.</description>
+    </domainvalue>
+    <domainvalue value="locality">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>An unpopulated, named place.</description>
+    </domainvalue>
+    <domainvalue value="island">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>identifies an island (see also natural=land), also consider place=islet for very small islands</description>
+    </domainvalue>
+  </domain>
+  <domain name="railway">
+    <domainvalue value="rail">
+      <geometrytype>line</geometrytype>
+      <description>Full sized passenger or freight trains in the standard gauge for the country or state</description>
+    </domainvalue>
+    <domainvalue value="tram">
+      <geometrytype>line</geometrytype>
+      <description>One or two carriage rail vehicles, usually sharing motor road (Other languages)</description>
+    </domainvalue>
+    <domainvalue value="light_rail">
+      <geometrytype>line</geometrytype>
+      <description>Short/light passenger trains. Metro systems.</description>
+    </domainvalue>
+    <domainvalue value="abandoned">
+      <geometrytype>line</geometrytype>
+      <description>The course of a former railway which has been abandoned and the track and infrastucture removed.</description>
+    </domainvalue>
+    <domainvalue value="disused">
+      <geometrytype>line</geometrytype>
+      <description>A section of railway which is no longer used but where the track and infrastructure remains in place. See disused=yes for alternative tagging.</description>
+    </domainvalue>
+    <domainvalue value="subway">
+      <geometrytype>line</geometrytype>
+      <description>A passenger rail service running mostly underground.</description>
+    </domainvalue>
+    <domainvalue value="preserved">
+      <geometrytype>line</geometrytype>
+      <description>A railway running historic trains, usually a tourist attraction (changed to preserved from preserved_rail as "rail" is redundant).</description>
+    </domainvalue>
+    <domainvalue value="construction">
+      <geometrytype>line</geometrytype>
+      <description>A railway under construction. See construction=* and the construction=yes proposal Proposed_features/Construction</description>
+    </domainvalue>
+    <domainvalue value="monorail">
+      <geometrytype>line</geometrytype>
+      <description>A railway with only a single rail.</description>
+    </domainvalue>
+    <domainvalue value="funicular">
+      <geometrytype>line</geometrytype>
+      <description>Cable driven inclined railways.</description>
+    </domainvalue>
+    <domainvalue value="station">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Railway station (Other languages).</description>
+    </domainvalue>
+    <domainvalue value="halt">
+      <geometrytype>point</geometrytype>
+      <description>A small station, may not have a platform, trains may only stop on request.</description>
+    </domainvalue>
+    <domainvalue value="tram_stop">
+      <geometrytype>point</geometrytype>
+      <description>A tram stop is a place where a passenger can embark / disembark a tram.</description>
+    </domainvalue>
+    <domainvalue value="crossing">
+      <geometrytype>point</geometrytype>
+      <description>A point where pedestrians may cross.</description>
+    </domainvalue>
+    <domainvalue value="level_crossing">
+      <geometrytype>point</geometrytype>
+      <description>A point where rails and roads cross.</description>
+    </domainvalue>
+    <domainvalue value="subway_entrance">
+      <geometrytype>point</geometrytype>
+      <description>The entrance to a subway station, usually going from surface to underground.</description>
+    </domainvalue>
+    <domainvalue value="turntable">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>These are used for changing the direction that part of a train is pointing in.</description>
+    </domainvalue>
+    <domainvalue value="platform">
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>This is parallel to the rail line for showing where the actual platforms are. It is also to know where you can change platform and enter the station, so use footpaths to connect them. This is really useful for routing too.</description>
+    </domainvalue>
+    <domainvalue value="buffer_stop">
+      <geometrytype>point</geometrytype>
+      <description>stops the train at the end of a track. see Buffer_stop</description>
+    </domainvalue>
+  </domain>
+  <domain name="boundary">
+    <domainvalue value="administrative">
+      <geometrytype>polygon</geometrytype>
+      <description>e.g. State, county, local council (unclear how these are specified. Clarify!). Use therefore admin_level=*</description>
+    </domainvalue>
+    <domainvalue value="civil">
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+    <domainvalue value="political">
+      <geometrytype>polygon</geometrytype>
+      <description>Electoral boundaries</description>
+    </domainvalue>
+    <domainvalue value="maritime">
+      <geometrytype>polygon</geometrytype>
+      <description>Maritime boundaries</description>
+    </domainvalue>
+    <domainvalue value="national_park">
+      <geometrytype>polygon</geometrytype>
+      <description>Area of outstanding natural beauty, set aside for conservation and for recreation (Other languages)</description>
+    </domainvalue>
+  </domain>
+  <domain name="power">
+    <domainvalue value="tower">
+      <geometrytype>point</geometrytype>
+      <description>For towers or pylons carrying high voltage electricity cables. Normally constructed from steel latticework. Should not be used for electricity or telephone cables carried on single wooden poles, which might be tagged power=pole.</description>
+    </domainvalue>
+    <domainvalue value="pole">
+      <geometrytype>point</geometrytype>
+      <description>For single (often wooden or concrete) poles carrying high/medium voltage electricity cables.</description>
+    </domainvalue>
+    <domainvalue value="line">
+      <geometrytype>line</geometrytype>
+      <description>A way following the path of power cables. For minor power lines with poles and not towers, you may want to use power=minor_line.</description>
+    </domainvalue>
+    <domainvalue value="minor_line">
+      <geometrytype>line</geometrytype>
+      <description>A way following the path of minor power cables, supported by poles and not towers/pylons.</description>
+    </domainvalue>
+    <domainvalue value="station">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A tag for electricity stations. Wires from power lines come in or go out here.</description>
+    </domainvalue>
+    <domainvalue value="sub_station">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A tag for electricity sub-stations. Smaller than a station. Could be a box near street.</description>
+    </domainvalue>
+    <domainvalue value="generator">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A place where power is generated. Use in combination with power_source=*; you may want to use power_rating=*</description>
+    </domainvalue>
+  </domain>
+  <domain name="leisure">
+    <domainvalue value="dog_park">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Designated area, with or without a fenced boundary, where dog-owners are permitted to exercise their pets unrestrained</description>
+    </domainvalue>
+    <domainvalue value="sports_centre">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>To describe what kind of sport(s) use sport= tag.</description>
+    </domainvalue>
+    <domainvalue value="golf_course">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>The outline of a golf course. The node form may be used to place an icon within the course. This tag implies sport=golf.</description>
+    </domainvalue>
+    <domainvalue value="stadium">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A major sports arena with substantial tiered seating. To describe what kind of sport(s) use sport= tag</description>
+    </domainvalue>
+    <domainvalue value="track">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>e.g. running, cycle-racing, greyhound, horses. To describe what kind of sport(s) use sport= tag</description>
+    </domainvalue>
+    <domainvalue value="pitch">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>e.g. a field for playing football/soccer, cricket, baseball sports. To describe what kind of sport(s) use sport= tag</description>
+    </domainvalue>
+    <domainvalue value="water_park">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Amusement area with water slides, recreational swimming pools and dressing rooms.</description>
+    </domainvalue>
+    <domainvalue value="marina">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>For mooring leisure yachts and motor boats</description>
+    </domainvalue>
+    <domainvalue value="slipway">
+      <geometrytype>point</geometrytype>
+      <description>Boats can be launched here</description>
+    </domainvalue>
+    <domainvalue value="fishing">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+    <domainvalue value="nature_reserve">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description></description>
+    </domainvalue>
+    <domainvalue value="park">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>open, green area for recreation, usually municipal</description>
+    </domainvalue>
+    <domainvalue value="playground">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Playground for little children.</description>
+    </domainvalue>
+    <domainvalue value="garden">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Place where flowers and other plants are grown in a decorative and structured manner or for scientific purposes.</description>
+    </domainvalue>
+    <domainvalue value="common">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>An area where the public can walk anywhere (UK)</description>
+    </domainvalue>
+    <domainvalue value="ice_rink">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A place where you can skate or play ice hockey.</description>
+    </domainvalue>
+    <domainvalue value="miniature_golf">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A place or area that you can play miniature golf.</description>
+    </domainvalue>
+  </domain>
+  <domain name="man_made">
+    <domainvalue value="beacon">
+      <geometrytype>point</geometrytype>
+      <description>Help guide navigators to their destinations. You need to add or use instead seamark=beacon or airmark=beacon to identify clearly for which type of navigation it's usefull/needed. --Cbm 11:54, 11 November 2009 (UTC)</description>
+    </domainvalue>
+    <domainvalue value="crane">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>a stationary, permanent crane, such as those at docks</description>
+    </domainvalue>
+    <domainvalue value="cutline">
+      <geometrytype>line</geometrytype>
+      <description>Used to mark cut lines in forests.</description>
+    </domainvalue>
+    <domainvalue value="gasometer">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Gasometer in Wikipedia</description>
+    </domainvalue>
+    <domainvalue value="lighthouse">
+      <geometrytype>point</geometrytype>
+      <description>Sends out a light beam to guide ships</description>
+    </domainvalue>
+    <domainvalue value="mineshaft">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A vertical tunnel</description>
+    </domainvalue>
+    <domainvalue value="petroleum_well">
+      <geometrytype>point</geometrytype>
+      <description>A boring through the earth's surface that is designed to find and produce petroleum oil</description>
+    </domainvalue>
+    <domainvalue value="pier">
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A "bridge into the ocean", usually for recreation</description>
+    </domainvalue>
+    <domainvalue value="pipeline">
+      <geometrytype>line</geometrytype>
+      <description>A pipe for carrying various fluids, such as water, gas, sewage</description>
+    </domainvalue>
+    <domainvalue value="reservoir_covered">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A covered water reservoir</description>
+    </domainvalue>
+    <domainvalue value="surveillance">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>To mark places and buildings monitored by public or private camera</description>
+    </domainvalue>
+    <domainvalue value="survey_point">
+      <geometrytype>point</geometrytype>
+      <description>Triangulation pillars, geodetic vertices, and fixed equipment used by topographers (e.g. DGPS radio stations)</description>
+    </domainvalue>
+    <domainvalue value="tower">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A tall and often lean building or structure e.g. telecoms. Also see historic=* below.</description>
+    </domainvalue>
+    <domainvalue value="wastewater_plant">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Facilities used to treat wastewater (known as sewage in some countries)</description>
+    </domainvalue>
+    <domainvalue value="watermill">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Watermill, mostly ancient and out of order</description>
+    </domainvalue>
+    <domainvalue value="water_tower">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A tower to store water in, usually found on hills beside or in a town</description>
+    </domainvalue>
+    <domainvalue value="water_works">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A place where drinking water is found and applied to the local waterpipes network.</description>
+    </domainvalue>
+    <domainvalue value="windmill">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Windmill, mostly ancient and out of order, see power=generator in combination with power_source=wind for modern wind turbines</description>
+    </domainvalue>
+    <domainvalue value="works">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Industrial building to produce something</description>
+    </domainvalue>
+  </domain>
+  <domain name="shop">
+    <domainvalue value="alcohol">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Government owned or licensed shop selling alcohol. See also shop=beverages.</description>
+    </domainvalue>
+    <domainvalue value="bakery">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Selling bread</description>
+    </domainvalue>
+    <domainvalue value="beverages">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Shop focused on selling alcoholic and non-alcoholic beverages. See also shop=alcohol.</description>
+    </domainvalue>
+    <domainvalue value="bicycle">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shop that sells bicycles, bicycle equipment and may rent or repair them</description>
+    </domainvalue>
+    <domainvalue value="books">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Selling books (for a library that borrows books, see amenity=library)</description>
+    </domainvalue>
+    <domainvalue value="butcher">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Selling meat</description>
+    </domainvalue>
+    <domainvalue value="car">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Car store - a place to buy cars or to get your car repaired</description>
+    </domainvalue>
+    <domainvalue value="car_repair">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shop focused on car repair (usually independent of a specific car brand).</description>
+    </domainvalue>
+    <domainvalue value="chemist">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shop selling articles of personal hygiene, cosmetics, and household cleaning products (for a shop that potentially dispenses prescription drugs, cf. pharmacy. U.S. drug store, see amenity=pharmacy)</description>
+    </domainvalue>
+    <domainvalue value="clothes">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shop selling clothes (other related values in use are: fashion, shoes)</description>
+    </domainvalue>
+    <domainvalue value="computer">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shop selling computers, peripherals, software, ...</description>
+    </domainvalue>
+    <domainvalue value="confectionery">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shop selling sweets and pastry</description>
+    </domainvalue>
+    <domainvalue value="convenience">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Convenience Store - a small local store usually selling a small selection of food items plus things like simple first aid, household, stationary and car items</description>
+    </domainvalue>
+    <domainvalue value="department_store">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A single large store - often multiple storeys high - selling a large variety of goods (see also shop=mall)</description>
+    </domainvalue>
+    <domainvalue value="dry_cleaning">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shop or kiosk offering a clothes dry cleaning service. The actual cleaning may be done elsewhere.</description>
+    </domainvalue>
+    <domainvalue value="doityourself">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shop that sells tools and supplies to do-it-yourself householders, gardening, ...</description>
+    </domainvalue>
+    <domainvalue value="electronics">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Selling consumer electronics (TV, radio, ...). Larger ones may also sell computers, fridges, ...</description>
+    </domainvalue>
+    <domainvalue value="fabrics">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shop that sells the fabrics.</description>
+    </domainvalue>
+    <domainvalue value="farm">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shop at a farm that sells the farm produce</description>
+    </domainvalue>
+    <domainvalue value="florist">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Get your bouquet of flowers from here (see shop=garden_centre for potted flowers).</description>
+    </domainvalue>
+    <domainvalue value="funeral_directors">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Providing services related to funeral arrangements, may also be known as a "funeral parlour" or "undertakers".</description>
+    </domainvalue>
+    <domainvalue value="furniture">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Selling furniture, might range from small decorational items to a whole flat interieur</description>
+    </domainvalue>
+    <domainvalue value="garden_centre">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Selling potted flowers, maybe even trees (see also shop=florist for flower bouquets).</description>
+    </domainvalue>
+    <domainvalue value="general">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A store that carries a general line of merchandise. (see also shop=convenience if it sells food).</description>
+    </domainvalue>
+    <domainvalue value="gift">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Selling gifts and greeting cards. May also sell tourist gifts in areas near major tourist attractions.</description>
+    </domainvalue>
+    <domainvalue value="glaziery">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Selling and installing glazing for windows and doors.</description>
+    </domainvalue>
+    <domainvalue value="greengrocer">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Selling vegetables and fruits.</description>
+    </domainvalue>
+    <domainvalue value="hairdresser">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Here you can get your hair cut, coloured, ...</description>
+    </domainvalue>
+    <domainvalue value="hardware">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A small shop that sells screws and bolts, paints, key copying, ...</description>
+    </domainvalue>
+    <domainvalue value="hearing_aids">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shop specialized in selling hearing aids devices</description>
+    </domainvalue>
+    <domainvalue value="hifi">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shop that sells High Fidelity or High End environment to listen music or watch films at home</description>
+    </domainvalue>
+    <domainvalue value="jewelry">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Jewellers shops.</description>
+    </domainvalue>
+    <domainvalue value="kiosk">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A small shop on the pavement that sells magazines, tobacco, newspapers, sweets and stamps.</description>
+    </domainvalue>
+    <domainvalue value="laundry">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shop to get your normal clothes washed. Might be self service coin operated, with service staff for drop off, ...</description>
+    </domainvalue>
+    <domainvalue value="mall">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shopping mall - multiple stores under one roof (also known as a shopping centre)</description>
+    </domainvalue>
+    <domainvalue value="massage">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A massage shop</description>
+    </domainvalue>
+    <domainvalue value="motorcycle">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shop that sells motorcycles</description>
+    </domainvalue>
+    <domainvalue value="newsagent">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Shop selling newspapers, cigarettes, other goods</description>
+    </domainvalue>
+    <domainvalue value="optician">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shop that sells eyeglasses, contact lenses (may also check your eyes).</description>
+    </domainvalue>
+    <domainvalue value="organic">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shop selling organic food</description>
+    </domainvalue>
+    <domainvalue value="outdoor">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shop that sells camping, walking, climbing, fishing and other outdoor sports equipment (and GPSes)</description>
+    </domainvalue>
+    <domainvalue value="second_hand">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shop buying and selling used clothes and other things</description>
+    </domainvalue>
+    <domainvalue value="sports">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shop selling sporting goods.</description>
+    </domainvalue>
+    <domainvalue value="stationery">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shop selling office supplies</description>
+    </domainvalue>
+    <domainvalue value="supermarket">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Supermarket</description>
+    </domainvalue>
+    <domainvalue value="shoes">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Selling shoes.</description>
+    </domainvalue>
+    <domainvalue value="toys">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A toy store.</description>
+    </domainvalue>
+    <domainvalue value="travel_agency">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shop selling travel related products and services</description>
+    </domainvalue>
+    <domainvalue value="video">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A shop that sells or rents out videos/DVDs</description>
+    </domainvalue>
+  </domain>
+  <domain name="tourism">
+    <domainvalue value="alpine_hut">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Wikipedia:Mountain hut</description>
+    </domainvalue>
+    <domainvalue value="attraction">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A general tourism attraction, this tag is often used in addition with other tags (like historic=*).</description>
+    </domainvalue>
+    <domainvalue value="artwork">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A tag for public pieces of art.</description>
+    </domainvalue>
+    <domainvalue value="camp_site">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A place where you can pitch a tent</description>
+    </domainvalue>
+    <domainvalue value="caravan_site">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A place where you can park a caravan overnight or for longer periods</description>
+    </domainvalue>
+    <domainvalue value="chalet">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Rent a hut</description>
+    </domainvalue>
+    <domainvalue value="guest_house">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>a guest house</description>
+    </domainvalue>
+    <domainvalue value="hostel">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Wikipedia:Hostel</description>
+    </domainvalue>
+    <domainvalue value="hotel">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Wikipedia:Hotel</description>
+    </domainvalue>
+    <domainvalue value="information">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Information resource for tourists and visitors, including information offices and map boards</description>
+    </domainvalue>
+    <domainvalue value="motel">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Wikipedia:Motel</description>
+    </domainvalue>
+    <domainvalue value="museum">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>see Other languages</description>
+    </domainvalue>
+    <domainvalue value="picnic_site">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A place where you can have an outdoor picnic. May have facilities such as tables and benches.</description>
+    </domainvalue>
+    <domainvalue value="theme_park">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Wikipedia:Theme park</description>
+    </domainvalue>
+    <domainvalue value="viewpoint">
+      <geometrytype>point</geometrytype>
+      <description>A place, often high, with a good view of surrounding countryside or notable buildings, lookout. Sometimes called a vista point or scenic area/point.</description>
+    </domainvalue>
+    <domainvalue value="zoo">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>zoological garden</description>
+    </domainvalue>
+    <domainvalue value="yes">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>to add tourist interest to something described by other tags</description>
+    </domainvalue>
+  </domain>
+  <domain name="route">
+    <domainvalue value="bicycle">
+      <geometrytype>line</geometrytype>
+      <geometrytype>mpolyline</geometrytype>
+      <description>Cycle_routes explains how to tag cycle routes</description>
+    </domainvalue>
+    <domainvalue value="bus">
+      <geometrytype>line</geometrytype>
+      <geometrytype>mpolyline</geometrytype>
+      <description>The route a public bus service takes. See Buses</description>
+    </domainvalue>
+    <domainvalue value="detour">
+      <geometrytype>line</geometrytype>
+      <description>Route for fixed detour routes. Examples are Bedarfsumleitung in Germany and uitwijkroute in the Netherlands</description>
+    </domainvalue>
+    <domainvalue value="ferry">
+      <geometrytype>line</geometrytype>
+      <geometrytype>mpolyline</geometrytype>
+      <description>The route a ferry takes from terminal to terminal Please make sure to add at least one node per tile (zoom level 12), better at least one every few km, so offline editors catch it with bbox requests.</description>
+    </domainvalue>
+    <domainvalue value="hiking">
+      <geometrytype>line</geometrytype>
+      <geometrytype>mpolyline</geometrytype>
+      <description>hiking explains how to tag hiking routes</description>
+    </domainvalue>
+    <domainvalue value="mtb">
+      <geometrytype>line</geometrytype>
+      <description>Mountainbike explains how to tag mtb routes</description>
+    </domainvalue>
+    <domainvalue value="railway">
+      <geometrytype>line</geometrytype>
+      <geometrytype>mpolyline</geometrytype>
+      <description>Named stretches of railroad tracks (eg Channel Tunnel). See Railways</description>
+    </domainvalue>
+    <domainvalue value="road">
+      <geometrytype>line</geometrytype>
+      <geometrytype>mpolyline</geometrytype>
+      <description>Can be used to map various road routes/long roads</description>
+    </domainvalue>
+    <domainvalue value="ski">
+      <geometrytype>line</geometrytype>
+      <description></description>
+    </domainvalue>
+    <domainvalue value="train">
+      <geometrytype>line</geometrytype>
+      <geometrytype>mpolyline</geometrytype>
+      <description>Train services (eg London-Paris Eurostar) See Railways</description>
+    </domainvalue>
+    <domainvalue value="tram">
+      <geometrytype>line</geometrytype>
+      <geometrytype>mpolyline</geometrytype>
+      <description>See Trams for more information on tagging tram services</description>
+    </domainvalue>
+  </domain>
+  <domain name="historic">
+    <domainvalue value="archaeological_site">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Excavation place for ancient remains</description>
+    </domainvalue>
+    <domainvalue value="battlefield">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>The site of a battle or military skirmish in the past. this could be on land or at sea.</description>
+    </domainvalue>
+    <domainvalue value="boundary_stone">
+      <geometrytype>point</geometrytype>
+      <description>A historic boundary stone usually found along the way.</description>
+    </domainvalue>
+    <domainvalue value="castle">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Other languages</description>
+    </domainvalue>
+    <domainvalue value="memorial">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Much like a monument, but smaller. Might range from a WWII memorial to a simple plate on a wall.</description>
+    </domainvalue>
+    <domainvalue value="monument">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>An object, especially large and made of stone, built to remember and show respect to a person or group of people. Other languages</description>
+    </domainvalue>
+    <domainvalue value="ruins">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Remains of a castle or alike, usage was abandoned. A replacement proposal can be found at Proposed_features/ruins for ruins of historic buildings. E.g. historic=castle, ruins=yes</description>
+    </domainvalue>
+    <domainvalue value="wayside_cross">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A historical (usually christian) cross. Frequently found along the way in southern germany, austria and probably elsewhere.</description>
+    </domainvalue>
+    <domainvalue value="wayside_shrine">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A historical shrine often showing a religious depiction. Frequently found along the way in southern germany, austria and probably elsewhere.</description>
+    </domainvalue>
+    <domainvalue value="wreck">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Nautical craft that has unintentionally been sunk or destroyed.</description>
+    </domainvalue>
+    <domainvalue value="yes">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Used to add historic interest to something described by other tags .</description>
+    </domainvalue>
+  </domain>
+  <domain name="aeroway">
+    <domainvalue value="aerodrome">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>An Aerodrome (UK), Airport (US), see also military=airfield</description>
+    </domainvalue>
+    <domainvalue value="terminal">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Airport passenger building</description>
+    </domainvalue>
+    <domainvalue value="helipad">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Helicopter start/landing pad</description>
+    </domainvalue>
+    <domainvalue value="runway">
+      <geometrytype>line</geometrytype>
+      <description>A strip of land kept clear and set aside for aeroplanes to take off from and land on. (Other languages)</description>
+    </domainvalue>
+    <domainvalue value="taxiway">
+      <geometrytype>line</geometrytype>
+      <description>Where airplanes manouevre between runways and parking areas.</description>
+    </domainvalue>
+    <domainvalue value="apron">
+      <geometrytype>polygon</geometrytype>
+      <description>A place where planes are parked.</description>
+    </domainvalue>
+    <domainvalue value="gate">
+      <geometrytype>point</geometrytype>
+      <description>Used to mark the gate numbers at the airports.</description>
+    </domainvalue>
+    <domainvalue value="windsock">
+      <geometrytype>point</geometrytype>
+      <description>Used to mark the position of a windsock.</description>
+    </domainvalue>
+  </domain>
+  <domain name="aerialway">
+    <domainvalue value="cable_car">
+      <geometrytype>line</geometrytype>
+      <description>A cable car run. Cable_cars are aerial tramways that are just one pair of big cars that go in alternating directions to each other from A to B (Usually Valley to Hill or</description>
+    </domainvalue>
+    <domainvalue value="gondola">
+      <geometrytype>line</geometrytype>
+      <description>A gondola. A Gondola is an aerialway where the cabins go around in a circle. The cabins are usually smaller than cabins of a cable car. Usual maximum occupancy is 4,6 or 8 persons per cabin</description>
+    </domainvalue>
+    <domainvalue value="chair_lift">
+      <geometrytype>line</geometrytype>
+      <description>An open chairlift run. These have a single seat to sit on and are open to the outside air. Beginners may struggle to get off them without making a fool of themselves!</description>
+    </domainvalue>
+    <domainvalue value="mixed_lift">
+      <geometrytype>line</geometrytype>
+      <description>A mixed lift, containing both gondolas and chairs.</description>
+    </domainvalue>
+    <domainvalue value="drag_lift">
+      <geometrytype>line</geometrytype>
+      <description>An overhead tow-line for skiers and riders, known as a T-bar lift, with a T shaped bit which two skiers share by resting their bottom on the bar or a button lift where the skier places a circular disk in between their legs. More difficult and uncomfortable for snowboarders. drag_lift would also cover more simple looped rope drag lifts, or loops of wire with handles to grab same as chair_lift</description>
+    </domainvalue>
+    <domainvalue value="station">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A station, where passengers can enter and/or leave the aerialway</description>
+    </domainvalue>
+    <domainvalue value="pylon">
+      <geometrytype>point</geometrytype>
+      <description>A pylon supporting the aerialway cable.</description>
+    </domainvalue>
+  </domain>
+  <domain name="barrier">
+    <domainvalue value="hedge">
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>is a line of closely spaced shrubs and bushes, planted and trained in such a way as to form a barrier or to mark the boundary of an area.</description>
+    </domainvalue>
+    <domainvalue value="fence">
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>a freestanding structure designed to restrict or prevent movement across a boundary. It is generally distinguished from a wall by the lightness of its construction.</description>
+    </domainvalue>
+    <domainvalue value="wall">
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>a freestanding structure designed to restrict or prevent movement across a boundary made from solid brick, concrete rocks, and almost always built so that it is opaque to vision.</description>
+    </domainvalue>
+    <domainvalue value="ditch">
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A trench, ditch or ravine, usually with a stream at the bottom, that is not easily crossed, especially if not on foot. Can be used in combination with waterway=stream or waterway=drain</description>
+    </domainvalue>
+    <domainvalue value="retaining_wall">
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>is a structure that holds back soil or rock from a building, structure or area. Retaining walls prevent downslope movement or erosion and provide support for vertical or near-vertical grade changes. * right side is bottom, left side is top.</description>
+    </domainvalue>
+    <domainvalue value="city_wall">
+      <geometrytype>line</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Is a fortification used to defend a city or settlement from potential aggressors. From ancient to modern times, they are used to enclose settlements. * right side is bottom, left side is top. if both sides are same height then add "two_sided=yes".</description>
+    </domainvalue>
+    <domainvalue value="bollard">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <description>solid (usually concrete or metal) pillar or pillars in the middle of the road to prevent passage by some traffic.</description>
+    </domainvalue>
+    <domainvalue value="cycle_barrier">
+      <geometrytype>point</geometrytype>
+      <description>Barriers to bicycle traffic, most typically a pair of staggered steel bars perpendicular to the way itself whose gaps allow pedestrians to pass.</description>
+    </domainvalue>
+    <domainvalue value="block">
+      <geometrytype>point</geometrytype>
+      <description>A large, solid, immobile block that can be moved only with heavy machinery or great effort. Typically big solid things made of concrete for stopping larger vehicles. Sometimes natural boulders are used for the same purpose.</description>
+    </domainvalue>
+    <domainvalue value="cattle_grid">
+      <geometrytype>point</geometrytype>
+      <description>Bars in the road surface that allow wheeled vehicles but not animals to cross. Sometimes known as a Texas Gate, even outside of Texas</description>
+    </domainvalue>
+    <domainvalue value="toll_booth">
+      <geometrytype>point</geometrytype>
+      <description>A road usage toll or fee is collected here</description>
+    </domainvalue>
+    <domainvalue value="entrance">
+      <geometrytype>point</geometrytype>
+      <description>A hole in a linear barrier with no specific construction that limits passing through. access=yes is understood. the limitations are the same of the way that crosses it, if there is such.</description>
+    </domainvalue>
+    <domainvalue value="gate">
+      <geometrytype>point</geometrytype>
+      <geometrytype>line</geometrytype>
+      <description>An entrance that can be opened or closed to get through the barrier. Combine with access=* where appropriate.</description>
+    </domainvalue>
+    <domainvalue value="lift_gate">
+      <geometrytype>point</geometrytype>
+      <description>A lift gate (boom barrier) is a bar, or pole pivoted in such a way as to allow the boom to block vehicular access through a controlled point. Combine with access=* where appropriate.</description>
+    </domainvalue>
+    <domainvalue value="stile">
+      <geometrytype>point</geometrytype>
+      <description>A stile allows pedestrians to cross a wall or fence, but never actually "opens" the barrier (unlike a gate, a stile has few or no moving parts).</description>
+    </domainvalue>
+    <domainvalue value="sally_port">
+      <geometrytype>point</geometrytype>
+      <description>A sally_port is used to pass through thick or city walls, and is a type of covered gate with two doors.</description>
+    </domainvalue>
+    <domainvalue value="kent_carriage_gate">
+      <geometrytype>point</geometrytype>
+      <description>A Kent carriage gate is used by local authorities in the UK to prevent motorised vehicles from accessing public rights of way whilst allowing most horse drawn carriages to pass. These are now becoming common on byways in the UK</description>
+    </domainvalue>
+  </domain>
+  <domain name="military">
+    <domainvalue value="airfield">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A place where military planes take off and land</description>
+    </domainvalue>
+    <domainvalue value="bunker">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Buildings, often build from concrete, to stand even heavier fire. Also WW2 pillboxes.</description>
+    </domainvalue>
+    <domainvalue value="barracks">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Buildings where soldiers live and work.</description>
+    </domainvalue>
+    <domainvalue value="danger_area">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Usually a large marked area around something like a firing range, bombing range, etc which is an exclusion zone.</description>
+    </domainvalue>
+    <domainvalue value="range">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>Where soldiers have practice with their weapons (firing, bombing, artillery, ...).</description>
+    </domainvalue>
+    <domainvalue value="naval_base">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A naval base</description>
+    </domainvalue>
+  </domain>
+  <domain name="geological">
+    <domainvalue value="palaeontological_site">
+      <geometrytype>point</geometrytype>
+      <geometrytype>polygon</geometrytype>
+      <description>A paleontological site is a place (or group of physical sites) in which remains of ancient living forms is preserved. Area under the study of the forms of life existing in prehistoric times, as represented by the fossils of plants, animals, and other organisms investigated using the discipline of paleontology.</description>
+    </domainvalue>
+  </domain>
+</OSMDomains>

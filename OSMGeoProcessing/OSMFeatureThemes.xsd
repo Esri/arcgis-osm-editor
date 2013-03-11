@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+ <xs:element name="geometrytype">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="point" />
+        <xs:enumeration value="line" />
+        <xs:enumeration value="mpolyline" />
+        <xs:enumeration value ="polygon" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+
+  <xs:element name="description" type="xs:string" />
+  
+  <xs:element name="domainvalue">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="geometrytype" minOccurs="1" maxOccurs="unbounded" />
+        <xs:element ref="description" />
+      </xs:sequence>
+      <xs:attribute name="value" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="domain">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="domainvalue" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="OSMDomains">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="domain" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
+

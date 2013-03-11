@@ -1,0 +1,364 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+Network Configuration for a generic cycle routing network
+- This configuration incurs a runtime performance penalty by using the slower Script evaluators,
+  but will work with more coordinate systems
+  
+OSM Tags:
+    - highway:      cycle navigable roads
+    - access:       road access restrictions
+    - barrier:      cycle barrier restrictions / time penalties
+    - oneway:       turn restrictions onto oneway roads
+    - surface:
+    - smoothness:   drive time penalty for rough roads
+    - bicycle:      restrictions on bicycle traffic
+-->
+<networkConfiguration>
+    <edge>
+        <name>roads</name>
+        <connect_policy>AnyVertex</connect_policy>
+        <osm_fields>
+            <osm_field>access</osm_field>
+            <osm_field>surface</osm_field>
+            <osm_field>smoothness</osm_field>
+            <osm_field>oneway</osm_field>
+            <osm_field>bicycle</osm_field>
+            <osm_field>name</osm_field>
+        </osm_fields>
+        <query>(highway IS NOT NULL) AND (LOWER(highway) in ('primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary', 'tertiary_link', 'unclassified', 'residential', 'living_street', 'service', 'track', 'cycleway', 'footway', 'bridleway', 'pedestrian', 'path'))</query>
+        <street_name_fields>
+            <direction_prefix></direction_prefix>
+            <type_prefix></type_prefix>
+            <street_name>osm_name</street_name>
+            <direction_suffix></direction_suffix>
+            <type_suffix></type_suffix>
+        </street_name_fields>
+    </edge>
+
+    <junction>
+        <name>barriers</name>
+        <connect_policy>Override</connect_policy>
+        <osm_fields>
+            <osm_field>access</osm_field>
+        </osm_fields>
+        <query>(barrier IS NOT NULL) AND (LOWER(barrier) in ('block','bollard','chain','debris','jersey_barrier','lift_gate','log','spikes','swing_gate'))</query>
+    </junction>
+
+    <turn>
+        <name>turns</name>
+    </turn>
+
+    <connectivity>
+        <group>
+            <source>roads</source>
+            <source>barriers</source>
+        </group>
+    </connectivity>
+
+    <directions>
+        <length_attr>Length</length_attr>
+        <length_units>Miles</length_units>
+        <!--<time_attr>CycleTime</time_attr>-->
+    </directions>
+
+    <network>
+        <!-- Speed - descriptor -->
+        <network_attribute>
+            <name>Speed</name>
+            <default_value>0</default_value>
+            <descriptor>
+                <datatype>double</datatype>
+                <evaluator_attributes>
+                    <source>roads</source>
+                    <direction>From-To</direction>
+                    <Field script_type="VBScript">
+                        <expression>speed</expression>
+                        <pre_logic>
+                            <![CDATA[
+                            speed = 16.0
+
+                            'Adjust speed for road surface
+                            Select Case LCase([osm_surface])
+                                Case "compacted"
+                                    speed = speed / 1.25
+                                Case "metal"
+                                    speed = speed / 1.50
+                                Case "unpaved", "gravel", "fine_gravel", "pebblestone", "sand", "dirt", "grass"
+                                    speed = speed / 2.00
+                            End Select
+                                
+                            'Adjust for smoothness
+                            Select Case LCase([osm_smoothness])
+                                Case "intermediate"
+                                    speed = speed / 1.25
+                                Case "bad"
+                                    speed = speed / 1.50
+                                Case "very_bad"
+                                    speed = speed / 1.75
+                                Case "horrible"
+                                    speed = speed / 2.00
+                                Case "very_horrible"
+                                    speed = speed / 3.00
+                                Case "impassable"
+                                    speed = speed / 5.00
+                            End Select
+                            ]]>
+                        </pre_logic>
+                    </Field>
+                </evaluator_attributes>
+                <evaluator_attributes>
+                    <source>roads</source>
+                    <direction>To-From</direction>
+                    <Field script_type="VBScript">
+                        <expression>speed</expression>
+                        <pre_logic>
+                            <![CDATA[
+                            speed = 16.0
+
+                            'Adjust speed for road surface
+                            Select Case LCase([osm_surface])
+                                Case "compacted"
+                                    speed = speed / 1.25
+                                Case "metal"
+                                    speed = speed / 1.50
+                                Case "unpaved", "gravel", "fine_gravel", "pebblestone", "sand", "dirt", "grass"
+                                    speed = speed / 2.00
+                            End Select
+                                
+                            'Adjust for smoothness
+                            Select Case LCase([osm_smoothness])
+                                Case "intermediate"
+                                    speed = speed / 1.25
+                                Case "bad"
+                                    speed = speed / 1.50
+                                Case "very_bad"
+                                    speed = speed / 1.75
+                                Case "horrible"
+                                    speed = speed / 2.00
+                                Case "very_horrible"
+                                    speed = speed / 3.00
+                                Case "impassable"
+                                    speed = speed / 5.00
+                            End Select
+                            ]]>
+                        </pre_logic>
+                    </Field>
+                </evaluator_attributes>
+            </descriptor>
+        </network_attribute>
+
+        <!-- CycleTime - cost -->
+        <network_attribute>
+            <name>CycleTime</name>
+            <default_value>0</default_value>
+            <cost useAsDefault="true">
+                <units>Minutes</units>
+                <datatype>double</datatype>
+                <evaluator_attributes>
+                    <source>roads</source>
+                    <direction>From-To</direction>
+                    <Script script_type="VBScript">
+                        <expression>cycleTime</expression>
+                        <pre_logic>
+                            <![CDATA[
+                            'Speed must not be 0 (division by 0).
+                            speed = Edge.AttributeValueByName("Speed")
+                            If speed = 0 Then
+                                speed = 0.001
+                            End If
+
+                            cycleTime = (Edge.AttributeValueByName("Length") * 60) / (speed * 1000)
+                            ]]>
+                        </pre_logic>
+                    </Script>
+                </evaluator_attributes>
+                <evaluator_attributes>
+                    <source>roads</source>
+                    <direction>To-From</direction>
+                    <Script script_type="VBScript">
+                        <expression>cycleTime</expression>
+                        <pre_logic>
+                            <![CDATA[
+                            'Speed must not be 0 (division by 0).
+                            speed = Edge.AttributeValueByName("Speed")
+                            If speed = 0 Then
+                                speed = 0.001
+                            End If
+
+                            cycleTime = (Edge.AttributeValueByName("Length") * 60) / (speed * 1000)
+                            ]]>
+                        </pre_logic>
+                    </Script>
+                </evaluator_attributes>
+                <evaluator_attributes>
+                    <source>barriers</source>
+                    <direction>To-From</direction>
+                    <Field script_type="VBScript">
+                        <expression>cycleTime</expression>
+                        <pre_logic>
+                            <![CDATA[
+                            cycleTime = 0
+                            
+                            Select Case LCase([highway])
+                                Case "stop", "traffic_signals"
+                                    cycleTime = cycleTime + 0.1
+                            End Select
+
+                            If NOT IsNull([barrier]) Then
+                                cycleTime = cycleTime + 0.1
+                            End If
+                            ]]>
+                        </pre_logic>
+                    </Field>
+                </evaluator_attributes>
+            </cost>
+        </network_attribute>
+
+        <!-- Length - cost -->
+        <network_attribute>
+            <name>Length</name>
+            <default_value>0</default_value>
+            <cost useAsDefault="false">
+                <units>Meters</units>
+                <datatype>double</datatype>
+                <evaluator_attributes>
+                    <source>roads</source>
+                    <direction>From-To</direction>
+                    <Field script_type="VBScript">
+                        <expression>[SHAPE]</expression>
+                    </Field>
+                </evaluator_attributes>
+                <evaluator_attributes>
+                    <source>roads</source>
+                    <direction>To-From</direction>
+                    <Field script_type="VBScript">
+                        <expression>[SHAPE]</expression>
+                    </Field>
+                </evaluator_attributes>
+            </cost>
+        </network_attribute>
+
+        <!-- Access - restriction -->
+        <network_attribute>
+            <name>Access</name>
+            <default_value>false</default_value>
+            <restriction useAsDefault="true">
+                <evaluator_attributes>
+                    <source>roads</source>
+                    <direction>From-To</direction>
+                    <Field script_type="VBScript">
+                        <expression>restricted</expression>
+                        <pre_logic>
+                            <![CDATA[
+                            restricted = False
+                            Select Case LCase([osm_access])
+                                Case "no", "destination", "delivery", "agricultural", "forestry", "private"
+                                    restricted = True
+                            End Select
+
+                            If restricted = False Then
+                                If LCase([osm_bicycle]) = "no" Then
+                                    restricted = True
+                                End If
+                            End If
+                            ]]>
+                        </pre_logic>
+                    </Field>
+                </evaluator_attributes>
+                <evaluator_attributes>
+                    <source>roads</source>
+                    <direction>To-From</direction>
+                    <Field script_type="VBScript">
+                        <expression>restricted</expression>
+                        <pre_logic>
+                            <![CDATA[
+                            restricted = False
+                            Select Case LCase([osm_access])
+                                Case "no", "destination", "delivery", "agricultural", "forestry", "private"
+                                    restricted = True
+                            End Select
+
+                            If restricted = False Then
+                                If LCase([osm_bicycle]) = "no" Then
+                                    restricted = True
+                                End If
+                            End If
+                            ]]>
+                        </pre_logic>
+                    </Field>
+                </evaluator_attributes>
+                <evaluator_attributes>
+                    <source>barriers</source>
+                    <direction>From-To</direction>
+                    <Field script_type="VBScript">
+                        <expression>restricted</expression>
+                        <pre_logic>
+                            <![CDATA[
+                            restricted = True
+                            Select Case LCase([osm_access])
+                                Case "yes", "designated", "official", "permissive"
+                                    restricted = False
+                            End Select
+                            ]]>
+                        </pre_logic>
+                    </Field>
+                </evaluator_attributes>
+            </restriction>
+        </network_attribute>
+
+        <!-- OneWay - restriction -->
+        <network_attribute>
+            <name>Oneway</name>
+            <default_value>false</default_value>
+            <restriction useAsDefault="true">
+                <evaluator_attributes>
+                    <source>roads</source>
+                    <direction>From-To</direction>
+                    <Field script_type="VBScript">
+                        <expression>restricted</expression>
+                        <pre_logic>
+                            <![CDATA[
+                            restricted = False
+                            Select Case LCase([osm_oneway])
+                                Case "yes", "true", "1"
+                                    restricted = True
+                            End Select
+                            ]]>
+                        </pre_logic>
+                    </Field>
+                </evaluator_attributes>
+                <evaluator_attributes>
+                    <source>roads</source>
+                    <direction>To-From</direction>
+                    <Field script_type="VBScript">
+                        <expression>restricted</expression>
+                        <pre_logic>
+                            <![CDATA[
+                            restricted = False
+                            Select Case LCase([osm_oneway])
+                                Case "-1", "reverse"
+                                    restricted = True
+                            End Select
+                            ]]>
+                        </pre_logic>
+                    </Field>
+                </evaluator_attributes>
+            </restriction>
+        </network_attribute>
+
+        <!-- TurnRestriction - restriction -->
+        <network_attribute>
+            <name>TurnRestriction</name>
+            <default_value>0</default_value>
+            <restriction useAsDefault="true">
+                <evaluator_attributes>
+                    <source>turns</source>
+                    <direction>From-To</direction>
+                    <Constant>
+                        <value>true</value>
+                    </Constant>
+                </evaluator_attributes>
+            </restriction>
+        </network_attribute>
+    </network>
+</networkConfiguration>

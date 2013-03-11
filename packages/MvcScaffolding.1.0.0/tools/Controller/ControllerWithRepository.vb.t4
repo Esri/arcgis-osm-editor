@@ -1,0 +1,141 @@
+﻿<#@ template language="C#" HostSpecific="True"  inherits="DynamicTransform" #>
+<#@ Output Extension="vb" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+<#@ import namespace="EnvDTE" #>
+Imports System.Linq
+Imports System.Web.Mvc
+<# if(!string.IsNullOrEmpty(Model.ModelTypeNamespace)) { #>
+Imports <#= Model.ModelTypeNamespace #>
+<# } #>
+<# if((!string.IsNullOrEmpty(Model.RepositoriesNamespace)) && (Model.RepositoriesNamespace != Model.ModelTypeNamespace)) { #>
+Imports <#= Model.RepositoriesNamespace #>
+<# } #>
+
+<#= T4Scaffolding.Namespaces.BeginVb(Model.ControllerNamespace, Model.DefaultNamespace) #>
+<#  
+	var modelType = (CodeType)Model.ModelType; 
+	var modelName = modelType.Name; 
+	var modelNamePlural = Model.ModelTypePluralized; 
+	var modelVariable = modelName.ToLower(); 
+	var relatedEntities = ((IEnumerable)Model.RelatedEntities).OfType<RelatedEntityInfo>();
+	var primaryKeyProperty = modelType.VisibleMembers().OfType<CodeProperty>().Single(x => x.Name == Model.PrimaryKey);
+	var routingName = Regex.Replace(Model.ControllerName, "Controller$", "", RegexOptions.IgnoreCase);
+#>
+    Public Class <#= Model.ControllerName #> : Inherits Controller
+<# foreach(var repository in Repositories.Values) { #>
+		Private ReadOnly <#= repository.VariableName #> As I<#= repository.RepositoryTypeName #>
+<# } #>
+
+		' If you are using Dependency Injection, you can delete the following constructor
+        Public Sub New()
+			Me.New(<#= String.Join(", ", Repositories.Values.Select(x => "New " + x.RepositoryTypeName + "()")) #>)
+        End Sub
+
+        Public Sub New(<#= String.Join(", ", Repositories.Values.Select(x => "ByVal " + x.VariableName + " As I" + x.RepositoryTypeName)) #>)
+<# foreach(var repository in Repositories.Values) { #>
+			Me.<#= repository.VariableName #> = <#= repository.VariableName #>
+<# } #>
+        End Sub
+
+        ' GET: /<#= routingName #>/
+        Public Function Index() As ViewResult
+<#
+	var propertiesToInclude = relatedEntities.Select(relation => relation.LazyLoadingProperty).Where(x => x != null);
+	var includeExpression = String.Join(", ", propertiesToInclude.Select(x => String.Format("Function({0}) {0}.{1}", modelVariable, x.Name)));
+	if (!string.IsNullOrEmpty(includeExpression)) {
+		includeExpression = "Including(" + includeExpression + ")";
+	}
+#>
+            Return View(<#= Repositories[modelType.FullName].VariableName #>.All<#= includeExpression #>)
+        End Function
+
+        ' GET: /<#= routingName #>/Details/5
+        Public Function Details(ByVal id As <#= primaryKeyProperty.Type.AsString #>) As ViewResult
+            Return View(<#= Repositories[modelType.FullName].VariableName #>.Find(id))
+        End Function
+
+        ' GET: /<#= routingName #>/Create
+        Public Function Create() As ActionResult
+<# foreach(var relatedEntity in relatedEntities.Where(x => x.RelationType == RelationType.Parent)) { #>
+			ViewBag.Possible<#= relatedEntity.RelationNamePlural #> = <#= Repositories[relatedEntity.RelatedEntityType.FullName].VariableName #>.All
+<# } #>
+            Return View()
+        End Function
+
+        ' POST: /<#= routingName #>/Create
+        <HttpPost>
+        Public Function Create(ByVal <#= modelVariable #> As <#= modelName #>) As ActionResult
+            If ModelState.IsValid
+                <#= Repositories[modelType.FullName].VariableName #>.InsertOrUpdate(<#= modelVariable #>)
+                <#= Repositories[modelType.FullName].VariableName #>.Save()
+                Return RedirectToAction("Index")
+			Else
+<# foreach(var relatedEntity in relatedEntities.Where(x => x.RelationType == RelationType.Parent)) { #>
+				ViewBag.Possible<#= relatedEntity.RelationNamePlural #> = <#= Repositories[relatedEntity.RelatedEntityType.FullName].VariableName #>.All
+<# } #>
+				Return View()
+            End If
+        End Function
+        
+        ' GET: /<#= routingName #>/Edit/5
+        Public Function Edit(ByVal id As <#= primaryKeyProperty.Type.AsString #>) As ActionResult
+<# foreach(var relatedEntity in relatedEntities.Where(x => x.RelationType == RelationType.Parent)) { #>
+			ViewBag.Possible<#= relatedEntity.RelationNamePlural #> = <#= Repositories[relatedEntity.RelatedEntityType.FullName].VariableName #>.All
+<# } #>
+            Return View(<#= Repositories[modelType.FullName].VariableName #>.Find(id))
+        End Function
+
+        ' POST: /<#= routingName #>/Edit/5
+        <HttpPost>
+        Public Function Edit(ByVal <#= modelVariable #> As <#= modelName #>) As ActionResult
+            If ModelState.IsValid
+                <#= Repositories[modelType.FullName].VariableName #>.InsertOrUpdate(<#= modelVariable #>)
+                <#= Repositories[modelType.FullName].VariableName #>.Save()
+                Return RedirectToAction("Index")
+			Else
+<# foreach(var relatedEntity in relatedEntities.Where(x => x.RelationType == RelationType.Parent)) { #>
+				ViewBag.Possible<#= relatedEntity.RelationNamePlural #> = <#= Repositories[relatedEntity.RelatedEntityType.FullName].VariableName #>.All
+<# } #>
+				Return View()
+            End If
+        End Function
+
+        ' GET: /<#= routingName #>/Delete/5
+        Public Function Delete(ByVal id As <#= primaryKeyProperty.Type.AsString #>) As ActionResult
+            Return View(<#= Repositories[modelType.FullName].VariableName #>.Find(id))
+        End Function
+
+        ' POST: /<#= routingName #>/Delete/5
+        <HttpPost, ActionName("Delete")>
+        Public Function DeleteConfirm(ByVal id As <#= primaryKeyProperty.Type.AsString #>) As ActionResult
+            <#= Repositories[modelType.FullName].VariableName #>.Delete(id)
+            <#= Repositories[modelType.FullName].VariableName #>.Save()
+            Return RedirectToAction("Index")
+        End Function
+    End Class
+<#= T4Scaffolding.Namespaces.EndVb(Model.ControllerNamespace, Model.DefaultNamespace) #>
+<#+
+class RepositoryInfo {
+    public string RepositoryTypeName { get; set; }
+    public string VariableName { get; set; }
+}
+
+IDictionary<string, RepositoryInfo> _repositories;
+IDictionary<string, RepositoryInfo> Repositories {
+	get {
+		if (_repositories == null) {
+			var relatedEntities = ((IEnumerable)Model.RelatedEntities).OfType<RelatedEntityInfo>();
+			var relatedTypes = relatedEntities.Where(x => x.RelationType == RelationType.Parent).Select(x => x.RelatedEntityType).Distinct();
+			_repositories = relatedTypes.ToDictionary(
+				relatedType => relatedType.FullName,
+				relatedType => new RepositoryInfo { RepositoryTypeName = relatedType.Name + "Repository", VariableName = relatedType.Name.ToLower() + "Repository" }
+			); 
+			_repositories[((CodeType)Model.ModelType).FullName] = new RepositoryInfo { RepositoryTypeName = Model.Repository, VariableName = ((CodeType)Model.ModelType).Name.ToLower() + "Repository" };
+		}
+		return _repositories;
+	}
+}
+#>

@@ -1,0 +1,55 @@
+@model IEnumerable<OSMWeb.Models.OsmConfig>
+@{
+    ViewBag.Title = "Index";
+}
+<div class="title">
+<h2>Feature Service List</h2>
+</div>
+
+<div>@Html.ActionLink("> Create new feature service", "Create")</div>
+
+@foreach (var item in Model)
+{
+    <div class="service-list-row">
+        <div class="service-list-row-actions">
+            @Html.ActionLink("Remove", "Delete", new { id = item.ID })
+        </div>
+        <h3>
+            @item.FeatureDataSet
+        </h3>
+        <img src="@Url.Content("~/Images/map-placeholder.png")" style="width: 100px; height: 65px; padding: 0.1em;
+            border: 1px solid #CCC; float: left;" />
+        <div class="service-list-row-content">
+            Created by: <strong>@item.Username</strong><br />
+            Link:
+            @{
+    if (@item.FeatureService == null || @item.FeatureService.Equals(""))
+    {
+                    <span>link not available</span>
+    }
+    else
+    {
+                    <a href="@item.FeatureService" title="ServiceLink">@item.FeatureService</a>    
+    }
+            }
+            <div class="service-list-row-data">
+            
+            Data: @Html.ActionLink("Edit feature data", "EditFeatures", new { id = item.ID })
+
+            @{
+    if (item.RefreshInterval > 0)
+    {
+                    <span>(synchronizing every @item.RefreshInterval</span>
+    }
+    else
+    {
+                    <span>(currently not synchronized with OSM</span>
+    }
+            }
+           @* <a href="">change</a>*@)
+            <span>Last Sync at @item.LastTimeRunned</span>
+            </div>
+        </div>
+    </div>
+}
+<div class="clear"></div>

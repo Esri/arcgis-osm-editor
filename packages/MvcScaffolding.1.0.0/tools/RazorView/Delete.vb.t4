@@ -1,0 +1,139 @@
+﻿<#@ Template Language="VB" HostSpecific="True" Inherits="DynamicTransform" #>
+<#@ Output extension="vbhtml" #>
+<#@ assembly name="System.ComponentModel.DataAnnotations" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Data.Entity" #>
+<#@ assembly name="System.Data.Linq" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.ComponentModel.DataAnnotations" #>
+<#@ import namespace="System.Data.Linq.Mapping" #>
+<#@ import namespace="System.Data.Objects.DataClasses" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Reflection" #>
+<#@ import namespace="EnvDTE" #>
+<# Dim viewDataType = CType(Model.ViewDataType, CodeType) #>
+<# If viewDataType IsNot Nothing #>
+@ModelType <#= viewDataType.FullName #>
+
+<# End If #>
+@Code
+    ViewData("Title") = "<#= Model.ViewName #>"
+<# If Not String.IsNullOrEmpty(Model.Layout) #>
+    Layout = "<#= Model.Layout #>"
+<# End If #>
+End Code
+
+<h2><#= Model.ViewName #></h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<fieldset>
+    <legend><#= If(Model.ViewDataTypeName, String.Empty) #></legend>
+<#
+For Each modelProp As ModelProperty In GetModelProperties(Model.ViewDataType, True)
+    If (Not modelProp.IsPrimaryKey AndAlso Not modelProp.IsForeignKey) Then
+#>
+
+    <div class="display-label"><#= modelProp.Name #></div>
+    <div class="display-field">@<#= modelProp.ValueExpression #></div>
+<#
+    End If
+Next
+#>
+</fieldset>
+
+@Using Html.BeginForm()
+    @<p>
+        <input type="submit" value="Delete" /> |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+End Using
+
+<#+
+' Describes the information about a property on the model
+Private Class ModelProperty
+    Public Name As String
+    Public ValueExpression As String
+    Public Type As CodeTypeRef
+    Public IsReadOnly As Boolean
+    Public IsPrimaryKey As Boolean
+	Public IsForeignKey As Boolean
+End Class
+
+' Change this list to include any non-primitive types you think should be eligible to be edited using a textbox
+Private Shared bindableNonPrimitiveTypes As Type() = New Type() {
+    GetType(String),
+    GetType(Decimal),
+    GetType(Guid),
+    GetType(DateTime),
+    GetType(DateTimeOffset),
+    GetType(TimeSpan)
+}
+
+' Call this to get the list of properties in the model. Change this to modify or add your
+' own default formatting for display values.
+Private Function GetModelProperties(ByVal type As CodeType, ByVal includeUnbindableProperties As Boolean) As List(Of ModelProperty)
+    Dim results As List(Of ModelProperty) = GetEligibleProperties(type, includeUnbindableProperties)
+    
+    For Each modelProp As ModelProperty In results
+        If ((modelProp.Type.UnderlyingTypeIs(GetType(Double))) OrElse (modelProp.Type.UnderlyingTypeIs(GetType(Decimal)))) Then
+            modelProp.ValueExpression = ("String.Format(""{0:F}"", " & modelProp.ValueExpression & ")")
+        ElseIf (modelProp.Type.UnderlyingTypeIs(GetType(DateTime))) Then
+            modelProp.ValueExpression = ("String.Format(""{0:g}"", " & modelProp.ValueExpression & ")")
+		ElseIf (Not IsBindableType(modelProp.Type))
+			modelProp.ValueExpression = GetValueExpression("Model." & modelProp.Name, CType(modelProp.Type.CodeType, CodeType))
+        End If
+    Next
+
+    Return results
+End Function
+
+' Change this list to include the names of properties that should be selected to represent an entity as a single string
+Private Shared displayPropertyNames As String() = New String() { "Name", "Title", "LastName", "Surname", "Subject", "Count" }
+
+Private Function GetValueExpression(ByVal propertyExpression As String, ByVal propertyType As CodeType) As String
+	If propertyType IsNot Nothing Then
+		Dim chosenSubproperty = If(propertyType.DisplayColumnProperty(), propertyType.FindProperty(displayPropertyNames))
+		If chosenSubproperty IsNot Nothing Then 
+			Dim toStringSuffix = If(chosenSubproperty.Type.AsFullName = "System.String", "", ".ToString()")
+			Return String.Format("(If({0} Is Nothing, ""None"", {0}.{1}{2}))", propertyExpression, chosenSubproperty.Name, toStringSuffix)
+		End If
+	End If
+	Return "Html.DisplayTextFor(Function(model) " & propertyExpression & ").ToString()"
+End Function
+
+' Helper
+Private Function GetEligibleProperties(ByVal type As CodeType, ByVal includeUnbindableProperties As Boolean) As List(Of ModelProperty)
+    Dim results As New List(Of ModelProperty)
+
+	If type IsNot Nothing Then
+		For Each prop As CodeProperty In type.VisibleMembers().OfType(Of CodeProperty)()
+			Dim propValue = prop
+			If (prop.IsReadable() AndAlso (Not prop.HasIndexParameters()) AndAlso (includeUnbindableProperties OrElse IsBindableType(prop.Type))) Then
+				results.Add(New ModelProperty() With { _
+					.Name = prop.Name, _
+					.ValueExpression = ("Model." & prop.Name), _
+					.Type = prop.Type, _
+					.IsPrimaryKey = Model.PrimaryKeyName = prop.Name, _
+					.IsReadOnly = Not prop.IsWriteable(), _
+					.IsForeignKey = ParentRelations.Any(Function(x) propValue.Name = x.RelationProperty.Name) _
+				})
+			End If
+		Next
+	End If
+
+    Return results
+End Function
+
+Private ReadOnly Property ParentRelations As IEnumerable(Of RelatedEntityInfo)
+	Get
+		Return CType(Model.RelatedEntities, IEnumerable).OfType(Of RelatedEntityInfo)().Where(Function(x) x.RelationType = RelationType.Parent)
+	End Get
+End Property
+
+' Helper
+Private Function IsBindableType(ByVal type As CodeTypeRef) As Boolean
+    Return type.UnderlyingIsPrimitive() OrElse bindableNonPrimitiveTypes.Any(Function(x) type.UnderlyingTypeIs(x))
+End Function
+#>

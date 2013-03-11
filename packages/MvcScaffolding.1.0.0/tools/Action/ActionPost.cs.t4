@@ -1,0 +1,11 @@
+<#@ Template Language="C#" HostSpecific="True" Inherits="DynamicTransform" #>
+<# var viewModel = (EnvDTE.CodeType)Model.ViewModel; #>
+[HttpPost, ActionName("<#= Model.Action #>")]
+public ActionResult <#= Model.Action #>Post(<# if (viewModel != null) { #><#= viewModel.Name #> <#= viewModel.Name.ToLower() #><# } #>)
+{
+    if (ModelState.IsValid) {
+	    return RedirectToAction("Index");
+	} else {
+		return View(<# if (viewModel != null) { #><#= viewModel.Name.ToLower() #><# } #>);
+	}
+}

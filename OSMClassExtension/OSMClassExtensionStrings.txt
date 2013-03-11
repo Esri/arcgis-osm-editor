@@ -1,0 +1,4 @@
+﻿OSMClassExtension_FeatureInspector_pointnumber_exceeeded_in_ring=The existing number of vertices exceeds the allowed number of {0} in the ring index {1}.
+OSMClassExtension_emptyGeometry=The object to be changed contains an empty geometry.
+OSMClassExtensionManager_Exclusive_Lock_Exception=Unable to get an exclusive schema lock due to an existing lock on [{0}] by user [{1}].	
+OSMClassExtensionManager_Reading_Lock_Exception=Unable to acquire existing schema lock type.

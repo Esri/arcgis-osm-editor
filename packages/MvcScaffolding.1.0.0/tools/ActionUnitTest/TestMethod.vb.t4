@@ -1,0 +1,42 @@
+<#@ Template Language="VB" HostSpecific="True" Inherits="DynamicTransform" #>
+<#@ assembly name="System.Web.Mvc" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="EnvDTE" #>
+<# 
+	Dim viewModel = CType(Model.ViewModel, CodeType)
+	Dim actionMethodInfo = CType(Model.Controller, CodeType).VisibleMembers().OfType(Of CodeFunction)().FirstOrDefault(Function(x) x.Name = Model.ActionMethod)
+	Dim defaultActionMethodArgs = If(actionMethodInfo Is Nothing, Nothing, System.Linq.Enumerable.Range(0, actionMethodInfo.Parameters.Count).Select(Function(x) "Nothing"))
+#>
+
+<TestMethod>
+Public Sub <#= Model.TestMethod #>()
+	' Arrange
+	Dim controller = New <#= CType(Model.Controller, EnvDTE.CodeType).Name #>()
+
+	' Act
+<# If actionMethodInfo Is Nothing Then #>
+
+	' Assert
+<# ElseIf CType(actionMethodInfo.Type, CodeTypeRef).IsType(Of System.Web.Mvc.ViewResult)() Then #>
+	Dim viewResult = controller.<#= Model.ActionMethod #>(<#= String.Join(", ", CType(defaultActionMethodArgs, IEnumerable(Of String))) #>)
+	Dim viewModel = <# If viewModel IsNot Nothing Then #>CType(viewResult.Model, <#= viewModel.Name #>)<# Else #>viewResult.Model<# End If #>
+
+	' Assert
+	' Assert.AreEqual("expected value", viewModel.SomeProperty)
+<# ElseIf CType(actionMethodInfo.Type, CodeTypeRef).IsType(Of System.Web.Mvc.RedirectToRouteResult)() Then #>
+	Dim redirectToRouteResult = controller.<#= Model.ActionMethod #>(<#= String.Join(", ", CType(defaultActionMethodArgs, IEnumerable(Of String))) #>)
+
+	' Assert
+	'Assert.AreEqual("ActionName", redirectToRouteResult.RouteValues("action"))
+<# ElseIf CType(actionMethodInfo.Type, CodeTypeRef).IsType(Of System.Web.Mvc.ActionResult)() Then #>
+	Dim actionResult = controller.<#= Model.ActionMethod #>(<#= String.Join(", ", CType(defaultActionMethodArgs, IEnumerable(Of String))) #>)
+
+	' Assert
+<# Else #>
+
+	' Assert
+<# End If #>
+	Assert.Inconclusive() ' Todo: Make assertions, then remove this line
+End Sub

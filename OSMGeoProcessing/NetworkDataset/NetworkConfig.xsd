@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="OSMNetworkConfiguation" xmlns:xs="http://www.w3.org/2001/XMLSchema"  version="1.0">
+    <xs:element name="networkConfiguration">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="edge" minOccurs="1" maxOccurs="unbounded" />
+                <xs:element ref="junction" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element ref="turn" minOccurs="0" maxOccurs="1" />
+                <xs:element ref="connectivity" minOccurs="1" maxOccurs="1" />
+                <xs:element ref="directions" minOccurs="0" maxOccurs="1" />
+                <xs:element ref="network" minOccurs="0" maxOccurs="1" />
+            </xs:sequence>
+        </xs:complexType>
+        
+        <xs:unique name="attr_key">
+            <xs:selector xpath="network/network_attribute" />
+            <xs:field xpath="name" />
+        </xs:unique>
+    </xs:element>
+
+    <xs:element name="edge">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:ID" minOccurs="1" maxOccurs="1" />
+                <xs:element name="connect_policy" minOccurs="0" maxOccurs="1" >
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="AnyVertex" />
+                            <xs:enumeration value="EndVertex" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element ref="osm_fields" minOccurs="0" maxOccurs="1" />
+                <xs:element ref="query" minOccurs="0" maxOccurs="1" />
+                <xs:element ref="street_name_fields" minOccurs="0" maxOccurs="1" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="junction">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:ID" minOccurs="1" maxOccurs="1" />
+                <xs:element name="connect_policy" minOccurs="0" maxOccurs="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="Honor" />
+                            <xs:enumeration value="Override" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element ref="osm_fields" minOccurs="0" maxOccurs="1" />
+                <xs:element ref="query" minOccurs="0" maxOccurs="1" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="osm_fields">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="osm_field" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="query" type="xs:string" />
+
+    <xs:element name="street_name_fields">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="direction_prefix" type="xs:string" minOccurs="0" maxOccurs="1" />
+                <xs:element name="type_prefix" type="xs:string" minOccurs="0" maxOccurs="1" />
+                <xs:element name="street_name" type="xs:string" minOccurs="1" maxOccurs="1" />
+                <xs:element name="direction_suffix" type="xs:string" minOccurs="0" maxOccurs="1" />
+                <xs:element name="type_suffix" type="xs:string" minOccurs="0" maxOccurs="1" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="turn">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:ID" minOccurs="1" maxOccurs="1" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="connectivity">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="group" minOccurs="1" maxOccurs="5" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="group">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="source" type="xs:IDREF" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="directions">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="length_attr" type="xs:string" minOccurs="0" maxOccurs="1" />
+                <xs:element name="length_units" minOccurs="0" maxOccurs="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="Miles" />
+                            <xs:enumeration value="Kilometers" />
+                            <xs:enumeration value="Meters" />
+                            <xs:enumeration value="Yards" />
+                            <xs:enumeration value="Feet" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="time_attr" type="xs:string" minOccurs="0" maxOccurs="1" />
+                <xs:element name="road_class_attr" type="xs:string" minOccurs="0" maxOccurs="1" />
+            </xs:sequence>
+        </xs:complexType>
+
+        <xs:keyref name="lengthattr_refkey" refer="attr_key">
+            <xs:selector xpath="." />
+            <xs:field xpath="length_attr" />
+        </xs:keyref>
+
+        <xs:keyref name="timeattr_refkey" refer="attr_key">
+            <xs:selector xpath="." />
+            <xs:field xpath="time_attr" />
+        </xs:keyref>
+
+        <xs:keyref name="roadclassattr_refkey" refer="attr_key">
+            <xs:selector xpath="." />
+            <xs:field xpath="road_class_attr" />
+        </xs:keyref>
+    </xs:element>
+    
+    <xs:element name="network">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="network_attribute" minOccurs="1" maxOccurs="unbounded" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="cost">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="units" minOccurs="1" maxOccurs="1" />
+                <xs:element ref="datatype" minOccurs="1" maxOccurs="1" />
+                <xs:element ref="parameter" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element ref="evaluator_attributes" minOccurs="0" maxOccurs="unbounded" />
+            </xs:sequence>
+            <xs:attribute name="useAsDefault" type="xs:boolean" use="optional" default="true" />
+        </xs:complexType>
+    </xs:element>
+
+    <!-- restriction will always be of type boolean -->
+    <xs:element name="restriction">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="parameter" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element ref="evaluator_attributes" minOccurs="0" maxOccurs="unbounded" />
+            </xs:sequence>
+            <xs:attribute name="useAsDefault" type="xs:boolean" use="optional" default="true"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="datatype" >
+        <xs:simpleType>
+            <xs:restriction base="xs:NMTOKEN">
+                <xs:enumeration value="boolean" />
+                <xs:enumeration value="float" />
+                <xs:enumeration value="double" />
+                <xs:enumeration value="integer" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+
+    <xs:element name="descriptor">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="datatype" minOccurs="1" maxOccurs="1" />
+                <xs:element ref="parameter" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element ref="evaluator_attributes" minOccurs="0" maxOccurs="unbounded" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- hierachy will always be of type integer -->
+    <xs:element name="hierachy">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="parameter" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element ref="evaluator_attributes" minOccurs="0" maxOccurs="unbounded" />
+            </xs:sequence>
+            <xs:attribute name="useAsDefault" type="xs:boolean" use="optional" default="true"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="network_attribute">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
+                <xs:element name="default_value" type="xs:string" minOccurs="1" maxOccurs="1" />
+                <xs:choice>
+                    <xs:element ref="cost" />
+                    <xs:element ref="descriptor" />
+                    <xs:element ref="hierachy" />
+                    <xs:element ref="restriction" />
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="units">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="Unknown" />
+                <xs:enumeration value="Inches" />
+                <xs:enumeration value="Feet" />
+                <xs:enumeration value="Yards" />
+                <xs:enumeration value="Miles" />
+                <xs:enumeration value="NauticalMiles" />
+                <xs:enumeration value="Millimeters" />
+                <xs:enumeration value="Centimeters" />
+                <xs:enumeration value="Meters" />
+                <xs:enumeration value="Kilometers" />
+                <xs:enumeration value="DecimalDegrees" />
+                <xs:enumeration value="Decimeters" />
+                <xs:enumeration value="Seconds" />
+                <xs:enumeration value="Minutes" />
+                <xs:enumeration value="Hours" />
+                <xs:enumeration value="Days" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+
+    <xs:element name="direction">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="From-To" />
+                <xs:enumeration value="To-From" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+
+    <xs:element name="parameter">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
+                <xs:element ref="datatype" minOccurs="1" maxOccurs="1" />
+                <xs:element name="default_value" type="xs:string" minOccurs="0" maxOccurs="1" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="evaluator_attributes">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="source" type="xs:IDREF" minOccurs="1" maxOccurs="1" />
+                <xs:element ref="direction" minOccurs="1" maxOccurs="1" />
+                <xs:choice>
+                    <xs:element ref="Constant" />
+                    <xs:element ref="Field" />
+                    <xs:element ref="Script" />
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Constant" >
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="value" minOccurs="1" maxOccurs="1" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Field">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="expression" type="xs:string" minOccurs="1" maxOccurs="1" />
+                <xs:element name="pre_logic" type="xs:string" minOccurs="0" maxOccurs="1" />
+            </xs:sequence>
+            <xs:attribute ref="script_type" use="required" />
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Script">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="expression" type="xs:string" minOccurs="1" maxOccurs="1" />
+                <xs:element name="pre_logic" type="xs:string" minOccurs="0" maxOccurs="1" />
+            </xs:sequence>
+            <xs:attribute ref="script_type" use="required" />
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:attribute name="script_type">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="VBScript" />
+                <xs:enumeration value="Python" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:attribute>
+
+</xs:schema>

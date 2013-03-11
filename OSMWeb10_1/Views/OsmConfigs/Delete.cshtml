@@ -1,0 +1,45 @@
+<head>
+    <script type="text/javascript">
+        $(document).ready(function () {            
+            $("#DeleteButton").click(function () {
+                //$(this).val("Deleting...");
+                //$(this).attr("disabled", "disabled");
+                
+            });
+        });
+    </script>
+</head>
+
+@model OSMWeb.Models.OsmConfig
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<fieldset>
+    <legend>OsmConfig</legend>
+
+    <div class="display-label">Username</div>
+    <div class="display-field">@Model.Username</div>
+
+    <div class="display-label">Password</div>
+    <div class="display-field">******</div>
+
+    <div class="display-label">FeatureDataSet</div>
+    <div class="display-field">@Model.FeatureDataSet</div>
+
+    <div class="display-label">Extent</div>
+    <div class="display-field">@Model.Extent</div>
+</fieldset>
+@using (Html.BeginForm()) {
+    <p>
+        <input type="submit" id="DeleteButton" value="Delete" /> |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+}
+
+

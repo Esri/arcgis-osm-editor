@@ -1,0 +1,81 @@
+<#@ Template Language="VB" HostSpecific="True" Inherits="DynamicTransform" #>
+<#@ Output extension="aspx" #>
+<#
+Dim viewDataType = CType(Model.ViewDataType, EnvDTE.CodeType)
+Dim mvcViewDataTypeGenericString As String = If(viewDataType IsNot Nothing, "(Of " & viewDataType.FullName & ")", String.Empty)
+Dim CPHCounter As Integer = 1
+#>
+<#
+If Model.IsContentPage Then
+#>
+<%@ Page Title="" Language="VB" MasterPageFile="~<#= Model.Layout #>" Inherits="System.Web.Mvc.ViewPage<#= mvcViewDataTypeGenericString #>" %>
+
+<#
+    For Each cphid As String In Model.SectionNames 
+        If cphid.Equals("TitleContent", StringComparison.OrdinalIgnoreCase) Then
+#>
+<asp:Content ID="Content<#= CPHCounter #>" ContentPlaceHolderID="<#= cphid #>" runat="server">
+	<#= Model.ViewName #>
+</asp:Content>
+
+<#
+                CPHCounter += 1
+        End If
+    Next
+#>
+<asp:Content ID="Content<#= CPHCounter #>" ContentPlaceHolderID="<#= Model.PrimarySectionName #>" runat="server">
+
+	<h2><#= Model.ViewName #></h2>
+
+<#
+Else
+#>
+<%@ Page Language="VB" Inherits="System.Web.Mvc.ViewPage<#= mvcViewDataTypeGenericString #>" %>
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <title><#= Model.ViewName #></title>
+</head>
+<body>
+<#
+    PushIndent("    ")
+End If
+#>
+<#
+If Not Model.IsContentPage Then
+#>
+<div>
+    
+</div>
+<#
+End If
+#>
+<#
+' The following code closes the asp:Content tag used in the case of a master page and the body and html tags in the case of a regular view page
+#>
+<#
+If Model.IsContentPage Then
+#>
+</asp:Content>
+<#
+	For Each cphid As String In Model.SectionNames 
+        If String.Compare(cphid, "TitleContent", StringComparison.OrdinalIgnoreCase) <> 0 AndAlso String.Compare(cphid, Model.PrimarySectionName, StringComparison.OrdinalIgnoreCase) <> 0 Then
+            CPHCounter += 1
+#>
+
+<asp:Content ID="Content<#= CPHCounter #>" ContentPlaceHolderID="<#= cphid #>" runat="server">
+</asp:Content>
+<#
+        End If
+    Next
+#>
+<#
+Else If Not Model.IsContentPage Then
+    ClearIndent()
+#>
+</body>
+</html>
+<#
+End If
+#>

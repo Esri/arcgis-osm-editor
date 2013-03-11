@@ -1,0 +1,20 @@
+﻿@model IEnumerable<OSMWeb.Models.OSMLogs>
+@{
+    ViewBag.Title = "Index";
+}
+<div class="title">
+<h2>Logs List</h2>
+</div>
+
+<div>@Html.ActionLink("> Clear Logs", "DeleteAll")</div><div class="back-link">@Html.ActionLink("< Back to list", "Index", "Home")</div>
+
+@foreach (var item in Model)
+{
+    <div class="service-list-row">       
+        <div class="service-list-row-content">
+            @item.When @item.SectionName @item.Description<br />                        
+        </div>
+    </div>
+}
+<div class="clear"></div>
+

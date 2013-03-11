@@ -1,0 +1,129 @@
+﻿<#@ template language="C#" HostSpecific="True"  inherits="DynamicTransform" #>
+<#@ Output Extension="vb" #>
+<#@ assembly name="System.Data.Entity" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+<#@ import namespace="EnvDTE" #>
+Imports System.Data
+Imports System.Data.Entity
+Imports System.Linq
+Imports System.Web.Mvc
+<# if(!string.IsNullOrEmpty(Model.ModelTypeNamespace)) { #>
+Imports <#= Model.ModelTypeNamespace #>
+<# } #>
+<# if((!string.IsNullOrEmpty(Model.DbContextNamespace)) && (Model.DbContextNamespace != Model.ModelTypeNamespace)) { #>
+Imports <#= Model.DbContextNamespace #>
+<# } #>
+
+<#= T4Scaffolding.Namespaces.BeginVb(Model.ControllerNamespace, Model.DefaultNamespace) #>
+<#  
+    var modelType = (CodeType)Model.ModelType; 
+    var modelName = modelType.Name; 
+    var modelNamePlural = Model.ModelTypePluralized; 
+    var modelVariable = modelName.ToLower(); 
+    var relatedEntities = ((IEnumerable)Model.RelatedEntities).OfType<RelatedEntityInfo>();
+    var primaryKeyProperty = modelType.VisibleMembers().OfType<CodeProperty>().Single(x => x.Name == Model.PrimaryKey);
+    var routingName = Regex.Replace(Model.ControllerName, "Controller$", "", RegexOptions.IgnoreCase);
+    var isObjectContext = ((CodeType)Model.DbContextType).IsAssignableTo<System.Data.Objects.ObjectContext>();
+#>
+    Public Class <#= Model.ControllerName #> : Inherits Controller
+        Private context As <#= ((CodeType)Model.DbContextType).Name #> = New <#= ((CodeType)Model.DbContextType).Name #>()
+
+        ' GET: /<#= routingName #>/
+        Public Function Index() As ViewResult 
+<#
+    var propertiesToInclude = relatedEntities.Select(relation => relation.LazyLoadingProperty).Where(x => x != null);
+    var includeExpressions = isObjectContext 
+        ? String.Join("", propertiesToInclude.Select(x => String.Format(".Include(\"{0}\")", x.Name)))
+        : String.Join("", propertiesToInclude.Select(x => String.Format(".Include(Function({0}) {0}.{1})", modelVariable, x.Name)));
+#>
+            return View(context.<#= modelNamePlural #><#= includeExpressions #>.ToList())
+        End Function
+
+        ' GET: /<#= routingName #>/Details/5
+        Public Function Details(id As <#= primaryKeyProperty.Type.AsString #>) As ViewResult
+            Dim <#= modelVariable #> As <#= modelName #> = context.<#= modelNamePlural #>.Single(Function(x) x.<#= primaryKeyProperty.Name #> = id)
+            Return View(<#= modelVariable #>)
+        End Function
+
+        ' GET: /<#= routingName #>/Create
+        Public Function Create() As ViewResult
+<# foreach(var relatedEntity in relatedEntities.Where(x => x.RelationType == RelationType.Parent)) { #>
+            ViewBag.Possible<#= relatedEntity.RelationNamePlural #> = context.<#= relatedEntity.RelatedEntityTypeNamePlural #>
+<# } #>
+            Return View()
+        End Function
+
+        ' POST: /<#= routingName #>/Create
+        <HttpPost>
+        Public Function Create(<#= modelVariable #> As <#= modelName #>) As ActionResult
+            If ModelState.IsValid
+<# if(primaryKeyProperty.Type.AsString == "System.Guid") { #>
+                <#= modelVariable #>.<#= primaryKeyProperty.Name #> = Guid.NewGuid()
+<# } #>
+<# if(isObjectContext) { #>
+                context.<#= modelNamePlural #>.AddObject(<#= modelVariable #>)
+<# } else { #>
+                context.<#= modelNamePlural #>.Add(<#= modelVariable #>)
+<# } #>
+                context.SaveChanges()
+                Return RedirectToAction("Index")
+            Else
+<# foreach(var relatedEntity in relatedEntities.Where(x => x.RelationType == RelationType.Parent)) { #>
+                ViewBag.Possible<#= relatedEntity.RelationNamePlural #> = context.<#= relatedEntity.RelatedEntityTypeNamePlural #>
+<# } #>
+                Return View()
+            End If
+        End Function
+        
+        ' GET: /<#= routingName #>/Edit/5
+        Public Function Edit(id As <#= primaryKeyProperty.Type.AsString #>) As ViewResult
+             Dim <#= modelVariable #> As <#= modelName #> = context.<#= modelNamePlural #>.Single(Function(x) x.<#= primaryKeyProperty.Name #> = id)
+<# foreach(var relatedEntity in relatedEntities.Where(x => x.RelationType == RelationType.Parent)) { #>
+             ViewBag.Possible<#= relatedEntity.RelationNamePlural #> = context.<#= relatedEntity.RelatedEntityTypeNamePlural #>
+<# } #>
+             Return View(<#= modelVariable #>)
+        End Function
+
+        ' POST: /<#= routingName #>/Edit/5
+        <HttpPost>
+        Public Function Edit(<#= modelVariable #> As <#= modelName #>) As ActionResult
+            If ModelState.IsValid
+<# if(isObjectContext) { #>
+                context.<#= modelNamePlural #>.Attach(<#= modelVariable #>)
+                context.ObjectStateManager.ChangeObjectState(<#= modelVariable #>, EntityState.Modified)
+<# } else { #>
+                context.Entry(<#= modelVariable #>).State = EntityState.Modified
+<# } #>
+                context.SaveChanges()
+                Return RedirectToAction("Index")
+            Else
+<# foreach(var relatedEntity in relatedEntities.Where(x => x.RelationType == RelationType.Parent)) { #>
+                ViewBag.Possible<#= relatedEntity.RelationNamePlural #> = context.<#= relatedEntity.RelatedEntityTypeNamePlural #>
+<# } #>
+                Return View()
+            End If
+        End Function
+
+        ' GET: /<#= routingName #>/Delete/5
+        Public Function Delete(id As <#= primaryKeyProperty.Type.AsString #>) As ViewResult
+            Dim <#= modelVariable #> as <#= modelName #> = context.<#= modelNamePlural #>.Single(Function(x) x.<#= primaryKeyProperty.Name #> = id)
+            Return View(<#= modelVariable #>)
+        End Function
+
+        ' POST: /<#= routingName #>/Delete/5
+        <HttpPost, ActionName("Delete")>
+        Public Function DeleteConfirmed(id as <#= primaryKeyProperty.Type.AsString #>) As ActionResult
+            Dim <#= modelVariable #> As <#= modelName #> = context.<#= modelNamePlural #>.Single(Function(x) x.<#= primaryKeyProperty.Name #> = id)
+<# if(isObjectContext) { #>
+            context.<#= modelNamePlural #>.DeleteObject(<#= modelVariable #>)
+<# } else { #>
+            context.<#= modelNamePlural #>.Remove(<#= modelVariable #>)
+<# } #>
+            context.SaveChanges()
+            Return RedirectToAction("Index")
+        End Function
+    End Class
+<#= T4Scaffolding.Namespaces.EndVb(Model.ControllerNamespace, Model.DefaultNamespace) #>

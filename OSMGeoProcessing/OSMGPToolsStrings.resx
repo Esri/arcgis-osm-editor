@@ -1,0 +1,837 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="GPTools_factoryname" xml:space="preserve">
+    <value>OpenStreetMap Tools</value>
+  </data>
+  <data name="GPTools_validating_msg" xml:space="preserve">
+    <value>Validating...</value>
+  </data>
+  <data name="GPTools_executing_msg" xml:space="preserve">
+    <value>Executing...</value>
+  </data>
+  <data name="GPTools_toolabort" xml:space="preserve">
+    <value>Aborting the tool execution upon user request...</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_categoryName" xml:space="preserve">
+    <value>Data Delivery</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_displayName" xml:space="preserve">
+    <value>Download OSM Data</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_desc" xml:space="preserve">
+    <value>Download data from an OSM server</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_downloadURL_desc" xml:space="preserve">
+    <value>OpenStreetMap base download URL</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_downloadExtent_desc" xml:space="preserve">
+    <value>Extent of data download</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_targetDataset_desc" xml:space="preserve">
+    <value>Target feature dataset</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_nofeatureworkspace" xml:space="preserve">
+    <value>Unable to open the workspace at {0}.</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_targetDataset_notexist" xml:space="preserve">
+    <value>The specified workspace ({0}) does not exist.</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_invaliddownloadurl" xml:space="preserve">
+    <value>Invalid download URL. Please enter a valid OSM address and ensure that the URL does not contain a trailing slash.</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_includeReferences_desc" xml:space="preserve">
+    <value>Include all relation references</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_outputCategory" xml:space="preserve">
+    <value>OpenStreetMap feature classes</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_osmPoints_desc" xml:space="preserve">
+    <value>OpenStreetMap point features</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_osmLine_desc" xml:space="preserve">
+    <value>OpenStreetMap line features</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_osmPolygon_desc" xml:space="preserve">
+    <value>OpenStreetMap polygon features</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_osmRevTable_desc" xml:space="preserve">
+    <value>OpenStreetMap revision table</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_noValidOSMResponse" xml:space="preserve">
+    <value>The OpenStreetMap response does not contain valid elements.</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_basenamealreadyexists" xml:space="preserve">
+    <value>The basename ({0}) is already used in the given workspace.</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_exceedDownloadROI" xml:space="preserve">
+    <value>The requested download area is too large. Consider a smaller extent.</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_repairgeometryfailure" xml:space="preserve">
+    <value>Unable to repair geometry (internal geoprocessing failure).</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_startingDownloadRequest" xml:space="preserve">
+    <value>Starting OSM Data download request...</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_includereferences" xml:space="preserve">
+    <value>Resolving and downloading remaining OSM features...</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_prepareFeatureClasses" xml:space="preserve">
+    <value>Preparing OSM Data for local use...</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_metadata_abstract" xml:space="preserve">
+    <value>Vector data downloaded from the OpenStreetMap website.</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_metadata_purpose" xml:space="preserve">
+    <value>Vector data downloaded from the OpenStreetMap website.</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_nullpointfeatureclass" xml:space="preserve">
+    <value>Unable to create a valid point feature class ({0}).</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_nulllinefeatureclass" xml:space="preserve">
+    <value>Unable to create a valid line feature class ({0}).</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_nullpolygonfeatureclass" xml:space="preserve">
+    <value>Unable to create a valid polygon feature class ({0}).</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_nullrelationtable" xml:space="preserve">
+    <value>Unable to create a relation table ({0}).</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_nullrevisiontable" xml:space="preserve">
+    <value>Unable to create a revision table ({0}).</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_noschemalockdueto" xml:space="preserve">
+    <value>Unable to get an exclusive schema lock due to an existing lock on [{0}] by user [{1}].</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_directory_is_not_target_dataset" xml:space="preserve">
+    <value>Please choose a valid geodatabase to host the target feature dataset.</value>
+  </data>
+  <data name="GPTools_OSMGPAttributeSelector_categoryName" xml:space="preserve">
+    <value>Data Management</value>
+  </data>
+  <data name="GPTools_OSMGPAttributeSelector_displayName" xml:space="preserve">
+    <value>OSM Attribute Selector</value>
+  </data>
+  <data name="GPTools_OSMGPAttributeSelector_desc" xml:space="preserve">
+    <value>Selects tags from the tag collection and stores them as individual attributes in the feature class.</value>
+  </data>
+  <data name="GPTools_OSMGPAttributeSelector_inputFeatureClass" xml:space="preserve">
+    <value>Input OpenStreetMap Feature Class</value>
+  </data>
+  <data name="GPTools_OSMGPAttributeSelector_inputAttributes" xml:space="preserve">
+    <value>Select OSM Tag Keys</value>
+  </data>
+  <data name="GPTools_OSMGPAttributeSelecto_unableopentable" xml:space="preserve">
+    <value>Unable to open input table ({0}).</value>
+  </data>
+  <data name="GPTools_OSMGPAttributeSelector_ColumnHeaderTagKeys" xml:space="preserve">
+    <value>Key names</value>
+  </data>
+  <data name="GPTools_OSMGPAttributeSelector_outputFeatureClass" xml:space="preserve">
+    <value>Output OpenStreetMap Feature Class</value>
+  </data>
+  <data name="GPTools_OSMGPAttributeSelector_progressMessage" xml:space="preserve">
+    <value>Extracting OSM tags</value>
+  </data>
+  <data name="GPTools_OSMGPAttributeSelector_notagfieldfound" xml:space="preserve">
+    <value>No OSM tag field found in given feature class.</value>
+  </data>
+  <data name="GPTools_OSMGPAttributeSelector_aliasaddition" xml:space="preserve">
+    <value>(tag value)</value>
+  </data>
+  <data name="GPTools_OSMGPSymbolizer_displayName" xml:space="preserve">
+    <value>OSM Feature Symbolizer</value>
+  </data>
+  <data name="GPTools_OSMGPSymbolizer_desc" xml:space="preserve">
+    <value>Assigns a set of predefined symbology and prepares the edit templates.</value>
+  </data>
+  <data name="GPTools_OSMGPUpload_displayName" xml:space="preserve">
+    <value>Upload OSM Data</value>
+  </data>
+  <data name="GPTools_OSMGPUpload_desc" xml:space="preserve">
+    <value>Uploads pending edits to the specified OSM server.</value>
+  </data>
+  <data name="GPTools_OSMGPUpload_uploadURL_displayName" xml:space="preserve">
+    <value>OpenStreetMap base upload URL</value>
+  </data>
+  <data name="GPTools_OSMGPUpload_inputTable_displayName" xml:space="preserve">
+    <value>OSM Revision Table</value>
+  </data>
+  <data name="GPTools_OSMGPUpload_inputnotvalidduringedit" xml:space="preserve">
+    <value>The selected table cannot participate in an active edit session during the upload procedure.</value>
+  </data>
+  <data name="GPTools_OSMGPUpload_notarevisiontable" xml:space="preserve">
+    <value>The selected table is not a valid revision table.</value>
+  </data>
+  <data name="GPTools_OSMGPUpload_oauth_category" xml:space="preserve">
+    <value>OSM Login credentials</value>
+  </data>
+  <data name="GPTools_OSMGPUpload_comment_displayName" xml:space="preserve">
+    <value>Comment describing the upload content</value>
+  </data>
+  <data name="GPTools_OSMGPUpload_authentication_caption" xml:space="preserve">
+    <value>OSM login credentials</value>
+  </data>
+  <data name="GPTools_OSMGPUpload_invalid_osmlogin" xml:space="preserve">
+    <value>Invalid OpenStreetMap user credentials for user {0}.</value>
+  </data>
+  <data name="GPTools_OSMGPUpload_invaliduploadurl" xml:space="preserve">
+    <value>Invalid upload URL. Please enter a valid OSM address and ensure that the URL does not contain a trailing slash.</value>
+  </data>
+  <data name="GPTools_OSMGPUpload_invalidPoint" xml:space="preserve">
+    <value>Unable to create proper point representation of the node.</value>
+  </data>
+  <data name="GPTools_OSMGPSymbolizer_inosmds_displayName" xml:space="preserve">
+    <value>Input OSM Feature Dataset</value>
+  </data>
+  <data name="GPTools_OSMGPSymbolizer_inptlayer_displayName" xml:space="preserve">
+    <value>Template OSM Points Layer</value>
+  </data>
+  <data name="GPTools_OSMGPSymbolizer_inlnlayer_displayName" xml:space="preserve">
+    <value>Template OSM Lines Layer</value>
+  </data>
+  <data name="GPTools_OSMGPSymbolizer_inplylayer_displayName" xml:space="preserve">
+    <value>Template OSM Polygons Layer</value>
+  </data>
+  <data name="GPTools_OSMGPSymbolizer_outptlayer_displayName" xml:space="preserve">
+    <value>Adjusted OSM Points Layer</value>
+  </data>
+  <data name="GPTools_OSMGPSymbolizer_outlnlayer_displayName" xml:space="preserve">
+    <value>Adjusted OSM Lines Layer</value>
+  </data>
+  <data name="GPTools_OSMGPSymbolizer_outplylayer_displayName" xml:space="preserve">
+    <value>Adjusted OSM Polygons Layer</value>
+  </data>
+  <data name="GPTools_OSMGPRemoveExtension_displayName" xml:space="preserve">
+    <value>Remove OSM Editor Extension</value>
+  </data>
+  <data name="GPTools_OSMGPRemoveExtension_desc" xml:space="preserve">
+    <value>Removes the OSM feature class extension.</value>
+  </data>
+  <data name="GPTools_OSMGPRemoveExtension_noEXTCLSID" xml:space="preserve">
+    <value>Unable to find OSM Editor extension.</value>
+  </data>
+  <data name="GPTools_OSMGPRemoveExtension_inputlayer_displayname" xml:space="preserve">
+    <value>Input OSM Feature Layer</value>
+  </data>
+  <data name="GPTools_OSMGPRemoveExtension_outputlayer_displayname" xml:space="preserve">
+    <value>Output OSM Feature Layer</value>
+  </data>
+  <data name="GPTools_OSMGPAddExtension_displayName" xml:space="preserve">
+    <value>Add OSM Editor Extension</value>
+  </data>
+  <data name="GPTools_OSMGPAddExtension_desc" xml:space="preserve">
+    <value>Adds the OSM feature class extension.</value>
+  </data>
+  <data name="GPTools_OSMGPAddExtension_noosmtagfield" xml:space="preserve">
+    <value>No OSM tag field found. This feature class is not suitable for attaching an OSM Editor extension.</value>
+  </data>
+  <data name="GPTools_OSMGPAddExtension_inputlayer_displayname" xml:space="preserve">
+    <value>Input OSM Feature Layer</value>
+  </data>
+  <data name="GPTools_OSMGPAddExtension_outputlayer_displayname" xml:space="preserve">
+    <value>Output OSM Feature Layer</value>
+  </data>
+  <data name="GPTools_AuthenticationDataType_DisplayName" xml:space="preserve">
+    <value>Http Basic Authentication</value>
+  </data>
+  <data name="GPTools_Authentication_GPValue_displayname" xml:space="preserve">
+    <value>Username/Password using Http Basic Encoding</value>
+  </data>
+  <data name="GPTools_Authentication_GPValue_UnableParseAuthentication" xml:space="preserve">
+    <value>Unable to parse and to decode the provided authentication information</value>
+  </data>
+  <data name="GPTools_Authentication_HttpBasicDataType_displayname" xml:space="preserve">
+    <value>OpenStreetMap login</value>
+  </data>
+  <data name="GPTools_Authentication_HttpBasicDataType_typevalidation" xml:space="preserve">
+    <value>Not a HttpBasic Authentication data type</value>
+  </data>
+  <data name="GPTools_Authentication_HttpBasicDataType_valuevalidation" xml:space="preserve">
+    <value>Not a HttpBasic Authentication value</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_diplayname" xml:space="preserve">
+    <value>Load OSM File</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_desc" xml:space="preserve">
+    <value>Loads stand-alone OSM file (planet files, etc.) into a geodatabase.</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_osmfile_desc" xml:space="preserve">
+    <value>OSM File</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_conserveMemory_desc" xml:space="preserve">
+    <value>Conserve Memory</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_targetDataset_desc" xml:space="preserve">
+    <value>Target feature dataset</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_outputCategory" xml:space="preserve">
+    <value>OpenStreetMap feature classes</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_osmPoints_desc" xml:space="preserve">
+    <value>OpenStreetMap point features</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_osmLine_desc" xml:space="preserve">
+    <value>OpenStreetMap line features</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_osmPolygon_desc" xml:space="preserve">
+    <value>OpenStreetMap polygon features</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_targetDataset_notexist" xml:space="preserve">
+    <value>The specified feature dataset is not valid.</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_problemaccessingfile" xml:space="preserve">
+    <value>Problem accessing the OSM file ({0}).</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_osmfiledoesnotexist" xml:space="preserve">
+    <value>The specified OSM file ({0}) does not exist.</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_basenamealreadyexists" xml:space="preserve">
+    <value>The base name ({0}) is already used in the given workspace. Either allow the geoprocessing environment to override the existing dataset or please select a different name.</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_metadata_abstract" xml:space="preserve">
+    <value>Vector data downloaded from the OpenStreetMap website</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_metadata_purpose" xml:space="preserve">
+    <value>Vector data downloaded from the OpenStreetMap website</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_pointsloaded" xml:space="preserve">
+    <value>{0} nodes loaded...</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_waysloaded" xml:space="preserve">
+    <value>{0} ways loaded...</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_relationsloaded" xml:space="preserve">
+    <value>{0} relations loaded...</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_resolvegeometries" xml:space="preserve">
+    <value>Resolving multi-part geometries...</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_updatereferences" xml:space="preserve">
+    <value>Updating remaining references...</value>
+  </data>
+  <data name="GPTools_buildingpointidx" xml:space="preserve">
+    <value>Building point indexes...</value>
+  </data>
+  <data name="GPTools_buildinglineidx" xml:space="preserve">
+    <value>Building line indexes...</value>
+  </data>
+  <data name="GPTools_buildingpolygonidx" xml:space="preserve">
+    <value>Building polygon indexes...</value>
+  </data>
+  <data name="GPTools_preparedb" xml:space="preserve">
+    <value>Preparing geodatabase...</value>
+  </data>
+  <data name="GPTools_GPCombineLayers_categoryname" xml:space="preserve">
+    <value>OpenStreetMap Tools</value>
+  </data>
+  <data name="GPTools_GPCombineLayers_displayname" xml:space="preserve">
+    <value>Combine Layers</value>
+  </data>
+  <data name="GPTools_GPCombineLayers_desc" xml:space="preserve">
+    <value>Combines multiple layers into a single group layer.</value>
+  </data>
+  <data name="GPTools_GPCombineLayers_inputlayers_desc" xml:space="preserve">
+    <value>Input Layers</value>
+  </data>
+  <data name="GPTools_GPCombineLayers_outputgrouplayer_desc" xml:space="preserve">
+    <value>Output Group Layer</value>
+  </data>
+  <data name="GPTools_GPCombineLayers_outputgrouplayer_proposedname" xml:space="preserve">
+    <value>Group Layer</value>
+  </data>
+  <data name="GPTools_OSMGPCombineAttributes_displayName" xml:space="preserve">
+    <value>Combine OSM Attributes</value>
+  </data>
+  <data name="GPTools_OSMGPCombineAttributes_desc" xml:space="preserve">
+    <value>Combines attributes to a collection of OSM tags.</value>
+  </data>
+  <data name="GPTools_OSMGPCombineAttributes_inputlayer_displayname" xml:space="preserve">
+    <value>Input OSM Layer</value>
+  </data>
+  <data name="GPTools_OSMGPCombineAttributes_inputAttributes_displayname" xml:space="preserve">
+    <value>Select OSM Attributes</value>
+  </data>
+  <data name="GPTools_OSMGPCombineAttributes_outputFeatureClass_displayname" xml:space="preserve">
+    <value>Output OpenStreetMap Feature Class</value>
+  </data>
+  <data name="GPTools_OSMGPCombineAttributes_inputlayer_missingtagfield" xml:space="preserve">
+    <value>Invalid feature class because of missing OSM tag [osmTags] field.</value>
+  </data>
+  <data name="GPTools_OSMGPCombineAttributes_progressMessage" xml:space="preserve">
+    <value>Combining OSM Tags</value>
+  </data>
+  <data name="GPTools_GPCopyLayerExtension_categoryname" xml:space="preserve">
+    <value>Data Management</value>
+  </data>
+  <data name="GPTools_GPCopyLayerExtension_displayname" xml:space="preserve">
+    <value>Copy Layer Extensions</value>
+  </data>
+  <data name="GPTools_GPCopyLayerExtension_desc" xml:space="preserve">
+    <value>Copies layer extensions from the source layer to the target layer.</value>
+  </data>
+  <data name="GPTools_GPCopyLayerExtension_inputsourcelayer_displayname" xml:space="preserve">
+    <value>Input Source Layer</value>
+  </data>
+  <data name="GPTools_GPCopyLayerExtension_inputtargetlayer_displayname" xml:space="preserve">
+    <value>Input Target Layer</value>
+  </data>
+  <data name="GPTools_GPCopyLayerExtension_outputlayer_displayname" xml:space="preserve">
+    <value>Output Layer</value>
+  </data>
+  <data name="GPTools_GPCopyLayerExtension_source_noext_support" xml:space="preserve">
+    <value>The source layer doesn't support extensions.</value>
+  </data>
+  <data name="GPTools_GPCopyLayerExtension_target_noext_support" xml:space="preserve">
+    <value>The target layer doesn't support extensions.</value>
+  </data>
+  <data name="GPTools_GPCopyLayerExtension_targetlayeralreadyexists" xml:space="preserve">
+    <value>A target layer with the following name ({0}) already exists. Either allow the geoprocessing environment to override the existing layer or please specify a different layer.</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_displayname" xml:space="preserve">
+    <value>Load OSM Diff Files</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_desc" xml:space="preserve">
+    <value>Loads OSM Planet Diff Files.</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_targetDataset_desc" xml:space="preserve">
+    <value>Input OSM Feature Dataset</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_syncStartTime_desc" xml:space="preserve">
+    <value>Start Time for Diff Files</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_outtargetDataset_desc" xml:space="preserve">
+    <value>Output OSM Feature Dataset</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_downloadURL_desc" xml:space="preserve">
+    <value>OpenStreetMap planet diff files base download URL</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_malformed_downloadURL" xml:space="preserve">
+    <value>Invalid formatted download URL.</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_updateinsideaoi_desc" xml:space="preserve">
+    <value>Load updates only inside current AOI</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_logginglevel_desc" xml:space="preserve">
+    <value>Verbose geoprocessing logging</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_invalidTimeString" xml:space="preserve">
+    <value>Unable to convert given time string to a valid time representation.</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_invalidTime_beforeOSM" xml:space="preserve">
+    <value>The given time is invalid as it describes a point in time before OpenStreetMap was invented.</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_relationskipped_noline" xml:space="preserve">
+    <value>Update of relation ({0}) skipped as no existing polyline with same ID could be found.</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_relationskipped_nopolygon" xml:space="preserve">
+    <value>Update of relation ({0}) skipped as no existing polygon with same ID could be found.</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_relationskipped_norelation" xml:space="preserve">
+    <value>Update of relation ({0}) skipped as no existing relation with same ID could be found.</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_wayskipped_noline" xml:space="preserve">
+    <value>Update of way ({0}) skipped as no existing polyline with same ID could be found.</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_wayskipped_nopolygon" xml:space="preserve">
+    <value>Update of way ({0}) skipped as no existing polygon with same ID could be found.</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_nodeskipped_nopoint" xml:space="preserve">
+    <value>Update of node ({0}) skipped as no existing point with same ID could be found.</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_deleteNodeskipped" xml:space="preserve">
+    <value>Delete of node ({0}) skipped as no existing point with the same ID could be found.</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_deleteWayskipped_noline" xml:space="preserve">
+    <value>Delete of way ({0}) skipped as no existing polyline feature with the same ID could be found.</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_deleteNodeskipped_nopolygon" xml:space="preserve">
+    <value>Delete of way ({0}) skipped as no existing polyline feature with the same ID could be found.</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_deleteRelationskipped_nopolygon" xml:space="preserve">
+    <value>Delete of relation ({0}) skipped as no existing polyline feature with the same ID could be found.</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_deleteRelationskipped_nopolyline" xml:space="preserve">
+    <value>Delete of relation ({0}) skipped as no existing polygon feature with the same ID could be found.</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_deleteRelationskipped_norelation" xml:space="preserve">
+    <value>Delete of relation ({0}) skipped as no existing relation feature with the same ID could be found.</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_createmessage" xml:space="preserve">
+    <value>Creating {0} (id: {1}).</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_modifymessage" xml:space="preserve">
+    <value>Modifying {0} (id: {1}).</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_deletemessage" xml:space="preserve">
+    <value>Deleting {0} (id: {1}).</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_downloadProblem" xml:space="preserve">
+    <value>There was a problem downloading {0}.</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_processing_diff" xml:space="preserve">
+    <value>Processing {0} diff file ({1}).</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_hour" xml:space="preserve">
+    <value>hour</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_minute" xml:space="preserve">
+    <value>minute</value>
+  </data>
+  <data name="GPTools_OSM_node" xml:space="preserve">
+    <value>node</value>
+  </data>
+  <data name="GPTools_OSM_way" xml:space="preserve">
+    <value>way</value>
+  </data>
+  <data name="GPTools_OSM_relation" xml:space="preserve">
+    <value>relation</value>
+  </data>
+  <data name="GPTools_OSM_superrelation" xml:space="preserve">
+    <value>super-relation</value>
+  </data>
+  <data name="GPTools_OSMGPFeatureComparison_displayname" xml:space="preserve">
+    <value>Feature Comparison</value>
+  </data>
+  <data name="GPTools_OSMGPFeatureComparison_desc" xml:space="preserve">
+    <value>Allows the comparison of two feature classes to discover geometric similarities.</value>
+  </data>
+  <data name="GPTools_OSMGPFeatureComparison_inputsourcefeatures_displayname" xml:space="preserve">
+    <value>Input (source) features</value>
+  </data>
+  <data name="GPTools_OSMGPFeatureComparison_inputintersectnumber_displayname" xml:space="preserve">
+    <value>Field to store number of intersections</value>
+  </data>
+  <data name="GPTools_OSMGPFeatureComparison_inputintersectids_displayname" xml:space="preserve">
+    <value>Field to store intersected feature OIDs</value>
+  </data>
+  <data name="GPTools_OSMGPFeatureComparison_inputmatchfeatures_displayname" xml:space="preserve">
+    <value>Match feature class</value>
+  </data>
+  <data name="GPTools_OSMGPFeatureComparison_outputfeatures_displayname" xml:space="preserve">
+    <value>Output (source) features</value>
+  </data>
+  <data name="GPTools_OSMGPFeatureComparison_progressMessage" xml:space="preserve">
+    <value>Comparing Features</value>
+  </data>
+  <data name="GPTools_OSMGPFeatureComparison_source_nullpointer" xml:space="preserve">
+    <value>Unable to retrieve a valid instance of the source feature class.</value>
+  </data>
+  <data name="GPTools_OSMGPFeatureComparison_match_nullpointer" xml:space="preserve">
+    <value>Unable to retrieve a valid instance of the match feature class.</value>
+  </data>
+  <data name="GPTools_OSMGPExport2OSM_displayname" xml:space="preserve">
+    <value>Export to OSM file</value>
+  </data>
+  <data name="GPTools_OSMGPExport2OSM_desc" xml:space="preserve">
+    <value>Export OpenStreetMap feature classes into the OSM XML format.</value>
+  </data>
+  <data name="GPTools_OSMGPExport2OSM_desc_inputDataset_desc" xml:space="preserve">
+    <value>OpenStreetMap Feature Dataset</value>
+  </data>
+  <data name="GPTools_OSMGPExport2OSM_desc_outputXMLFile_desc" xml:space="preserve">
+    <value>Output OpenStreetMap XML file</value>
+  </data>
+  <data name="GPTools_OSMGPExport2OSM_invalid_featuredataset" xml:space="preserve">
+    <value>Unable to parse feature dataset. Please check if described dataset exists.</value>
+  </data>
+  <data name="GPTools_OSMGPExport2OSM_exporting_pts_msg" xml:space="preserve">
+    <value>Exporting nodes...</value>
+  </data>
+  <data name="GPTools_OSMGPExport2OSM_pts_exported_msg" xml:space="preserve">
+    <value>{0} node(s) exported.</value>
+  </data>
+  <data name="GPTools_OSMGPExport2OSM_exporting_ways_msg" xml:space="preserve">
+    <value>Exporting ways...</value>
+  </data>
+  <data name="GPTools_OSMGPExport2OSM_ways_exported_msg" xml:space="preserve">
+    <value>{0} way(s) exported.</value>
+  </data>
+  <data name="GPTools_OSMGPExport2OSM_exporting_relations_msg" xml:space="preserve">
+    <value>Exporting relations...</value>
+  </data>
+  <data name="GPTools_OSMGPExport2OSM_relations_exported_msg" xml:space="preserve">
+    <value>{0} relation(s) exported.</value>
+  </data>
+  <data name="GPTools_OSMGPExport2OSM_no_pointfeatureclass" xml:space="preserve">
+    <value>Unable to retrieve the point feature class ({0}) for export.</value>
+  </data>
+  <data name="GPTools_OSMGPExport2OSM_no_linefeatureclass" xml:space="preserve">
+    <value>Unable to retrieve the line feature class ({0}) for export.</value>
+  </data>
+  <data name="GPTools_OSMGPExport2OSM_no_polygonfeatureclass" xml:space="preserve">
+    <value>Unable to retrieve the polygon feature class ({0}) for export.</value>
+  </data>
+  <data name="GPTools_OSMGPExport2OSM_no_relationTable" xml:space="preserve">
+    <value>Unable to retrieve the relation table ({0}) for export.</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_invalidTimeFormat" xml:space="preserve">
+    <value>Unable to convert timestamp element ({0}).</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_countingNodes" xml:space="preserve">
+    <value>Counting elements in OSM file...</value>
+  </data>
+  <data name="GPTools_OSMGPUpload_uploadFormat_displayName" xml:space="preserve">
+    <value>Bundle Data Upload(s)</value>
+  </data>
+  <data name="GPTools_OSMGPUpload_closeChangeSet" xml:space="preserve">
+    <value>Closed changeset {0}.</value>
+  </data>
+  <data name="GPTools_OSMGPUpload_openChangeSet" xml:space="preserve">
+    <value>Opened changeset {0}.</value>
+  </data>
+  <data name="GPTools_OSMGPUpload_featureSubmit" xml:space="preserve">
+    <value>Submitting {0} features to the server...</value>
+  </data>
+  <data name="GPTools_OSMGPUpload_updatelocalData" xml:space="preserve">
+    <value>Reconciling local data with server information.</value>
+  </data>
+  <data name="GPTools_OSMGPUpload_missingRevisionTable" xml:space="preserve">
+    <value>Unable to retrieve revision table.</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_NoDomainConfigFile" xml:space="preserve">
+    <value>Unable to locate the osm_domains.xml (domain configurations) file.</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_countedElements" xml:space="preserve">
+    <value>Counted {0} nodes, {1} ways, and {2} relations.</value>
+  </data>
+  <data name="GPTools_OSMGPAttributeSelector_Unable2RetrieveTags" xml:space="preserve">
+    <value>Unable to retrieve OSM tags.</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_updatepointrelations" xml:space="preserve">
+    <value>Updating point relations...</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_updatepointrefcount" xml:space="preserve">
+    <value>Updating point reference counts...</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_updatewayrelations" xml:space="preserve">
+    <value>Updating way relations...</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_updaterelationrelations" xml:space="preserve">
+    <value>Updating relation relations...</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_loadingNodes" xml:space="preserve">
+    <value>Loading Nodes...</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_loadingWays" xml:space="preserve">
+    <value>Loading Ways...</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_loadingRelations" xml:space="preserve">
+    <value>Loading Relations...</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_undeterminedline_node" xml:space="preserve">
+    <value>Unable to complete line geometry (OSMID={0}) due to undetermined nodes: {1}.</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_undeterminedpolygon_node" xml:space="preserve">
+    <value>Unable to complete polygon geometry (OSMID={0}) due to undetermined nodes: {1}.</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_undeterminedrelation_polygon" xml:space="preserve">
+    <value>Unable to complete relation geometry (OSMID={0}) due to missing way ({1}).</value>
+  </data>
+  <data name="GPTools_NullPointerParameterType" xml:space="preserve">
+    <value>Encountered unexpected data type. Please check the parameter data type ({0}).</value>
+  </data>
+  <data name="GPTools_OSMGPUpload_LockErrorTitle" xml:space="preserve">
+    <value>Exception on table lock ISchemaLock: </value>
+  </data>
+  <data name="GPTools_OSMGPCreateNetworkDataset_displayname" xml:space="preserve">
+    <value>Create OSM Network Dataset</value>
+  </data>
+  <data name="GPTools_OSMGPCreateNetworkDataset_desc" xml:space="preserve">
+    <value>Create a network dataset from a given OSM dataset.</value>
+  </data>
+  <data name="GPTools_OSMGPCreateNetworkDataset_inputOSMDataset_displayname" xml:space="preserve">
+    <value>Input OSM Feature Dataset</value>
+  </data>
+  <data name="GPTools_OSMGPCreateNetworkDataset_inputConfigFile_displayname" xml:space="preserve">
+    <value>Network Configuration File</value>
+  </data>
+  <data name="GPTools_OSMGPCreateNetworkDataset_outputNetworkDataset_displayname" xml:space="preserve">
+    <value>Output Network Dataset</value>
+  </data>
+  <data name="GPTools_OSMGPCreateNetworkDataset_userCancelException" xml:space="preserve">
+    <value>Process canceled by user</value>
+  </data>
+  <data name="GPTools_OSMGPCreateNetworkDataset_extractingEdges" xml:space="preserve">
+    <value>Extracting Edge Features</value>
+  </data>
+  <data name="GPTools_OSMGPCreateNetworkDataset_extractingJunctions" xml:space="preserve">
+    <value>Extracting Junction Features</value>
+  </data>
+  <data name="GPTools_OSMGPCreateNetworkDataset_assignConnectivity" xml:space="preserve">
+    <value>Assigning Network Connectivity Groups</value>
+  </data>
+  <data name="GPTools_OSMGPCreateNetworkDataset_addingNetworkAttributes" xml:space="preserve">
+    <value>Adding Network Attributes</value>
+  </data>
+  <data name="GPTools_OSMGPCreateNetworkDataset_creating" xml:space="preserve">
+    <value>Creating Network Dataset</value>
+  </data>
+  <data name="GPTools_OSMGPCreateNetworkDataset_building" xml:space="preserve">
+    <value>Building Network Dataset</value>
+  </data>
+  <data name="GPTools_OSMGPCreateNetworkDataset_extractingTurns" xml:space="preserve">
+    <value>Extracting Turn Restrictions</value>
+  </data>
+  <data name="GPTools_OSMGPCreateNetworkDataset_populatingTurns" xml:space="preserve">
+    <value>Populating Turn Features from OSM Relations</value>
+  </data>
+  <data name="GPTools_OSMGPCreateNetworkDataset_noXML" xml:space="preserve">
+    <value>OSM Network Dataset XML ({0}) does not exist</value>
+  </data>
+  <data name="GPTools_OSMGPCreateNetworkDataset_xmlParseError" xml:space="preserve">
+    <value>OSM Network Dataset Config File: '{0}' Failed to Parse:</value>
+  </data>
+  <data name="GPTools_OSMGPCreateNetworkDataset_NA_extension" xml:space="preserve">
+    <value>Network Analyst extension must be enabled before running this tool.</value>
+  </data>
+  <data name="GPTools_OSMGPCreateNetworkDataset_invalidOsmDataset" xml:space="preserve">
+    <value>Invalid OSM Dataset. Feature Class: {0} does not exist.</value>
+  </data>
+  <data name="GPTools_OSMGPCreateNetworkDataset_invalidScriptLanguage" xml:space="preserve">
+    <value>"Script language for ArcGIS 10.0 must be VBScript."</value>
+  </data>
+  <data name="GPTools_OSMGPAttributeSelector_addField" xml:space="preserve">
+    <value>Adding field {0} based on tag key {1}.</value>
+  </data>
+  <data name="GPTools_IncompatibleExtensionVersion" xml:space="preserve">
+    <value>Incompatible OSM extension version detected. (Detected {0}, expected {1}).</value>
+  </data>
+  <data name="GPTools_OSMGPDownload_resolveid" xml:space="preserve">
+    <value>Resolving and downloading {0} with id {1}.</value>
+  </data>
+  <data name="GPTools_OSMGPFileReader_unable_to_create_fd" xml:space="preserve">
+    <value>Unable to create feature dataset. Does the target database already exist?</value>
+  </data>
+  <data name="GPTools_OSMGPCreateNetworkDataset_mixedScriptLanguage" xml:space="preserve">
+    <value>Evaluator script languages must be consistient (all VBScript or all Python)</value>
+  </data>
+  <data name="GPTools_OSMGPCreateNetworkDataset_lockedTarget" xml:space="preserve">
+    <value>The target dataset: '{0}' is locked.</value>
+  </data>
+  <data name="GPTools_Utility_NodeLoadError" xml:space="preserve">
+    <value>General error in the node loading routine ({0}).</value>
+  </data>
+  <data name="GPTools_Utility_WayLoadError" xml:space="preserve">
+    <value>General error in the way loading routine ({0}).</value>
+  </data>
+  <data name="GPTools_Utility_RelationLoadError" xml:space="preserve">
+    <value>General error in the relation loading routine ({0}).</value>
+  </data>
+</root>
