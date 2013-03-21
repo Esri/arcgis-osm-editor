@@ -214,8 +214,3 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 
-#############
-## ArcGIS Editor for OSM
-#############
-# Ignore compiled code directory and files within.
-compiled/**/*
