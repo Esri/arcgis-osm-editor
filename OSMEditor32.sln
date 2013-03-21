@@ -17,28 +17,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSMUtilities", "OSMUtilities\OSMUtilities.csproj", "{A39DF625-C9EA-4719-9A59-1FE8D1F3D2C5}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 5
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs08
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = OSMEditor\\Editor.csproj
-		SccProjectTopLevelParentUniqueName1 = OSMEditor32.sln
-		SccProjectName1 = OSMEditor
-		SccLocalPath1 = OSMEditor
-		SccProjectUniqueName2 = OSMGeoProcessing\\GeoProcessing.csproj
-		SccProjectTopLevelParentUniqueName2 = OSMEditor32.sln
-		SccProjectName2 = OSMGeoProcessing
-		SccLocalPath2 = OSMGeoProcessing
-		SccProjectUniqueName3 = OSMClassExtension\\OSMClassExtension.csproj
-		SccProjectTopLevelParentUniqueName3 = OSMEditor32.sln
-		SccProjectName3 = OSMClassExtension
-		SccLocalPath3 = OSMClassExtension
-		SccProjectUniqueName4 = OSMUtilities\\OSMUtilities.csproj
-		SccProjectTopLevelParentUniqueName4 = OSMEditor32.sln
-		SccProjectName4 = OSMUtilities
-		SccLocalPath4 = OSMUtilities
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms

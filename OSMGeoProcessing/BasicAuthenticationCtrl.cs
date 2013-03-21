@@ -1,6 +1,6 @@
 ﻿// (c) Copyright ESRI, 2010
-// This source is subject to the Microsoft Public License (Ms-PL).
-// Please see http://go.microsoft.com/fwlink/?LinkID=131993 for details.
+// This source is subject to the Apache 2.0 License.
+// Please see http://www.apache.org/licenses/LICENSE-2.0.html for details.
 // All other rights reserved.
 
 
