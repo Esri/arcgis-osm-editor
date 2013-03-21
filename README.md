@@ -4,7 +4,7 @@ ArcGIS Editor for OpenStreetMap - Welcome
 ArcGIS Editor for OpenStreetMap is a toolset for GIS users to access and contribute to OpenStreetMap through their Desktop or Server environment.  Learn more [here](http://www.esri.com/osmeditor).
 
 ## Features
-* Download data from OSM into a file geodatabase – download from current extent or load from .osm file
+* Download data from OSM into a file geodatabase ï¿½ download from current extent or load from .osm file
 * Create your own planet (.osm) files
 * Edit OSM data in ArcGIS
 * Upload edits back to OSM
@@ -57,7 +57,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-A copy of the license is available in the repository's [license.txt]( https://raw.github.com/Esri/quickstart-map-js/master/license.txt) file.
+A copy of the license is available in the repository's [license.txt]( https://github.com/Esri/arcgis-osm-editor/blob/master/license.txt) file.
 
-[](Esri Tags: ArcGIS Editor for OpenStreetMap)
-[](Esri Language: .Net)
+[](Esri Tags: ArcGIS Editor OpenStreetMap)
+[](Esri Language: C-Sharp)
