@@ -12,23 +12,28 @@ ArcGIS Editor for OpenStreetMap is a toolset for GIS users to access and contrib
 * Create custom feature services based on OSM data
 
 ## Instructions
+1. To access compiled setups (if you just want to install in ArcGIS and not deal with the code):
+	a) Download the repo's .zip file
+	b) You can ignore the 'src' folder, that is source code. Open the 'setups' folder and unzip the setup that applies to your ArcGIS Version.
+	c) Install as described in the http://github.com/Esri/arcgis-osm-editor/wiki/System-requirements%2C-installation%2C-%26-working-with-the-code documentation.
+	d) Read documentation at http://github.com/Esri/arcgis-osm-editor/wiki/Documentation on how to use the tools
 
-1. Fork and then clone the repo. 
-2. Read the wiki documentation for how to use the compiled code.
-3. For the Server Components Only: 
-	a) Please read the web.config to run the server and make sure all paths are correct.
-	b) Please make sure you install Visual Studio 2010 Service Pack 1. Best way to know you got the latest of Visual Studio is to install it from here: http://www.microsoft.com/web/gallery/install.aspx?appid=VWDorVS2010SP1Pack
-	c) Make sure you have ArcGIS 10.1 installed to run the Server part.
-	d) The application needs a SDE connection.You can change in the web.config where the sde file is:
-
-    <add key="DatabaseConnection" value="C:\Data\OSM\Mxds\osmdevsde.sde" />
+2. If you want to work with the code:
+	a) Fork and then clone the repo. 
+	b) See the documentation on working with the code ("Working with the code" section of this topic: http://github.com/Esri/arcgis-osm-editor/wiki/System-requirements,-installation,-&-working-with-the-code).
+	c) *If you want to work with the Server Component code, then do the following*: 
+		c1) Please read the web.config to run the server and make sure all paths are correct.
+		c2) Please make sure you install Visual Studio 2010 Service Pack 1. Best way to know you got the latest of Visual Studio is to install it from here: http://www.microsoft.com/web/gallery/install.aspx?appid=VWDorVS2010SP1Pack
+		c3) Make sure you have ArcGIS 10.1 installed to run the Server part.
+		c4) The application needs a SDE connection.You can change in the web.config where the sde file is:
+    		<add key="DatabaseConnection" value="C:\Data\OSM\Mxds\osmdevsde.sde" />
 
 ## Requirements
 
-* An OpenStreetMap login
-* Visual Studo 2010
+* An OpenStreetMap login (create at https://www.openstreetmap.org/user/new)
 * ArcGIS for Desktop 10.1 (Desktop Component)
 * ArcGIS Server 10.1, ArcSDE 10.1, and IIS (Server Component)
+* Visual Studo 2010 (if you're working with the code)
 
 ## Resources
 
