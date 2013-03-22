@@ -33,7 +33,7 @@ ArcGIS Editor for OpenStreetMap is a toolset for GIS users to access and contrib
 		2) Please make sure you install Visual Studio 2010 Service Pack 1. Best way to know you got the latest of Visual Studio is to install it from here: http://www.microsoft.com/web/gallery/install.aspx?appid=VWDorVS2010SP1Pack
 		3) Make sure you have ArcGIS 10.1 installed to run the Server part.
 		4) The application needs a SDE connection.You can change in the web.config where the sde file is:
-    		<add key="DatabaseConnection" value="C:\Data\OSM\Mxds\osmdevsde.sde" />
+    	 	 add key="DatabaseConnection" value="C:\Data\OSM\Mxds\osmdevsde.sde"
 
 ## Requirements
 
