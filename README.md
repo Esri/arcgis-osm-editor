@@ -40,7 +40,7 @@ ArcGIS Editor for OpenStreetMap is a toolset for GIS users to access and contrib
 * An OpenStreetMap login (create at https://www.openstreetmap.org/user/new)
 * ArcGIS for Desktop 10.1 (Desktop Component)
 * ArcGIS Server 10.1, ArcSDE 10.1, and IIS (Server Component)
-* Visual Studo 2010 (if you're working with the code)
+* Visual Studio 2010 (if you're working with the code)
 
 ## Resources
 
