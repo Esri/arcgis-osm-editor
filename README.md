@@ -13,6 +13,7 @@ ArcGIS Editor for OpenStreetMap is a toolset for GIS users to access and contrib
 
 ## Instructions
 1. To access compiled setups (if you just want to install in ArcGIS and not deal with the code):
+
 	a) Download the repo's .zip file
 	b) You can ignore the 'src' folder, that is source code. Open the 'setups' folder and unzip the setup that applies to your ArcGIS Version.
 	c) Install as described in the http://github.com/Esri/arcgis-osm-editor/wiki/System-requirements%2C-installation%2C-%26-working-with-the-code documentation.
