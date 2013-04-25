@@ -1544,6 +1544,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 // let's insert all the points first
                 if (osmPointFeatureClass != null)
                 {
+                    IPoint pointGeometry = null;
                     IFeatureBuffer pointFeature = null;
                     IFeatureClassLoad pointFeatureLoad = null;
 
@@ -1559,9 +1560,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                             IFeatureCursor pointInsertCursor = osmPointFeatureClass.Insert(true);
                             comReleaser.ManageLifetime(pointInsertCursor);
-
-                            pointFeature = osmPointFeatureClass.CreateFeatureBuffer();
-                            comReleaser.ManageLifetime(pointFeature);
 
                             if (pointFeatureLoad != null)
                             {
@@ -1595,15 +1593,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                         try
                                         {
-                                            //if (pointFeature == null)
-                                            //{
                                             pointFeature = osmPointFeatureClass.CreateFeatureBuffer();
-                                            comReleaser.ManageLifetime(pointFeature);
-                                            //}
 
-                                            IPoint pointGeometry = new PointClass();
-                                            comReleaser.ManageLifetime(pointGeometry);
-
+                                            pointGeometry = new PointClass();
                                             pointGeometry.X = Convert.ToDouble(currentNode.lon, new CultureInfo("en-US"));
                                             pointGeometry.Y = Convert.ToDouble(currentNode.lat, new CultureInfo("en-US"));
                                             pointGeometry.SpatialReference = wgs84;
@@ -1640,7 +1632,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                     osmNodeDictionary[currentNode.id] = new simplePointRef(Convert.ToSingle(currentNode.lon, new CultureInfo("en-US")), Convert.ToSingle(currentNode.lat, new CultureInfo("en-US")), 0, 0);
                                                 }
                                             }
-
 
                                             insertTags(osmPointDomainAttributeFieldIndices, osmPointDomainAttributeFieldLength, tagCollectionPointFieldIndex, pointFeature, currentNode.tag);
 
@@ -1738,9 +1729,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                 pointInsertCursor.Flush();
                                                 System.GC.Collect();
                                             }
-
-                                            if (pointGeometry != null)
-                                                Marshal.ReleaseComObject(pointGeometry);
                                         }
                                         catch (Exception ex)
                                         {
@@ -1751,12 +1739,14 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         {
                                             if (pointFeature != null)
                                             {
-                                                Marshal.ReleaseComObject(pointFeature);
+                                                Marshal.FinalReleaseComObject(pointFeature);
+                                                pointFeature = null;
+                                            }
 
-                                                if (pointFeature != null)
-                                                    pointFeature = null;
-
-                                                
+                                            if (pointGeometry != null)
+                                            {
+                                                Marshal.FinalReleaseComObject(pointGeometry);
+                                                pointGeometry = null;
                                             }
                                         }
 
@@ -1797,7 +1787,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                         while (feature2Update != null)
                         {
-                            IPoint pointGeometry = feature2Update.Shape as IPoint;
+                            pointGeometry = feature2Update.Shape as IPoint;
                             pointGeometry.ID = feature2Update.OID;
                             feature2Update.Shape = pointGeometry;
 
@@ -2107,17 +2097,13 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 {
                     using (ComReleaser comReleaser = new ComReleaser())
                     {
+                        IFeatureBuffer featureLineBuffer = null;
                         IFeatureCursor insertLineCursor = osmLineFeatureClass.Insert(true);
                         comReleaser.ManageLifetime(insertLineCursor);
 
-                        IFeatureBuffer featureLineBuffer = osmLineFeatureClass.CreateFeatureBuffer();
-                        comReleaser.ManageLifetime(featureLineBuffer);
-
+                        IFeatureBuffer featurePolygonBuffer = null;
                         IFeatureCursor insertPolygonCursor = osmPolygonFeatureClass.Insert(true);
                         comReleaser.ManageLifetime(insertPolygonCursor);
-
-                        IFeatureBuffer featurePolygonBuffer = osmPolygonFeatureClass.CreateFeatureBuffer();
-                        comReleaser.ManageLifetime(featurePolygonBuffer);
 
                         if (((IWorkspace)featureWorkspace).WorkspaceFactory.WorkspaceType == esriWorkspaceType.esriRemoteDatabaseWorkspace)
                         {
@@ -2207,8 +2193,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                             }
 
                                             IPolyline wayPolyline = new PolylineClass();
-                                            comReleaser.ManageLifetime(wayPointCollection);
-
                                             wayPolyline.SpatialReference = downloadSpatialReference;
 
                                             IPointIDAware polylineIDAware = wayPolyline as IPointIDAware;
@@ -2366,8 +2350,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
 
                                             IPolygon wayPolygon = new PolygonClass();
-                                            comReleaser.ManageLifetime(wayPointCollection);
-
                                             wayPolygon.SpatialReference = downloadSpatialReference;
 
                                             IPointIDAware polygonIDAware = wayPolygon as IPointIDAware;
@@ -3102,23 +3084,17 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         using (SchemaLockManager linelock = new SchemaLockManager(osmLineFeatureClass as ITable), polygonLock = new SchemaLockManager(osmPolygonFeatureClass as ITable), relationLock = new SchemaLockManager(relationTable))
                         {
+                            IRowBuffer rowBuffer = null;
                             ICursor rowCursor = relationTable.Insert(true);
                             comReleaser.ManageLifetime(rowCursor);
 
-                            IRowBuffer rowBuffer = relationTable.CreateRowBuffer();
-                            comReleaser.ManageLifetime(rowBuffer);
-
+                            IFeatureBuffer lineFeatureBuffer = null;
                             IFeatureCursor lineFeatureInsertCursor = osmLineFeatureClass.Insert(true);
                             comReleaser.ManageLifetime(lineFeatureInsertCursor);
 
-                            IFeatureBuffer lineFeatureBuffer = osmLineFeatureClass.CreateFeatureBuffer();
-                            comReleaser.ManageLifetime(lineFeatureBuffer);
-
+                            IFeatureBuffer polygonFeatureBuffer = null;
                             IFeatureCursor polygonFeatureInsertCursor = osmPolygonFeatureClass.Insert(true);
                             comReleaser.ManageLifetime(polygonFeatureInsertCursor);
-
-                            IFeatureBuffer polygonFeatureBuffer = osmPolygonFeatureClass.CreateFeatureBuffer();
-                            comReleaser.ManageLifetime(polygonFeatureBuffer);
 
                             int relationCount = 1;
                             int relationDebugCount = 1;
@@ -3228,13 +3204,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                             List<OSMRelation> osmRelationList = null;
 
                                             rowBuffer = relationTable.CreateRowBuffer();
-                                            comReleaser.ManageLifetime(rowBuffer);
-
                                             lineFeatureBuffer = osmLineFeatureClass.CreateFeatureBuffer();
-                                            comReleaser.ManageLifetime(lineFeatureBuffer);
-
                                             polygonFeatureBuffer = osmPolygonFeatureClass.CreateFeatureBuffer();
-                                            comReleaser.ManageLifetime(polygonFeatureBuffer);
 
                                             foreach (var item in currentRelation.Items)
                                             {
@@ -3889,24 +3860,18 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                             if (rowBuffer != null)
                                             {
                                                 Marshal.ReleaseComObject(rowBuffer);
-
-                                                if (rowBuffer != null)
-                                                    rowBuffer = null;
+                                                rowBuffer = null;
                                             }
                                             if (lineFeatureBuffer != null)
                                             {
                                                 Marshal.ReleaseComObject(lineFeatureBuffer);
-
-                                                if (lineFeatureBuffer != null)
-                                                    lineFeatureBuffer = null;
+                                                lineFeatureBuffer = null;
                                             }
 
                                             if (polygonFeatureBuffer != null)
                                             {
                                                 Marshal.ReleaseComObject(polygonFeatureBuffer);
-
-                                                if (polygonFeatureBuffer != null)
-                                                    polygonFeatureBuffer = null;
+                                                polygonFeatureBuffer = null;
                                             }
 
                                             currentRelation = null;
@@ -3974,7 +3939,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
             finally
