@@ -2901,12 +2901,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         nodeID = Convert.ToString(pointFeature.get_Value(osmIDPointFieldIndex));
                     }
+
+                    Marshal.ReleaseComObject(pointFeature);
                 }
-                Marshal.ReleaseComObject(pointFeature);
             }
             return nodeID;
         }
-
 
 
         internal void countOSMStuff(string osmFileLocation, ref int nodeCapacity, ref int wayCapacity, ref int relationCapacity, ref ITrackCancel CancelTracker)
