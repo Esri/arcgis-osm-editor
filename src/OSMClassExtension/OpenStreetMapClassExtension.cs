@@ -605,100 +605,41 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                 return;
             }
 
-            IPointCollection pointCollection = deleteFeature.Shape as IPointCollection;
+            // process supporting nodes for ways / polygons
             IFeatureClass pointFeatureClass = findMatchingFeatureClass(deleteFeature, esriGeometryType.esriGeometryPoint);
-
             wayRefCountFieldIndex = pointFeatureClass.Fields.FindField("wayRefCount");
-            osmIDFieldIndex = pointFeatureClass.Fields.FindField("OSMID");
-            supportingElementFieldIndex = pointFeatureClass.Fields.FindField("osmSupportingElement");
-            osmTagsFieldIndex = pointFeatureClass.Fields.FindField("osmTags");
-            osmVersionFieldIndex = pointFeatureClass.Fields.FindField("osmversion");
-            osmChangeSetFieldIndex = pointFeatureClass.Fields.FindField("osmchangeset");
-            int pointTrackChangesFieldIndex = pointFeatureClass.Fields.FindField("osmTrackChanges");
 
-            string sqlOSMID = pointFeatureClass.SqlIdentifier("OSMID");
-
-            IQueryFilter queryfilter = new QueryFilter();
-
-            using (ComReleaser comReleaser = new ComReleaser())
+            foreach (IFeature nodeFeature in PointFeaturesFromWayOrPoly(deleteFeature, pointFeatureClass))
             {
-                for (int pointIndex = 0; pointIndex < pointCollection.PointCount; pointIndex++)
+                try
                 {
-                    IFeature foundFeature = null;
-                    if (_ExtensionVersion == 1)
+                    // flag as delete and demote the enitity to supporting node
+                    int wayRefCount = 0;
+                    if (wayRefCountFieldIndex > 0)
                     {
-                        queryfilter.WhereClause = pointFeatureClass.WhereClauseByExtensionVersion(pointCollection.get_Point(pointIndex).ID, "OSMID", _ExtensionVersion);
-
-                        IFeatureCursor searchCursor = pointFeatureClass.Search(queryfilter, false);
-                        comReleaser.ManageLifetime(searchCursor);
-                        foundFeature = searchCursor.NextFeature();
-                    }
-                    else if (_ExtensionVersion == 2)
-                    {
-                        try
-                        {
-                            foundFeature = pointFeatureClass.GetFeature(pointCollection.get_Point(pointIndex).ID);
-                        }
-                        catch
-                        {
-                            foundFeature = null;
-                        }
+                        wayRefCount = ReadAttributeValueAsInt(nodeFeature, wayRefCountFieldIndex) ?? 0;
                     }
 
-                    if (foundFeature != null)
+                    if (wayRefCount > 1)
                     {
-                        // flag as delete and demote the enitity to supporting node
-                        int wayRefCount = 0;
-                        if (wayRefCountFieldIndex > 0)
+                        // reduce the reference counter by 1 node, since we are deleting the feature and the vertices
+                        if (wayRefCountFieldIndex > -1)
                         {
-                            wayRefCount = ReadAttributeValueAsInt(foundFeature, wayRefCountFieldIndex) ?? 0;
+                            nodeFeature.set_Value(wayRefCountFieldIndex, wayRefCount - 1);
                         }
 
-                        if (wayRefCount > 1)
-                        {
-                            // reduce the reference counter by 1 node, since we are deleting the feature and the vertices
-                            if (wayRefCountFieldIndex > -1)
-                            {
-                                foundFeature.set_Value(wayRefCountFieldIndex, wayRefCount - 1);
-                            }
-
-                            //if (pointTrackChangesFieldIndex > -1)
-                            //{
-                            //    if (trackChanges == false)
-                            //    {
-                            //        foundFeature.set_Value(pointTrackChangesFieldIndex, 1);
-                            //    }
-                            //}
-
-                            // persist the update into the node 
-                            foundFeature.Store();
-                        }
-                        else
-                        {
-                            osmVersion = ReadAttributeValueAsInt(foundFeature, osmVersionFieldIndex) ?? -1;
-
-                            // this will fail if the node doesn't have a changeset entry yet - meaning the server doesn't know about this node
-                            // if the server doesn't know about this node there is still a change that we need to take the node out of the revision table
-                            // and we can simply delete the node locally
-                            try
-                            {
-                                osmChangeSet = Convert.ToInt32(foundFeature.get_Value(osmChangeSetFieldIndex));
-                            }
-                            catch
-                            { }
-
-                            //if (pointTrackChangesFieldIndex > -1)
-                            //{
-                            //    if (trackChanges == false)
-                            //    {
-                            //        foundFeature.set_Value(pointTrackChangesFieldIndex, 1);
-                            //    }
-                            //}
-
-                            // remove the node feature altogether
-                            foundFeature.Delete();
-                        }
+                        // persist the update into the node 
+                        nodeFeature.Store();
                     }
+                    else
+                    {
+                        // remove the node feature altogether
+                        nodeFeature.Delete();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Error deleting supporting node: " + ex.ToString());
                 }
             }
 
@@ -730,7 +671,7 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                             foreach (member currentosmRelationMember in relationMembers)
                             {
                                 IRow currentRow = null;
-                                queryfilter = new QueryFilterClass();
+                                IQueryFilter queryfilter = new QueryFilterClass();
                                 queryfilter.WhereClause = deleteFeatureClass.WhereClauseByExtensionVersion(currentosmRelationMember.@ref, "OSMID", _ExtensionVersion);
 
                                 // since we are only dealing with homogeneous geometry types  - releations with only polygons or only polylines
@@ -809,6 +750,51 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                             }
                         }
                     }
+                }
+            }
+        }
+
+        /// <summary>Return a sequence of node features associated with the given osm line or polygon</summary>
+        private IEnumerable<IFeature> PointFeaturesFromWayOrPoly(IFeature wayFeature, IFeatureClass pointFeatureClass)
+        {
+            IPointCollection pointCollection = wayFeature.Shape as IPointCollection;
+            if ((pointCollection == null) || (pointFeatureClass == null))
+                yield break;
+
+            IQueryFilter filter = new QueryFilterClass();
+
+            for (int idx = 0; idx < pointCollection.PointCount; ++idx)
+            {
+                int pointOID = pointCollection.get_Point(idx).ID;
+
+                // Query for the feature by OSMID or ObjectID in the point feature class
+                if (_ExtensionVersion == 1)
+                {
+                    filter.WhereClause = pointFeatureClass.WhereClauseByExtensionVersion(pointOID, "OSMID", _ExtensionVersion);
+                }
+                else if (_ExtensionVersion == 2)
+                {
+                    filter.WhereClause = string.Format("{0} = {1}", pointFeatureClass.OIDFieldName, pointOID);
+                }
+
+                using (ComReleaser comReleaser = new ComReleaser())
+                {
+                    IFeature pointFeature = null;
+
+                    try
+                    {
+                        IFeatureCursor searchCursor = pointFeatureClass.Search(filter, false);
+                        comReleaser.ManageLifetime(searchCursor);
+                        pointFeature = searchCursor.NextFeature();
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(
+                            string.Format("Node ID Search (filter: {0}) Failed: {1}" + filter.WhereClause, ex.ToString()));
+                    }
+
+                    if (pointFeature != null)
+                        yield return pointFeature;
                 }
             }
         }

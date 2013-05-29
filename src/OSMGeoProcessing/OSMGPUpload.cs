@@ -1091,15 +1091,15 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             }
 
                         }
-
-                        if (listOfDeletes != null && uploadDelete != null)
-                        {
-                            uploadDelete.Items = listOfDeletes.ToArray();
-                            // in case there are any creates let's add them to the changeset document
-                            changeSetItems.Add(uploadDelete);
-                        }
-                    #endregion
                     }
+
+                    if (listOfDeletes != null && uploadDelete != null)
+                    {
+                        uploadDelete.Items = listOfDeletes.ToArray();
+                        // in case there are any creates let's add them to the changeset document
+                        changeSetItems.Add(uploadDelete);
+                    }
+                    #endregion
 
                     if (TrackCancel.Continue() == false)
                     {
