@@ -26,8 +26,21 @@ namespace OSMWeb.Controllers
                     break;
                 }
             }
-                        
-            DoUploadGP(myConfigToDownload.Username, myConfigToDownload.Password, myConfigToDownload.FeatureDataSet, myConfigToDownload);
+
+            AppLogs logs = new AppLogs();
+            try
+            {
+                logs.AddLog("DOWNLOADLOGS", "Start Uploading");
+                DoUploadGP(myConfigToDownload.Username, myConfigToDownload.Password, myConfigToDownload.FeatureDataSet, myConfigToDownload);
+            }
+            catch
+            {
+                // Exceptions logged in DoUploadGP
+            }
+            finally
+            {
+                logs.AddLog("DOWNLOADLOGS", "Finished Uploading");
+            }
 
             // Download again the same extent
             DownloadController download = new DownloadController();
@@ -38,8 +51,22 @@ namespace OSMWeb.Controllers
 
         // GET /Upload/
         public ActionResult Upload(string sUsername, string sPassword, string sFeatureDataSet)
-        {            
-            DoUploadGP(sUsername, sPassword, sFeatureDataSet, null);
+        {
+            AppLogs logs = new AppLogs();
+
+            try
+            {
+                logs.AddLog("DOWNLOADLOGS", "Start Uploading");
+                DoUploadGP(sUsername, sPassword, sFeatureDataSet, null);
+            }
+            catch
+            {
+                // Exceptions logged in DoUploadGP
+            }
+            finally
+            {
+                logs.AddLog("DOWNLOADLOGS", "Finished Uploading");
+            }
 
             return View();
         }
