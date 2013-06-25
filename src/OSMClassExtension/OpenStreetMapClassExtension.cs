@@ -1252,11 +1252,17 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
 
                                         foundFeature.Delete();
                                     }
-                                } 
+                                }
                             } // for each of the missing nodes
                         } // missing nodes count larger than 0 
                     }  // geometry type test
                 } // IRelationOp::Equal test
+                else
+                {
+                    // This means the shape is only different by vertex IDs or some other metadata
+                    //   so reset the shape to the original geometry to get back the IDs
+                    changeFeature.Shape = oldGeometry;
+                }
             } // shape.changed
 
             int currentFeatureOSMIDIndex = changeFeature.Fields.FindField("OSMID");
