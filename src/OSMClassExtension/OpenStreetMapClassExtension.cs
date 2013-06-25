@@ -1271,6 +1271,19 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
             if (currentFeatureOSMIDIndex > -1)
             {
                 currentFeatureOSMID = ReadAttributeValueAsLong(changeFeature, currentFeatureOSMIDIndex) ?? 0;
+
+                // If the OSMID is null, we're probably hitting a premature feature service attribute edit
+                //   so reset the OSMID to the original value
+                if (currentFeatureOSMID == 0)
+                {
+                    object objID = ((IRowChanges)changeFeature).get_OriginalValue(currentFeatureOSMIDIndex);
+                    if ((objID != null) && (objID != DBNull.Value))
+                    {
+                        long origOSMID = Convert.ToInt64(objID);
+                        if (origOSMID != 0)
+                            changeFeature.set_Value(currentFeatureOSMIDIndex, origOSMID);
+                    }
+                }
             }
 
             int currentFeatureVersion = -1;
