@@ -3399,12 +3399,15 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
 
                 if (existingPolygonGeometryCollection.GeometryCount > 1)
                 {
+                    IPolygon4 polyPointCollection = pointCollection as IPolygon4;
+                    polyPointCollection.SimplifyPreserveFromTo();
+
                     // each ring (way) element can't have more than 2000 nodes
-                    IGeometryCollection outerRingGeometryCollection = ((IPolygon4)pointCollection).ExteriorRingBag as IGeometryCollection;
+                    IGeometryCollection outerRingGeometryCollection = polyPointCollection.ExteriorRingBag as IGeometryCollection;
 
                     for (int outerRingIndex = 0; outerRingIndex < outerRingGeometryCollection.GeometryCount; outerRingIndex++)
                     {
-                        IGeometryCollection innerRingGeometryCollection = ((IPolygon4)pointCollection).get_InteriorRingBag((IRing)outerRingGeometryCollection.get_Geometry(outerRingIndex)) as IGeometryCollection;
+                        IGeometryCollection innerRingGeometryCollection = polyPointCollection.get_InteriorRingBag((IRing)outerRingGeometryCollection.get_Geometry(outerRingIndex)) as IGeometryCollection;
 
                         for (int innerRingIndex = 0; innerRingIndex < innerRingGeometryCollection.GeometryCount; innerRingIndex++)
                         {
