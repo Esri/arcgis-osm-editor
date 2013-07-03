@@ -2,7 +2,7 @@
 
 ArcGIS Editor for OpenStreetMap - Welcome!
 
-ArcGIS Editor for OpenStreetMap is a toolset for GIS users to access and contribute to OpenStreetMap through their ArcGIS Desktop or Server environment.  Learn more at [esri.com/osmeditor](http://www.esri.com/osmeditor).
+ArcGIS Editor for OpenStreetMap is a toolset for GIS users to access and contribute to OpenStreetMap through their ArcGIS Desktop or Server environment.  Learn more at [the ArcGIS Editor for OSM wiki page](https://github.com/Esri/arcgis-osm-editor/wiki).
 
 ## Features
 * Download data from OSM into a file geodatabase - get data from the current extent or load from an .osm file
@@ -12,18 +12,14 @@ ArcGIS Editor for OpenStreetMap is a toolset for GIS users to access and contrib
 * Create routing networks from OSM data
 * Create custom feature services based on OSM data
 
-## Instructions
-1. To access compiled setups (if you just want to install in ArcGIS and not deal with the code):
+## Download Instructions
+1. You can download the ArcGIS Editor for OSM Desktop 10.1 setup [here] (http://www.arcgis.com/home/item.html?id=6a2a3c3cece749558393d4e80241ef51). Or, you can access compiled installers by downloading this repo and browsing to the 'setups' folder; run the desired setup from there. 
 
-	a) Download the repo's .zip file
-
-	b) You can ignore the 'src' folder, that is source code. Open the 'setups' folder and unzip the setup that applies to your ArcGIS Version.
+2. Once downloaded, install as described in the http://github.com/Esri/arcgis-osm-editor/wiki/System-requirements%2C-installation%2C-%26-working-with-the-code documentation.
 	
-	c) Install as described in the http://github.com/Esri/arcgis-osm-editor/wiki/System-requirements%2C-installation%2C-%26-working-with-the-code documentation.
-	
-	d) Read documentation at http://github.com/Esri/arcgis-osm-editor/wiki/Documentation on how to use the tools
+3. Read documentation at http://github.com/Esri/arcgis-osm-editor/wiki/Documentation on how to use the tools
 
-2. If you want to work with the code:
+4. If you want to work with the code:
 	
 	a) Fork and then clone the repo. 
 	
