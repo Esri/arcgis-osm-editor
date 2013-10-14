@@ -20,40 +20,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyncUtilTask", "SyncUtilTask\SyncUtilTask.csproj", "{BF14E977-98E2-4021-9E05-4BC462E94A91}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 8
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs08
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = OSMWeb10_1\\OSMWeb10_1.csproj
-		SccProjectTopLevelParentUniqueName1 = OSMEditorServer10_1.sln
-		SccProjectName1 = OSMWeb10_1
-		SccLocalPath1 = OSMWeb10_1
-		SccProjectUniqueName2 = ServicePublisher10_1\\ServicePublisher10_1.csproj
-		SccProjectTopLevelParentUniqueName2 = OSMEditorServer10_1.sln
-		SccProjectName2 = ServicePublisher10_1
-		SccLocalPath2 = ServicePublisher10_1
-		SccProjectUniqueName3 = OSMUtilities64\\OSMUtilities64.csproj
-		SccProjectTopLevelParentUniqueName3 = OSMEditorServer10_1.sln
-		SccProjectName3 = OSMUtilities64
-		SccLocalPath3 = OSMUtilities64
-		SccProjectUniqueName4 = OSMClassExtension64\\OSMClassExtension64.csproj
-		SccProjectTopLevelParentUniqueName4 = OSMEditorServer10_1.sln
-		SccProjectName4 = OSMClassExtension64
-		SccLocalPath4 = OSMClassExtension64
-		SccProjectUniqueName5 = OSMGeoprocessing64\\OSMGeoprocessing64.csproj
-		SccProjectTopLevelParentUniqueName5 = OSMEditorServer10_1.sln
-		SccProjectName5 = OSMGeoprocessing64
-		SccLocalPath5 = OSMGeoprocessing64
-		SccProjectUniqueName6 = OSMUtilities\\OSMUtilities.csproj
-		SccProjectTopLevelParentUniqueName6 = OSMEditorServer10_1.sln
-		SccProjectName6 = OSMUtilities
-		SccLocalPath6 = OSMUtilities
-		SccProjectUniqueName7 = SyncUtilTask\\SyncUtilTask.csproj
-		SccProjectTopLevelParentUniqueName7 = OSMEditorServer10_1.sln
-		SccProjectName7 = SyncUtilTask
-		SccLocalPath7 = SyncUtilTask
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -149,31 +115,5 @@ Global
 		{2F16F539-D25F-44D4-B6B1-38682EACF66B} = {835819F3-12E8-45CC-AF6C-1A35F2FE1F28}
 		{91E3CAAE-EA1C-4C81-AC53-9E1DB64C4C77} = {835819F3-12E8-45CC-AF6C-1A35F2FE1F28}
 		{BF14E977-98E2-4021-9E05-4BC462E94A91} = {835819F3-12E8-45CC-AF6C-1A35F2FE1F28}
-	EndGlobalSection
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 8
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs08
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = OSMWeb\\OSMWeb.csproj
-		SccProjectTopLevelParentUniqueName1 = OSMEditor64.sln
-		SccProjectName1 = OSMWeb
-		SccLocalPath1 = OSMWeb
-		SccProjectUniqueName2 = OSMClassExtension64\\OSMClassExtension64.csproj
-		SccProjectTopLevelParentUniqueName2 = OSMEditor64.sln
-		SccProjectName2 = OSMClassExtension64
-		SccLocalPath2 = OSMClassExtension64
-		SccProjectUniqueName3 = ServicePublisher64\\ServicePublisher64.csproj
-		SccProjectTopLevelParentUniqueName3 = OSMEditor64.sln
-		SccProjectName3 = ServicePublisher64
-		SccLocalPath3 = ServicePublisher64
-		SccProjectUniqueName4 = OSMGeoprocessing64\\OSMGeoprocessing64.csproj
-		SccProjectTopLevelParentUniqueName4 = OSMEditor64.sln
-		SccProjectName4 = OSMGeoprocessing64
-		SccLocalPath4 = OSMGeoprocessing64
-		SccProjectUniqueName5 = OSMUtilities\\OSMUtilities.csproj
-		SccProjectTopLevelParentUniqueName5 = OSMEditor64.sln
-		SccProjectName5 = OSMUtilities
-		SccLocalPath5 = OSMUtilities
 	EndGlobalSection
 EndGlobal
