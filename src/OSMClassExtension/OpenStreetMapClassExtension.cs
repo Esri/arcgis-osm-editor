@@ -251,7 +251,7 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
     [ClassInterface(ClassInterfaceType.None)]
     [ProgId("OSMEditor.OSMClassExtension")]
     [ComVisible(true)]
-    public class OpenStreetMapClassExtension : ESRI.ArcGIS.Geodatabase.IClassExtension, ESRI.ArcGIS.Geodatabase.IFeatureClassExtension,  IObjectClassEvents, IObjectClassInfo2, IOSMClassExtension, ESRI.ArcGIS.Editor.IObjectInspector
+    public class OpenStreetMapClassExtension : ESRI.ArcGIS.Geodatabase.IClassExtension, ESRI.ArcGIS.Geodatabase.IFeatureClassExtension, IObjectClassEvents, IObjectClassInfo2, IOSMClassExtension, ESRI.ArcGIS.Editor.IObjectInspector
     {
 
         #region COM Registration Function(s)
@@ -326,9 +326,13 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
 
 
         #region IClassExtension Members
-        
+
+        // Temporary index for newly created OSM IDs
+        //  - shared between point / line and polygon feature classes
+        //  - by convention: use then decrement
+        private static long _TemporaryIndex = 0;
+
         private ISpatialReference m_wgs84 = null;
-        private long _TemporaryIndex = 0;
         private int _ExtensionVersion = 1;
         private ResourceManager resourceManager = null;
         private bool m_bypassOSMChangeDetection = false;
@@ -370,8 +374,8 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
         public void Shutdown()
         {
             // general release of resources
-           
-            
+
+
         }
 
         #endregion
@@ -447,14 +451,13 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
             // find/retrieve the osm logging/revision table
             ITable revisionTable = findRevisionTable(deleteFeature);
 
-            //if (_TemporaryIndex > -1)
-            //{
-            //    _TemporaryIndex = determineMinTemporaryOSMID(deleteObject, _TemporaryIndex);
-            //}
-            if (_ExtensionVersion == 1)
-                _TemporaryIndex = determineMinTemporaryOSMID(deleteObject, _TemporaryIndex);
-            else if (_ExtensionVersion == 2)
-                _TemporaryIndex = determineMinTemporaryOSMID(revisionTable, _TemporaryIndex);
+            if (_TemporaryIndex >= 0)
+            {
+                if (_ExtensionVersion == 1)
+                    _TemporaryIndex = determineMinTemporaryOSMID(deleteObject, _TemporaryIndex);
+                else if (_ExtensionVersion == 2)
+                    _TemporaryIndex = determineMinTemporaryOSMID(revisionTable, _TemporaryIndex);
+            }
 
             // find/retrieve the table containing the relations
             ITable relationTable = findRelationTable(deleteFeature);
@@ -475,7 +478,7 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
             int osmMembersFieldIndex = deleteFeature.Fields.FindField("osmMembers");
 
 
-            bool trackChanges = true;
+            //bool trackChanges = true;
             int osmTrackChangesFieldIndex = currentObjectFeatureClass.FindField("osmTrackChanges");
 
             //if (osmTrackChangesFieldIndex > -1)
@@ -941,33 +944,16 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
             ITable revisionTable = findRevisionTable(changeFeature);
 
             // let's determine the current lowest available ID number to be used for the current edits
-            //if (_TemporaryIndex >= -1)
-           // {
-               // _TemporaryIndex = determineMinTemporaryOSMID(changedObject, _TemporaryIndex);
+            if (_TemporaryIndex >= 0)
+            {
                 if (_ExtensionVersion == 1)
                     _TemporaryIndex = determineMinTemporaryOSMID(changedObject, _TemporaryIndex);
                 else if (_ExtensionVersion == 2)
                     _TemporaryIndex = determineMinTemporaryOSMID(revisionTable, _TemporaryIndex);
-
-            //
+            }
 
             bool trackChanges = true;
             int osmTrackChangesFieldIndex = currentObjectFeatureClass.FindField("osmTrackChanges");
-
-                    //if (osmTrackChangesFieldIndex > -1)
-                    //{
-                    //    try
-                    //    {
-                    //        int trackChangesIndicator = Convert.ToInt32(changeFeature.get_Value(osmTrackChangesFieldIndex));
-
-                    //        if (trackChangesIndicator != 0)
-                    //        {
-                    //            trackChanges  = false;
-                    //        }
-                    //    }
-                    //    catch { }
-                    //}
-
 
             // if the feature geometry has changed make sure the matching point do exist in the _osm_pt feature class
             // as well as that the geometry is tested for coincident nodes
@@ -1091,7 +1077,6 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                         int osmChangeFeatureIsMemberOfFieldIndex = currentObjectFeatureClass.FindField("osmMemberOf");
                         int osmChangeFeatureTimeStampFieldIndex = currentObjectFeatureClass.FindField("osmtimestamp");
 
-                        long featureOSMID = _TemporaryIndex;
                         _TemporaryIndex = _TemporaryIndex - 1;
 
                         // depending on the incoming geometry type loop through all the points and make sure that they are put into chunks of 
@@ -1294,12 +1279,12 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
 
             if (m_bypassOSMChangeDetection == false)
             {
-            // if the ids of the orginal and the changed feature geometry are the same and no attributes have changed then we don't need to
-            // issue a change request against the OSM server
-            if (hasOSMRelevantChanges((IRowChanges)changeFeature))
-            {
-                LogOSMAction(revisionTable, "modify", determineOSMTypeByClassNameAndGeometry(((IDataset)changeFeature.Class).Name, changeFeature.Shape), ((IDataset)changeFeature.Class).Name, currentFeatureOSMID, currentFeatureVersion, -1, null);
-            }
+                // if the ids of the orginal and the changed feature geometry are the same and no attributes have changed then we don't need to
+                // issue a change request against the OSM server
+                if (hasOSMRelevantChanges((IRowChanges)changeFeature))
+                {
+                    LogOSMAction(revisionTable, "modify", determineOSMTypeByClassNameAndGeometry(((IDataset)changeFeature.Class).Name, changeFeature.Shape), ((IDataset)changeFeature.Class).Name, currentFeatureOSMID, currentFeatureVersion, -1, null);
+                }
             }
         }
 
@@ -1308,224 +1293,224 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
         /// -- create needed vertices to fully represent the line or polygon
         /// </summary>
         /// <param name="changeFeature"></param>
-        private void CheckforMovingAwayFromFeature(IFeature changeFeature, bool trackChanges)
-        {
+        //private void CheckforMovingAwayFromFeature(IFeature changeFeature, bool trackChanges)
+        //{
 
-            // if the feature is not supposed to tracked then we are either handling the loading of diff files
-            // since diff files have explictly expressed knowledge of the changes for OpenStreetMap there is no need to 
-            // detect effects on connected entities as the diff itself will tell us
-            if (trackChanges == false)
-                return;
+        //    // if the feature is not supposed to tracked then we are either handling the loading of diff files
+        //    // since diff files have explictly expressed knowledge of the changes for OpenStreetMap there is no need to 
+        //    // detect effects on connected entities as the diff itself will tell us
+        //    if (trackChanges == false)
+        //        return;
 
-            IFeatureClass lineFeatureClass = findMatchingFeatureClass(changeFeature, esriGeometryType.esriGeometryPolyline);
-
-
-            // the original shape is provided in the current map projection which might be different from the feature class projection
-            // hence the re-project
-            IPoint oldPointGeometry = ((IFeatureChanges)changeFeature).OriginalShape as IPoint;
-            oldPointGeometry.Project(changeFeature.Shape.SpatialReference);
-
-            ISpatialFilter searchSpatialFilter = new SpatialFilterClass();
-            searchSpatialFilter.Geometry = oldPointGeometry;
-            searchSpatialFilter.SpatialRel = esriSpatialRelEnum.esriSpatialRelIntersects;
-            searchSpatialFilter.GeometryField = lineFeatureClass.ShapeFieldName;
-
-            int supportElementFieldIndex = changeFeature.Fields.FindField("osmSupportingElement");
-            int osmIDFieldIndex = changeFeature.Fields.FindField("OSMID");
-            int wayRefCountFieldIndex = changeFeature.Fields.FindField("wayRefCount");
-            int osmVersionFieldIndex = changeFeature.Fields.FindField("osmversion");
-            int trackChangesFieldIndex = changeFeature.Fields.FindField("osmTrackChanges");
-
-            int lineTrackChangesFieldIndex = lineFeatureClass.Fields.FindField("osmTrackChanges");
-
-            // find lines that were coincident with the previous point location
-            using (ComReleaser comReleaser = new ComReleaser())
-            {
-                IFeatureCursor lineSearchCursor = lineFeatureClass.Search(searchSpatialFilter, false);
-                comReleaser.ManageLifetime(lineSearchCursor);
-
-                IFeature foundFeature = lineSearchCursor.NextFeature();
-
-                // if we indeed find such a line geometry, ensure that we add a new supporting vertex in the position of the vertex (point/node)
-                // that was just changed
-                if (foundFeature != null)
-                {
-                    IPointCollection pointCollection = foundFeature.Shape as IPointCollection;
-                    IRelationalOperator relationOperator = oldPointGeometry as IRelationalOperator;
-                    IFeatureClass pointFeatureClass = changeFeature.Class as IFeatureClass;
-
-                    for (int pointIndex = 0; pointIndex < pointCollection.PointCount; pointIndex++)
-                    {
-                        if (relationOperator.Equals((IGeometry)pointCollection.get_Point(pointIndex)))
-                        {
-                            IFeature newSupportPointFeature = pointFeatureClass.CreateFeature();
-
-                            IPoint newPoint = ((IClone)pointCollection.get_Point(pointIndex)).Clone() as IPoint;
-
-                            IPointIDAware newPointIDAware = newPoint as IPointIDAware;
-                            newPointIDAware.PointIDAware = true;
-
-                            if (_ExtensionVersion == 1)
-                                newPoint.ID = Convert.ToInt32(_TemporaryIndex);
-                            else if (_ExtensionVersion == 2)
-                                newPoint.ID = newSupportPointFeature.OID;
-
-                            // remember to update the geometry of the line itself
-                            pointCollection.UpdatePoint(pointIndex, newPoint);
-
-                            newSupportPointFeature.Shape = newPoint;
-
-                            if (supportElementFieldIndex > -1)
-                            {
-                                newSupportPointFeature.set_Value(supportElementFieldIndex, "yes");
-                            }
-                            if (osmIDFieldIndex > -1)
-                            {
-                                if (_ExtensionVersion == 1)
-                                    newSupportPointFeature.set_Value(osmIDFieldIndex, Convert.ToInt32(_TemporaryIndex));
-                                else if (_ExtensionVersion == 2)
-                                    newSupportPointFeature.set_Value(osmIDFieldIndex, Convert.ToString(_TemporaryIndex));
-                            }
-
-                            if (wayRefCountFieldIndex > -1)
-                            {
-                                newSupportPointFeature.set_Value(wayRefCountFieldIndex, 1);
-                            }
-
-                            if (osmVersionFieldIndex > -1)
-                            {
-                                newSupportPointFeature.set_Value(osmVersionFieldIndex, 1);
-                            }
-
-                            _TemporaryIndex = _TemporaryIndex - 1;
-
-                            //if (trackChangesFieldIndex > -1)
-                            //{
-                            //    if (trackChanges == false)
-                            //    {
-                            //        newSupportPointFeature.set_Value(trackChangesFieldIndex, 1);
-                            //    }
-                            //}
-
-                            // save the newly created point
-                            newSupportPointFeature.Store();
-
-                            //if (trackChanges == false)
-                            //{
-                            //    if (lineTrackChangesFieldIndex > -1)
-                            //    {
-                            //        foundFeature.set_Value(lineTrackChangesFieldIndex, 1);
-                            //    }
-                            //}
-
-                            // save the updated line geometry
-                            foundFeature.Shape = pointCollection as IGeometry;
-                            foundFeature.Store();
-
-                        }
-                    }
-
-                    foundFeature = lineSearchCursor.NextFeature();
-                }
-            }
-
-            IFeatureClass polygonFeatureClass = findMatchingFeatureClass(changeFeature, esriGeometryType.esriGeometryPolygon);
-            int polygonTrackChangesFieldIndex = polygonFeatureClass.Fields.FindField("osmTrackChanges");
-
-            ISpatialFilter searchPolygonSpatialFilter = new SpatialFilterClass();
-            searchPolygonSpatialFilter.Geometry = oldPointGeometry;
-            searchPolygonSpatialFilter.SpatialRel = esriSpatialRelEnum.esriSpatialRelTouches;
-            searchPolygonSpatialFilter.GeometryField = polygonFeatureClass.ShapeFieldName;
-
-            using (ComReleaser comReleaser = new ComReleaser())
-            {
-                IFeatureCursor polygonSearchCursor = polygonFeatureClass.Search(searchSpatialFilter, false);
-                comReleaser.ManageLifetime(polygonSearchCursor);
-
-                IFeature foundFeature = polygonSearchCursor.NextFeature();
-
-                if (foundFeature != null)
-                {
-                    IPointCollection pointCollection = foundFeature.Shape as IPointCollection;
-
-                    IRelationalOperator relationOperator = oldPointGeometry as IRelationalOperator;
-                    IFeatureClass pointFeatureClass = changeFeature.Class as IFeatureClass;
-
-                    for (int pointIndex = 0; pointIndex < pointCollection.PointCount; pointIndex++)
-                    {
-                        if (relationOperator.Equals((IGeometry)pointCollection.get_Point(pointIndex)))
-                        {
-                            IFeature newSupportPointFeature = pointFeatureClass.CreateFeature();
-
-                            IPoint newPoint = ((IClone)pointCollection.get_Point(pointIndex)).Clone() as IPoint;
-
-                            IPointIDAware newPointIDAware = newPoint as IPointIDAware;
-                            newPointIDAware.PointIDAware = true;
-
-                            if (_ExtensionVersion == 1)
-                                newPoint.ID = Convert.ToInt32(_TemporaryIndex);
-                            else if (_ExtensionVersion == 2)
-                                newPoint.ID = newSupportPointFeature.OID;
+        //    IFeatureClass lineFeatureClass = findMatchingFeatureClass(changeFeature, esriGeometryType.esriGeometryPolyline);
 
 
-                            pointCollection.UpdatePoint(pointIndex, newPoint);
+        //    // the original shape is provided in the current map projection which might be different from the feature class projection
+        //    // hence the re-project
+        //    IPoint oldPointGeometry = ((IFeatureChanges)changeFeature).OriginalShape as IPoint;
+        //    oldPointGeometry.Project(changeFeature.Shape.SpatialReference);
 
-                            newSupportPointFeature.Shape = newPoint;
+        //    ISpatialFilter searchSpatialFilter = new SpatialFilterClass();
+        //    searchSpatialFilter.Geometry = oldPointGeometry;
+        //    searchSpatialFilter.SpatialRel = esriSpatialRelEnum.esriSpatialRelIntersects;
+        //    searchSpatialFilter.GeometryField = lineFeatureClass.ShapeFieldName;
 
-                            if (supportElementFieldIndex > -1)
-                            {
-                                newSupportPointFeature.set_Value(supportElementFieldIndex, "yes");
-                            }
-                            if (osmIDFieldIndex > -1)
-                            {   
-                                if (_ExtensionVersion == 1)
-                                    newSupportPointFeature.set_Value(osmIDFieldIndex, Convert.ToInt32(_TemporaryIndex));
-                                else if (_ExtensionVersion == 2)
-                                    newSupportPointFeature.set_Value(osmIDFieldIndex, Convert.ToString(_TemporaryIndex));
-                            }
+        //    int supportElementFieldIndex = changeFeature.Fields.FindField("osmSupportingElement");
+        //    int osmIDFieldIndex = changeFeature.Fields.FindField("OSMID");
+        //    int wayRefCountFieldIndex = changeFeature.Fields.FindField("wayRefCount");
+        //    int osmVersionFieldIndex = changeFeature.Fields.FindField("osmversion");
+        //    int trackChangesFieldIndex = changeFeature.Fields.FindField("osmTrackChanges");
 
-                            if (wayRefCountFieldIndex > -1)
-                            {
-                                newSupportPointFeature.set_Value(wayRefCountFieldIndex, 1);
-                            }
+        //    int lineTrackChangesFieldIndex = lineFeatureClass.Fields.FindField("osmTrackChanges");
 
-                            if (osmVersionFieldIndex > -1)
-                            {
-                                newSupportPointFeature.set_Value(osmVersionFieldIndex, 1);
-                            }
+        //    // find lines that were coincident with the previous point location
+        //    using (ComReleaser comReleaser = new ComReleaser())
+        //    {
+        //        IFeatureCursor lineSearchCursor = lineFeatureClass.Search(searchSpatialFilter, false);
+        //        comReleaser.ManageLifetime(lineSearchCursor);
 
-                            _TemporaryIndex = _TemporaryIndex - 1;
+        //        IFeature foundFeature = lineSearchCursor.NextFeature();
 
-                            //if (trackChangesFieldIndex > -1)
-                            //{
-                            //    if (trackChanges == false)
-                            //    {
-                            //        newSupportPointFeature.set_Value(trackChangesFieldIndex, 1);
-                            //    }
-                            //}
+        //        // if we indeed find such a line geometry, ensure that we add a new supporting vertex in the position of the vertex (point/node)
+        //        // that was just changed
+        //        if (foundFeature != null)
+        //        {
+        //            IPointCollection pointCollection = foundFeature.Shape as IPointCollection;
+        //            IRelationalOperator relationOperator = oldPointGeometry as IRelationalOperator;
+        //            IFeatureClass pointFeatureClass = changeFeature.Class as IFeatureClass;
 
-                            // save the newly created point
-                            newSupportPointFeature.Store();
+        //            for (int pointIndex = 0; pointIndex < pointCollection.PointCount; pointIndex++)
+        //            {
+        //                if (relationOperator.Equals((IGeometry)pointCollection.get_Point(pointIndex)))
+        //                {
+        //                    IFeature newSupportPointFeature = pointFeatureClass.CreateFeature();
 
-                            //if (trackChanges == false)
-                            //{
-                            //    if (polygonTrackChangesFieldIndex > -1)
-                            //    {
-                            //        foundFeature.set_Value(polygonTrackChangesFieldIndex, 1);
-                            //    }
-                            //}
+        //                    IPoint newPoint = ((IClone)pointCollection.get_Point(pointIndex)).Clone() as IPoint;
 
-                            // save the changes to the polygon geometry
-                            foundFeature.Shape = pointCollection as IGeometry;
-                            foundFeature.Store();
+        //                    IPointIDAware newPointIDAware = newPoint as IPointIDAware;
+        //                    newPointIDAware.PointIDAware = true;
 
-                        }
-                    }
+        //                    if (_ExtensionVersion == 1)
+        //                        newPoint.ID = Convert.ToInt32(_TemporaryIndex);
+        //                    else if (_ExtensionVersion == 2)
+        //                        newPoint.ID = newSupportPointFeature.OID;
 
-                    foundFeature = polygonSearchCursor.NextFeature();
-                }
-            }
-        }
+        //                    // remember to update the geometry of the line itself
+        //                    pointCollection.UpdatePoint(pointIndex, newPoint);
+
+        //                    newSupportPointFeature.Shape = newPoint;
+
+        //                    if (supportElementFieldIndex > -1)
+        //                    {
+        //                        newSupportPointFeature.set_Value(supportElementFieldIndex, "yes");
+        //                    }
+        //                    if (osmIDFieldIndex > -1)
+        //                    {
+        //                        if (_ExtensionVersion == 1)
+        //                            newSupportPointFeature.set_Value(osmIDFieldIndex, Convert.ToInt32(_TemporaryIndex));
+        //                        else if (_ExtensionVersion == 2)
+        //                            newSupportPointFeature.set_Value(osmIDFieldIndex, Convert.ToString(_TemporaryIndex));
+        //                    }
+
+        //                    if (wayRefCountFieldIndex > -1)
+        //                    {
+        //                        newSupportPointFeature.set_Value(wayRefCountFieldIndex, 1);
+        //                    }
+
+        //                    if (osmVersionFieldIndex > -1)
+        //                    {
+        //                        newSupportPointFeature.set_Value(osmVersionFieldIndex, 1);
+        //                    }
+
+        //                    _TemporaryIndex = _TemporaryIndex - 1;
+
+        //                    //if (trackChangesFieldIndex > -1)
+        //                    //{
+        //                    //    if (trackChanges == false)
+        //                    //    {
+        //                    //        newSupportPointFeature.set_Value(trackChangesFieldIndex, 1);
+        //                    //    }
+        //                    //}
+
+        //                    // save the newly created point
+        //                    newSupportPointFeature.Store();
+
+        //                    //if (trackChanges == false)
+        //                    //{
+        //                    //    if (lineTrackChangesFieldIndex > -1)
+        //                    //    {
+        //                    //        foundFeature.set_Value(lineTrackChangesFieldIndex, 1);
+        //                    //    }
+        //                    //}
+
+        //                    // save the updated line geometry
+        //                    foundFeature.Shape = pointCollection as IGeometry;
+        //                    foundFeature.Store();
+
+        //                }
+        //            }
+
+        //            foundFeature = lineSearchCursor.NextFeature();
+        //        }
+        //    }
+
+        //    IFeatureClass polygonFeatureClass = findMatchingFeatureClass(changeFeature, esriGeometryType.esriGeometryPolygon);
+        //    int polygonTrackChangesFieldIndex = polygonFeatureClass.Fields.FindField("osmTrackChanges");
+
+        //    ISpatialFilter searchPolygonSpatialFilter = new SpatialFilterClass();
+        //    searchPolygonSpatialFilter.Geometry = oldPointGeometry;
+        //    searchPolygonSpatialFilter.SpatialRel = esriSpatialRelEnum.esriSpatialRelTouches;
+        //    searchPolygonSpatialFilter.GeometryField = polygonFeatureClass.ShapeFieldName;
+
+        //    using (ComReleaser comReleaser = new ComReleaser())
+        //    {
+        //        IFeatureCursor polygonSearchCursor = polygonFeatureClass.Search(searchSpatialFilter, false);
+        //        comReleaser.ManageLifetime(polygonSearchCursor);
+
+        //        IFeature foundFeature = polygonSearchCursor.NextFeature();
+
+        //        if (foundFeature != null)
+        //        {
+        //            IPointCollection pointCollection = foundFeature.Shape as IPointCollection;
+
+        //            IRelationalOperator relationOperator = oldPointGeometry as IRelationalOperator;
+        //            IFeatureClass pointFeatureClass = changeFeature.Class as IFeatureClass;
+
+        //            for (int pointIndex = 0; pointIndex < pointCollection.PointCount; pointIndex++)
+        //            {
+        //                if (relationOperator.Equals((IGeometry)pointCollection.get_Point(pointIndex)))
+        //                {
+        //                    IFeature newSupportPointFeature = pointFeatureClass.CreateFeature();
+
+        //                    IPoint newPoint = ((IClone)pointCollection.get_Point(pointIndex)).Clone() as IPoint;
+
+        //                    IPointIDAware newPointIDAware = newPoint as IPointIDAware;
+        //                    newPointIDAware.PointIDAware = true;
+
+        //                    if (_ExtensionVersion == 1)
+        //                        newPoint.ID = Convert.ToInt32(_TemporaryIndex);
+        //                    else if (_ExtensionVersion == 2)
+        //                        newPoint.ID = newSupportPointFeature.OID;
+
+
+        //                    pointCollection.UpdatePoint(pointIndex, newPoint);
+
+        //                    newSupportPointFeature.Shape = newPoint;
+
+        //                    if (supportElementFieldIndex > -1)
+        //                    {
+        //                        newSupportPointFeature.set_Value(supportElementFieldIndex, "yes");
+        //                    }
+        //                    if (osmIDFieldIndex > -1)
+        //                    {
+        //                        if (_ExtensionVersion == 1)
+        //                            newSupportPointFeature.set_Value(osmIDFieldIndex, Convert.ToInt32(_TemporaryIndex));
+        //                        else if (_ExtensionVersion == 2)
+        //                            newSupportPointFeature.set_Value(osmIDFieldIndex, Convert.ToString(_TemporaryIndex));
+        //                    }
+
+        //                    if (wayRefCountFieldIndex > -1)
+        //                    {
+        //                        newSupportPointFeature.set_Value(wayRefCountFieldIndex, 1);
+        //                    }
+
+        //                    if (osmVersionFieldIndex > -1)
+        //                    {
+        //                        newSupportPointFeature.set_Value(osmVersionFieldIndex, 1);
+        //                    }
+
+        //                    _TemporaryIndex = _TemporaryIndex - 1;
+
+        //                    //if (trackChangesFieldIndex > -1)
+        //                    //{
+        //                    //    if (trackChanges == false)
+        //                    //    {
+        //                    //        newSupportPointFeature.set_Value(trackChangesFieldIndex, 1);
+        //                    //    }
+        //                    //}
+
+        //                    // save the newly created point
+        //                    newSupportPointFeature.Store();
+
+        //                    //if (trackChanges == false)
+        //                    //{
+        //                    //    if (polygonTrackChangesFieldIndex > -1)
+        //                    //    {
+        //                    //        foundFeature.set_Value(polygonTrackChangesFieldIndex, 1);
+        //                    //    }
+        //                    //}
+
+        //                    // save the changes to the polygon geometry
+        //                    foundFeature.Shape = pointCollection as IGeometry;
+        //                    foundFeature.Store();
+
+        //                }
+        //            }
+
+        //            foundFeature = polygonSearchCursor.NextFeature();
+        //        }
+        //    }
+        //}
 
         private string ReadAttributeValueAsString(IRow row, int fieldIndex, string defaultValue = null)
         {
@@ -1936,7 +1921,7 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
         private long getLowestOSMID(ref int catchCounter, ITable inputTable, string fieldName)
         {
             int osmIDFieldIndex = inputTable.Fields.FindField(fieldName);
-            long newTempID = -1;
+            long newTempID = 0;
 
             if (osmIDFieldIndex > -1)
             {
@@ -2222,7 +2207,7 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
             int revFCNameFieldIndex = revisionTable.Fields.FindField("sourcefcname");
             int revOldIdFieldIndex = revisionTable.Fields.FindField("osmoldid");
 
-            bool trackFeatureChanges = true;
+            //bool trackFeatureChanges = true;
 
             if (_ExtensionVersion == 2)
             {
@@ -2405,7 +2390,6 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                             //}
 
                             _TemporaryIndex = _TemporaryIndex - 1;
-
                         }
                         else
                         {
@@ -2471,8 +2455,8 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                 }
                 else
                 {
-                    _TemporaryIndex = _TemporaryIndex - 1;
                     osmID = _TemporaryIndex;
+                    _TemporaryIndex = _TemporaryIndex - 1;
                     if (_ExtensionVersion == 1)
                         pointFeature.set_Value(osmIDFieldIndex, Convert.ToInt32(osmID));
                     else if (_ExtensionVersion == 2)
@@ -2642,7 +2626,7 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
 
                 // let's determine the new temporary OSM ID - the number should be consistent through points, line, polygons
                 long fff = Convert.ToInt64(_TemporaryIndex);
-                if (_TemporaryIndex >= -1)
+                if (_TemporaryIndex >= 0)
                 {
                     if (_ExtensionVersion == 1)
                         _TemporaryIndex = determineMinTemporaryOSMID(source, _TemporaryIndex);
@@ -2722,7 +2706,6 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                                 newlyCreatedFeature.set_Value(osmNewFeatureIDFieldIndex, Convert.ToInt32(featureOSMID));
                             else if (_ExtensionVersion == 2)
                                 newlyCreatedFeature.set_Value(osmNewFeatureIDFieldIndex, Convert.ToString(featureOSMID));
-
                         }
                         else
                         {
@@ -2732,13 +2715,8 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                             // existing attributes - that is not allowed by definition hence to decrement the temporary index by 1 to indicate a new feature
                             if (featureOSMID < 0)
                             {
-                                //featureOSMID = _TemporaryIndex;
+                                featureOSMID = _TemporaryIndex;
                                 _TemporaryIndex = _TemporaryIndex - 1;
-
-                                //if (_ExtensionVersion == 1)
-                                //    newlyCreatedFeature.set_Value(osmNewFeatureIDFieldIndex, Convert.ToInt32(featureOSMID));
-                                //else if (_ExtensionVersion == 2)
-                                //    newlyCreatedFeature.set_Value(osmNewFeatureIDFieldIndex, Convert.ToString(featureOSMID));
                             }
                         }
                     }
@@ -3048,7 +3026,7 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                                                     testBuffer = pc.Buffer(currentPoint, ((ISpatialReferenceTolerance)currentPoint.SpatialReference).XYTolerance * 1.5);
                                                 }
 
-                                                bool equalPoint = ((IRelationalOperator2) testBuffer).ContainsEx(existingNodeFeature.Shape, esriSpatialRelationExEnum.esriSpatialRelationExProper);
+                                                bool equalPoint = ((IRelationalOperator2)testBuffer).ContainsEx(existingNodeFeature.Shape, esriSpatialRelationExEnum.esriSpatialRelationExProper);
 
                                                 if (equalPoint == false)
                                                 {
@@ -3129,8 +3107,8 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                                         {
                                             // we are populating the add IDs as we go - but as opposed to adding the currently used one (for which we deleted the OSM metadata info)
                                             // we pick a new ID
-                                            _TemporaryIndex = _TemporaryIndex - 1;
                                             addIDs.Add(_TemporaryIndex);
+                                            _TemporaryIndex = _TemporaryIndex - 1;
                                         }
 
                                         // in this case we have a new point/node geometry
@@ -3623,20 +3601,19 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                     if (enumVertex.IsLastInPart())
                     {
                         // ignore the last point in the part in ring as it is supposed to be coincident with the first point
-                       // iDList.Add(iDList[0]);
+                        // iDList.Add(iDList[0]);
                     }
                     else
                     {
                         // test if the point has an ID already assigned to it
                         if (currentPoint.ID == 0)
                         {
-                            // decrease the temp index counter
-                            _TemporaryIndex = _TemporaryIndex - 1;
-
                             // if not then give it a temporary id
                             enumVertex.put_ID(Convert.ToInt32(_TemporaryIndex));
                             iDList.Add(_TemporaryIndex);
 
+                            // decrease the temp index counter
+                            _TemporaryIndex = _TemporaryIndex - 1;
                         }
                         else
                         {
@@ -3649,12 +3626,12 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                     // test if the point has an ID already assigned to it
                     if (currentPoint.ID == 0)
                     {
-                        // decrease the temp index counter
-                        _TemporaryIndex = _TemporaryIndex - 1;
-
                         // if not then give it a temporary id
                         enumVertex.put_ID(Convert.ToInt32(_TemporaryIndex));
                         iDList.Add(_TemporaryIndex);
+
+                        // decrease the temp index counter
+                        _TemporaryIndex = _TemporaryIndex - 1;
                     }
                     else
                     {
@@ -3945,7 +3922,7 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
 
         public int HWND
         {
-            get 
+            get
             {
                 if (m_Inspector != null)
                 {
