@@ -427,12 +427,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
             try
             {
-                bool succeeded = ESRI.ArcGIS.RuntimeManager.Bind(ProductCode.EngineOrDesktop);
-                if (succeeded)
-                {
-                    RuntimeInfo activeRunTimeInfo = RuntimeManager.ActiveRuntime;
-                    System.Diagnostics.Debug.Print(activeRunTimeInfo.Product.ToString());
-                }
+                //bool succeeded = ESRI.ArcGIS.RuntimeManager.Bind(ProductCode.EngineOrDesktop);
+                //if (succeeded)
+                //{
+                //    RuntimeInfo activeRunTimeInfo = RuntimeManager.ActiveRuntime;
+                //    System.Diagnostics.Debug.Print(activeRunTimeInfo.Product.ToString());
+                //}
 
                 // Get installed runtimes
                 installedRuntimes = ESRI.ArcGIS.RuntimeManager.InstalledRuntimes;
