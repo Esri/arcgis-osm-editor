@@ -328,9 +328,21 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
         #region IClassExtension Members
 
         // Temporary index for newly created OSM IDs
-        //  - shared between point / line and polygon feature classes
+        //  - shared between point / line and polygon feature classes for each unique osm dataset
         //  - by convention: use then decrement
-        private static long _TemporaryIndex = 0;
+        private long _temporaryIndex = 0;
+        private string _revisionTableName;
+
+        private static Dictionary<string, long> _tempIndicies;
+        private static Dictionary<string, long> TempIndicies
+        {
+            get
+            {
+                if (_tempIndicies == null)
+                    _tempIndicies = new Dictionary<string, long>();
+                return _tempIndicies;
+            }
+        }
 
         private ISpatialReference m_wgs84 = null;
         private int _ExtensionVersion = 1;
@@ -347,6 +359,17 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                 m_wgs84 = spatialReferenceFactory.CreateGeographicCoordinateSystem((int)esriSRGeoCSType.esriSRGeoCS_WGS1984) as ISpatialReference;
 
                 m_baseClass = ClassHelper.Class;
+
+                // Save the path to the revision table (used to track temp indexes)
+                IDataset ds = (IDataset)m_baseClass;
+                _revisionTableName = "Empty";
+                string className = ds.Name;
+                int osmDelimiterPosition = className.IndexOf("_osm_");
+                if (osmDelimiterPosition >= 0)
+                {
+                    string baseName = className.Substring(0, osmDelimiterPosition);
+                    _revisionTableName = System.IO.Path.Combine(ds.Workspace.PathName, baseName + "_osm_revision");
+                }
 
                 if (ExtensionProperties == null)
                     _ExtensionVersion = 1;
@@ -451,13 +474,8 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
             // find/retrieve the osm logging/revision table
             ITable revisionTable = findRevisionTable(deleteFeature);
 
-            if (_TemporaryIndex >= 0)
-            {
-                if (_ExtensionVersion == 1)
-                    _TemporaryIndex = determineMinTemporaryOSMID(deleteObject, _TemporaryIndex);
-                else if (_ExtensionVersion == 2)
-                    _TemporaryIndex = determineMinTemporaryOSMID(revisionTable, _TemporaryIndex);
-            }
+            // Set revision table from cache or calculate from revision table
+            SetTemporaryIndex(deleteObject, revisionTable);
 
             // find/retrieve the table containing the relations
             ITable relationTable = findRelationTable(deleteFeature);
@@ -567,7 +585,7 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                 }
                 else
                 {
-                    long osmID = ReadAttributeValueAsLong(deleteFeature, osmIDFieldIndex) ?? _TemporaryIndex;
+                    long osmID = ReadAttributeValueAsLong(deleteFeature, osmIDFieldIndex) ?? _temporaryIndex;
                     osmVersion = ReadAttributeValueAsInt(deleteFeature, osmVersionFieldIndex) ?? -1;
                     osmChangeSet = -1;// ReadAttributeValueAsInt(deleteFeature, osmChangeSetFieldIndex) ?? -1;
 
@@ -943,14 +961,8 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
             // find/retrieve the instance of the logging/revision table 
             ITable revisionTable = findRevisionTable(changeFeature);
 
-            // let's determine the current lowest available ID number to be used for the current edits
-            if (_TemporaryIndex >= 0)
-            {
-                if (_ExtensionVersion == 1)
-                    _TemporaryIndex = determineMinTemporaryOSMID(changedObject, _TemporaryIndex);
-                else if (_ExtensionVersion == 2)
-                    _TemporaryIndex = determineMinTemporaryOSMID(revisionTable, _TemporaryIndex);
-            }
+            // Set revision table from cache or calculate from revision table
+            SetTemporaryIndex(changedObject, revisionTable);
 
             bool trackChanges = true;
             int osmTrackChangesFieldIndex = currentObjectFeatureClass.FindField("osmTrackChanges");
@@ -1077,7 +1089,7 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                         int osmChangeFeatureIsMemberOfFieldIndex = currentObjectFeatureClass.FindField("osmMemberOf");
                         int osmChangeFeatureTimeStampFieldIndex = currentObjectFeatureClass.FindField("osmtimestamp");
 
-                        _TemporaryIndex = _TemporaryIndex - 1;
+                        DecrementTemporaryIndex();
 
                         // depending on the incoming geometry type loop through all the points and make sure that they are put into chunks of 
                         // 2000 nodes/points
@@ -1855,6 +1867,31 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
             return deletedNodeIDs;
         }
 
+
+        /// <summary>Sets the temporary index for pre-commited osmids</summary>
+        /// <remarks>Reads the lowest available value from the given revision table</remarks>
+        private void SetTemporaryIndex(IObject testObject, ITable revisionTable)
+        {
+            _temporaryIndex = 0;
+
+            TempIndicies.TryGetValue(_revisionTableName, out _temporaryIndex);
+            if (_temporaryIndex >= 0)
+            {
+                if (_ExtensionVersion == 1)
+                    _temporaryIndex = determineMinTemporaryOSMID(testObject, _temporaryIndex);
+                else if (_ExtensionVersion == 2)
+                    _temporaryIndex = determineMinTemporaryOSMID(revisionTable, _temporaryIndex);
+
+                TempIndicies[_revisionTableName] = _temporaryIndex;
+            }
+        }
+
+        private void DecrementTemporaryIndex()
+        {
+            --_temporaryIndex;
+            TempIndicies[_revisionTableName] = _temporaryIndex;
+        }
+
         /// <summary>
         /// Determines the new temporary ID for a newly created feature. This should be consistent throughout the 
         /// point, line, and polygon feature class. Relations and revisions are checked as well - even though for version 1.1 there is currently
@@ -2381,7 +2418,7 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
 
                             if (m_bypassOSMChangeDetection == false)
                             {
-                                LogOSMAction(revisionTable, "create", "node", ((IDataset)targetFeature.Class).Name, _TemporaryIndex, 1, -1, null);
+                                LogOSMAction(revisionTable, "create", "node", ((IDataset)targetFeature.Class).Name, _temporaryIndex, 1, -1, null);
                             }
 
                             //if (osmTrackFeatureChangesFieldIndex > -1)
@@ -2389,7 +2426,7 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                             //    targetFeature.set_Value(osmTrackFeatureChangesFieldIndex, 0);
                             //}
 
-                            _TemporaryIndex = _TemporaryIndex - 1;
+                            DecrementTemporaryIndex();
                         }
                         else
                         {
@@ -2455,8 +2492,8 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                 }
                 else
                 {
-                    osmID = _TemporaryIndex;
-                    _TemporaryIndex = _TemporaryIndex - 1;
+                    osmID = _temporaryIndex;
+                    DecrementTemporaryIndex();
                     if (_ExtensionVersion == 1)
                         pointFeature.set_Value(osmIDFieldIndex, Convert.ToInt32(osmID));
                     else if (_ExtensionVersion == 2)
@@ -2624,18 +2661,9 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                 // find the revision table for logging the changes.
                 ITable revisionTable = findRevisionTable(newlyCreatedFeature);
 
-                // let's determine the new temporary OSM ID - the number should be consistent through points, line, polygons
-                long fff = Convert.ToInt64(_TemporaryIndex);
-                if (_TemporaryIndex >= 0)
-                {
-                    if (_ExtensionVersion == 1)
-                        _TemporaryIndex = determineMinTemporaryOSMID(source, _TemporaryIndex);
-                    else if (_ExtensionVersion == 2)
-                        _TemporaryIndex = determineMinTemporaryOSMID(revisionTable, _TemporaryIndex);
-                }
-                long fff2 = Convert.ToInt64(_TemporaryIndex);
+                // Set revision table from cache or calculate from revision table
+                SetTemporaryIndex(source, revisionTable);
 
-                //
                 int revActionFieldIndex = revisionTable.Fields.FindField("osmaction");
                 int revElementTypeFieldIndex = revisionTable.Fields.FindField("osmelementtype");
                 int revFCNameFieldIndex = revisionTable.Fields.FindField("sourcefcname");
@@ -2699,8 +2727,8 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
 
                         if (osmIDValue == DBNull.Value)
                         {
-                            featureOSMID = _TemporaryIndex;
-                            _TemporaryIndex = _TemporaryIndex - 1;
+                            featureOSMID = _temporaryIndex;
+                            DecrementTemporaryIndex();
 
                             if (_ExtensionVersion == 1)
                                 newlyCreatedFeature.set_Value(osmNewFeatureIDFieldIndex, Convert.ToInt32(featureOSMID));
@@ -2715,8 +2743,8 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                             // existing attributes - that is not allowed by definition hence to decrement the temporary index by 1 to indicate a new feature
                             if (featureOSMID < 0)
                             {
-                                featureOSMID = _TemporaryIndex;
-                                _TemporaryIndex = _TemporaryIndex - 1;
+                                featureOSMID = _temporaryIndex;
+                                DecrementTemporaryIndex();
                             }
                         }
                     }
@@ -3048,11 +3076,11 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                                                     if (pointOSMIDFieldIndex > -1)
                                                     {
                                                         if (_ExtensionVersion == 1)
-                                                            newSupportFeature.set_Value(pointOSMIDFieldIndex, Convert.ToInt32(_TemporaryIndex));
+                                                            newSupportFeature.set_Value(pointOSMIDFieldIndex, Convert.ToInt32(_temporaryIndex));
                                                         else if (_ExtensionVersion == 2)
-                                                            newSupportFeature.set_Value(pointOSMIDFieldIndex, Convert.ToString(_TemporaryIndex));
+                                                            newSupportFeature.set_Value(pointOSMIDFieldIndex, Convert.ToString(_temporaryIndex));
 
-                                                        _TemporaryIndex = _TemporaryIndex - 1;
+                                                        DecrementTemporaryIndex();
                                                     }
 
                                                     if (pointVersionFieldIndex > -1)
@@ -3107,8 +3135,8 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                                         {
                                             // we are populating the add IDs as we go - but as opposed to adding the currently used one (for which we deleted the OSM metadata info)
                                             // we pick a new ID
-                                            addIDs.Add(_TemporaryIndex);
-                                            _TemporaryIndex = _TemporaryIndex - 1;
+                                            addIDs.Add(_temporaryIndex);
+                                            DecrementTemporaryIndex();
                                         }
 
                                         // in this case we have a new point/node geometry
@@ -3305,8 +3333,8 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
 
                                     // since we need to keep feature level OSM metadata around, we need to be sure to add a support object
                                     newLineMember = new member();
-                                    newLineMember.@ref = Convert.ToString(_TemporaryIndex);
-                                    _TemporaryIndex = _TemporaryIndex - 1;
+                                    newLineMember.@ref = Convert.ToString(_temporaryIndex);
+                                    DecrementTemporaryIndex();
                                     newLineMember.role = String.Empty;
                                     newLineMember.type = memberType.way;
 
@@ -3327,8 +3355,8 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
 
                             // since we need to keep feature level OSM metadata around, we need to be sure to add a support object
                             newLineMember = new member();
-                            newLineMember.@ref = Convert.ToString(_TemporaryIndex);
-                            _TemporaryIndex = _TemporaryIndex - 1;
+                            newLineMember.@ref = Convert.ToString(_temporaryIndex);
+                            DecrementTemporaryIndex();
                             newLineMember.role = String.Empty;
                             newLineMember.type = memberType.way;
 
@@ -3353,8 +3381,8 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                                 newLineGeometry.AddGeometry(currentPath, ref MissingValue, ref MissingValue);
 
                                 newLineMember = new member();
-                                newLineMember.@ref = Convert.ToString(_TemporaryIndex);
-                                _TemporaryIndex = _TemporaryIndex - 1;
+                                newLineMember.@ref = Convert.ToString(_temporaryIndex);
+                                DecrementTemporaryIndex();
                                 newLineMember.role = String.Empty;
                                 newLineMember.type = memberType.way;
 
@@ -3408,8 +3436,8 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                                 else
                                 {
                                     member newHoleMember = new member();
-                                    newHoleMember.@ref = Convert.ToString(_TemporaryIndex);
-                                    _TemporaryIndex = _TemporaryIndex - 1;
+                                    newHoleMember.@ref = Convert.ToString(_temporaryIndex);
+                                    DecrementTemporaryIndex();
                                     newHoleMember.role = "inner";
                                     newHoleMember.type = memberType.way;
 
@@ -3421,8 +3449,8 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                             else
                             {
                                 member newHoleMember = new member();
-                                newHoleMember.@ref = Convert.ToString(_TemporaryIndex);
-                                _TemporaryIndex = _TemporaryIndex - 1;
+                                newHoleMember.@ref = Convert.ToString(_temporaryIndex);
+                                DecrementTemporaryIndex();
                                 newHoleMember.role = "inner";
                                 newHoleMember.type = memberType.way;
 
@@ -3451,8 +3479,8 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                             else
                             {
                                 member newPolygonMember = new member();
-                                newPolygonMember.@ref = Convert.ToString(_TemporaryIndex);
-                                _TemporaryIndex = _TemporaryIndex - 1;
+                                newPolygonMember.@ref = Convert.ToString(_temporaryIndex);
+                                DecrementTemporaryIndex();
                                 newPolygonMember.role = "outer";
                                 newPolygonMember.type = memberType.way;
 
@@ -3464,8 +3492,8 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                         else
                         {
                             member newPolygonMember = new member();
-                            newPolygonMember.@ref = Convert.ToString(_TemporaryIndex);
-                            _TemporaryIndex = _TemporaryIndex - 1;
+                            newPolygonMember.@ref = Convert.ToString(_temporaryIndex);
+                            DecrementTemporaryIndex();
                             newPolygonMember.role = "outer";
                             newPolygonMember.type = memberType.way;
 
@@ -3609,11 +3637,10 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                         if (currentPoint.ID == 0)
                         {
                             // if not then give it a temporary id
-                            enumVertex.put_ID(Convert.ToInt32(_TemporaryIndex));
-                            iDList.Add(_TemporaryIndex);
+                            enumVertex.put_ID(Convert.ToInt32(_temporaryIndex));
+                            iDList.Add(_temporaryIndex);
 
-                            // decrease the temp index counter
-                            _TemporaryIndex = _TemporaryIndex - 1;
+                            DecrementTemporaryIndex();
                         }
                         else
                         {
@@ -3627,11 +3654,10 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                     if (currentPoint.ID == 0)
                     {
                         // if not then give it a temporary id
-                        enumVertex.put_ID(Convert.ToInt32(_TemporaryIndex));
-                        iDList.Add(_TemporaryIndex);
+                        enumVertex.put_ID(Convert.ToInt32(_temporaryIndex));
+                        iDList.Add(_temporaryIndex);
 
-                        // decrease the temp index counter
-                        _TemporaryIndex = _TemporaryIndex - 1;
+                        DecrementTemporaryIndex();
                     }
                     else
                     {
