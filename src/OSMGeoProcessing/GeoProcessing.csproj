@@ -156,6 +156,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="gp_documentation\osmgpcreatenetworkdataset.xml" />
     <Content Include="gp_documentation\gpcombinelayers.xml" />
     <Content Include="gp_documentation\gpfeaturecomparison.xml" />
     <Content Include="gp_documentation\osmgpaddextension.xml" />

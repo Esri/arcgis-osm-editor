@@ -1,0 +1,103 @@
+<metadata xml:lang="en">
+	<Esri>
+		<CreaDate>20131028</CreaDate>
+		<CreaTime>11563200</CreaTime>
+		<ArcGISFormat>1.0</ArcGISFormat>
+		<ArcGISstyle>ISO 19139 Metadata Implementation Specification</ArcGISstyle>
+		<SyncOnce>TRUE</SyncOnce>
+		<ModDate>20131028</ModDate>
+		<ModTime>164555</ModTime>
+		<ArcGISProfile>ISO19139</ArcGISProfile>
+	</Esri>
+	<tool name="OSMGPCreateNetworkDataset" displayname="OSM Create Network Dataset" toolboxalias="osmtools" xmlns="">
+		<parameters>
+			<param name="in_osmfeaturedataset" displayname="Input OpenStreetMap Feature Dataset" type="Required" direction="Input" datatype="Feature Dataset" expression="in_osmfeaturedataset">
+				<dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;Input feature dataset from which the OSM data is to be extracted.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
+				<pythonReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;Input feature dataset from which the OSM data is to be extracted.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</pythonReference>
+			</param>
+			<param name="in_networkconfigfile" displayname="OSM Create Network Dataset Configuration File" type="Required" direction="Input" datatype="XML File" expression="in_networkconfigfile">
+				<dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;Configuration XML file that guides creation of a network dataset from the given OSM data.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
+				<pythonReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;P&gt;&lt;SPAN&gt;Configuration XML file that guides creation of a network dataset from the given OSM data.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;</pythonReference>
+			</param>
+			<param name="out_networkdataset" displayname="NetworkAnalyst Network Dataset Name" type="Required" direction="Output" datatype="Network Dataset Name" expression="out_networkdataset">
+				<dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;Name of the output NetworkAnalyst Network Dataset.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference>
+				<pythonReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;P&gt;&lt;SPAN&gt;Name of the output NetworkAnalyst Network Dataset.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;</pythonReference>
+			</param>
+		</parameters>
+		<summary>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;The tool allows the user to create a NetworkAnalyst Network Dataset from OpenStreetMap data downloaded with ArcGIS Editor for OpenStreetMap.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</summary>
+		<usage>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;The tool allows the user to create a NetworkAnalyst Network Dataset from OpenStreetMap data downloaded with ArcGIS Editor for OpenStreetMap.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</usage>
+		<scriptExamples>
+			<scriptExample>
+				<title>OSM Create Network Dataset Sample (Python)</title>
+				<para>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;This Python window sample demonstrates how to create a Network Dataset from downloaded OSM data.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;</para>
+				<code>
+					# import the system modules
+					import arcpy
+					from arcpy import env
+
+					# load the OpenStreetMap specific toolbox
+					arcpy.ImportToolbox(r'd:\projects\OSMEditor\WheelChairMap\OpenStreetMap Toolbox.tbx')
+
+					env.workspace = r'd:\projects\OSMEditor\WheelChairMap\defaultstorage.gdb'
+
+					# extract the name tag for all line features
+					arcpy.OSMGPCreateNetworkDataset_osmtools(r'stuttgart\stuttgart', r'c:\temp\drivegeneric.xml', r'stuttgart_nd')
+				</code>
+			</scriptExample>
+		</scriptExamples>
+	</tool>
+	<dataIdInfo>
+		<idCitation>
+			<resTitle>OSM Create Network Dataset</resTitle>
+			<citRespParty>
+				<rpIndName>ESRI</rpIndName>
+				<rpCntInfo>
+					<cntOnlineRes>
+						<linkage>https://github.com/Esri/arcgis-osm-editor</linkage>
+						<orFunct>
+							<OnFunctCd value="002"/>
+						</orFunct>
+					</cntOnlineRes>
+				</rpCntInfo>
+				<role>
+					<RoleCd value="011"/>
+				</role>
+			</citRespParty>
+		</idCitation>
+		<idAbs>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;The tool allows the user to create a NetworkAnalyst Network Dataset from OpenStreetMap data downloaded with ArcGIS Editor for OpenStreetMap.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</idAbs>
+		<searchKeys>
+			<keyword>OSM</keyword>
+			<keyword>OpenStreetMap</keyword>
+			<keyword>editor</keyword>
+		</searchKeys>
+		<resConst>
+			<LegConsts>
+				<useLimit>http://go.microsoft.com/fwlink/?LinkID=131993</useLimit>
+				<accessConsts>
+					<RestrictCd value="005"/>
+				</accessConsts>
+				<useConsts>
+					<RestrictCd value="005"/>
+				</useConsts>
+			</LegConsts>
+		</resConst>
+		<idPoC>
+			<rpIndName>ESRI</rpIndName>
+			<rpCntInfo>
+				<cntAddress>
+					<eMailAdd>openstreetmap@esri.com</eMailAdd>
+				</cntAddress>
+			</rpCntInfo>
+			<role>
+				<RoleCd value="003"/>
+			</role>
+		</idPoC>
+	</dataIdInfo>
+	<distInfo>
+		<distributor>
+			<distorFormat>
+				<formatName>ArcToolbox Tool</formatName>
+			</distorFormat>
+		</distributor>
+	</distInfo>
+</metadata>
