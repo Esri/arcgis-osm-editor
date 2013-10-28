@@ -176,7 +176,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 tag createdByTag = new tag();
                 createdByTag.k = "created_by";
-                createdByTag.v = "ArcGIS Editor for OpenStreetMap (2.1)";
+                createdByTag.v = "ArcGIS Editor for OpenStreetMap (10.2)";
                 changeSetTags.Add(createdByTag);
 
                 tag commentTag = new tag();
