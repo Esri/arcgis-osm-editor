@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<networkConfiguration>
+    <edge>
+        <name>streets</name>
+        <connect_policy>EndVertex</connect_policy>
+        <osm_fields>
+            <osm_field>highway</osm_field>
+        </osm_fields>
+        <query>highway IS NOT NULL</query>
+    </edge>
+
+    <edge>
+        <name>railway</name>
+        <osm_fields>
+            <osm_field>railway</osm_field>
+        </osm_fields>
+        <query>railway IS NOT NULL</query>
+    </edge>
+
+    <junction>
+        <name>bus_stops</name>
+        <connect_policy>Honor</connect_policy>
+        <osm_fields>
+            <osm_field>highway</osm_field>
+        </osm_fields>
+        <query>highway = 'bus_stop'</query>
+    </junction>
+
+    <connectivity>
+        <group>
+            <source>streets</source>
+            <source>bus_stops</source>
+        </group>
+        <group>
+            <source>railway</source>
+            <source>bus_stops</source>
+        </group>
+    </connectivity>
+
+    <network>
+        <network_attribute>
+            <name>Distance</name>
+            <default_value>0.0</default_value>
+            <cost useAsDefault="true">
+                <units>Meters</units>
+                <datatype>double</datatype>
+                <evaluator_attributes>
+                    <source>streets</source>
+                    <direction>From-To</direction>
+                    <Field script_type="VBScript">
+                        <expression>[SHAPE]</expression>
+                    </Field>
+                </evaluator_attributes>
+                <evaluator_attributes>
+                    <source>streets</source>
+                    <direction>To-From</direction>
+                    <Field script_type="VBScript">
+                        <expression>[SHAPE]</expression>
+                    </Field>
+                </evaluator_attributes>
+            </cost>
+        </network_attribute>
+    </network>
+</networkConfiguration>

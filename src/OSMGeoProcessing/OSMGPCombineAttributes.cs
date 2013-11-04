@@ -178,41 +178,50 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         }
 
                         // look if the tag needs to be updated or added
+                        bool tagsUpdated = false;
                         foreach (var fieldItem in fieldIndexes)
                         {
-                            if (osmRow.get_Value(fieldItem.Value) != System.DBNull.Value)
+                            object fldValue = osmRow.get_Value(fieldItem.Value);
+                            if (fldValue != System.DBNull.Value)
                             {
                                 if (tagsDictionary.ContainsKey(fieldItem.Key))
                                 {
-                                    tagsDictionary[fieldItem.Key] = Convert.ToString(osmRow.get_Value(fieldItem.Value));
+                                    if (!tagsDictionary[fieldItem.Key].Equals(fldValue))
+                                    {
+                                        tagsDictionary[fieldItem.Key] = Convert.ToString(fldValue);
+                                        tagsUpdated = true;
+                                    }
                                 }
                                 else
                                 {
-                                    tagsDictionary.Add(fieldItem.Key, Convert.ToString(osmRow.get_Value(fieldItem.Value)));
+                                    tagsDictionary.Add(fieldItem.Key, Convert.ToString(fldValue));
+                                    tagsUpdated = true;
                                 }
                             }
                         }
 
-                        List<ESRI.ArcGIS.OSM.OSMClassExtension.tag> updatedTags = new List<ESRI.ArcGIS.OSM.OSMClassExtension.tag>();
-
-                        foreach (var tagItem in tagsDictionary)
+                        if (tagsUpdated)
                         {
-                            ESRI.ArcGIS.OSM.OSMClassExtension.tag newTag = new ESRI.ArcGIS.OSM.OSMClassExtension.tag();
-                            newTag.k = tagItem.Key;
-                            newTag.v = tagItem.Value;
-                            updatedTags.Add(newTag);
+                            List<ESRI.ArcGIS.OSM.OSMClassExtension.tag> updatedTags = new List<ESRI.ArcGIS.OSM.OSMClassExtension.tag>();
+
+                            foreach (var tagItem in tagsDictionary)
+                            {
+                                ESRI.ArcGIS.OSM.OSMClassExtension.tag newTag = new ESRI.ArcGIS.OSM.OSMClassExtension.tag();
+                                newTag.k = tagItem.Key;
+                                newTag.v = tagItem.Value;
+                                updatedTags.Add(newTag);
+                            }
+
+                            // insert the tags back into the collection field
+                            if (updatedTags.Count != 0)
+                            {
+                                osmUtility.insertOSMTags(osmTagCollectionFieldIndex, osmRow, updatedTags.ToArray(), ((IDataset)osmInputTable).Workspace);
+
+                                updateCursor.UpdateRow(osmRow);
+                            }
                         }
 
-
-                        // insert the tags back into the collection field
-                        if (updatedTags.Count != 0)
-                        {
-                            osmUtility.insertOSMTags(osmTagCollectionFieldIndex, osmRow, updatedTags.ToArray(), ((IDataset)osmInputTable).Workspace);
-
-                            updateCursor.UpdateRow(osmRow);
-                            progressIndex++;
-                        }
-
+                        progressIndex++;
                         if (stepProgressor != null)
                         {
                             stepProgressor.Position = progressIndex;
@@ -378,6 +387,19 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         public void UpdateMessages(ESRI.ArcGIS.esriSystem.IArray paramvalues, ESRI.ArcGIS.Geoprocessing.IGPEnvironmentManager pEnvMgr, ESRI.ArcGIS.Geodatabase.IGPMessages Messages)
         {
             IGPUtilities3 gpUtilities3 = new GPUtilitiesClass();
+
+            for (int i = 0; i < Messages.Count; i++)
+            {
+                IGPMessage blah = Messages.GetMessage(i);
+                if (blah.IsError())
+                {
+                    IGPMessage something = new GPMessageClass();
+                    something.Description = String.Empty;
+                    something.Type = esriGPMessageType.esriGPMessageTypeInformative;
+                    something.ErrorCode = 0;
+                    Messages.Replace(i, something);
+                }
+            }
 
             IGPParameter inputOSMParameter = paramvalues.get_Element(in_osmFeatureClassNumber) as IGPParameter;
             IGPValue inputOSMGPValue = gpUtilities3.UnpackGPValue(inputOSMParameter);

@@ -10,24 +10,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSMUtilities64", "OSMUtilities64\OSMUtilities64.csproj", "{32729333-B5EE-414D-B820-E57D13BA5987}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 4
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs08
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = OSMClassExtension64\\OSMClassExtension64.csproj
-		SccProjectTopLevelParentUniqueName1 = OSMEditor64.sln
-		SccProjectName1 = OSMClassExtension64
-		SccLocalPath1 = OSMClassExtension64
-		SccProjectUniqueName2 = OSMGeoprocessing64\\OSMGeoprocessing64.csproj
-		SccProjectTopLevelParentUniqueName2 = OSMEditor64.sln
-		SccProjectName2 = OSMGeoprocessing64
-		SccLocalPath2 = OSMGeoprocessing64
-		SccProjectUniqueName3 = OSMUtilities64\\OSMUtilities64.csproj
-		SccProjectTopLevelParentUniqueName3 = OSMEditor64.sln
-		SccProjectName3 = OSMUtilities64
-		SccLocalPath3 = OSMUtilities64
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -75,31 +57,5 @@ Global
 		{534CAEF4-0F82-4EC1-A7D2-70748B125F66} = {C42C6DBF-113B-4C0E-BA35-357A088ED422}
 		{A16E03A2-50B7-4A65-9944-7952D2761773} = {C42C6DBF-113B-4C0E-BA35-357A088ED422}
 		{32729333-B5EE-414D-B820-E57D13BA5987} = {C42C6DBF-113B-4C0E-BA35-357A088ED422}
-	EndGlobalSection
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 8
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs08
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = OSMWeb\\OSMWeb.csproj
-		SccProjectTopLevelParentUniqueName1 = OSMEditor64.sln
-		SccProjectName1 = OSMWeb
-		SccLocalPath1 = OSMWeb
-		SccProjectUniqueName2 = OSMClassExtension64\\OSMClassExtension64.csproj
-		SccProjectTopLevelParentUniqueName2 = OSMEditor64.sln
-		SccProjectName2 = OSMClassExtension64
-		SccLocalPath2 = OSMClassExtension64
-		SccProjectUniqueName3 = ServicePublisher64\\ServicePublisher64.csproj
-		SccProjectTopLevelParentUniqueName3 = OSMEditor64.sln
-		SccProjectName3 = ServicePublisher64
-		SccLocalPath3 = ServicePublisher64
-		SccProjectUniqueName4 = OSMGeoprocessing64\\OSMGeoprocessing64.csproj
-		SccProjectTopLevelParentUniqueName4 = OSMEditor64.sln
-		SccProjectName4 = OSMGeoprocessing64
-		SccLocalPath4 = OSMGeoprocessing64
-		SccProjectUniqueName5 = OSMUtilities\\OSMUtilities.csproj
-		SccProjectTopLevelParentUniqueName5 = OSMEditor64.sln
-		SccProjectName5 = OSMUtilities
-		SccLocalPath5 = OSMUtilities
 	EndGlobalSection
 EndGlobal

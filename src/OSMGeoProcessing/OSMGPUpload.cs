@@ -176,7 +176,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 tag createdByTag = new tag();
                 createdByTag.k = "created_by";
-                createdByTag.v = "ArcGIS Editor for OpenStreetMap (2.1)";
+                createdByTag.v = "ArcGIS Editor for OpenStreetMap (10.2)";
                 changeSetTags.Add(createdByTag);
 
                 tag commentTag = new tag();
@@ -1091,15 +1091,15 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             }
 
                         }
-
-                        if (listOfDeletes != null && uploadDelete != null)
-                        {
-                            uploadDelete.Items = listOfDeletes.ToArray();
-                            // in case there are any creates let's add them to the changeset document
-                            changeSetItems.Add(uploadDelete);
-                        }
-                    #endregion
                     }
+
+                    if (listOfDeletes != null && uploadDelete != null)
+                    {
+                        uploadDelete.Items = listOfDeletes.ToArray();
+                        // in case there are any creates let's add them to the changeset document
+                        changeSetItems.Add(uploadDelete);
+                    }
+                    #endregion
 
                     if (TrackCancel.Continue() == false)
                     {

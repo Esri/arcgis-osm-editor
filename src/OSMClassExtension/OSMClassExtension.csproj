@@ -193,7 +193,7 @@
   -->
   <PropertyGroup>
     <PostBuildEvent>"$(CommonProgramFiles)\ArcGIS\bin\esriRegasm.exe" $(TargetPath) /p:Desktop /s
-if exist "$(CommonProgramFiles)\ArcGIS\Server10.0" "$(CommonProgramFiles)\ArcGIS\bin\esriRegasm.exe" $(TargetPath) /p:Server /s</PostBuildEvent>
+IF EXIST ("$(CommonProgramFiles)\ArcGIS\Server10.0") "$(CommonProgramFiles)\ArcGIS\bin\esriRegasm.exe" $(TargetPath) /p:Server /s</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>

@@ -402,7 +402,7 @@ OSM Tags:
                             <![CDATA[
                             restricted = False
                             Select Case LCase([osm_oneway])
-                                Case "yes", "true", "1"
+                                Case "-1", "reverse"
                                     restricted = True
                             End Select
                             ]]>
@@ -418,7 +418,7 @@ OSM Tags:
                             <![CDATA[
                             restricted = False
                             Select Case LCase([osm_oneway])
-                                Case "-1", "reverse"
+                                Case "yes", "true", "1"
                                     restricted = True
                             End Select
                             ]]>

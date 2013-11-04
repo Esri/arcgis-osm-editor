@@ -198,8 +198,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     string[] languageid = System.Threading.Thread.CurrentThread.CurrentUICulture.Name.Split("-".ToCharArray());
 
                     string ArcGISInstallationLocation = OSMGPFactory.GetArcGIS10InstallLocation();
-                    string localizedMetaDataFileShort = ArcGISInstallationLocation + System.IO.Path.DirectorySeparatorChar.ToString() + "help" + System.IO.Path.DirectorySeparatorChar.ToString() + "gp" + System.IO.Path.DirectorySeparatorChar.ToString() + "osmgpcombineattributes_" + languageid[0] + ".xml";
-                    string localizedMetaDataFileLong = ArcGISInstallationLocation + System.IO.Path.DirectorySeparatorChar.ToString() + "help" + System.IO.Path.DirectorySeparatorChar.ToString() + "gp" + System.IO.Path.DirectorySeparatorChar.ToString() + "osmgpcombineattributes_" + System.Threading.Thread.CurrentThread.CurrentUICulture.Name + ".xml";
+                    string localizedMetaDataFileShort = ArcGISInstallationLocation + System.IO.Path.DirectorySeparatorChar.ToString() + "help" + System.IO.Path.DirectorySeparatorChar.ToString() + "gp" + System.IO.Path.DirectorySeparatorChar.ToString() + "osmgpcreatenetworkdataset_" + languageid[0] + ".xml";
+                    string localizedMetaDataFileLong = ArcGISInstallationLocation + System.IO.Path.DirectorySeparatorChar.ToString() + "help" + System.IO.Path.DirectorySeparatorChar.ToString() + "gp" + System.IO.Path.DirectorySeparatorChar.ToString() + "osmgpcreatenetworkdataset_" + System.Threading.Thread.CurrentThread.CurrentUICulture.Name + ".xml";
 
                     if (System.IO.File.Exists(localizedMetaDataFileShort))
                     {

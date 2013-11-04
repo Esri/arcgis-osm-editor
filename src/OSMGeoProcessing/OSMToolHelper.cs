@@ -2296,7 +2296,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                                 //// update the new position start search index
                                                                 nodePositionDictionary[nodeOSMIDString] = nodePositionIndex + 1;
 
-                                                                wayPointCollection.UpdatePoint(nodePositionIndex, (IPoint)nodeFeature.Shape);
+                                                                IPoint nodePoint = (IPoint)nodeFeature.ShapeCopy;
+                                                                nodePoint.ID = nodeFeature.OID;
+                                                                wayPointCollection.UpdatePoint(nodePositionIndex, nodePoint);
 
                                                                 // increase the reference counter
                                                                 if (osmWayRefCountFieldIndex != -1)
@@ -2446,7 +2448,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                             // update the new position start search index
                                                             nodePositionDictionary[nodeOSMIDString] = nodePositionIndex + 1;
 
-                                                            wayPointCollection.UpdatePoint(nodePositionIndex, (IPoint)nodeFeature.Shape);
+                                                            IPoint nodePoint = (IPoint)nodeFeature.ShapeCopy;
+                                                            nodePoint.ID = nodeFeature.OID;
+                                                            wayPointCollection.UpdatePoint(nodePositionIndex, nodePoint);
 
                                                             // increase the reference counter
                                                             if (osmWayRefCountFieldIndex != -1)
@@ -2901,12 +2905,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         nodeID = Convert.ToString(pointFeature.get_Value(osmIDPointFieldIndex));
                     }
+
+                    Marshal.ReleaseComObject(pointFeature);
                 }
-                Marshal.ReleaseComObject(pointFeature);
             }
             return nodeID;
         }
-
 
 
         internal void countOSMStuff(string osmFileLocation, ref int nodeCapacity, ref int wayCapacity, ref int relationCapacity, ref ITrackCancel CancelTracker)

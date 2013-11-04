@@ -420,86 +420,59 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         /// <returns></returns>
         public static string GetArcGIS10InstallLocation()
         {
-
-            RegistryKey localMachineKey = null;
-            RegistryKey softwareKey = null;
-            RegistryKey esriKey = null;
-            RegistryKey arcgisKey = null;
+           
             System.Object installationDirectory = null;
             string m_foundInstallationDirectory = String.Empty;
+            IEnumerable<ESRI.ArcGIS.RuntimeInfo> installedRuntimes = null;
 
             try
             {
-                localMachineKey = Registry.LocalMachine;
-                softwareKey = localMachineKey.OpenSubKey("SOFTWARE");
-                esriKey = softwareKey.OpenSubKey("ESRI");
-                arcgisKey = esriKey.OpenSubKey("Desktop10.0");
+                //bool succeeded = ESRI.ArcGIS.RuntimeManager.Bind(ProductCode.EngineOrDesktop);
+                //if (succeeded)
+                //{
+                //    RuntimeInfo activeRunTimeInfo = RuntimeManager.ActiveRuntime;
+                //    System.Diagnostics.Debug.Print(activeRunTimeInfo.Product.ToString());
+                //}
 
-                if (arcgisKey == null)
+                // Get installed runtimes
+                installedRuntimes = ESRI.ArcGIS.RuntimeManager.InstalledRuntimes;
+
+                // Check for Desktop first
+                foreach (RuntimeInfo item in installedRuntimes)
                 {
-                    arcgisKey = esriKey.OpenSubKey("Desktop10.1");
+                    
+                    if (String.Compare(item.Product.ToString(), "Desktop", true) == 0)
+                        installationDirectory = item.Path;
                 }
 
-                installationDirectory = arcgisKey.GetValue("InstallDir");
+                // Check for Engine if installationDirectory is null
+                if (installationDirectory == null)
+                {
+                    foreach (RuntimeInfo item in installedRuntimes)
+                    {
 
+                        if (String.Compare(item.Product.ToString(), "Engine", true) == 0)
+                            installationDirectory = item.Path;
+                    }
+                }
+
+                // Check for Server if installationDirectory is null
+                if (installationDirectory == null)
+                {
+                    foreach (RuntimeInfo item in installedRuntimes)
+                    {
+
+                        if (String.Compare(item.Product.ToString(), "Server", true) == 0)
+                            installationDirectory = item.Path;
+                    }
+                }
+                
                 if (installationDirectory != null)
                     m_foundInstallationDirectory = Convert.ToString(installationDirectory);
             }
             catch
             {
-            }
-
-            // if no desktop installation directory is found let's check next for an engine install
-            if (String.IsNullOrEmpty(m_foundInstallationDirectory))
-            {
-                try
-                {
-                    arcgisKey = esriKey.OpenSubKey("Engine10.0");
-
-                    if (arcgisKey == null)
-                    {
-                        arcgisKey = esriKey.OpenSubKey("Engine10.1");
-                    }
-
-                    installationDirectory = arcgisKey.GetValue("InstallDir");
-
-                    if (installationDirectory != null)
-                        m_foundInstallationDirectory = Convert.ToString(installationDirectory);
-                }
-                catch { }
-            }
-
-            // if neither desktop nor engine installation directory is found let's check next for an server install
-            if (String.IsNullOrEmpty(m_foundInstallationDirectory))
-            {
-                try
-                {
-                    arcgisKey = esriKey.OpenSubKey("Server10.0");
-
-                    if (arcgisKey == null)
-                    {
-                        arcgisKey = esriKey.OpenSubKey("Server10.1");
-                    }
-
-                    installationDirectory = arcgisKey.GetValue("InstallDir");
-
-                    if (installationDirectory != null)
-                        m_foundInstallationDirectory = Convert.ToString(installationDirectory);
-                }
-                catch { }
-            }
-
-            if (arcgisKey != null)
-                arcgisKey.Close();
-
-            if (esriKey != null)
-                esriKey.Close();
-
-            if (softwareKey != null)
-                softwareKey.Close();
-
-            if (localMachineKey != null)
-                localMachineKey.Close();
+            }            
 
             return m_foundInstallationDirectory;
         }
