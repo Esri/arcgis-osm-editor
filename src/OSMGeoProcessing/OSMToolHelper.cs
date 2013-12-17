@@ -3328,6 +3328,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                                 IPolygon relationMPPolygon = new PolygonClass();
                                                 relationMPPolygon.SpatialReference = ((IGeoDataset)osmPolygonFeatureClass).SpatialReference;
+                                                ((IPointIDAware)relationMPPolygon).PointIDAware = true;
 
                                                 ISegmentCollection relationPolygonGeometryCollection = relationMPPolygon as ISegmentCollection;
 
@@ -3572,6 +3573,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                                 IPolyline relationMPPolyline = new PolylineClass();
                                                 relationMPPolyline.SpatialReference = ((IGeoDataset)osmLineFeatureClass).SpatialReference;
+                                                ((IPointIDAware)relationMPPolyline).PointIDAware = true;
 
                                                 IGeometryCollection relationPolylineGeometryCollection = relationMPPolyline as IGeometryCollection;
 
