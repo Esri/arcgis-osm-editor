@@ -3406,7 +3406,14 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                 if (existingPolygonGeometryCollection.GeometryCount > 1)
                 {
                     IPolygon4 polyPointCollection = pointCollection as IPolygon4;
-                    polyPointCollection.SimplifyPreserveFromTo();
+                    if (((ITopologicalOperator)polyPointCollection).IsKnownSimple == true)
+                    {
+                        // do nothing
+                    }
+                    else
+                    {
+                        ((ITopologicalOperator)polyPointCollection).Simplify();
+                    }
 
                     // each ring (way) element can't have more than 2000 nodes
                     IGeometryCollection outerRingGeometryCollection = polyPointCollection.ExteriorRingBag as IGeometryCollection;
