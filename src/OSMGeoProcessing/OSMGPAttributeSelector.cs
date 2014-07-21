@@ -681,50 +681,67 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             {
                 IGPUtilities3 gpUtilities3 = new GPUtilitiesClass();
 
-                IGPValue inputOSMGPValue = gpUtilities3.UnpackGPValue(paramvalues.get_Element(in_osmFeatureClass));
+                IGPParameter3 inputOSMParameter = paramvalues.get_Element(in_osmFeatureClass) as IGPParameter3;
+                IGPValue inputOSMGPValue = null;
+
+                // check if the input is of type variable
+                if (inputOSMParameter.Value is IGPVariable)
+                {
+                    // also check if the variable contains a derived value
+                    // -- which in this context means a featureclass that will be produced during execution but 
+                    // doesn't exist yet
+                    IGPVariable inputOSMVariable = inputOSMParameter.Value as IGPVariable;
+                    if (!inputOSMVariable.Derived)
+                        inputOSMGPValue = gpUtilities3.UnpackGPValue(paramvalues.get_Element(in_osmFeatureClass));
+                }
+                else
+                {
+                    inputOSMGPValue = gpUtilities3.UnpackGPValue(paramvalues.get_Element(in_osmFeatureClass));
+                }
 
                 IFeatureClass osmFeatureClass = null;
                 ITable osmInputTable = null;
                 IQueryFilter osmQueryFilter = null;
-
-
-                try
-                {
-                    gpUtilities3.DecodeFeatureLayer(inputOSMGPValue, out osmFeatureClass, out osmQueryFilter);
-                    osmInputTable = osmFeatureClass as ITable;
-                }
-                catch { }
-
-                try
-                {
-                    if (osmInputTable == null)
-                    {
-                        gpUtilities3.DecodeTableView(inputOSMGPValue, out osmInputTable, out osmQueryFilter);
-                    }
-                }
-                catch { }
-
-                if (osmInputTable == null)
-                {
-                    return;
-                }
-
                 String illegalCharacters = String.Empty;
 
-                ISQLSyntax sqlSyntax = ((IDataset)osmInputTable).Workspace as ISQLSyntax;
-                if (sqlSyntax != null)
+                if (inputOSMGPValue != null)
                 {
-                    illegalCharacters = sqlSyntax.GetInvalidCharacters();
-                }
+                    try
+                    {
+                        gpUtilities3.DecodeFeatureLayer(inputOSMGPValue, out osmFeatureClass, out osmQueryFilter);
+                        osmInputTable = osmFeatureClass as ITable;
+                    }
+                    catch { }
 
-                // find the field that holds tag binary/xml field
-                int osmTagCollectionFieldIndex = osmInputTable.FindField("osmTags");
+                    try
+                    {
+                        if (osmInputTable == null)
+                        {
+                            gpUtilities3.DecodeTableView(inputOSMGPValue, out osmInputTable, out osmQueryFilter);
+                        }
+                    }
+                    catch { }
+
+                    if (osmInputTable == null)
+                    {
+                        return;
+                    }
+
+                    ISQLSyntax sqlSyntax = ((IDataset)osmInputTable).Workspace as ISQLSyntax;
+                    if (sqlSyntax != null)
+                    {
+                        illegalCharacters = sqlSyntax.GetInvalidCharacters();
+                    }
+
+                    // find the field that holds tag binary/xml field
+                    int osmTagCollectionFieldIndex = osmInputTable.FindField("osmTags");
 
 
-                // if the Field doesn't exist - wasn't found (index = -1) get out
-                if (osmTagCollectionFieldIndex == -1)
-                {
-                    return;
+                    // if the Field doesn't exist - wasn't found (index = -1) get out
+                    if (osmTagCollectionFieldIndex == -1)
+                    {
+                        return;
+                    }
                 }
 
                 if (((IGPParameter)paramvalues.get_Element(in_attributeSelector)).Altered)
