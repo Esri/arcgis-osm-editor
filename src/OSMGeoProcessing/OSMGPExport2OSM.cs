@@ -617,11 +617,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 IPoint wgs84Point = currentFeature.Shape as IPoint;
                 wgs84Point.Project(m_wgs84);
 
-                CultureInfo exportCultureInfo = new CultureInfo("en-US");
-                exportCultureInfo.NumberFormat.NumberDecimalDigits = 6;
+                NumberFormatInfo exportCultureInfo = new CultureInfo("en-US", false).NumberFormat;
+                exportCultureInfo.NumberDecimalDigits = 6;
 
-                osmNode.lat = Convert.ToString(wgs84Point.Y, exportCultureInfo);
-                osmNode.lon = Convert.ToString(wgs84Point.X, exportCultureInfo);
+                osmNode.lat = wgs84Point.Y.ToString("N", exportCultureInfo);
+                osmNode.lon = wgs84Point.X.ToString("N", exportCultureInfo);
 
                 Marshal.ReleaseComObject(wgs84Point);
             }

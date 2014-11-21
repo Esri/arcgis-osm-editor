@@ -375,7 +375,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         // if difference between current minute and next url is more then 10 minutes continue
                         TimeSpan currentTimespan = DateTime.Now.ToUniversalTime().Subtract(item.Value);
 
-                        message.AddMessage("now: " + DateTime.Now.ToUniversalTime() + " item.value: " + item.Value.ToString() + " timespan (min): " + currentTimespan.TotalMinutes);
+                        //message.AddMessage("now: " + DateTime.Now.ToUniversalTime() + " item.value: " + item.Value.ToString() + " timespan (min): " + currentTimespan.TotalMinutes);
 
                         if (currentTimespan.TotalMinutes > 10)
                         {
@@ -1128,18 +1128,25 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 {
                     if (changeItem is create)
                     {
+                        using (ComReleaser comReleaser = new ComReleaser())
+                        {
                         // determine what it is - then create it
                         create createXMLNode = changeItem as create;
 
                         foreach (var createXMLNodeItem in createXMLNode.Items)
                         {
+
+                            if (trackCancel.Continue() == false)
+                            {
+                                return;
+                            }
                             // check if a local edit is coming back to us or if it is a new creation altogether
                             if (elementNeedsUpdate(createXMLNodeItem, localnodeRevisions, localwayRevisions, localrelationRevisions))
                             {
                                 if (createXMLNodeItem is node)
                                 {
-                                    // since it is a new node we need to explicit create it
-                                    insertNode((node)createXMLNodeItem, "create", updateFilterGeometry, osmPointFeatureClass, availableDomains, domainFieldLengthPoints, pointFieldIndexes, ref message, internalExtensionVersion);
+                                    // since it is a new node we need to explicitly create it
+                                    insertNode((node)createXMLNodeItem, "create", updateFilterGeometry, osmPointFeatureClass, availableDomains, domainFieldLengthPoints, pointFieldIndexes, ref message, internalExtensionVersion, comReleaser);
 
                                     if (useVerboseLogging == true)
                                     {
@@ -1159,7 +1166,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                 message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_createmessage"), resourceManager.GetString("GPTools_OSM_way"), ((way)createXMLNodeItem).id));
                                             }
 
-                                            insertWay((way)createXMLNodeItem, "create", osmLineFeatureClass, lineGeometry, updateFilterGeometry, osmPointFeatureClass, pointFieldIndexes, availableDomains, domainFieldLengthLines, polylineFieldIndexes, ref message, internalExtensionVersion);
+                                            insertWay((way)createXMLNodeItem, "create", osmLineFeatureClass, lineGeometry, updateFilterGeometry, osmPointFeatureClass, pointFieldIndexes, availableDomains, domainFieldLengthLines, polylineFieldIndexes, ref message, internalExtensionVersion, comReleaser);
                                         }
                                     }
                                     else
@@ -1173,7 +1180,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                 message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_createmessage"), resourceManager.GetString("GPTools_OSM_way"), ((way)createXMLNodeItem).id));
                                             }
 
-                                            insertWay((way)createXMLNodeItem, "create", osmPolygonFeatureClass, polygonGeometry, updateFilterGeometry, osmPointFeatureClass, pointFieldIndexes, availableDomains, domainFieldLengthPolygons, polygonFieldIndexes, ref message, internalExtensionVersion);
+                                            insertWay((way)createXMLNodeItem, "create", osmPolygonFeatureClass, polygonGeometry, updateFilterGeometry, osmPointFeatureClass, pointFieldIndexes, availableDomains, domainFieldLengthPolygons, polygonFieldIndexes, ref message, internalExtensionVersion, comReleaser);
                                         }
                                     }
                                 }
@@ -1181,12 +1188,20 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 {
                                     relation currentRelation = createXMLNodeItem as relation;
 
+                                    // a relation can be multiple things, multipart polyline or polygon is one we would like to treat special
+                                    esriGeometryType detectedGeoType = osmToolHelper.determineRelationGeometryType(osmLineFeatureClass, osmPolygonFeatureClass, relationTable, (relation)createXMLNodeItem);
+                                    IGeometry relationGeometry = extractGeometryFromOSMFeature(currentRelation, detectedGeoType, osmLineFeatureClass, osmPolygonFeatureClass, internalExtensionVersion);
+
+                                    // check if geometry type and geometry are in sync
+                                    if (relationGeometry == null)
+                                        detectedGeoType = esriGeometryType.esriGeometryNull;
+
                                     if (useVerboseLogging == true)
                                     {
                                         message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_createmessage"), resourceManager.GetString("GPTools_OSM_relation"), currentRelation.id));
                                     }
 
-                                    insertRelation((relation)createXMLNodeItem, "create", updateFilterGeometry, osmPointFeatureClass, pointFieldIndexes, osmLineFeatureClass, polylineFieldIndexes, osmPolygonFeatureClass, polygonFieldIndexes, relationTable, relationFieldIndexes, ref message, internalExtensionVersion);
+                                    insertRelation((relation)createXMLNodeItem, "create", updateFilterGeometry, detectedGeoType, relationGeometry, osmPointFeatureClass, pointFieldIndexes, osmLineFeatureClass, polylineFieldIndexes, osmPolygonFeatureClass, polygonFieldIndexes, relationTable, relationFieldIndexes, ref message, internalExtensionVersion, comReleaser);
                                 }
                             }
                         }
@@ -1195,103 +1210,117 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         {
                             return;
                         }
-
+                        }
                     }
                     else if (changeItem is modify)
                     {
-                        // check if it is one of our edits (already logged in the revision table)
-                        // if it is then we can skip the element
-                        // otherwise retrieve the item from the geodatabase and update everything
-
-                        // determine what it is - then create it
-                        modify modifyXMLNode = changeItem as modify;
-
-                        foreach (var modifyXMLNodeItem in modifyXMLNode.Items)
+                        // scope the modify items
+                        using (ComReleaser comReleaser = new ComReleaser())
                         {
-                            // check if a local edit is coming back to us or if it is a new creation altogether
-                            if (elementNeedsUpdate(modifyXMLNodeItem, localnodeRevisions, localwayRevisions, localrelationRevisions))
+                            // check if it is one of our edits (already logged in the revision table)
+                            // if it is then we can skip the element
+                            // otherwise retrieve the item from the geodatabase and update everything
+
+                            // determine what it is - then create it
+                            modify modifyXMLNode = changeItem as modify;
+
+                            foreach (var modifyXMLNodeItem in modifyXMLNode.Items)
                             {
-                                if (modifyXMLNodeItem is node)
-                                {
-                                    if (useVerboseLogging == true)
-                                    {
-                                        message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_modifymessage"), resourceManager.GetString("GPTools_OSM_node"), ((node)modifyXMLNodeItem).id));
-                                    }
 
-                                    // since it is a new node we need to explicit create it
-                                    insertNode((node)modifyXMLNodeItem, "modify", updateFilterGeometry, osmPointFeatureClass, availableDomains, domainFieldLengthPoints, pointFieldIndexes, ref message, internalExtensionVersion);
+                                if (trackCancel.Continue() == false)
+                                {
+                                    return;
                                 }
-                                else if (modifyXMLNodeItem is way)
+                                //message.AddMessage(String.Format("enter item modify {0}", DateTime.Now));
+
+                                // check if a local edit is coming back to us or if it is a new creation altogether
+                                if (elementNeedsUpdate(modifyXMLNodeItem, localnodeRevisions, localwayRevisions, localrelationRevisions))
                                 {
-                                    IFeature updateWayFeature = null;
-
-                                    if (OSMToolHelper.IsThisWayALine((way)modifyXMLNodeItem))
+                                    //message.AddMessage(String.Format("after elementNeedsUpdate {0}", DateTime.Now));
+                                    if (modifyXMLNodeItem is node)
                                     {
-                                        IGeometry lineUpdateGeometry = extractGeometryFromOSMFeature(((way)modifyXMLNodeItem), osmLineFeatureClass, osmPointFeatureClass, osmPointIDFieldIndex, internalExtensionVersion);
-                                        if (updateWayFeature != null)
+                                        if (useVerboseLogging == true)
                                         {
-                                            if (useVerboseLogging == true)
-                                            {
-                                                message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_modifymessage"), resourceManager.GetString("GPTools_OSM_way"), ((way)modifyXMLNodeItem).id));
-                                            }
+                                            message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_modifymessage"), resourceManager.GetString("GPTools_OSM_node"), ((node)modifyXMLNodeItem).id));
+                                        }
 
-                                            insertWay((way)modifyXMLNodeItem, "modify", osmLineFeatureClass, lineUpdateGeometry, updateFilterGeometry, osmPointFeatureClass, pointFieldIndexes, availableDomains, domainFieldLengthLines, polylineFieldIndexes, ref message, internalExtensionVersion);
+                                        // since it is a new node we need to explicit create it
+                                        insertNode((node)modifyXMLNodeItem, "modify", updateFilterGeometry, osmPointFeatureClass, availableDomains, domainFieldLengthPoints, pointFieldIndexes, ref message, internalExtensionVersion, comReleaser);
+                                    }
+                                    else if (modifyXMLNodeItem is way)
+                                    {
+                                        IFeature updateWayFeature = null;
+
+                                        if (OSMToolHelper.IsThisWayALine((way)modifyXMLNodeItem))
+                                        {
+                                            IGeometry lineUpdateGeometry = extractGeometryFromOSMFeature(((way)modifyXMLNodeItem), osmLineFeatureClass, osmPointFeatureClass, osmPointIDFieldIndex, internalExtensionVersion);
+                                            if (updateWayFeature != null)
+                                            {
+                                                if (useVerboseLogging == true)
+                                                {
+                                                    message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_modifymessage"), resourceManager.GetString("GPTools_OSM_way"), ((way)modifyXMLNodeItem).id));
+                                                }
+
+                                                insertWay((way)modifyXMLNodeItem, "modify", osmLineFeatureClass, lineUpdateGeometry, updateFilterGeometry, osmPointFeatureClass, pointFieldIndexes, availableDomains, domainFieldLengthLines, polylineFieldIndexes, ref message, internalExtensionVersion, comReleaser);
+                                            }
+                                            else
+                                            {
+                                                if (useVerboseLogging == true)
+                                                {
+                                                    message.AddWarning(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_wayskipped_noline"), ((way)modifyXMLNodeItem).id));
+                                                }
+                                            }
                                         }
                                         else
                                         {
-                                            if (useVerboseLogging == true)
+                                            IGeometry polygonUpdateGeometry = extractGeometryFromOSMFeature((way)modifyXMLNodeItem, osmPolygonFeatureClass, osmPointFeatureClass, osmPointIDFieldIndex, internalExtensionVersion);
+
+                                            if (polygonUpdateGeometry != null)
                                             {
-                                                message.AddWarning(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_wayskipped_noline"), ((way)modifyXMLNodeItem).id));
+                                                if (useVerboseLogging == true)
+                                                {
+                                                    message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_modifymessage"), resourceManager.GetString("GPTools_OSM_way"), ((way)modifyXMLNodeItem).id));
+                                                }
+
+                                                insertWay((way)modifyXMLNodeItem, "modify", osmPolygonFeatureClass, polygonUpdateGeometry, updateFilterGeometry, osmPointFeatureClass, pointFieldIndexes, availableDomains, domainFieldLengthPolygons, polygonFieldIndexes, ref message, internalExtensionVersion, comReleaser);
+                                            }
+                                            else
+                                            {
+                                                if (useVerboseLogging == true)
+                                                {
+                                                    message.AddWarning(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_wayskipped_nopolygon"), ((way)modifyXMLNodeItem).id));
+                                                }
                                             }
                                         }
                                     }
-                                    else
+                                    else if (modifyXMLNodeItem is relation)
                                     {
-                                        IGeometry polygonUpdateGeometry = extractGeometryFromOSMFeature((way)modifyXMLNodeItem, osmPolygonFeatureClass, osmPointFeatureClass, osmPointIDFieldIndex, internalExtensionVersion);
+                                        relation currentRelation = modifyXMLNodeItem as relation;
 
-                                        if (polygonUpdateGeometry != null)
+                                        // a relation can be multiple things, multipart polyline or polygon is one we would like to treat special
+                                        esriGeometryType detectedGeoType = osmToolHelper.determineRelationGeometryType(osmLineFeatureClass, osmPolygonFeatureClass, relationTable, currentRelation);
+                                        IGeometry relationGeometry = extractGeometryFromOSMFeature(currentRelation, detectedGeoType, osmLineFeatureClass, osmPolygonFeatureClass, internalExtensionVersion);
+
+                                        // check if geometry type and geometry are in sync
+                                        if (relationGeometry == null)
+                                            detectedGeoType = esriGeometryType.esriGeometryNull;
+
+                                        if (useVerboseLogging == true)
                                         {
-                                            if (useVerboseLogging == true)
-                                            {
-                                                message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_modifymessage"), resourceManager.GetString("GPTools_OSM_way"), ((way)modifyXMLNodeItem).id));
-                                            }
-
-                                            insertWay((way)modifyXMLNodeItem, "modify", osmPolygonFeatureClass, polygonUpdateGeometry, updateFilterGeometry, osmPointFeatureClass, pointFieldIndexes, availableDomains, domainFieldLengthPolygons, polygonFieldIndexes, ref message, internalExtensionVersion);
+                                            message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_modifymessage"), resourceManager.GetString("GPTools_OSM_relation"), currentRelation.id));
                                         }
-                                        else
-                                        {
-                                            if (useVerboseLogging == true)
-                                            {
-                                                message.AddWarning(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_wayskipped_nopolygon"), ((way)modifyXMLNodeItem).id));
-                                            }
-                                        }
-                                    }
-                                }
-                                else if (modifyXMLNodeItem is relation)
-                                {
-                                    relation currentRelation = modifyXMLNodeItem as relation;
 
-                                    if (useVerboseLogging == true)
-                                    {
-                                        message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_modifymessage"), resourceManager.GetString("GPTools_OSM_relation"), currentRelation.id));
-                                    }
 
-                                    // for relations we change the approach
-                                    // we need to find the matching id in order to continue with the modification
-                                    // i.e. we rely on attribute information as opposed to making a spatial decision
-                                    if ((osmToolHelper.determineOSMGeometryType(osmLineFeatureClass, osmPolygonFeatureClass, relationTable, currentRelation.id) != OSMToolHelper.osmRelationGeometryType.osmUnknownGeometry))
-                                    {
-                                        insertRelation(currentRelation, "modify", updateFilterGeometry, osmPointFeatureClass, pointFieldIndexes, osmLineFeatureClass, polylineFieldIndexes, osmPolygonFeatureClass, polygonFieldIndexes, relationTable, relationFieldIndexes, ref message, internalExtensionVersion);
+                                        insertRelation(currentRelation, "modify", updateFilterGeometry, detectedGeoType, relationGeometry, osmPointFeatureClass, pointFieldIndexes, osmLineFeatureClass, polylineFieldIndexes, osmPolygonFeatureClass, polygonFieldIndexes, relationTable, relationFieldIndexes, ref message, internalExtensionVersion, comReleaser);
                                     }
                                 }
                             }
-                        }
 
-                        if (trackCancel.Continue() == false)
-                        {
-                            return;
+                            if (trackCancel.Continue() == false)
+                            {
+                                return;
+                            }
                         }
-
                     }
                     else if (changeItem is delete)
                     {
@@ -1300,6 +1329,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                         foreach (var deleteXMLNodeItem in deleteXMLNode.Items)
                         {
+
+                            if (trackCancel.Continue() == false)
+                            {
+                                return;
+                            }
+
                             if (deleteXMLNodeItem is node)
                             {
                                 IFeature deleteFeature = getOSMRow((ITable)osmPointFeatureClass, ((node)deleteXMLNodeItem).id) as IFeature;
@@ -1489,8 +1524,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             return returnName;
         }
 
-        private void insertRelation(relation currentRelation, string action, IGeometry filterGeometry, IFeatureClass osmPointFeatureClass, IPropertySet pointFieldIndexes, IFeatureClass osmLineFeatureClass, IPropertySet polylineFieldIndexes, IFeatureClass osmPolygonFeatureClass, IPropertySet polygonFieldIndexes, ITable relationTable, IPropertySet relationIndexes, ref IGPMessages message, int extensionVersion)
+        private void insertRelation(relation currentRelation, string action, IGeometry filterGeometry, esriGeometryType detectedGeometryType, IGeometry detectedGeometry, IFeatureClass osmPointFeatureClass, IPropertySet pointFieldIndexes, IFeatureClass osmLineFeatureClass, IPropertySet polylineFieldIndexes, IFeatureClass osmPolygonFeatureClass, IPropertySet polygonFieldIndexes, ITable relationTable, IPropertySet relationIndexes, ref IGPMessages message, int extensionVersion, ComReleaser comReleaser)
         {
+            IFeatureCursor updateCursor = null;
+            ICursor updateRow = null;
+
             try
             {
                 OSMToolHelper osmToolHelper = new OSMToolHelper();
@@ -1534,8 +1572,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 int osmTimeStampRelationFieldIndex = (int)relationIndexes.GetProperty("osmTimeStampFieldIndex");
                 int osmRelationIDFieldIndex = (int)relationIndexes.GetProperty("osmIDFieldIndex");
                 int osmRelationTrackChangesFieldIndex = (int)relationIndexes.GetProperty("osmTrackChangesFieldIndex");
-
-                esriGeometryType detectedGeometryType = osmToolHelper.determineRelationGeometryType(osmLineFeatureClass, osmPolygonFeatureClass, relationTable, currentRelation);
 
                 List<tag> relationTagList = new List<tag>();
                 List<member> relationMemberList = new List<member>();
@@ -1653,15 +1689,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     }
                 }
 
+
                 // if there is a defined geometry type use it to generate a multipart geometry
                 if (detectedGeometryType == esriGeometryType.esriGeometryPolygon)
                 {
                     #region create multipart polygon geometry
-
-                    IPolygon relationMPPolygon = new PolygonClass();
-                    relationMPPolygon.SpatialReference = ((IGeoDataset)osmPolygonFeatureClass).SpatialReference;
-
-                    IGeometryCollection relationPolygonGeometryCollection = relationMPPolygon as IGeometryCollection;
 
                     ISpatialFilter osmIDQueryFilter = new SpatialFilterClass();
                     string sqlPolyOSMID = osmPolygonFeatureClass.SqlIdentifier("OSMID");
@@ -1671,117 +1703,25 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     // if that is the case then we cannot abort 
                     bool alreadyClearedFlag = false;
 
-                    // loop through the 
-                    foreach (string wayKey in wayList)
-                    {
-                        osmIDQueryFilter.WhereClause = osmPolygonFeatureClass.WhereClauseByExtensionVersion(wayKey,"OSM", extensionVersion);
-                        osmIDQueryFilter.Geometry = filterGeometry;
-                        osmIDQueryFilter.GeometryField = osmPolygonFeatureClass.ShapeFieldName;
-
-                        System.Diagnostics.Debug.WriteLine("Relation (Polygon) id: " + currentRelation.id + " :___: " + wayKey);
-
-                        using (ComReleaser relationComReleaser = new ComReleaser())
-                        {
-                            IFeatureCursor featureCursor = osmPolygonFeatureClass.Search(osmIDQueryFilter, false);
-                            relationComReleaser.ManageLifetime(featureCursor);
-
-                            IFeature partFeature = featureCursor.NextFeature();
-
-                            // set the appropriate field attribute to become invisible as a standalone features
-                            if (partFeature != null)
-                            {
-                                IGeometryCollection ringCollection = partFeature.Shape as IGeometryCollection;
-
-                                // test for available content in the geometry collection  
-                                if (ringCollection.GeometryCount > 0)
-                                {
-                                    // test if we dealing with a valid geometry
-                                    if (ringCollection.get_Geometry(0).IsEmpty == false)
-                                    {
-                                        // add it to the new geometry and mark the added geometry as a supporting element
-                                        relationPolygonGeometryCollection.AddGeometry(ringCollection.get_Geometry(0), ref missing, ref missing);
-
-                                        if (osmSupportingElementPolygonFieldIndex > -1)
-                                        {
-                                            partFeature.set_Value(osmSupportingElementPolygonFieldIndex, "yes");
-                                        }
-
-                                        if (osmMemberOfPolygonFieldIndex > -1)
-                                        {
-                                            _osmUtility.insertIsMemberOf(osmMemberOfPolygonFieldIndex, lineReferences[wayKey].relations, partFeature);
-                                        }
-
-                                        if (osmPolygonTrackChangesFieldIndex > -1)
-                                        {
-                                            partFeature.set_Value(osmPolygonTrackChangesFieldIndex, 1);
-                                        }
-
-                                        partFeature.Store();
-
-                                        alreadyClearedFlag = true;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                // it still can be a line geometry that will be pieced together into a polygon
-                                IFeatureCursor lineFeatureCursor = osmLineFeatureClass.Search(osmIDQueryFilter, false);
-                                relationComReleaser.ManageLifetime(lineFeatureCursor);
-
-                                partFeature = lineFeatureCursor.NextFeature();
-
-                                if (partFeature != null)
-                                {
-                                    IGeometryCollection ringCollection = partFeature.Shape as IGeometryCollection;
-
-                                    // test for available content in the geometry collection  
-                                    if (ringCollection.GeometryCount > 0)
-                                    {
-                                        // test if we dealing with a valid geometry
-                                        if (ringCollection.get_Geometry(0).IsEmpty == false)
-                                        {
-                                            // add it to the new geometry and mark the added geometry as a supporting element
-                                            //relationPolygonGeometryCollection.AddGeometry(ringCollection.get_Geometry(0), ref missing, ref missing);
-                                            ((ISegmentCollection)relationPolygonGeometryCollection).AddSegmentCollection((ISegmentCollection)ringCollection.get_Geometry(0));
-
-                                            if (osmSupportingElementPolylineFieldIndex > -1)
-                                            {
-                                                partFeature.set_Value(osmSupportingElementPolylineFieldIndex, "yes");
-                                            }
-
-                                            if (osmMemberOfPolylineFieldIndex > -1)
-                                            {
-                                                _osmUtility.insertIsMemberOf(osmMemberOfPolylineFieldIndex, lineReferences[wayKey].relations, partFeature);
-                                            }
-
-                                            partFeature.Store();
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    // since we can't find the feature with a given openstreetmap id within the query envelope we will quit at this point
-                                    // unless a previous part already passed
-                                    if (alreadyClearedFlag == false)
-                                    {
-                                        return;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    ((IPolygon4)relationMPPolygon).SimplifyEx(true, false, true);
-
                     IFeature mpFeature = null;
 
                     if (action == "create")
                     {
-                        mpFeature = osmPolygonFeatureClass.CreateFeature();
+                        //mpFeature = osmPolygonFeatureClass.CreateFeature();
+                        updateCursor = osmPolygonFeatureClass.Insert(true);
+                        comReleaser.ManageLifetime(updateCursor);
+                        mpFeature = osmPolygonFeatureClass.CreateFeatureBuffer() as IFeature;
                     }
                     else if (action == "modify")
                     {
-                        mpFeature = getOSMRow((ITable)osmPolygonFeatureClass, currentRelation.id) as IFeature;
+                        //mpFeature = getOSMRow((ITable)osmPolygonFeatureClass, currentRelation.id) as IFeature;
+                        IQueryFilter queryFilter = new QueryFilterClass();
+                        queryFilter.WhereClause = osmPolygonFeatureClass.WhereClauseByExtensionVersion(currentRelation.id, "OSMID", extensionVersion);
+                        queryFilter.SubFields = String.Join(",", osmPolygonFeatureClass.ExtractRequiredFields());
+                        comReleaser.ManageLifetime(queryFilter);
+                        updateCursor = osmPolygonFeatureClass.Update(queryFilter, false);
+                        comReleaser.ManageLifetime(updateCursor);
+                        mpFeature = updateCursor.NextFeature();
                     }
 
                     // don't continue unless we have a feature instance we can populate
@@ -1791,7 +1731,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         return;
                     }
 
-                    mpFeature.Shape = relationMPPolygon;
+                    mpFeature.Shape = detectedGeometry;
 
                     if (osmMembersPolygonFieldIndex > -1)
                     {
@@ -1882,7 +1822,20 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         mpFeature.set_Value(osmPolygonTrackChangesFieldIndex, 1);
                     }
 
-                    mpFeature.Store();
+
+                    switch (action)
+                    {
+                        case "create":
+                            //mpFeature.Store();
+                            updateCursor.InsertFeature((IFeatureBuffer)mpFeature);
+                            break;
+                        case "modify":
+                            updateCursor.UpdateFeature(mpFeature);
+                            break;
+                        default:
+                            break;
+                    }
+
                     #endregion
                 }
                 else if (detectedGeometryType == esriGeometryType.esriGeometryPolyline)
@@ -1892,11 +1845,21 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                     if (action == "create")
                     {
-                        mpFeature = osmLineFeatureClass.CreateFeature();
+                        //mpFeature = osmLineFeatureClass.CreateFeature();
+                        updateCursor = osmLineFeatureClass.Insert(true);
+                        comReleaser.ManageLifetime(updateCursor);
+                        mpFeature = osmLineFeatureClass.CreateFeatureBuffer() as IFeature;
                     }
                     else if (action == "modify")
                     {
-                        mpFeature = getOSMRow((ITable)osmLineFeatureClass, currentRelation.id) as IFeature;
+                        //mpFeature = getOSMRow((ITable)osmLineFeatureClass, currentRelation.id) as IFeature;
+                        IQueryFilter queryFilter = new QueryFilterClass();
+                        queryFilter.WhereClause = osmLineFeatureClass.WhereClauseByExtensionVersion(currentRelation.id, "OSMID", extensionVersion);
+                        queryFilter.SubFields = String.Join(",", osmLineFeatureClass.ExtractRequiredFields());
+                        comReleaser.ManageLifetime(queryFilter);
+                        updateCursor = osmLineFeatureClass.Update(queryFilter, false);
+                        comReleaser.ManageLifetime(updateCursor);
+                        mpFeature = updateCursor.NextFeature();
                     }
 
                     // don't continue unless we have a feature instance we can populate
@@ -1905,60 +1868,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         message.AddWarning(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_relationskipped_noline"), currentRelation.id));
                         return;
                     }
-                    IPolyline relationMPPolyline = new PolylineClass();
-                    relationMPPolyline.SpatialReference = ((IGeoDataset)osmLineFeatureClass).SpatialReference;
 
-                    IGeometryCollection relationPolylineGeometryCollection = relationMPPolyline as IGeometryCollection;
-
-                    IQueryFilter osmIDQueryFilter = new QueryFilterClass();
-                    string sqlWayOSMID = osmLineFeatureClass.SqlIdentifier("OSMID");
-                    object missing = Type.Missing;
-
-                    // loop through the 
-                    foreach (string wayKey in wayList)
-                    {
-                        osmIDQueryFilter.WhereClause = osmLineFeatureClass.WhereClauseByExtensionVersion(wayKey, "OSMID",extensionVersion);
-
-                        System.Diagnostics.Debug.WriteLine("Relation (Polyline) id: " + currentRelation.id + " :___: " + wayKey);
-
-                        using (ComReleaser relationComReleaser = new ComReleaser())
-                        {
-                            IFeatureCursor featureCursor = osmLineFeatureClass.Search(osmIDQueryFilter, false);
-                            relationComReleaser.ManageLifetime(featureCursor);
-
-                            IFeature partFeature = featureCursor.NextFeature();
-
-                            // set the appropriate field attribute to become invisible as a standalone features
-                            if (partFeature != null)
-                            {
-                                if (partFeature.Shape.IsEmpty == false)
-                                {
-                                    IGeometryCollection pathCollection = partFeature.Shape as IGeometryCollection;
-                                    relationPolylineGeometryCollection.AddGeometry(pathCollection.get_Geometry(0), ref missing, ref missing);
-
-                                    if (osmSupportingElementPolylineFieldIndex > -1)
-                                    {
-                                        partFeature.set_Value(osmSupportingElementPolylineFieldIndex, "yes");
-                                    }
-
-                                    if (osmMemberOfPolylineFieldIndex > -1)
-                                    {
-                                        _osmUtility.insertIsMemberOf(osmMemberOfPolylineFieldIndex, lineReferences[wayKey].relations, partFeature);
-                                    }
-
-                                    // set attribute to bypass OSM class extension logging
-                                    if (osmPolylineTrackChangesFieldIndex > -1)
-                                    {
-                                        partFeature.set_Value(osmPolylineTrackChangesFieldIndex, 1);
-                                    }
-
-                                    partFeature.Store();
-                                }
-                            }
-                        }
-                    }
-
-                    mpFeature.Shape = relationMPPolyline;
+                    mpFeature.Shape = detectedGeometry;
 
                     if (tagCollectionPolylineFieldIndex > -1)
                     {
@@ -2042,7 +1953,20 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         mpFeature.set_Value(osmPolylineTrackChangesFieldIndex, 1);
                     }
 
-                    mpFeature.Store();
+                    switch (action)
+                    {
+                        case "create":
+                            //mpFeature.Store();
+                            updateCursor.InsertFeature((IFeatureBuffer)mpFeature);
+                            break;
+                        case "modify":
+                            updateCursor.UpdateFeature(mpFeature);
+                            break;
+                        default:
+                            break;
+                    }
+
+
                     #endregion
 
                 }
@@ -2057,11 +1981,20 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     IRow relationRow = null;
                     if (action == "create")
                     {
-                        relationRow = relationTable.CreateRow();
+                        //relationRow = relationTable.CreateRow();
+                        updateRow = relationTable.Insert(true);
+                        comReleaser.ManageLifetime(updateRow);
+                        relationRow = relationTable.CreateRowBuffer() as IRow;
                     }
                     else if (action == "modify")
                     {
-                        relationRow = getOSMRow(relationTable, currentRelation.id);
+                        //relationRow = getOSMRow(relationTable, currentRelation.id);
+                        IQueryFilter queryFilter = new QueryFilterClass();
+                        queryFilter.WhereClause = relationTable.WhereClauseByExtensionVersion(currentRelation.id, "OSMID", extensionVersion);
+                        comReleaser.ManageLifetime(queryFilter);
+                        updateRow = relationTable.Update(queryFilter, false);
+                        comReleaser.ManageLifetime(updateRow);
+                        relationRow = updateRow.NextRow();
                     }
 
                     if (relationRow == null)
@@ -2145,13 +2078,34 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         relationRow.set_Value(osmRelationTrackChangesFieldIndex, 1);
                     }
 
-                    relationRow.Store();
+
+                    switch (action)
+                    {
+                        case "create":
+                            //relationRow.Store();
+                            updateRow.InsertRow((IRowBuffer)relationRow);
+                            break;
+                        case "modify":
+                            updateRow.UpdateRow(relationRow);
+                            break;
+                        default:
+                            break;
+                    }
+
                 }
             }
             catch (Exception ex)
             {
                 message.AddWarning(ex.Message);
                 message.AddWarning(ex.StackTrace);
+            }
+            finally
+            {
+                if (updateCursor != null)
+                    Marshal.ReleaseComObject(updateCursor);
+
+                if (updateRow != null)
+                    Marshal.ReleaseComObject(updateRow);
             }
         }
 
@@ -2174,10 +2128,13 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
 
             return foundRow;
-        } 
+        }
 
-        void insertWay(way currentWay, string action, IFeatureClass insertFeatureClass, IGeometry featureGeometry, IGeometry filterGeometry, IFeatureClass osmPointFeatureClass, IPropertySet pointFieldIndexes, OSMDomains availableDomains, int domainFieldLength, IPropertySet wayFieldIndexes, ref IGPMessages message, int extensionVersion)
+        void insertWay(way currentWay, string action, IFeatureClass insertFeatureClass, IGeometry featureGeometry, IGeometry filterGeometry, IFeatureClass osmPointFeatureClass, IPropertySet pointFieldIndexes, OSMDomains availableDomains, int domainFieldLength, IPropertySet wayFieldIndexes, ref IGPMessages message, int extensionVersion, ComReleaser comReleaser)
         {
+            IFeature newWayFeature = null;
+            IFeatureCursor updateCursor = null;
+            
             try
             {
                 if (currentWay == null)
@@ -2226,7 +2183,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 int osmPointIDFieldIndex = (int)pointFieldIndexes.GetProperty("osmIDFieldIndex");
-                int osmWayRefCountFieldIndex = (int) pointFieldIndexes.GetProperty("osmWayRefCountFieldIndex");
+                int osmWayRefCountFieldIndex = (int)pointFieldIndexes.GetProperty("osmWayRefCountFieldIndex");
                 Dictionary<string, int> osmDomainAttributeFieldIndices = (Dictionary<string, int>)wayFieldIndexes.GetProperty("domainAttributesFieldIndex");
                 int osmIDFieldIndex = (int)wayFieldIndexes.GetProperty("osmIDFieldIndex");
                 int tagCollectionFieldIndex = (int)wayFieldIndexes.GetProperty("osmTagsFieldIndex");
@@ -2238,8 +2195,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 int osmChangesetFieldIndex = (int)wayFieldIndexes.GetProperty("osmChangeSetFieldIndex");
                 int osmTimeStampFieldIndex = (int)wayFieldIndexes.GetProperty("osmTimeStampFieldIndex");
                 int osmTrackChangesFieldIndex = (int)wayFieldIndexes.GetProperty("osmTrackChangesFieldIndex");
-
-                IFeature newWayFeature = null;
 
                 if (filterGeometry != null)
                 {
@@ -2255,23 +2210,42 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 switch (action)
                 {
                     case "create":
-                        newWayFeature = insertFeatureClass.CreateFeature();
-                        newWayFeature.Shape = featureGeometry;
+                        //newWayFeature = insertFeatureClass.CreateFeature();
+                        updateCursor = insertFeatureClass.Insert(true);
+                        comReleaser.ManageLifetime(updateCursor);
+                        newWayFeature = insertFeatureClass.CreateFeatureBuffer() as IFeature;
                         break;
                     case "modify":
-                        newWayFeature = getOSMRow((ITable)insertFeatureClass, currentWay.id) as IFeature;
+                        //newWayFeature = getOSMRow((ITable)insertFeatureClass, currentWay.id) as IFeature;
+                        IQueryFilter queryFilter = new QueryFilterClass();
+                        queryFilter.WhereClause = insertFeatureClass.WhereClauseByExtensionVersion(currentWay.id, "OSMID", extensionVersion);
+                        comReleaser.ManageLifetime(queryFilter);
+                        updateCursor = insertFeatureClass.Update(queryFilter, false);
+                        comReleaser.ManageLifetime(updateCursor);
+                        newWayFeature = updateCursor.NextFeature();
                         break;
                     default:
                         break;
                 }
 
-
                 // sanity check 
                 if (newWayFeature == null)
                 {
+                    if (insertFeatureClass.ShapeType == esriGeometryType.esriGeometryPolyline)
+                    {
+                        message.AddWarning(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_wayskipped_noline"), currentWay.id));
+                    }
+                    else if (insertFeatureClass.ShapeType == esriGeometryType.esriGeometryPolygon)
+                    {
+                        message.AddWarning(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_wayskipped_nopolygon"), currentWay.id));
+                    }
                     return;
                 }
-                
+
+                // assign the geometry to the either the new or the existing feature
+                newWayFeature.Shape = featureGeometry;
+
+
                 if (osmIDFieldIndex > -1)
                 {
                     if (extensionVersion == 1)
@@ -2377,7 +2351,20 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     newWayFeature.set_Value(osmTrackChangesFieldIndex, 1);
                 }
 
-                newWayFeature.Store();
+
+                switch (action)
+                {
+                    case "create":
+                        //newWayFeature.Store();
+                        updateCursor.InsertFeature((IFeatureBuffer)newWayFeature);
+                        break;
+                    case "modify":
+                        updateCursor.UpdateFeature(newWayFeature);
+                        break;
+                    default:
+                        break;
+                }
+
 
             }
             catch (Exception ex)
@@ -2385,6 +2372,116 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 message.AddWarning(ex.Message);
                 message.AddWarning(ex.StackTrace);
             }
+            finally
+            {
+                if (updateCursor != null)
+                    Marshal.ReleaseComObject(updateCursor);
+
+                if (newWayFeature != null)
+                    Marshal.ReleaseComObject(newWayFeature);
+            }
+        }
+
+        private static IGeometry extractGeometryFromOSMFeature(relation currentRelation, esriGeometryType detectedGeometry, IFeatureClass lineFeatureClass, IFeatureClass polygonFeatureClass, int extensionVersion)
+        {
+            IGeometry featureGeometry = null;
+            ISegmentCollection relationGeometryCollection = null;
+            OSMToolHelper osmToolHelper = new OSMToolHelper();
+
+            if (detectedGeometry == esriGeometryType.esriGeometryPolygon)
+            {
+                IPolygon relationMPPolygon = new PolygonClass();
+                relationMPPolygon.SpatialReference = ((IGeoDataset)polygonFeatureClass).SpatialReference;
+
+                relationGeometryCollection = relationMPPolygon as ISegmentCollection;
+            }
+            else if (detectedGeometry == esriGeometryType.esriGeometryPolyline)
+            {
+                IPolyline relationMPPolyline = new PolylineClass();
+                relationMPPolyline.SpatialReference = ((IGeoDataset)lineFeatureClass).SpatialReference;
+
+                relationGeometryCollection = relationMPPolyline as ISegmentCollection;
+            }
+            else
+            {
+                return featureGeometry;
+            }
+
+
+            IQueryFilter osmIDQueryFilter = new QueryFilterClass();
+            string sqlPolyOSMID = polygonFeatureClass.SqlIdentifier("OSMID");
+            string sqlLineOSMID = lineFeatureClass.SqlIdentifier("OSMID");
+            object missing = Type.Missing;
+
+            foreach (var item in currentRelation.Items)
+            {
+
+                if (item is member)
+                {
+                    member memberItem = item as member;
+                    switch (memberItem.type)
+                    {
+                        case memberType.way:
+                        case memberType.relation:
+                            bool isPolyline = true;
+
+                            if (detectedGeometry == esriGeometryType.esriGeometryPolygon)
+                            {
+                                isPolyline = osmToolHelper.IsThisWayALine(memberItem.@ref, lineFeatureClass, sqlLineOSMID, polygonFeatureClass, sqlPolyOSMID);
+                            }
+
+                            if (isPolyline == true)
+                            {
+                                osmIDQueryFilter.WhereClause = ((ITable)lineFeatureClass).WhereClauseByExtensionVersion(memberItem.@ref, "OSMID", extensionVersion);
+                            }
+                            else
+                            {
+                                osmIDQueryFilter.WhereClause = ((ITable)polygonFeatureClass).WhereClauseByExtensionVersion(memberItem.@ref, "OSMID", extensionVersion);
+                            }
+
+
+                            using (ComReleaser relationComReleaser = new ComReleaser())
+                            {
+                                IFeatureCursor featureCursor = null;
+                                if (isPolyline == true)
+                                {
+                                    featureCursor = lineFeatureClass.Search(osmIDQueryFilter, false);
+                                }
+                                else
+                                {
+                                    featureCursor = polygonFeatureClass.Search(osmIDQueryFilter, false);
+                                }
+
+                                relationComReleaser.ManageLifetime(featureCursor);
+
+                                IFeature partFeature = featureCursor.NextFeature();
+
+                                // set the appropriate field attribute to become invisible as a standalone features
+                                if (partFeature != null)
+                                {
+                                    IGeometryCollection ringCollection = partFeature.Shape as IGeometryCollection;
+
+                                    // test for available content in the geometry collection  
+                                    if (ringCollection.GeometryCount > 0)
+                                    {
+                                        // test if we dealing with a valid geometry
+                                        if (ringCollection.get_Geometry(0).IsEmpty == false)
+                                        {
+                                            // add it to the new geometry and mark the added geometry as a supporting element
+                                            relationGeometryCollection.AddSegmentCollection((ISegmentCollection)ringCollection.get_Geometry(0));
+
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            return featureGeometry;
         }
 
         private static IGeometry extractGeometryFromOSMFeature(way currentWay, IFeatureClass insertFeatureClass, IFeatureClass osmPointFeatureClass, int osmPointIDFieldIndex, int extensionVersion)
@@ -2436,6 +2533,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         string tempRequest = request;
 
                         osmIDQueryFilter.WhereClause = sqlPointOSMID + " IN " + request;
+                        osmIDQueryFilter.SubFields = insertFeatureClass.OIDFieldName + ",OSMID," + insertFeatureClass.ShapeFieldName;
+
                         using (ComReleaser comReleaser = new ComReleaser())
                         {
                             searchPointCursor = osmPointFeatureClass.Search(osmIDQueryFilter, false);
@@ -2457,15 +2556,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         nodePositionDictionary[nodeOSMIDString] = nodePositionIndex + 1;
                                     }
 
-                                    wayPointCollection.UpdatePoint(nodePositionIndex, (IPoint)nodeFeature.Shape);
+                                    IPoint currentPoint = nodeFeature.Shape as IPoint;
+                                    currentPoint.ID = nodeFeature.OID;
 
-                                    //// increase the reference counter
-                                    //if (osmWayRefCountFieldIndex != -1)
-                                    //{
-                                    //    nodeFeature.set_Value(osmWayRefCountFieldIndex, ((int)nodeFeature.get_Value(osmWayRefCountFieldIndex)) + 1);
-
-                                    //    searchPointCursor.UpdateFeature(nodeFeature);
-                                    //}
+                                    wayPointCollection.UpdatePoint(nodePositionIndex, currentPoint);
 
                                     // remove the current osmid from the request string to indicate that we handled this feature
                                     tempRequest = tempRequest.Replace(nodeOSMIDString, "");
@@ -2545,7 +2639,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         nodePositionDictionary[nodeOSMIDString] = nodePositionIndex + 1;
                                     }
 
-                                    wayPointCollection.UpdatePoint(nodePositionIndex, (IPoint)nodeFeature.Shape);
+                                    IPoint currentPoint = nodeFeature.Shape as IPoint;
+                                    currentPoint.ID = nodeFeature.OID;
+
+                                    wayPointCollection.UpdatePoint(nodePositionIndex, currentPoint);
 
                                     //// increase the reference counter
                                     //if (osmWayRefCountFieldIndex != -1)
@@ -2826,10 +2923,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             return needsUpdate;
         }
 
-        private void insertNode(node createNode, string action, IGeometry filterGeometry, IFeatureClass pointFeatureClass, OSMDomains availableDomains, int domainFieldLength, IPropertySet pointFieldIndexes, ref IGPMessages message, int extensionVersion)
+        private void insertNode(node createNode, string action, IGeometry filterGeometry, IFeatureClass pointFeatureClass, OSMDomains availableDomains, int domainFieldLength, IPropertySet pointFieldIndexes, ref IGPMessages message, int extensionVersion, ComReleaser comReleaser)
         {
             try
             {
+                OSMToolHelper osmToolHelper = new OSMToolHelper();
+
                 IPoint pointGeometry = new PointClass();
                 pointGeometry.X = Convert.ToDouble(createNode.lon, new CultureInfo("en-US"));
                 pointGeometry.Y = Convert.ToDouble(createNode.lat, new CultureInfo("en-US"));
@@ -2849,19 +2948,29 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 IFeature pointFeature = null;
+                IFeatureCursor updateCursor = null;
 
                 switch (action)
                 {
                     case "create":
-                        pointFeature = pointFeatureClass.CreateFeature();
+                        updateCursor = pointFeatureClass.Insert(true);
+                        comReleaser.ManageLifetime(updateCursor);
+                        pointFeature = pointFeatureClass.CreateFeatureBuffer() as IFeature;
+                        //pointFeature = pointFeatureClass.CreateFeature();
                         break;
                     case "modify":
-                        pointFeature = getOSMRow((ITable)pointFeatureClass, createNode.id) as IFeature;
+                        IQueryFilter queryFilter = new QueryFilterClass();
+                        queryFilter.WhereClause = pointFeatureClass.WhereClauseByExtensionVersion(createNode.id, "OSMID", extensionVersion);
+                        queryFilter.SubFields = String.Join(",", pointFeatureClass.ExtractRequiredFields());
+                        comReleaser.ManageLifetime(queryFilter);
+                        updateCursor = pointFeatureClass.Update(queryFilter, false);
+                        comReleaser.ManageLifetime(updateCursor);
+                        pointFeature = updateCursor.NextFeature();
+                        //pointFeature = getOSMRow((ITable)pointFeatureClass, createNode.id) as IFeature;
                         break;
                     default:
                         break;
                 }
-
                 if (pointFeature == null)
                 {
                     return;
@@ -2882,6 +2991,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 IPointIDAware idAware = pointGeometry as IPointIDAware;
                 idAware.PointIDAware = true;
+
 
                 pointGeometry.ID = pointFeature.OID;
                 pointFeature.Shape = pointGeometry;
@@ -3000,11 +3110,22 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     pointFeature.set_Value(osmTrackChangesFieldIndex, 1);
                 }
 
-                pointFeature.Store();
+                switch (action)
+                {
+                    case "create":
+                        updateCursor.InsertFeature((IFeatureBuffer)pointFeature);
+                 //       pointFeature.Store();
+                        break;
+                    case "modify":
+                        updateCursor.UpdateFeature(pointFeature);
+                        break;
+                    default:
+                        break;
+                }
+
 
                 Marshal.ReleaseComObject(pointGeometry);
                 Marshal.ReleaseComObject(pointFeature);
-
             }
             catch (Exception ex)
             {

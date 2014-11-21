@@ -57,7 +57,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             get
             {
                 UID dataTypeFactory = new UIDClass();
-                dataTypeFactory.Value = "{1b7b1666-5bda-49ac-b899-cff8b1bfb6d9";
+                dataTypeFactory.Value = "{1b7b1666-5bda-49ac-b899-cff8b1bfb6d9}";
 
                 return dataTypeFactory;
             }

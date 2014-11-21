@@ -149,7 +149,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         string tagKeyName = osmInputTable.Fields.get_Field(fieldIndex).Name;
 
-                        tagKeyName = OSMGPAttributeSelector.convert2OSMKey(tagKeyName, illegalCharacters);
+                        tagKeyName = OSMToolHelper.convert2OSMKey(tagKeyName, illegalCharacters);
 
                         fieldIndexes.Add(tagKeyName, fieldIndex);
                     }

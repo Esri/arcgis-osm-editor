@@ -834,4 +834,10 @@
   <data name="GPTools_Utility_RelationLoadError" xml:space="preserve">
     <value>General error in the relation loading routine ({0}).</value>
   </data>
+  <data name="GPTools_OSMGPUpload_username" xml:space="preserve">
+    <value>User name</value>
+  </data>
+  <data name="GPTools_OSMGPUpload_password" xml:space="preserve">
+    <value>Password</value>
+  </data>
 </root>

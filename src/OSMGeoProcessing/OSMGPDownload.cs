@@ -586,9 +586,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 foreach (string osmDownloadDocument in downloadedOSMDocuments.Reverse<string>())
                 {
-                    int nodeCapacity = 0;
-                    int wayCapacity = 0;
-                    int relationCapacity = 0;
+                    long nodeCapacity = 0;
+                    long wayCapacity = 0;
+                    long relationCapacity = 0;
 
                     message.AddMessage(resourceManager.GetString("GPTools_OSMGPFileReader_countingNodes"));
 
@@ -596,10 +596,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPFileReader_countedElements"), nodeCapacity, wayCapacity, relationCapacity));
 
                     if (osmNodeDictionary == null)
-                        osmNodeDictionary = new Dictionary<string, OSMToolHelper.simplePointRef>(nodeCapacity);
+                        osmNodeDictionary = new Dictionary<string, OSMToolHelper.simplePointRef>(Convert.ToInt32(nodeCapacity));
 
                     #region load points
-                    osmToolHelper.loadOSMNodes(osmDownloadDocument, ref TrackCancel, ref message, targetDatasetGPValue, osmPointFeatureClass, false, false, nodeCapacity, ref osmNodeDictionary, featureWorkspace, downloadSpatialReference, availableDomains, false);
+                    osmToolHelper.loadOSMNodes(osmDownloadDocument, ref TrackCancel, ref message, targetDatasetGPValue, osmPointFeatureClass, false, false, Convert.ToInt32(nodeCapacity), ref osmNodeDictionary, featureWorkspace, downloadSpatialReference, availableDomains, false);
                     #endregion
 
                     if (TrackCancel.Continue() == false)
@@ -611,7 +611,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     if (wayCapacity > 0)
                     {
                         List<string> missingWays = null;
-                        missingWays = osmToolHelper.loadOSMWays(osmDownloadDocument, ref TrackCancel, ref message, targetDatasetGPValue, osmPointFeatureClass, osmLineFeatureClass, osmPolygonFeatureClass, false, false, wayCapacity, ref osmNodeDictionary, featureWorkspace, downloadSpatialReference, availableDomains, false);
+                        missingWays = osmToolHelper.loadOSMWays(osmDownloadDocument, ref TrackCancel, ref message, targetDatasetGPValue, osmPointFeatureClass, osmLineFeatureClass, osmPolygonFeatureClass, false, false, Convert.ToInt32(wayCapacity), ref osmNodeDictionary, featureWorkspace, downloadSpatialReference, availableDomains, false);
                     }
                     #endregion
 
@@ -697,7 +697,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     if (relationCapacity > 0)
                     {
                         List<string> missingRelations = null;
-                        missingRelations = osmToolHelper.loadOSMRelations(osmDownloadDocument, ref TrackCancel, ref message, targetDatasetGPValue, osmPointFeatureClass, osmLineFeatureClass, osmPolygonFeatureClass, relationCapacity, relationTable, availableDomains, false, false);
+                        missingRelations = osmToolHelper.loadOSMRelations(osmDownloadDocument, ref TrackCancel, ref message, targetDatasetGPValue, osmPointFeatureClass, osmLineFeatureClass, osmPolygonFeatureClass, Convert.ToInt32(relationCapacity), relationTable, availableDomains, false, false);
                     }
                     #endregion
                 }

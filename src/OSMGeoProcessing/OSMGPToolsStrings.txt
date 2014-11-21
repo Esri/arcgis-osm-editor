@@ -239,3 +239,6 @@ GPTools_OSMGPCreateNetworkDataset_lockedTarget=The target dataset: '{0}' is lock
 GPTools_Utility_NodeLoadError=General error in the node loading routine ({0}).
 GPTools_Utility_WayLoadError=General error in the way loading routine ({0}).
 GPTools_Utility_RelationLoadError=General error in the relation loading routine ({0}).
+# 2.2
+GPTools_OSMGPUpload_username=User name
+GPTools_OSMGPUpload_password=Password
