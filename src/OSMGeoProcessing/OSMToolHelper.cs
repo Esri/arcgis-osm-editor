@@ -1030,16 +1030,19 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     //osmTrackChangesField.DefaultValue_2 = 0;
                     //fieldsEdit.AddField((IField)osmTrackChangesField);
 
-                    foreach (string nameOfTag in additionalTagFields)
-	                {
-                        IFieldEdit osmTagAttributeField = new FieldClass() as IFieldEdit;
-                        osmTagAttributeField.Name_2 = OSMToolHelper.convert2AttributeFieldName(nameOfTag, illegalCharacters);
-                        osmTagAttributeField.AliasName_2 = nameOfTag + _resourceManager.GetString("GPTools_OSMGPAttributeSelector_aliasaddition");
-                        osmTagAttributeField.Type_2 = esriFieldType.esriFieldTypeString;
-                        osmTagAttributeField.Length_2 = 100;
-                        osmTagAttributeField.Required_2 = false;
+                    if (additionalTagFields != null)
+                    {
+                        foreach (string nameOfTag in additionalTagFields)
+                        {
+                            IFieldEdit osmTagAttributeField = new FieldClass() as IFieldEdit;
+                            osmTagAttributeField.Name_2 = OSMToolHelper.convert2AttributeFieldName(nameOfTag, illegalCharacters);
+                            osmTagAttributeField.AliasName_2 = nameOfTag + _resourceManager.GetString("GPTools_OSMGPAttributeSelector_aliasaddition");
+                            osmTagAttributeField.Type_2 = esriFieldType.esriFieldTypeString;
+                            osmTagAttributeField.Length_2 = 100;
+                            osmTagAttributeField.Required_2 = false;
 
-                        fieldsEdit.AddField((IField) osmTagAttributeField);
+                            fieldsEdit.AddField((IField)osmTagAttributeField);
+                        }
                     }
 
                     fields = (ESRI.ArcGIS.Geodatabase.IFields)fieldsEdit; // Explicit Cast
@@ -1337,16 +1340,19 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     //osmTrackChangesField.DefaultValue_2 = 0;
                     //fieldsEdit.AddField((IField)osmTrackChangesField);
 
-                    foreach (string nameOfTag in additionalTagFields)
-	                {
-                        IFieldEdit osmTagAttributeField = new FieldClass() as IFieldEdit;
-                        osmTagAttributeField.Name_2 = OSMToolHelper.convert2AttributeFieldName(nameOfTag, illegalCharacters);
-                        osmTagAttributeField.AliasName_2 = nameOfTag + _resourceManager.GetString("GPTools_OSMGPAttributeSelector_aliasaddition");
-                        osmTagAttributeField.Type_2 = esriFieldType.esriFieldTypeString;
-                        osmTagAttributeField.Length_2 = 100;
-                        osmTagAttributeField.Required_2 = false;
+                    if (additionalTagFields != null)
+                    {
+                        foreach (string nameOfTag in additionalTagFields)
+                        {
+                            IFieldEdit osmTagAttributeField = new FieldClass() as IFieldEdit;
+                            osmTagAttributeField.Name_2 = OSMToolHelper.convert2AttributeFieldName(nameOfTag, illegalCharacters);
+                            osmTagAttributeField.AliasName_2 = nameOfTag + _resourceManager.GetString("GPTools_OSMGPAttributeSelector_aliasaddition");
+                            osmTagAttributeField.Type_2 = esriFieldType.esriFieldTypeString;
+                            osmTagAttributeField.Length_2 = 100;
+                            osmTagAttributeField.Required_2 = false;
 
-                        fieldsEdit.AddField((IField) osmTagAttributeField);
+                            fieldsEdit.AddField((IField)osmTagAttributeField);
+                        }
                     }
 
                     fields = (ESRI.ArcGIS.Geodatabase.IFields)fieldsEdit; // Explicit Cast
