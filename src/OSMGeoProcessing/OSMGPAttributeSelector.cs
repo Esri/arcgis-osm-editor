@@ -360,8 +360,19 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     return;
                 }
 
-                // convert the selected fields into a comma separated string to limit the returned row buffer (fields)
-                osmQueryFilter.SubFields = String.Join(",", tagsAttributesIndices.Keys.Select(s => s.ToString()).ToArray());
+                if (useUpdateCursor)
+                {
+                    // convert the selected fields into a comma separated string to limit the returned row buffer (fields)
+                    string FieldsString = String.Join(",", tagsAttributesIndices.Keys.Select(s => OSMToolHelper.convert2AttributeFieldName(s, illegalCharacters)).ToArray());
+                    if (osmInputTable is IFeatureClass)
+                    {
+                        osmQueryFilter.SubFields = FieldsString + ",osmTags," + ((IFeatureClass)osmInputTable).ShapeFieldName;
+                    }
+                    else
+                    {
+                        osmQueryFilter.SubFields = FieldsString + ",osmTags";
+                    }
+                }
 
                 using (ComReleaser comReleaser = new ComReleaser())
                 {
