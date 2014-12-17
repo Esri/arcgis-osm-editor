@@ -1140,13 +1140,20 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             {
                                 return;
                             }
+
+                            System.Diagnostics.Debug.WriteLine(String.Format("node item {0}", DateTime.Now.ToLongTimeString()));
+
                             // check if a local edit is coming back to us or if it is a new creation altogether
                             if (elementNeedsUpdate(createXMLNodeItem, localnodeRevisions, localwayRevisions, localrelationRevisions))
                             {
+                                System.Diagnostics.Debug.WriteLine(String.Format("node update check {0}", DateTime.Now.ToLongTimeString()));
+
                                 if (createXMLNodeItem is node)
                                 {
                                     // since it is a new node we need to explicitly create it
                                     insertNode((node)createXMLNodeItem, "create", updateFilterGeometry, osmPointFeatureClass, availableDomains, domainFieldLengthPoints, pointFieldIndexes, ref message, internalExtensionVersion, comReleaser);
+
+                                    System.Diagnostics.Debug.WriteLine(String.Format("after node insert {0}", DateTime.Now.ToLongTimeString()));
 
                                     if (useVerboseLogging == true)
                                     {
@@ -1158,6 +1165,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                     if (OSMToolHelper.IsThisWayALine((way)createXMLNodeItem))
                                     {
                                         IGeometry lineGeometry = extractGeometryFromOSMFeature((way)createXMLNodeItem, osmLineFeatureClass, osmPointFeatureClass, osmPointIDFieldIndex, internalExtensionVersion);
+
+                                        System.Diagnostics.Debug.WriteLine(String.Format("create after line geometry creation {0}", DateTime.Now.ToLongTimeString()));
 
                                         if (lineGeometry != null)
                                         {
@@ -1173,6 +1182,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                     {
                                         IGeometry polygonGeometry = extractGeometryFromOSMFeature((way)createXMLNodeItem, osmPolygonFeatureClass, osmPointFeatureClass, osmPointIDFieldIndex, internalExtensionVersion);
 
+                                        System.Diagnostics.Debug.WriteLine(String.Format("create after polygon geometry creation {0}", DateTime.Now.ToLongTimeString()));
+
                                         if (polygonGeometry != null)
                                         {
                                             if (useVerboseLogging == true)
@@ -1183,6 +1194,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                             insertWay((way)createXMLNodeItem, "create", osmPolygonFeatureClass, polygonGeometry, updateFilterGeometry, osmPointFeatureClass, pointFieldIndexes, availableDomains, domainFieldLengthPolygons, polygonFieldIndexes, ref message, internalExtensionVersion, comReleaser);
                                         }
                                     }
+
+                                    System.Diagnostics.Debug.WriteLine(String.Format("after way insert {0}", DateTime.Now.ToLongTimeString()));
+
+
                                 }
                                 else if (createXMLNodeItem is relation)
                                 {
@@ -1191,6 +1206,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                     // a relation can be multiple things, multipart polyline or polygon is one we would like to treat special
                                     esriGeometryType detectedGeoType = osmToolHelper.determineRelationGeometryType(osmLineFeatureClass, osmPolygonFeatureClass, relationTable, (relation)createXMLNodeItem);
                                     IGeometry relationGeometry = extractGeometryFromOSMFeature(currentRelation, detectedGeoType, osmLineFeatureClass, osmPolygonFeatureClass, internalExtensionVersion);
+
+                                    System.Diagnostics.Debug.WriteLine(String.Format(" after relation geometry {1} creation {0}", DateTime.Now.ToLongTimeString(), detectedGeoType.ToString()));
 
                                     // check if geometry type and geometry are in sync
                                     if (relationGeometry == null)
@@ -1201,7 +1218,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_createmessage"), resourceManager.GetString("GPTools_OSM_relation"), currentRelation.id));
                                     }
 
-                                    insertRelation((relation)createXMLNodeItem, "create", updateFilterGeometry, detectedGeoType, relationGeometry, osmPointFeatureClass, pointFieldIndexes, osmLineFeatureClass, polylineFieldIndexes, osmPolygonFeatureClass, polygonFieldIndexes, relationTable, relationFieldIndexes, ref message, internalExtensionVersion, comReleaser);
+                                    insertRelation((relation)createXMLNodeItem, "create", updateFilterGeometry, detectedGeoType, relationGeometry, osmPointFeatureClass, pointFieldIndexes, osmLineFeatureClass, polylineFieldIndexes, osmPolygonFeatureClass, polygonFieldIndexes, relationTable, relationFieldIndexes, ref message, internalExtensionVersion, comReleaser, useVerboseLogging);
+
+                                    System.Diagnostics.Debug.WriteLine(String.Format("after relation insert {0}", DateTime.Now.ToLongTimeString()));
                                 }
                             }
                         }
@@ -1231,7 +1250,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 {
                                     return;
                                 }
-                                //message.AddMessage(String.Format("enter item modify {0}", DateTime.Now));
+
+                                System.Diagnostics.Debug.WriteLine(String.Format("modify {0}", DateTime.Now.ToLongTimeString()));
 
                                 // check if a local edit is coming back to us or if it is a new creation altogether
                                 if (elementNeedsUpdate(modifyXMLNodeItem, localnodeRevisions, localwayRevisions, localrelationRevisions))
@@ -1246,6 +1266,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                         // since it is a new node we need to explicit create it
                                         insertNode((node)modifyXMLNodeItem, "modify", updateFilterGeometry, osmPointFeatureClass, availableDomains, domainFieldLengthPoints, pointFieldIndexes, ref message, internalExtensionVersion, comReleaser);
+
+                                        System.Diagnostics.Debug.WriteLine(String.Format("after node modify {0}", DateTime.Now.ToLongTimeString()));
                                     }
                                     else if (modifyXMLNodeItem is way)
                                     {
@@ -1254,6 +1276,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         if (OSMToolHelper.IsThisWayALine((way)modifyXMLNodeItem))
                                         {
                                             IGeometry lineUpdateGeometry = extractGeometryFromOSMFeature(((way)modifyXMLNodeItem), osmLineFeatureClass, osmPointFeatureClass, osmPointIDFieldIndex, internalExtensionVersion);
+                                            System.Diagnostics.Debug.WriteLine(String.Format("after line way geometry extract {0}", DateTime.Now.ToLongTimeString())); 
                                             if (updateWayFeature != null)
                                             {
                                                 if (useVerboseLogging == true)
@@ -1262,6 +1285,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                 }
 
                                                 insertWay((way)modifyXMLNodeItem, "modify", osmLineFeatureClass, lineUpdateGeometry, updateFilterGeometry, osmPointFeatureClass, pointFieldIndexes, availableDomains, domainFieldLengthLines, polylineFieldIndexes, ref message, internalExtensionVersion, comReleaser);
+
+                                                System.Diagnostics.Debug.WriteLine(String.Format("after line modify {0}", DateTime.Now.ToLongTimeString())); 
                                             }
                                             else
                                             {
@@ -1274,7 +1299,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         else
                                         {
                                             IGeometry polygonUpdateGeometry = extractGeometryFromOSMFeature((way)modifyXMLNodeItem, osmPolygonFeatureClass, osmPointFeatureClass, osmPointIDFieldIndex, internalExtensionVersion);
-
+                                            System.Diagnostics.Debug.WriteLine(String.Format("after ploygon way geometry extract {0}", DateTime.Now.ToLongTimeString())); 
                                             if (polygonUpdateGeometry != null)
                                             {
                                                 if (useVerboseLogging == true)
@@ -1283,6 +1308,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                 }
 
                                                 insertWay((way)modifyXMLNodeItem, "modify", osmPolygonFeatureClass, polygonUpdateGeometry, updateFilterGeometry, osmPointFeatureClass, pointFieldIndexes, availableDomains, domainFieldLengthPolygons, polygonFieldIndexes, ref message, internalExtensionVersion, comReleaser);
+                                                System.Diagnostics.Debug.WriteLine(String.Format("after polygon modify {0}", DateTime.Now.ToLongTimeString())); 
                                             }
                                             else
                                             {
@@ -1301,6 +1327,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         esriGeometryType detectedGeoType = osmToolHelper.determineRelationGeometryType(osmLineFeatureClass, osmPolygonFeatureClass, relationTable, currentRelation);
                                         IGeometry relationGeometry = extractGeometryFromOSMFeature(currentRelation, detectedGeoType, osmLineFeatureClass, osmPolygonFeatureClass, internalExtensionVersion);
 
+                                        System.Diagnostics.Debug.WriteLine(String.Format("after relation geometry {1} extract {0}", DateTime.Now.ToLongTimeString(), detectedGeoType.ToString())); 
+
                                         // check if geometry type and geometry are in sync
                                         if (relationGeometry == null)
                                             detectedGeoType = esriGeometryType.esriGeometryNull;
@@ -1311,7 +1339,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         }
 
 
-                                        insertRelation(currentRelation, "modify", updateFilterGeometry, detectedGeoType, relationGeometry, osmPointFeatureClass, pointFieldIndexes, osmLineFeatureClass, polylineFieldIndexes, osmPolygonFeatureClass, polygonFieldIndexes, relationTable, relationFieldIndexes, ref message, internalExtensionVersion, comReleaser);
+                                        insertRelation(currentRelation, "modify", updateFilterGeometry, detectedGeoType, relationGeometry, osmPointFeatureClass, pointFieldIndexes, osmLineFeatureClass, polylineFieldIndexes, osmPolygonFeatureClass, polygonFieldIndexes, relationTable, relationFieldIndexes, ref message, internalExtensionVersion, comReleaser, useVerboseLogging);
+
+                                        System.Diagnostics.Debug.WriteLine(String.Format("after relation modify {0}", DateTime.Now.ToLongTimeString())); 
                                     }
                                 }
                             }
@@ -1335,6 +1365,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 return;
                             }
 
+                            System.Diagnostics.Debug.WriteLine(String.Format("delete {0}", DateTime.Now.ToLongTimeString())); 
+
                             if (deleteXMLNodeItem is node)
                             {
                                 IFeature deleteFeature = getOSMRow((ITable)osmPointFeatureClass, ((node)deleteXMLNodeItem).id) as IFeature;
@@ -1352,6 +1384,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                     }
 
                                     deleteFeature.Delete();
+
+                                    System.Diagnostics.Debug.WriteLine(String.Format("after node delete {0}", DateTime.Now.ToLongTimeString())); 
                                 }
                                 else
                                 {
@@ -1364,6 +1398,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             else if (deleteXMLNodeItem is way)
                             {
                                 bool isALine = OSMToolHelper.IsThisWayALine((way)deleteXMLNodeItem);
+
+                                System.Diagnostics.Debug.WriteLine(String.Format("after way delete isline {0}", DateTime.Now.ToLongTimeString())); 
 
                                 if (isALine == true)
                                 {
@@ -1382,6 +1418,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         }
 
                                         deletePolylineFeature.Delete();
+
                                     }
                                     else
                                     {
@@ -1417,6 +1454,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         }
                                     }
                                 }
+
+                                System.Diagnostics.Debug.WriteLine(String.Format("after way delete {0}", DateTime.Now.ToLongTimeString())); 
                             }
                             else if (deleteXMLNodeItem is relation)
                             {
@@ -1485,6 +1524,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         }
                                     }
                                 }
+
+                                System.Diagnostics.Debug.WriteLine(String.Format("after relation delete {0}", DateTime.Now.ToLongTimeString())); 
                             }
                         }
 
@@ -1524,7 +1565,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             return returnName;
         }
 
-        private void insertRelation(relation currentRelation, string action, IGeometry filterGeometry, esriGeometryType detectedGeometryType, IGeometry detectedGeometry, IFeatureClass osmPointFeatureClass, IPropertySet pointFieldIndexes, IFeatureClass osmLineFeatureClass, IPropertySet polylineFieldIndexes, IFeatureClass osmPolygonFeatureClass, IPropertySet polygonFieldIndexes, ITable relationTable, IPropertySet relationIndexes, ref IGPMessages message, int extensionVersion, ComReleaser comReleaser)
+        private void insertRelation(relation currentRelation, string action, IGeometry filterGeometry, esriGeometryType detectedGeometryType, IGeometry detectedGeometry, IFeatureClass osmPointFeatureClass, IPropertySet pointFieldIndexes, IFeatureClass osmLineFeatureClass, IPropertySet polylineFieldIndexes, IFeatureClass osmPolygonFeatureClass, IPropertySet polygonFieldIndexes, ITable relationTable, IPropertySet relationIndexes, ref IGPMessages message, int extensionVersion, ComReleaser comReleaser, bool verboseLogging)
         {
             IFeatureCursor updateCursor = null;
             ICursor updateRow = null;
@@ -1972,7 +2013,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
                 else if (detectedGeometryType == esriGeometryType.esriGeometryPoint)
                 {
+#if DEBUG
                     System.Diagnostics.Debug.WriteLine("Relation #: ____: POINT!!!");
+#endif
 
                 }
                 else
@@ -1999,11 +2042,16 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                     if (relationRow == null)
                     {
-                        message.AddWarning(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_relationskipped_norelation"), currentRelation.id));
+                        if (verboseLogging)
+                        {
+                            message.AddWarning(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_relationskipped_norelation"), currentRelation.id));
+                        }
                         return;
                     }
 
+#if DEBUG
                     System.Diagnostics.Debug.WriteLine("Relation #: " + currentRelation.id + " :____: Kept as relation");
+#endif
 
                     if (tagCollectionRelationFieldIndex != -1)
                     {

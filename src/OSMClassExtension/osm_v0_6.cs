@@ -836,7 +836,7 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension {
 		}
 		
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlIgnore()]
 		public nodeVisible visible {
 			get {
 				return this.visibleField;
@@ -1055,7 +1055,7 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension {
 		}
 		
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlIgnore()]
 		public string visible {
 			get {
 				return this.visibleField;
@@ -1288,7 +1288,7 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension {
 		}
 		
 		/// <remarks/>
-		[System.Xml.Serialization.XmlAttributeAttribute()]
+		[System.Xml.Serialization.XmlIgnore()]
 		public wayVisible visible {
 			get {
 				return this.visibleField;

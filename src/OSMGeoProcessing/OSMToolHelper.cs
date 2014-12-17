@@ -4464,6 +4464,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         isCoastline = true;
                         isALine = true;
+                        return isALine;
                     }
 
                     if (currentway.tag.Contains(highwayTag, new TagKeyComparer()))
