@@ -964,23 +964,27 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             {
                 try
                 {
-                    if (osmPointFeatureClass != null)
-                    {
-                        osmPointFeatureClass.ApplyOSMClassExtension();
-                        ComReleaser.ReleaseCOMObject(osmPointFeatureClass);
-                    }
+                    // TE -- 1/7/2015
+                    // this is a 'breaking' change as the default loader won't no longer enable the edit extension
+                    // the reasoning here is that most users would like the OSM in a 'read-only' fashion, and don't need to track 
+                    // changes to be properly transmitted back to the OSM server
+                    //if (osmPointFeatureClass != null)
+                    //{
+                    //    osmPointFeatureClass.ApplyOSMClassExtension();
+                    //    ComReleaser.ReleaseCOMObject(osmPointFeatureClass);
+                    //}
 
-                    if (osmLineFeatureClass != null)
-                    {
-                        osmLineFeatureClass.ApplyOSMClassExtension();
-                        ComReleaser.ReleaseCOMObject(osmLineFeatureClass);
-                    }
+                    //if (osmLineFeatureClass != null)
+                    //{
+                    //    osmLineFeatureClass.ApplyOSMClassExtension();
+                    //    ComReleaser.ReleaseCOMObject(osmLineFeatureClass);
+                    //}
 
-                    if (osmPolygonFeatureClass != null)
-                    {
-                        osmPolygonFeatureClass.ApplyOSMClassExtension();
-                        ComReleaser.ReleaseCOMObject(osmPolygonFeatureClass);
-                    }
+                    //if (osmPolygonFeatureClass != null)
+                    //{
+                    //    osmPolygonFeatureClass.ApplyOSMClassExtension();
+                    //    ComReleaser.ReleaseCOMObject(osmPolygonFeatureClass);
+                    //}
 
                     osmToolHelper = null;
 

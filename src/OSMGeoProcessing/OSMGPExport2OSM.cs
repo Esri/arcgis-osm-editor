@@ -603,6 +603,178 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         }
         #endregion
 
+        private String ConvertPointFeatureToXmlString(IFeature currentFeature, IWorkspace featureWorkspace, int tagsFieldIndex, int osmIDFieldIndex, int changesetIDFieldIndex, int osmVersionFieldIndex, int userIDFieldIndex, int userNameFieldIndex, int timeStampFieldIndex, int visibleFieldIndex, int extensionVersion)
+        {
+            StringBuilder xmlNodeStringBuilder = new StringBuilder(200);
+
+
+            if (currentFeature == null)
+                throw new ArgumentNullException("currentFeature");
+
+            object featureValue = DBNull.Value;
+
+            string latitudeString = String.Empty;
+            string longitudeString = String.Empty;
+
+            if (currentFeature.Shape.IsEmpty == false)
+            {
+                IPoint wgs84Point = currentFeature.Shape as IPoint;
+                wgs84Point.Project(m_wgs84);
+
+                NumberFormatInfo exportCultureInfo = new CultureInfo("en-US", false).NumberFormat;
+                exportCultureInfo.NumberDecimalDigits = 6;
+
+                latitudeString = wgs84Point.Y.ToString("N", exportCultureInfo);
+                longitudeString = wgs84Point.X.ToString("N", exportCultureInfo);
+
+                Marshal.ReleaseComObject(wgs84Point);
+            }
+
+            string osmIDString = String.Empty;
+            if (osmIDFieldIndex != -1)
+            {
+                osmIDString = Convert.ToString(currentFeature.get_Value(osmIDFieldIndex));
+            }
+
+            string changeSetString = String.Empty;
+            if (changesetIDFieldIndex != -1)
+            {
+                featureValue = currentFeature.get_Value(changesetIDFieldIndex);
+
+                if (featureValue != DBNull.Value)
+                {
+                    changeSetString = Convert.ToString(currentFeature.get_Value(changesetIDFieldIndex));
+                }
+            }
+
+            string osmVersionString = String.Empty;
+            if (osmVersionFieldIndex != -1)
+            {
+                featureValue = currentFeature.get_Value(osmVersionFieldIndex);
+
+                if (featureValue != DBNull.Value)
+                {
+                    osmVersionString = Convert.ToString(featureValue);
+                }
+            }
+
+            string userIDString = String.Empty;
+
+            if (userIDFieldIndex != -1)
+            {
+                featureValue = currentFeature.get_Value(userIDFieldIndex);
+
+                if (featureValue != DBNull.Value)
+                {
+                    userIDString = Convert.ToString(featureValue);
+                }
+            }
+
+            string userNameString = String.Empty;
+            if (userNameFieldIndex != -1)
+            {
+                featureValue = currentFeature.get_Value(userNameFieldIndex);
+
+                if (featureValue != DBNull.Value)
+                {
+                    userNameString = Convert.ToString(featureValue);
+                }
+            }
+
+            string timeStampString = String.Empty;
+
+            if (timeStampFieldIndex != -1)
+            {
+                featureValue = currentFeature.get_Value(timeStampFieldIndex);
+
+                if (featureValue != DBNull.Value)
+                {
+                    timeStampString = Convert.ToDateTime(featureValue).ToUniversalTime().ToString("u");
+                }
+            }
+
+            string visibilityString = bool.TrueString;
+            if (visibleFieldIndex != -1)
+            {
+                featureValue = currentFeature.get_Value(visibleFieldIndex);
+
+                if (featureValue != DBNull.Value)
+                {
+                    try
+                    {
+                        visibilityString = Convert.ToString(featureValue);
+                    }
+                    catch { }
+                }
+            }
+
+
+            tag[] tags = null;
+
+            if (tagsFieldIndex > -1)
+            {
+                tags = _osmUtility.retrieveOSMTags((IRow)currentFeature, tagsFieldIndex, featureWorkspace);
+            }
+
+            // no tags only the node itself
+            if (tags != null || tags.Length > 0)
+            {
+                xmlNodeStringBuilder.Append("<node id=\"");
+                xmlNodeStringBuilder.Append(osmIDString);
+                xmlNodeStringBuilder.Append("\" version=\"");
+                xmlNodeStringBuilder.Append(osmVersionString);
+                xmlNodeStringBuilder.Append("\" timestamp=\"");
+                xmlNodeStringBuilder.Append(timeStampString);
+                xmlNodeStringBuilder.Append("\" uid=\"");
+                xmlNodeStringBuilder.Append(userIDString);
+                xmlNodeStringBuilder.Append("\" user=\"");
+                xmlNodeStringBuilder.Append(userNameString);
+                xmlNodeStringBuilder.Append("\" changeset=\"");
+                xmlNodeStringBuilder.Append(changeSetString);
+                xmlNodeStringBuilder.Append("\" lat=\"");
+                xmlNodeStringBuilder.Append(latitudeString);
+                xmlNodeStringBuilder.Append("\" lon=\"");
+                xmlNodeStringBuilder.Append(longitudeString);
+                xmlNodeStringBuilder.AppendLine("\" />");
+
+            }
+            else
+            {
+                xmlNodeStringBuilder.Append("<node id=\"");
+                xmlNodeStringBuilder.Append(osmIDString);
+                xmlNodeStringBuilder.Append("\" version=\"");
+                xmlNodeStringBuilder.Append(osmVersionString);
+                xmlNodeStringBuilder.Append("\" timestamp=\"");
+                xmlNodeStringBuilder.Append(timeStampString);
+                xmlNodeStringBuilder.Append("\" uid=\"");
+                xmlNodeStringBuilder.Append(userIDString);
+                xmlNodeStringBuilder.Append("\" user=\"");
+                xmlNodeStringBuilder.Append(userNameString);
+                xmlNodeStringBuilder.Append("\" changeset=\"");
+                xmlNodeStringBuilder.Append(changeSetString);
+                xmlNodeStringBuilder.Append("\" lat=\"");
+                xmlNodeStringBuilder.Append(latitudeString);
+                xmlNodeStringBuilder.Append("\" lon=\"");
+                xmlNodeStringBuilder.Append(longitudeString);
+                xmlNodeStringBuilder.AppendLine("\" >");
+
+                foreach (tag item in tags)
+                {
+                    xmlNodeStringBuilder.Append("<tag k=\"");
+                    xmlNodeStringBuilder.Append(item.k);
+                    xmlNodeStringBuilder.Append("\" v=\"");
+                    xmlNodeStringBuilder.Append(item.v);
+                    xmlNodeStringBuilder.AppendLine("\" />");
+
+                }
+
+                xmlNodeStringBuilder.AppendLine("</node>");
+            }
+
+
+            return xmlNodeStringBuilder.ToString();
+        }
+
         private node ConvertPointFeatureToOSMNode(IFeature currentFeature, IWorkspace featureWorkspace, int tagsFieldIndex, int osmIDFieldIndex, int changesetIDFieldIndex, int osmVersionFieldIndex, int userIDFieldIndex, int userNameFieldIndex, int timeStampFieldIndex, int visibleFieldIndex, int extensionVersion)
         {
 

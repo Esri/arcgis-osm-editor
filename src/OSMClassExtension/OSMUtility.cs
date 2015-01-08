@@ -92,7 +92,7 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
             }
         }
 
-        public void insertMembers(int osmMembersRelationFieldIndex, IRow insertRow, member[] relationMembers)
+        public void insertMembers(int osmMembersRelationFieldIndex, ref IRow insertRow, member[] relationMembers)
         {
             if (insertRow.Fields.get_Field(osmMembersRelationFieldIndex).Type == esriFieldType.esriFieldTypeBlob)
             {
@@ -1226,14 +1226,16 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
         /// </summary>
         /// <param name="currentnode">OpenStreetMap node object to be examined. Non-relevant tags are 'created_by', 'source', 'attribution', and 'note'. </param>
         /// <returns>Boolean indicating if the node has relevant tags or not.</returns>
-        public bool DoesHaveKeys(node currentnode)
+        public bool DoesHaveKeys(tag[] tags)
         {
             bool doesHaveKeys = false;
+            bool partsOverride = false;
+
             try
             {
-                if (currentnode.tag != null)
+                if (tags != null)
                 {
-                    foreach (tag nodetag in currentnode.tag)
+                    foreach (tag nodetag in tags)
                     {
                         if (nodetag.k.ToLower().Equals("created_by"))
                         {
@@ -1245,6 +1247,9 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                         {
                         }
                         else if (nodetag.k.ToLower().Equals("note"))
+                        {
+                        }
+                        else if (nodetag.k.ToLower().Contains("building:part"))
                         {
                         }
                         else
@@ -1324,6 +1329,7 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
         public bool DoesHaveKeys(way currentway)
         {
             bool doesHaveKeys = false;
+            bool partsOverride = false;
 
             try
             {
@@ -1343,12 +1349,19 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                         else if (waytag.k.ToLower().Equals("note"))
                         {
                         }
+                        else if (waytag.k.ToLower().Contains("building:part"))
+                        {
+                            partsOverride = true;
+                        }
                         else
                         {
                             doesHaveKeys = true;
-                            break;
                         }
                     }
+
+                    // the building:part key sets the flag be a supporting elements, hence the trigger override
+                    if (partsOverride)
+                        doesHaveKeys = false;
                 }
             }
             catch (Exception ex)

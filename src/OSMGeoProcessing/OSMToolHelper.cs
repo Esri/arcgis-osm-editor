@@ -1693,7 +1693,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                             pointFeature.set_Value(osmPointIDFieldIndex, currentNode.id);
 
                                             string isSupportingNode = "";
-                                            if (_osmUtility.DoesHaveKeys(currentNode))
+                                            if (_osmUtility.DoesHaveKeys(currentNode.tag))
                                             {
                                                 // if case it has tags I assume that the node presents an entity of it own,
                                                 // hence it is not a supporting node in the context of supporting a way or relation
@@ -2702,13 +2702,13 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                             {
                                                 if (osmSupportingElementPolylineFieldIndex > -1)
                                                 {
-                                                    if (currentWay.tag == null)
+                                                    if (_osmUtility.DoesHaveKeys(currentWay))
                                                     {
-                                                        featureLineBuffer.set_Value(osmSupportingElementPolylineFieldIndex, "yes");
+                                                        featureLineBuffer.set_Value(osmSupportingElementPolylineFieldIndex, "no");
                                                     }
                                                     else
                                                     {
-                                                        featureLineBuffer.set_Value(osmSupportingElementPolylineFieldIndex, "no");
+                                                        featureLineBuffer.set_Value(osmSupportingElementPolylineFieldIndex, "yes");
                                                     }
                                                 }
                                             }
@@ -2716,13 +2716,13 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                             {
                                                 if (osmSupportingElementPolygonFieldIndex > -1)
                                                 {
-                                                    if (currentWay.tag == null)
+                                                    if (_osmUtility.DoesHaveKeys(currentWay))
                                                     {
-                                                        featurePolygonBuffer.set_Value(osmSupportingElementPolygonFieldIndex, "yes");
+                                                        featurePolygonBuffer.set_Value(osmSupportingElementPolygonFieldIndex, "no");
                                                     }
                                                     else
                                                     {
-                                                        featurePolygonBuffer.set_Value(osmSupportingElementPolygonFieldIndex, "no");
+                                                        featurePolygonBuffer.set_Value(osmSupportingElementPolygonFieldIndex, "yes");
                                                     }
                                                 }
                                             }
@@ -3669,7 +3669,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                                     // add it to the new geometry and mark the added geometry as a supporting element
                                                                     relationPolygonGeometryCollection.AddSegmentCollection((ISegmentCollection)ringCollection.get_Geometry(0));
 
-                                                                    // TE - 10/14/2014
+                                                                    // TE - 10/14/2014 ( 1/5/2015 -- still under consideration)
                                                                     // the initial assessment if the feature is a supporting element based on the existence of tags
                                                                     // has been made, at this point I don't think there is a reason to reassess the nature of feature
                                                                     // based on its appearance in a relation
@@ -4464,6 +4464,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         isCoastline = true;
                         isALine = true;
+                        return isALine;
                     }
 
                     if (currentway.tag.Contains(highwayTag, new TagKeyComparer()))
@@ -4487,6 +4488,70 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
 
             return isALine;
+        }
+
+        // split to osm element ids into manageable chunks of db requests
+        internal List<string> SplitOSMIDRequests<T>(List<T> osmElements, int extensionVersion) where T : class
+        {
+            List<string> osmIDRequests = new List<string>();
+
+            if (osmElements == null)
+                return osmIDRequests;
+
+            if (osmElements.Count == 0)
+                return osmIDRequests;
+
+            try
+            {
+                StringBuilder newQueryString = new StringBuilder();
+                newQueryString.Append("(");
+
+                foreach (T currentElement in osmElements)
+                {
+                    string elementID = String.Empty;
+                    if (currentElement is node)
+                        elementID = (currentElement as node).id;
+                    else if (currentElement is way)
+                        elementID = (currentElement as way).id;
+                    else if (currentElement is relation)
+                        elementID = (currentElement as relation).id;
+
+                    if (extensionVersion == 1)
+                        newQueryString.Append(elementID + ",");
+                    else if (extensionVersion == 2)
+                    {
+                        newQueryString.Append("'");
+                        newQueryString.Append(elementID);
+                        newQueryString.Append("'");
+                        newQueryString.Append(",");
+                    }
+
+                    // not too sure about this hard coded length of 6500
+                    // since the SQL implementation is data source dependent
+                    if (newQueryString.Length > 6500)
+                    {
+                        newQueryString = newQueryString.Remove(newQueryString.Length - 1, 1);
+
+                        newQueryString.Append(")");
+                        osmIDRequests.Add(newQueryString.ToString());
+
+                        newQueryString = new StringBuilder();
+                        newQueryString.Append("(");
+                    }
+                }
+
+                if (newQueryString.Length > 2)
+                {
+                    newQueryString = newQueryString.Remove(newQueryString.Length - 1, 1);
+                    newQueryString.Append(")");
+                    osmIDRequests.Add(newQueryString.ToString());
+                }
+            }
+            catch
+            {
+            }
+
+            return osmIDRequests;
         }
 
         // split to node ids into manageable chunks of db requests

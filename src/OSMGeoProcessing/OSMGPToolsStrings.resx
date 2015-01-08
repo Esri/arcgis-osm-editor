@@ -840,4 +840,25 @@
   <data name="GPTools_OSMGPUpload_password" xml:space="preserve">
     <value>Password</value>
   </data>
+  <data name="GPTools_OSMGPDiffLoader_createmodify_message" xml:space="preserve">
+    <value>{0} {1} considered for creation or update.</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_delete_message" xml:space="preserve">
+    <value>{0} {1} considered for deletion.</value>
+  </data>
+  <data name="GPTools_OSM_nodes" xml:space="preserve">
+    <value>nodes</value>
+  </data>
+  <data name="GPTools_OSM_ways" xml:space="preserve">
+    <value>ways</value>
+  </data>
+  <data name="GPTools_OSM_relations" xml:space="preserve">
+    <value>relations</value>
+  </data>
+  <data name="GPTools_OSM_superrelations" xml:space="preserve">
+    <value>super-relations</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_loadtime_message" xml:space="preserve">
+    <value>The diff loaded in {0} minutes.</value>
+  </data>
 </root>
