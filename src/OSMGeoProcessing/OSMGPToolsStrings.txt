@@ -242,3 +242,11 @@ GPTools_Utility_RelationLoadError=General error in the relation loading routine 
 # 2.2
 GPTools_OSMGPUpload_username=User name
 GPTools_OSMGPUpload_password=Password
+# 2.3
+GPTools_OSMGPDiffLoader_createmodify_message={0} {1} considered for creation or update.
+GPTools_OSMGPDiffLoader_delete_message={0} {1} considered for deletion.
+GPTools_OSM_nodes=nodes
+GPTools_OSM_ways=ways
+GPTools_OSM_relations=relations
+GPTools_OSM_superrelations=super-relations
+GPTools_OSMGPDiffLoader_loadtime_message=The diff loaded in {0} minutes.
