@@ -4692,6 +4692,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     if (lineFeatureClass != null)
                     {
                         osmIDQueryFilter.WhereClause = lineFeatureClass.WhereClauseByExtensionVersion(osmIDtoFind, "OSMID", 2);
+                        osmIDQueryFilter.SubFields = lineFeatureClass.OIDFieldName + "," + lineFeatureClass.ShapeFieldName;
+
                         IFeatureCursor lineFeatureCursor = lineFeatureClass.Search(osmIDQueryFilter, false);
                         comReleaser.ManageLifetime(lineFeatureCursor);
 
@@ -4703,6 +4705,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         }
 
                         osmIDQueryFilter.WhereClause = polygonFeatureClass.WhereClauseByExtensionVersion(osmIDtoFind, "OSMID", 2);
+                        osmIDQueryFilter.SubFields = polygonFeatureClass.OIDFieldName + "," + polygonFeatureClass.ShapeFieldName;
+
                         IFeatureCursor polygonFeatureCursor = polygonFeatureClass.Search(osmIDQueryFilter, false);
                         comReleaser.ManageLifetime(polygonFeatureCursor);
 
@@ -4714,6 +4718,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         }
 
                         osmIDQueryFilter.WhereClause = relationTable.WhereClauseByExtensionVersion(osmIDtoFind, "OSMID", 2);
+                        osmIDQueryFilter.SubFields = relationTable.OIDFieldName;
+
                         ICursor relationCursor = relationTable.Search(osmIDQueryFilter, false);
                         comReleaser.ManageLifetime(relationCursor);
 
@@ -4890,6 +4896,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             if (osmLineFeatureClass != null)
                             {
                                 osmIDQueryFilter.WhereClause = osmLineFeatureClass.WhereClauseByExtensionVersion(memberItem.@ref, "OSMID", 2);
+                                osmIDQueryFilter.SubFields = osmLineFeatureClass.OIDFieldName + "," + osmLineFeatureClass.ShapeFieldName;
+
                                 IFeatureCursor lineFeatureCursor = osmLineFeatureClass.Search(osmIDQueryFilter, false);
                                 comReleaser.ManageLifetime(lineFeatureCursor);
 
@@ -4926,6 +4934,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 }
 
                                 osmIDQueryFilter.WhereClause = osmPolygonFeatureClass.WhereClauseByExtensionVersion(memberItem.@ref, "OSMID", 2);
+                                osmIDQueryFilter.SubFields = osmPolygonFeatureClass.OIDFieldName + "," + osmPolygonFeatureClass.ShapeFieldName;
+
                                 IFeatureCursor polygonFeatureCursor = osmPolygonFeatureClass.Search(osmIDQueryFilter, false);
                                 comReleaser.ManageLifetime(polygonFeatureCursor);
 
@@ -4951,6 +4961,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 }
 
                                 osmIDQueryFilter.WhereClause = relationTable.WhereClauseByExtensionVersion(memberItem.@ref, "OSMID", 2);
+                                osmIDQueryFilter.SubFields = relationTable.OIDFieldName;
+
                                 ICursor relationCursor = relationTable.Search(osmIDQueryFilter, false);
                                 comReleaser.ManageLifetime(relationCursor);
 

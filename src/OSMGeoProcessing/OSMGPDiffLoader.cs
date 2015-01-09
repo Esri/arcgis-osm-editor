@@ -3022,10 +3022,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             if (isPolyline == true)
                             {
                                 osmIDQueryFilter.WhereClause = ((ITable)lineFeatureClass).WhereClauseByExtensionVersion(memberItem.@ref, "OSMID", extensionVersion);
+                                osmIDQueryFilter.SubFields = lineFeatureClass.OIDFieldName + "," + lineFeatureClass.ShapeFieldName;
                             }
                             else
                             {
                                 osmIDQueryFilter.WhereClause = ((ITable)polygonFeatureClass).WhereClauseByExtensionVersion(memberItem.@ref, "OSMID", extensionVersion);
+                                osmIDQueryFilter.SubFields = polygonFeatureClass.OIDFieldName + "," + polygonFeatureClass.ShapeFieldName;
                             }
 
 
@@ -3081,10 +3083,17 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             IFeatureCursor searchPointCursor = null;
             OSMToolHelper osmToolHelper = new OSMToolHelper();
 
+
+            if (currentWay == null)
+                return featureGeometry;
+
+            if (currentWay.nd == null)
+                return featureGeometry;
+
             Regex regex = new Regex(@"\d");
 
-            try
-            {
+            //try
+            //{
                 string sqlPointOSMID = osmPointFeatureClass.SqlIdentifier("OSMID");
 
                 if (insertFeatureClass.ShapeType == esriGeometryType.esriGeometryPolyline)
@@ -3122,7 +3131,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         string tempRequest = request;
 
                         osmIDQueryFilter.WhereClause = sqlPointOSMID + " IN " + request;
-                        osmIDQueryFilter.SubFields = insertFeatureClass.OIDFieldName + ",OSMID," + insertFeatureClass.ShapeFieldName;
+                        osmIDQueryFilter.SubFields = osmPointFeatureClass.OIDFieldName + ",OSMID," + osmPointFeatureClass.ShapeFieldName;
 
                         using (ComReleaser comReleaser = new ComReleaser())
                         {
@@ -3209,6 +3218,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         using (ComReleaser innercomReleaser = new ComReleaser())
                         {
                             osmIDQueryFilter.WhereClause = sqlPointOSMID + " IN " + osmIDRequest;
+                            osmIDQueryFilter.SubFields = osmPointFeatureClass.OIDFieldName + ",OSMID," + osmPointFeatureClass.ShapeFieldName;
+
                             searchPointCursor = osmPointFeatureClass.Update(osmIDQueryFilter, false);
                             innercomReleaser.ManageLifetime(searchPointCursor);
 
@@ -3268,8 +3279,14 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
 
-            }
-            catch { }
+//            }
+//            catch (Exception ex) 
+//            {
+//#if DEBUG
+//                System.Diagnostics.Debug.WriteLine(ex.Message);
+//                System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+//#endif
+//            }
 
             return featureGeometry;
         }
