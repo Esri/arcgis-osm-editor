@@ -4526,9 +4526,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         newQueryString.Append(",");
                     }
 
-                    // not too sure about this hard coded length of 6500
+                    // not too sure about this hard coded length of 2048
                     // since the SQL implementation is data source dependent
-                    if (newQueryString.Length > 6500)
+                    if (newQueryString.Length > 2048)
                     {
                         newQueryString = newQueryString.Remove(newQueryString.Length - 1, 1);
 
@@ -4582,9 +4582,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         newQueryString.Append(",");
                     }
 
-                    // not too sure about this hard coded length of 6500
+                    // not too sure about this hard coded length of 2048
                     // since the SQL implementation is data source dependent
-                    if (newQueryString.Length > 6500)
+                    if (newQueryString.Length > 2048)
                     {
                         newQueryString = newQueryString.Remove(newQueryString.Length - 1, 1);
 

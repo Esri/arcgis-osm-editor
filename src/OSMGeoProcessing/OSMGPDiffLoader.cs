@@ -1994,6 +1994,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 // delete the mentioned lines
                 List<relation> relationsToWorkOn = elementsInAOI.Values.Select(kp => kp.Key).ToList();
                 List<string> whereClauses = osmToolHelper.SplitOSMIDRequests(relationsToWorkOn, extensionVersion);
+                string relationIDs = insertFeatureClass.SqlIdentifier("OSMID");
 
                 switch (action)
                 {
@@ -2003,7 +2004,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             if (cancelTracker.Continue() == false)
                                 return;
 
-                            queryFilter.WhereClause = whereClause;
+                            queryFilter.WhereClause = relationIDs + " IN " + whereClause;
 
                             featureCursor = insertFeatureClass.Update(queryFilter, false);
                             comReleaser.ManageLifetime(featureCursor);
@@ -2074,7 +2075,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             if (cancelTracker.Continue() == false)
                                 return;
 
-                            queryFilter.WhereClause = whereClause;
+                            queryFilter.WhereClause = relationIDs + " IN " + whereClause;
 
                             deleteCursor = insertFeatureClass.Update(queryFilter, false);
                             deleteFeature = deleteCursor.NextFeature();
@@ -2175,7 +2176,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             relationsInAOI.Add(item.Key, item.Value);
                     }
 
-                    Dictionary<string, int> osmDomainAttributeFieldIndices = (Dictionary<string, int>)relationFieldIndexes.GetProperty("domainAttributesFieldIndex");
+                    //Dictionary<string, int> osmDomainAttributeFieldIndices = (Dictionary<string, int>)relationFieldIndexes.GetProperty("domainAttributesFieldIndex");
                     int osmIDFieldIndex = (int)relationFieldIndexes.GetProperty("osmIDFieldIndex");
                     int tagCollectionFieldIndex = (int)relationFieldIndexes.GetProperty("osmTagsFieldIndex");
                     int osmSupportingElementFieldIndex = (int)relationFieldIndexes.GetProperty("osmSupportingElementFieldIndex");
@@ -2211,7 +2212,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                     List<relation> lineRelations = linesInAOI.Values.Select(kp => kp.Key).ToList();
                     List<string> lineWhereClauses = osmToolHelper.SplitOSMIDRequests(lineRelations, internalExtensionVersion);
-
+                    string lineIDs = osmLineFeatureClass.SqlIdentifier("OSMID");
 
                     IQueryFilter polygonQueryFilter = new QueryFilterClass();
                     comReleaser.ManageLifetime(lineQueryFilter);
@@ -2233,9 +2234,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                     List<relation> polygonRelations = polygonsInAOI.Values.Select(kp => kp.Key).ToList();
                     List<string> polygonWhereClauses = osmToolHelper.SplitOSMIDRequests(polygonRelations, internalExtensionVersion);
+                    string polygonIDs = osmPolygonFeatureClass.SqlIdentifier("OSMID");
 
                     List<relation> relationsToWorkOn = relationsInAOI.Values.ToList();
                     List<string> relationWhereClauses = osmToolHelper.SplitOSMIDRequests(relationsToWorkOn, internalExtensionVersion);
+                    string relationIDs = relationTable.SqlIdentifier("OSMID");
 
 
                     switch (action)
@@ -2247,7 +2250,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 if (trackCancel.Continue() == false)
                                     return;
 
-                                lineQueryFilter.WhereClause = whereClause;
+                                lineQueryFilter.WhereClause = lineIDs + " IN " + whereClause;
 
                                 featureCursor = osmLineFeatureClass.Update(lineQueryFilter, false);
                                 comReleaser.ManageLifetime(featureCursor);
@@ -2300,7 +2303,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 if (trackCancel.Continue() == false)
                                     return;
 
-                                lineQueryFilter.WhereClause = whereClause;
+                                lineQueryFilter.WhereClause = polygonIDs + " IN " + whereClause;
 
                                 featureCursor = osmPolygonFeatureClass.Update(polygonQueryFilter, false);
                                 comReleaser.ManageLifetime(featureCursor);
@@ -2357,7 +2360,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 if (trackCancel.Continue() == false)
                                     return;
 
-                                rowQueryFilter.WhereClause = whereClause;
+                                rowQueryFilter.WhereClause = relationIDs + " IN " + whereClause;
 
                                 rowCursor = relationTable.Update(rowQueryFilter, false);
                                 comReleaser.ManageLifetime(rowCursor);
@@ -2372,7 +2375,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         {
                                             relation currentRelation = relationsInAOI[elementID];
 
-                                            manipulateRelationRow(currentRelation, ref editRow, internalExtensionVersion, osmIDFieldIndex, tagCollectionFieldIndex, osmDomainAttributeFieldIndices, osmSupportingElementFieldIndex, osmUserFieldIndex, osmUIDFieldIndex, osmVisibleFieldIndex, osmVersionFieldIndex, osmChangesetFieldIndex, osmTimeStampFieldIndex, osmMembersFieldIndex);
+                                            manipulateRelationRow(currentRelation, ref editRow, internalExtensionVersion, osmIDFieldIndex, tagCollectionFieldIndex, osmSupportingElementFieldIndex, osmUserFieldIndex, osmUIDFieldIndex, osmVisibleFieldIndex, osmVersionFieldIndex, osmChangesetFieldIndex, osmTimeStampFieldIndex, osmMembersFieldIndex);
 
                                             // remove the current relation from the list
                                             relationsInAOI.Remove(elementID);
@@ -2399,7 +2402,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                 relation currentRelation = rel.Value;
 
-                                manipulateRelationRow(currentRelation, ref editRow, internalExtensionVersion, osmIDFieldIndex, tagCollectionFieldIndex, osmDomainAttributeFieldIndices, osmSupportingElementFieldIndex, osmUserFieldIndex, osmUIDFieldIndex, osmVisibleFieldIndex, osmVersionFieldIndex, osmChangesetFieldIndex, osmTimeStampFieldIndex, osmMembersFieldIndex);
+                                manipulateRelationRow(currentRelation, ref editRow, internalExtensionVersion, osmIDFieldIndex, tagCollectionFieldIndex, osmSupportingElementFieldIndex, osmUserFieldIndex, osmUIDFieldIndex, osmVisibleFieldIndex, osmVersionFieldIndex, osmChangesetFieldIndex, osmTimeStampFieldIndex, osmMembersFieldIndex);
 
                                 rowCursor.InsertRow((IRowBuffer)editRow);
                             }
@@ -2420,7 +2423,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 if (trackCancel.Continue() == false)
                                     return;
 
-                                deleteQueryFilter.WhereClause = whereClause;
+                                deleteQueryFilter.WhereClause = lineIDs + " IN " + whereClause;
 
                                 deleteCursor = ((ITable)osmLineFeatureClass).Update(deleteQueryFilter, false);
                                 deleteRow = deleteCursor.NextRow();
@@ -2438,7 +2441,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 if (trackCancel.Continue() == false)
                                     return;
 
-                                deleteQueryFilter.WhereClause = whereClause;
+                                deleteQueryFilter.WhereClause = polygonIDs + " IN " + whereClause;
 
                                 deleteCursor = ((ITable)osmPolygonFeatureClass).Update(deleteQueryFilter, false);
                                 deleteRow = deleteCursor.NextRow();
@@ -2456,7 +2459,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 if (trackCancel.Continue() == false)
                                     return;
 
-                                deleteQueryFilter.WhereClause = whereClause;
+                                deleteQueryFilter.WhereClause = relationIDs + " IN " + whereClause;
 
                                 deleteCursor = relationTable.Update(deleteQueryFilter, false);
                                 deleteRow = deleteCursor.NextRow();
@@ -2513,13 +2516,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                     bool isLine = OSMToolHelper.IsThisWayALine(item.Value);
 
-                    if (action != "delete")
-                    {
-                        if (isLine)
-                            wayGeometry = extractGeometryFromOSMFeature(item.Value, osmLineFeatureClass, osmPointFeatureClass, osmPointIDFieldIndex, internalExtensionVersion);
-                        else
-                            wayGeometry = extractGeometryFromOSMFeature(item.Value, osmPolygonFeatureClass, osmPointFeatureClass, osmPointIDFieldIndex, internalExtensionVersion);
-                    }
+                    if (isLine)
+                        wayGeometry = extractGeometryFromOSMFeature(item.Value, osmLineFeatureClass, osmPointFeatureClass, osmPointIDFieldIndex, internalExtensionVersion);
+                    else
+                        wayGeometry = extractGeometryFromOSMFeature(item.Value, osmPolygonFeatureClass, osmPointFeatureClass, osmPointIDFieldIndex, internalExtensionVersion);
 
                     // we are unable to complete the geometry, so let's continue with the next way
                     if (wayGeometry == null)
@@ -2585,7 +2585,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 int osmChangesetFieldIndex = (int)wayFieldIndexes.GetProperty("osmChangeSetFieldIndex");
                 int osmTimeStampFieldIndex = (int)wayFieldIndexes.GetProperty("osmTimeStampFieldIndex");
                 int osmTrackChangesFieldIndex = (int)wayFieldIndexes.GetProperty("osmTrackChangesFieldIndex");
-                int osmWayRefCountFieldIndex = (int)wayFieldIndexes.GetProperty("osmWayRefCountFieldIndex");
 
                 IQueryFilter queryFilter = new QueryFilterClass();
                 comReleaser.ManageLifetime(queryFilter);
@@ -2599,6 +2598,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 // delete the mentioned lines
                 List<way> waysToWorkOn = elementsInAOI.Values.Select(kp => kp.Key).ToList();
                 List<string> whereClauses = osmToolHelper.SplitOSMIDRequests(waysToWorkOn, extensionVersion);
+                string featureIDs = insertFeatureClass.SqlIdentifier("OSMID");
 
                 switch (action)
                 {
@@ -2608,7 +2608,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             if (cancelTracker.Continue() == false)
                                 return;
 
-                            queryFilter.WhereClause = whereClause;
+                            queryFilter.WhereClause = featureIDs + " IN " + whereClause;
 
                             featureCursor = insertFeatureClass.Update(queryFilter, false);
                             comReleaser.ManageLifetime(featureCursor);
@@ -2623,7 +2623,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                     {
                                         KeyValuePair<way, IGeometry> currentWay = elementsInAOI[elementID];
 
-                                        manipulateLinearWayFeature(currentWay.Key, ref insertFeature, availableDomains, domainFieldLength, extensionVersion, currentWay.Value, osmIDFieldIndex, tagCollectionFieldIndex, osmDomainAttributeFieldIndices, osmSupportingElementFieldIndex, osmWayRefCountFieldIndex, osmUserFieldIndex, osmUIDFieldIndex, osmVisibleFieldIndex, osmVersionFieldIndex, osmChangesetFieldIndex, osmTimeStampFieldIndex, osmTrackChangesFieldIndex);
+                                        manipulateLinearWayFeature(currentWay.Key, ref insertFeature, availableDomains, domainFieldLength, extensionVersion, currentWay.Value, osmIDFieldIndex, tagCollectionFieldIndex, osmDomainAttributeFieldIndices, osmSupportingElementFieldIndex, osmUserFieldIndex, osmUIDFieldIndex, osmVisibleFieldIndex, osmVersionFieldIndex, osmChangesetFieldIndex, osmTimeStampFieldIndex, osmTrackChangesFieldIndex);
 
                                         // remove the current node 
                                         elementsInAOI.Remove(elementID);
@@ -2655,7 +2655,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                             KeyValuePair<way, IGeometry> currentWay = item.Value;
 
-                            manipulateLinearWayFeature(currentWay.Key, ref insertFeature, availableDomains, domainFieldLength, extensionVersion, currentWay.Value, osmIDFieldIndex, tagCollectionFieldIndex, osmDomainAttributeFieldIndices, osmSupportingElementFieldIndex, osmWayRefCountFieldIndex, osmUserFieldIndex, osmUIDFieldIndex, osmVisibleFieldIndex, osmVersionFieldIndex, osmChangesetFieldIndex, osmTimeStampFieldIndex, osmTrackChangesFieldIndex);
+                            manipulateLinearWayFeature(currentWay.Key, ref insertFeature, availableDomains, domainFieldLength, extensionVersion, currentWay.Value, osmIDFieldIndex, tagCollectionFieldIndex, osmDomainAttributeFieldIndices, osmSupportingElementFieldIndex, osmUserFieldIndex, osmUIDFieldIndex, osmVisibleFieldIndex, osmVersionFieldIndex, osmChangesetFieldIndex, osmTimeStampFieldIndex, osmTrackChangesFieldIndex);
 
                             featureCursor.InsertFeature((IFeatureBuffer)insertFeature);
 
@@ -2679,7 +2679,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             if (cancelTracker.Continue() == false)
                                 return;
 
-                            queryFilter.WhereClause = whereClause;
+                            queryFilter.WhereClause = featureIDs + " IN " + whereClause;
 
                             deleteCursor = insertFeatureClass.Update(queryFilter, false);
                             deleteFeature = deleteCursor.NextFeature();
@@ -3569,6 +3569,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 int osmTimeStampPointFieldIndex = (int)pointFieldIndexes.GetProperty("osmTimeStampFieldIndex");
                 int osmTrackChangesFieldIndex = (int)pointFieldIndexes.GetProperty("osmTrackChangesFieldIndex");
 
+                string sqlPointOSMID = pointFeatureClass.SqlIdentifier("OSMID");
+
                 switch (action)
                 {
                     case "create_modify":
@@ -3584,7 +3586,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             if (cancelTracker.Continue() == false)
                                 return;
 
-                            queryFilter.WhereClause = whereClause;
+                            queryFilter.WhereClause = sqlPointOSMID + " IN " + whereClause;
                             updateCursor = pointFeatureClass.Update(queryFilter, false);
                             comReleaser.ManageLifetime(updateCursor);
                             pointFeature = updateCursor.NextFeature();
@@ -3658,7 +3660,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             if (cancelTracker.Continue() == false)
                                 return;
 
-                            queryFilter.WhereClause = whereClause;
+                            queryFilter.WhereClause = sqlPointOSMID + " IN " + whereClause;
 
                             deleteCursor = pointFeatureClass.Update(queryFilter, false);
                             deleteFeature = deleteCursor.NextFeature();
@@ -3680,6 +3682,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 }
 
                                 deleteFeature.Delete();
+
+                                deleteFeature = deleteCursor.NextFeature();
                             }
                         }
                         break;
@@ -3911,7 +3915,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
         }
 
-        private void manipulateLinearWayFeature(way createWay, ref IFeature editFeature, OSMDomains availableDomains, int domainFieldLength, int extensionVersion, IGeometry featureGeometry, int osmIDFieldIndex, int tagCollectionFieldIndex, Dictionary<string, int> osmDomainAttributeFieldIndices, int osmSupportingElementFieldIndex, int osmWayRefCountFieldIndex, int osmUserFieldIndex, int osmUIDFieldIndex, int osmVisibleFieldIndex, int osmVersionFieldIndex, int osmChangesetFieldIndex, int osmTimeStampFieldIndex, int osmTrackChangesFieldIndex)
+        private void manipulateLinearWayFeature(way createWay, ref IFeature editFeature, OSMDomains availableDomains, int domainFieldLength, int extensionVersion, IGeometry featureGeometry, int osmIDFieldIndex, int tagCollectionFieldIndex, Dictionary<string, int> osmDomainAttributeFieldIndices, int osmSupportingElementFieldIndex, int osmUserFieldIndex, int osmUIDFieldIndex, int osmVisibleFieldIndex, int osmVersionFieldIndex, int osmChangesetFieldIndex, int osmTimeStampFieldIndex, int osmTrackChangesFieldIndex)
         {
             try
             {
@@ -3971,11 +3975,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 if (osmSupportingElementFieldIndex > -1)
                 {
                     editFeature.set_Value(osmSupportingElementFieldIndex, isSupportingNode);
-                }
-
-                if (osmWayRefCountFieldIndex > -1)
-                {
-                    editFeature.set_Value(osmWayRefCountFieldIndex, 0);
                 }
 
                 // store the administrative attributes
@@ -4200,7 +4199,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
         }
 
-        private void manipulateRelationRow(relation createRelation, ref IRow editRow, int extensionVersion, int osmIDFieldIndex, int tagCollectionFieldIndex, Dictionary<string, int> osmDomainAttributeFieldIndices, int osmSupportingElementFieldIndex, int osmUserFieldIndex, int osmUIDFieldIndex, int osmVisibleFieldIndex, int osmVersionFieldIndex, int osmChangesetFieldIndex, int osmTimeStampFieldIndex, int osmMembersFieldIndex)
+        private void manipulateRelationRow(relation createRelation, ref IRow editRow, int extensionVersion, int osmIDFieldIndex, int tagCollectionFieldIndex, int osmSupportingElementFieldIndex, int osmUserFieldIndex, int osmUIDFieldIndex, int osmVisibleFieldIndex, int osmVersionFieldIndex, int osmChangesetFieldIndex, int osmTimeStampFieldIndex, int osmMembersFieldIndex)
         {
             // relations should always have items but just as a sanity check
             if (createRelation.Items == null)
@@ -4268,7 +4267,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 if (osmVisibleFieldIndex > -1)
                 {
-                    editRow.set_Value(osmVisibleFieldIndex, createRelation.visible.ToString());
+                    if (!String.IsNullOrEmpty(createRelation.visible))
+                    {
+                        editRow.set_Value(osmVisibleFieldIndex, createRelation.visible.ToString());
+                    }
                 }
 
                 if (osmVersionFieldIndex > -1)
