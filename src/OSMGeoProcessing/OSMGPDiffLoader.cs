@@ -2136,11 +2136,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     esriGeometryType detectedGeoType = osmToolHelper.determineRelationGeometryType(osmLineFeatureClass, osmPolygonFeatureClass, relationTable, item.Value);
 
                     IGeometry relationGeometry = null;
-                        relationGeometry = extractGeometryFromOSMFeature(item.Value, detectedGeoType, osmLineFeatureClass, osmPolygonFeatureClass, internalExtensionVersion);
+                    relationGeometry = extractGeometryFromOSMFeature(item.Value, detectedGeoType, osmLineFeatureClass, osmPolygonFeatureClass, internalExtensionVersion);
 
-                        // check if geometry type and geometry are in sync
-                        if (relationGeometry == null)
-                            detectedGeoType = esriGeometryType.esriGeometryNull;
+                    // check if geometry type and geometry are in sync
+                    if (relationGeometry == null)
+                        detectedGeoType = esriGeometryType.esriGeometryNull;
 
                     // if we have a filter geometry check if the newly created point is inside or outside the AOI 
                     if (filterGeometry != null)
@@ -2175,315 +2175,378 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         else
                             relationsInAOI.Add(item.Key, item.Value);
                     }
+                }
 
-                    //Dictionary<string, int> osmDomainAttributeFieldIndices = (Dictionary<string, int>)relationFieldIndexes.GetProperty("domainAttributesFieldIndex");
-                    int osmIDFieldIndex = (int)relationFieldIndexes.GetProperty("osmIDFieldIndex");
-                    int tagCollectionFieldIndex = (int)relationFieldIndexes.GetProperty("osmTagsFieldIndex");
-                    int osmSupportingElementFieldIndex = (int)relationFieldIndexes.GetProperty("osmSupportingElementFieldIndex");
-                    int osmUserFieldIndex = (int)relationFieldIndexes.GetProperty("osmUserFieldIndex");
-                    int osmUIDFieldIndex = (int)relationFieldIndexes.GetProperty("osmUIDFieldIndex");
-                    int osmVisibleFieldIndex = (int)relationFieldIndexes.GetProperty("osmVisibleFieldIndex");
-                    int osmVersionFieldIndex = (int)relationFieldIndexes.GetProperty("osmVersionFieldIndex");
-                    int osmChangesetFieldIndex = (int)relationFieldIndexes.GetProperty("osmChangeSetFieldIndex");
-                    int osmTimeStampFieldIndex = (int)relationFieldIndexes.GetProperty("osmTimeStampFieldIndex");
-                    int osmTrackChangesFieldIndex = (int)relationFieldIndexes.GetProperty("osmTrackChangesFieldIndex");
-                    int osmMembersFieldIndex = (int)relationFieldIndexes.GetProperty("osmMembersFieldIndex");
+                //Dictionary<string, int> osmDomainAttributeFieldIndices = (Dictionary<string, int>)relationFieldIndexes.GetProperty("domainAttributesFieldIndex");
+                int osmIDFieldIndex = (int)relationFieldIndexes.GetProperty("osmIDFieldIndex");
+                int tagCollectionFieldIndex = (int)relationFieldIndexes.GetProperty("osmTagsFieldIndex");
+                int osmSupportingElementFieldIndex = (int)relationFieldIndexes.GetProperty("osmSupportingElementFieldIndex");
+                int osmUserFieldIndex = (int)relationFieldIndexes.GetProperty("osmUserFieldIndex");
+                int osmUIDFieldIndex = (int)relationFieldIndexes.GetProperty("osmUIDFieldIndex");
+                int osmVisibleFieldIndex = (int)relationFieldIndexes.GetProperty("osmVisibleFieldIndex");
+                int osmVersionFieldIndex = (int)relationFieldIndexes.GetProperty("osmVersionFieldIndex");
+                int osmChangesetFieldIndex = (int)relationFieldIndexes.GetProperty("osmChangeSetFieldIndex");
+                int osmTimeStampFieldIndex = (int)relationFieldIndexes.GetProperty("osmTimeStampFieldIndex");
+                int osmTrackChangesFieldIndex = (int)relationFieldIndexes.GetProperty("osmTrackChangesFieldIndex");
+                int osmMembersFieldIndex = (int)relationFieldIndexes.GetProperty("osmMembersFieldIndex");
 
-                    IFeatureCursor featureCursor = null;
-                    IFeature editFeature = null;
+                IFeatureCursor featureCursor = null;
+                IFeature editFeature = null;
 
-                    IQueryFilter lineQueryFilter = new QueryFilterClass();
-                    comReleaser.ManageLifetime(lineQueryFilter);
-                    lineQueryFilter.SubFields = String.Join(",", osmLineFeatureClass.ExtractRequiredFields());
+                IQueryFilter lineQueryFilter = new QueryFilterClass();
+                comReleaser.ManageLifetime(lineQueryFilter);
+                lineQueryFilter.SubFields = String.Join(",", osmLineFeatureClass.ExtractRequiredFields());
 
-                    Dictionary<string, int> osmLineDomainAttributeFieldIndices = (Dictionary<string, int>)polylineFieldIndexes.GetProperty("domainAttributesFieldIndex");
-                    int osmLineIDFieldIndex = (int)polylineFieldIndexes.GetProperty("osmIDFieldIndex");
-                    int lineTagCollectionFieldIndex = (int)polylineFieldIndexes.GetProperty("osmTagsFieldIndex");
-                    int osmLineSupportingElementFieldIndex = (int)polylineFieldIndexes.GetProperty("osmSupportingElementFieldIndex");
-                    int osmLineUserFieldIndex = (int)polylineFieldIndexes.GetProperty("osmUserFieldIndex");
-                    int osmLineUIDFieldIndex = (int)polylineFieldIndexes.GetProperty("osmUIDFieldIndex");
-                    int osmLineVisibleFieldIndex = (int)polylineFieldIndexes.GetProperty("osmVisibleFieldIndex");
-                    int osmLineVersionFieldIndex = (int)polylineFieldIndexes.GetProperty("osmVersionFieldIndex");
-                    int osmLineChangesetFieldIndex = (int)polylineFieldIndexes.GetProperty("osmChangeSetFieldIndex");
-                    int osmLineTimeStampFieldIndex = (int)polylineFieldIndexes.GetProperty("osmTimeStampFieldIndex");
-                    int osmLineTrackChangesFieldIndex = (int)polylineFieldIndexes.GetProperty("osmTrackChangesFieldIndex");
-                    int osmLineMembersFieldIndex = (int)polylineFieldIndexes.GetProperty("osmMembersFieldIndex");
-
-
-                    List<relation> lineRelations = linesInAOI.Values.Select(kp => kp.Key).ToList();
-                    List<string> lineWhereClauses = osmToolHelper.SplitOSMIDRequests(lineRelations, internalExtensionVersion);
-                    string lineIDs = osmLineFeatureClass.SqlIdentifier("OSMID");
-
-                    IQueryFilter polygonQueryFilter = new QueryFilterClass();
-                    comReleaser.ManageLifetime(lineQueryFilter);
-                    polygonQueryFilter.SubFields = String.Join(",", osmLineFeatureClass.ExtractRequiredFields());
-
-                    Dictionary<string, int> osmPolyDomainAttributeFieldIndices = (Dictionary<string, int>)polygonFieldIndexes.GetProperty("domainAttributesFieldIndex");
-                    int osmPolyIDFieldIndex = (int)polygonFieldIndexes.GetProperty("osmIDFieldIndex");
-                    int polyTagCollectionFieldIndex = (int)polygonFieldIndexes.GetProperty("osmTagsFieldIndex");
-                    int osmPolySupportingElementFieldIndex = (int)polygonFieldIndexes.GetProperty("osmSupportingElementFieldIndex");
-                    int osmPolyUserFieldIndex = (int)polygonFieldIndexes.GetProperty("osmUserFieldIndex");
-                    int osmPolyUIDFieldIndex = (int)polygonFieldIndexes.GetProperty("osmUIDFieldIndex");
-                    int osmPolyVisibleFieldIndex = (int)polygonFieldIndexes.GetProperty("osmVisibleFieldIndex");
-                    int osmPolyVersionFieldIndex = (int)polygonFieldIndexes.GetProperty("osmVersionFieldIndex");
-                    int osmPolyChangesetFieldIndex = (int)polygonFieldIndexes.GetProperty("osmChangeSetFieldIndex");
-                    int osmPolyTimeStampFieldIndex = (int)polygonFieldIndexes.GetProperty("osmTimeStampFieldIndex");
-                    int osmPolyTrackChangesFieldIndex = (int)polygonFieldIndexes.GetProperty("osmTrackChangesFieldIndex");
-                    int osmPolyMembersFieldIndex = (int)polygonFieldIndexes.GetProperty("osmMembersFieldIndex");
+                Dictionary<string, int> osmLineDomainAttributeFieldIndices = (Dictionary<string, int>)polylineFieldIndexes.GetProperty("domainAttributesFieldIndex");
+                int osmLineIDFieldIndex = (int)polylineFieldIndexes.GetProperty("osmIDFieldIndex");
+                int lineTagCollectionFieldIndex = (int)polylineFieldIndexes.GetProperty("osmTagsFieldIndex");
+                int osmLineSupportingElementFieldIndex = (int)polylineFieldIndexes.GetProperty("osmSupportingElementFieldIndex");
+                int osmLineUserFieldIndex = (int)polylineFieldIndexes.GetProperty("osmUserFieldIndex");
+                int osmLineUIDFieldIndex = (int)polylineFieldIndexes.GetProperty("osmUIDFieldIndex");
+                int osmLineVisibleFieldIndex = (int)polylineFieldIndexes.GetProperty("osmVisibleFieldIndex");
+                int osmLineVersionFieldIndex = (int)polylineFieldIndexes.GetProperty("osmVersionFieldIndex");
+                int osmLineChangesetFieldIndex = (int)polylineFieldIndexes.GetProperty("osmChangeSetFieldIndex");
+                int osmLineTimeStampFieldIndex = (int)polylineFieldIndexes.GetProperty("osmTimeStampFieldIndex");
+                int osmLineTrackChangesFieldIndex = (int)polylineFieldIndexes.GetProperty("osmTrackChangesFieldIndex");
+                int osmLineMembersFieldIndex = (int)polylineFieldIndexes.GetProperty("osmMembersFieldIndex");
 
 
-                    List<relation> polygonRelations = polygonsInAOI.Values.Select(kp => kp.Key).ToList();
-                    List<string> polygonWhereClauses = osmToolHelper.SplitOSMIDRequests(polygonRelations, internalExtensionVersion);
-                    string polygonIDs = osmPolygonFeatureClass.SqlIdentifier("OSMID");
+                List<relation> lineRelations = linesInAOI.Values.Select(kp => kp.Key).ToList();
+                List<string> lineWhereClauses = osmToolHelper.SplitOSMIDRequests(lineRelations, internalExtensionVersion);
+                string lineIDs = osmLineFeatureClass.SqlIdentifier("OSMID");
 
-                    List<relation> relationsToWorkOn = relationsInAOI.Values.ToList();
-                    List<string> relationWhereClauses = osmToolHelper.SplitOSMIDRequests(relationsToWorkOn, internalExtensionVersion);
-                    string relationIDs = relationTable.SqlIdentifier("OSMID");
+                IQueryFilter polygonQueryFilter = new QueryFilterClass();
+                comReleaser.ManageLifetime(lineQueryFilter);
+                polygonQueryFilter.SubFields = String.Join(",", osmLineFeatureClass.ExtractRequiredFields());
+
+                Dictionary<string, int> osmPolyDomainAttributeFieldIndices = (Dictionary<string, int>)polygonFieldIndexes.GetProperty("domainAttributesFieldIndex");
+                int osmPolyIDFieldIndex = (int)polygonFieldIndexes.GetProperty("osmIDFieldIndex");
+                int polyTagCollectionFieldIndex = (int)polygonFieldIndexes.GetProperty("osmTagsFieldIndex");
+                int osmPolySupportingElementFieldIndex = (int)polygonFieldIndexes.GetProperty("osmSupportingElementFieldIndex");
+                int osmPolyUserFieldIndex = (int)polygonFieldIndexes.GetProperty("osmUserFieldIndex");
+                int osmPolyUIDFieldIndex = (int)polygonFieldIndexes.GetProperty("osmUIDFieldIndex");
+                int osmPolyVisibleFieldIndex = (int)polygonFieldIndexes.GetProperty("osmVisibleFieldIndex");
+                int osmPolyVersionFieldIndex = (int)polygonFieldIndexes.GetProperty("osmVersionFieldIndex");
+                int osmPolyChangesetFieldIndex = (int)polygonFieldIndexes.GetProperty("osmChangeSetFieldIndex");
+                int osmPolyTimeStampFieldIndex = (int)polygonFieldIndexes.GetProperty("osmTimeStampFieldIndex");
+                int osmPolyTrackChangesFieldIndex = (int)polygonFieldIndexes.GetProperty("osmTrackChangesFieldIndex");
+                int osmPolyMembersFieldIndex = (int)polygonFieldIndexes.GetProperty("osmMembersFieldIndex");
 
 
-                    switch (action)
-                    {
-                        case "create_modify":
-                            #region create - modify line relations
-                            foreach (string whereClause in lineWhereClauses)
+                List<relation> polygonRelations = polygonsInAOI.Values.Select(kp => kp.Key).ToList();
+                List<string> polygonWhereClauses = osmToolHelper.SplitOSMIDRequests(polygonRelations, internalExtensionVersion);
+                string polygonIDs = osmPolygonFeatureClass.SqlIdentifier("OSMID");
+
+                List<relation> relationsToWorkOn = relationsInAOI.Values.ToList();
+                List<string> relationWhereClauses = osmToolHelper.SplitOSMIDRequests(relationsToWorkOn, internalExtensionVersion);
+                string relationIDs = relationTable.SqlIdentifier("OSMID");
+
+
+                switch (action)
+                {
+                    case "create_modify":
+                        #region create - modify line relations
+                        foreach (string whereClause in lineWhereClauses)
+                        {
+                            if (trackCancel.Continue() == false)
+                                return;
+
+                            lineQueryFilter.WhereClause = lineIDs + " IN " + whereClause;
+
+                            featureCursor = osmLineFeatureClass.Update(lineQueryFilter, false);
+                            comReleaser.ManageLifetime(featureCursor);
+                            editFeature = featureCursor.NextFeature();
+
+                            while (editFeature != null)
                             {
-                                if (trackCancel.Continue() == false)
-                                    return;
+                                if (osmIDFieldIndex > -1)
+                                {
+                                    string elementID = editFeature.get_Value(osmIDFieldIndex) as string;
+                                    if (linesInAOI.ContainsKey(elementID))
+                                    {
+                                        KeyValuePair<relation, IGeometry> currentElement = linesInAOI[elementID];
 
-                                lineQueryFilter.WhereClause = lineIDs + " IN " + whereClause;
+                                        manipulateRelationFeature(currentElement.Key, ref editFeature, availableDomains, domainFieldLengthLines, internalExtensionVersion, currentElement.Value, osmLineIDFieldIndex, lineTagCollectionFieldIndex, osmLineDomainAttributeFieldIndices, osmLineSupportingElementFieldIndex, osmLineUserFieldIndex, osmLineUIDFieldIndex, osmLineVisibleFieldIndex, osmLineVersionFieldIndex, osmLineChangesetFieldIndex, osmLineTimeStampFieldIndex, osmLineTrackChangesFieldIndex, osmLineMembersFieldIndex);
 
-                                featureCursor = osmLineFeatureClass.Update(lineQueryFilter, false);
-                                comReleaser.ManageLifetime(featureCursor);
+                                        //remove the current relation - line
+                                        linesInAOI.Remove(elementID);
+
+                                        featureCursor.UpdateFeature(editFeature);
+
+                                        if (useVerboseLogging)
+                                        {
+                                            message.AddMessage(string.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_modifymessage"), resourceManager.GetString("GPTools_OSM_relation"), elementID));
+                                        }
+                                    }
+                                }
+
                                 editFeature = featureCursor.NextFeature();
-
-                                while (editFeature != null)
-                                {
-                                    if (osmIDFieldIndex > -1)
-                                    {
-                                        string elementID = editFeature.get_Value(osmIDFieldIndex) as string;
-                                        if (linesInAOI.ContainsKey(elementID))
-                                        {
-                                            KeyValuePair<relation, IGeometry> currentElement = linesInAOI[elementID];
-
-                                            manipulateRelationFeature(currentElement.Key, ref editFeature, availableDomains, domainFieldLengthLines, internalExtensionVersion, currentElement.Value, osmLineIDFieldIndex, lineTagCollectionFieldIndex, osmLineDomainAttributeFieldIndices, osmLineSupportingElementFieldIndex, osmLineUserFieldIndex, osmLineUIDFieldIndex, osmLineVisibleFieldIndex, osmLineVersionFieldIndex, osmLineChangesetFieldIndex, osmLineTimeStampFieldIndex, osmLineTrackChangesFieldIndex, osmLineMembersFieldIndex);
-
-                                            //remove the current relation - line
-                                            linesInAOI.Remove(elementID);
-
-                                            featureCursor.UpdateFeature(editFeature);
-                                        }
-                                    }
-
-                                    editFeature = featureCursor.NextFeature();
-                                }
-
-                                // at this point we should have only relations (linear) left that need to be created
-                                featureCursor = osmLineFeatureClass.Insert(true);
-                                comReleaser.ManageLifetime(featureCursor);
-
-                                foreach (var createLine in linesInAOI)
-                                {
-                                    if (trackCancel.Continue() == false)
-                                        return;
-
-                                    editFeature = osmLineFeatureClass.CreateFeatureBuffer() as IFeature;
-
-                                    KeyValuePair<relation, IGeometry> currentElement = createLine.Value;
-
-                                    manipulateRelationFeature(currentElement.Key, ref editFeature, availableDomains, domainFieldLengthLines, internalExtensionVersion, currentElement.Value, osmLineIDFieldIndex, lineTagCollectionFieldIndex, osmLineDomainAttributeFieldIndices, osmLineSupportingElementFieldIndex, osmLineUserFieldIndex, osmLineUIDFieldIndex, osmLineVisibleFieldIndex, osmLineVersionFieldIndex, osmLineChangesetFieldIndex, osmLineTimeStampFieldIndex, osmLineTrackChangesFieldIndex, osmLineMembersFieldIndex);
-
-                                    featureCursor.InsertFeature((IFeatureBuffer)editFeature);
-                                }
                             }
-                            #endregion
 
-                            #region create - modigy polygon relations
-                            foreach (string whereClause in polygonWhereClauses)
+                            // at this point we should have only relations (linear) left that need to be created
+                            featureCursor = osmLineFeatureClass.Insert(true);
+                            comReleaser.ManageLifetime(featureCursor);
+
+                            foreach (var createLine in linesInAOI)
                             {
                                 if (trackCancel.Continue() == false)
                                     return;
 
-                                lineQueryFilter.WhereClause = polygonIDs + " IN " + whereClause;
+                                editFeature = osmLineFeatureClass.CreateFeatureBuffer() as IFeature;
 
-                                featureCursor = osmPolygonFeatureClass.Update(polygonQueryFilter, false);
-                                comReleaser.ManageLifetime(featureCursor);
+                                KeyValuePair<relation, IGeometry> currentElement = createLine.Value;
+
+                                manipulateRelationFeature(currentElement.Key, ref editFeature, availableDomains, domainFieldLengthLines, internalExtensionVersion, currentElement.Value, osmLineIDFieldIndex, lineTagCollectionFieldIndex, osmLineDomainAttributeFieldIndices, osmLineSupportingElementFieldIndex, osmLineUserFieldIndex, osmLineUIDFieldIndex, osmLineVisibleFieldIndex, osmLineVersionFieldIndex, osmLineChangesetFieldIndex, osmLineTimeStampFieldIndex, osmLineTrackChangesFieldIndex, osmLineMembersFieldIndex);
+
+                                featureCursor.InsertFeature((IFeatureBuffer)editFeature);
+
+                                if (useVerboseLogging)
+                                {
+                                    message.AddMessage(string.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_createmessage"), resourceManager.GetString("GPTools_OSM_relation"), currentElement.Key.id));
+                                }
+
+                            }
+                        }
+                        #endregion
+
+                        #region create - modigy polygon relations
+                        foreach (string whereClause in polygonWhereClauses)
+                        {
+                            if (trackCancel.Continue() == false)
+                                return;
+
+                            lineQueryFilter.WhereClause = polygonIDs + " IN " + whereClause;
+
+                            featureCursor = osmPolygonFeatureClass.Update(polygonQueryFilter, false);
+                            comReleaser.ManageLifetime(featureCursor);
+                            editFeature = featureCursor.NextFeature();
+
+                            while (editFeature != null)
+                            {
+                                if (osmIDFieldIndex > -1)
+                                {
+                                    string elementID = editFeature.get_Value(osmIDFieldIndex) as string;
+                                    if (polygonsInAOI.ContainsKey(elementID))
+                                    {
+                                        KeyValuePair<relation, IGeometry> currentElement = linesInAOI[elementID];
+
+                                        manipulateRelationFeature(currentElement.Key, ref editFeature, availableDomains, domainFieldLengthLines, internalExtensionVersion, currentElement.Value, osmPolyIDFieldIndex, polyTagCollectionFieldIndex, osmPolyDomainAttributeFieldIndices, osmPolySupportingElementFieldIndex, osmPolyUserFieldIndex, osmPolyUIDFieldIndex, osmPolyVisibleFieldIndex, osmPolyVersionFieldIndex, osmPolyChangesetFieldIndex, osmPolyTimeStampFieldIndex, osmPolyTrackChangesFieldIndex, osmPolyMembersFieldIndex);
+
+                                        //remove the current relation - line
+                                        polygonsInAOI.Remove(elementID);
+
+                                        featureCursor.UpdateFeature(editFeature);
+
+                                        if (useVerboseLogging)
+                                        {
+                                            message.AddMessage(string.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_modifymessage"), resourceManager.GetString("GPTools_OSM_relation"), elementID));
+                                        }
+                                    }
+                                }
+
                                 editFeature = featureCursor.NextFeature();
-
-                                while (editFeature != null)
-                                {
-                                    if (osmIDFieldIndex > -1)
-                                    {
-                                        string elementID = editFeature.get_Value(osmIDFieldIndex) as string;
-                                        if (polygonsInAOI.ContainsKey(elementID))
-                                        {
-                                            KeyValuePair<relation, IGeometry> currentElement = linesInAOI[elementID];
-
-                                            manipulateRelationFeature(currentElement.Key, ref editFeature, availableDomains, domainFieldLengthLines, internalExtensionVersion, currentElement.Value, osmPolyIDFieldIndex, polyTagCollectionFieldIndex, osmPolyDomainAttributeFieldIndices, osmPolySupportingElementFieldIndex, osmPolyUserFieldIndex, osmPolyUIDFieldIndex, osmPolyVisibleFieldIndex, osmPolyVersionFieldIndex, osmPolyChangesetFieldIndex, osmPolyTimeStampFieldIndex, osmPolyTrackChangesFieldIndex, osmPolyMembersFieldIndex);
-
-                                            //remove the current relation - line
-                                            polygonsInAOI.Remove(elementID);
-
-                                            featureCursor.UpdateFeature(editFeature);
-                                        }
-                                    }
-
-                                    editFeature = featureCursor.NextFeature();
-                                }
-
-                                // at this point we should have only relations (polygonal) left that need to be created
-                                featureCursor = osmPolygonFeatureClass.Insert(true);
-                                comReleaser.ManageLifetime(featureCursor);
-
-                                foreach (var createPolygon in polygonsInAOI)
-                                {
-                                    if (trackCancel.Continue() == false)
-                                        return;
-
-                                    editFeature = osmPolygonFeatureClass.CreateFeatureBuffer() as IFeature;
-
-                                    KeyValuePair<relation, IGeometry> currentElement = createPolygon.Value;
-
-                                    manipulateRelationFeature(currentElement.Key, ref editFeature, availableDomains, domainFieldLengthLines, internalExtensionVersion, currentElement.Value, osmPolyIDFieldIndex, polyTagCollectionFieldIndex, osmPolyDomainAttributeFieldIndices, osmPolySupportingElementFieldIndex, osmPolyUserFieldIndex, osmPolyUIDFieldIndex, osmPolyVisibleFieldIndex, osmPolyVersionFieldIndex, osmPolyChangesetFieldIndex, osmPolyTimeStampFieldIndex, osmPolyTrackChangesFieldIndex, osmPolyMembersFieldIndex);
-
-                                    featureCursor.InsertFeature((IFeatureBuffer)editFeature);
-                                }
                             }
-                            # endregion
-                            IQueryFilter rowQueryFilter = new QueryFilterClass();
-                            comReleaser.ManageLifetime(rowQueryFilter);
 
-                            IRow editRow = null;
-                            ICursor rowCursor = null;
+                            // at this point we should have only relations (polygonal) left that need to be created
+                            featureCursor = osmPolygonFeatureClass.Insert(true);
+                            comReleaser.ManageLifetime(featureCursor);
 
-                            foreach (string whereClause in relationWhereClauses)
+                            foreach (var createPolygon in polygonsInAOI)
                             {
                                 if (trackCancel.Continue() == false)
                                     return;
 
-                                rowQueryFilter.WhereClause = relationIDs + " IN " + whereClause;
+                                editFeature = osmPolygonFeatureClass.CreateFeatureBuffer() as IFeature;
 
-                                rowCursor = relationTable.Update(rowQueryFilter, false);
-                                comReleaser.ManageLifetime(rowCursor);
-                                editRow = rowCursor.NextRow();
+                                KeyValuePair<relation, IGeometry> currentElement = createPolygon.Value;
 
-                                while (editRow != null)
+                                manipulateRelationFeature(currentElement.Key, ref editFeature, availableDomains, domainFieldLengthLines, internalExtensionVersion, currentElement.Value, osmPolyIDFieldIndex, polyTagCollectionFieldIndex, osmPolyDomainAttributeFieldIndices, osmPolySupportingElementFieldIndex, osmPolyUserFieldIndex, osmPolyUIDFieldIndex, osmPolyVisibleFieldIndex, osmPolyVersionFieldIndex, osmPolyChangesetFieldIndex, osmPolyTimeStampFieldIndex, osmPolyTrackChangesFieldIndex, osmPolyMembersFieldIndex);
+
+                                featureCursor.InsertFeature((IFeatureBuffer)editFeature);
+
+                                if (useVerboseLogging)
                                 {
-                                    if (osmIDFieldIndex > -1)
-                                    {
-                                        string elementID = editRow.get_Value(osmIDFieldIndex) as string;
-                                        if (relationsInAOI.ContainsKey(elementID))
-                                        {
-                                            relation currentRelation = relationsInAOI[elementID];
-
-                                            manipulateRelationRow(currentRelation, ref editRow, internalExtensionVersion, osmIDFieldIndex, tagCollectionFieldIndex, osmSupportingElementFieldIndex, osmUserFieldIndex, osmUIDFieldIndex, osmVisibleFieldIndex, osmVersionFieldIndex, osmChangesetFieldIndex, osmTimeStampFieldIndex, osmMembersFieldIndex);
-
-                                            // remove the current relation from the list
-                                            relationsInAOI.Remove(elementID);
-
-                                            rowCursor.UpdateRow(editRow);
-                                        }
-                                    }
-
-                                    editRow = rowCursor.NextRow();
+                                    message.AddMessage(string.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_createmessage"), resourceManager.GetString("GPTools_OSM_relation"), currentElement.Key.id));
                                 }
                             }
+                        }
+                        # endregion
 
-                            // at this point we should have only relations left that need to be created
-                            rowCursor = relationTable.Insert(true);
+                        #region create - modify relations
+                        IQueryFilter rowQueryFilter = new QueryFilterClass();
+                        comReleaser.ManageLifetime(rowQueryFilter);
+
+                        IRow editRow = null;
+                        ICursor rowCursor = null;
+
+                        foreach (string whereClause in relationWhereClauses)
+                        {
+                            if (trackCancel.Continue() == false)
+                                return;
+
+                            rowQueryFilter.WhereClause = relationIDs + " IN " + whereClause;
+
+                            rowCursor = relationTable.Update(rowQueryFilter, false);
                             comReleaser.ManageLifetime(rowCursor);
+                            editRow = rowCursor.NextRow();
 
-                            foreach (var rel in relationsInAOI)
+                            while (editRow != null)
                             {
-                                if (trackCancel.Continue() == false)
-                                    return;
-
-
-                                editRow = relationTable.CreateRowBuffer() as IRow;
-
-                                relation currentRelation = rel.Value;
-
-                                manipulateRelationRow(currentRelation, ref editRow, internalExtensionVersion, osmIDFieldIndex, tagCollectionFieldIndex, osmSupportingElementFieldIndex, osmUserFieldIndex, osmUIDFieldIndex, osmVisibleFieldIndex, osmVersionFieldIndex, osmChangesetFieldIndex, osmTimeStampFieldIndex, osmMembersFieldIndex);
-
-                                rowCursor.InsertRow((IRowBuffer)editRow);
-                            }
-
-                            #region create - modify relations
-
-                            #endregion
-                            break;
-                        case "delete":
-                            ICursor deleteCursor = null;
-                            IRow deleteRow = null;
-
-                            IQueryFilter deleteQueryFilter = new QueryFilterClass();
-                            comReleaser.ManageLifetime(deleteQueryFilter);
-
-                            foreach (string whereClause in lineWhereClauses)
-                            {
-                                if (trackCancel.Continue() == false)
-                                    return;
-
-                                deleteQueryFilter.WhereClause = lineIDs + " IN " + whereClause;
-
-                                deleteCursor = ((ITable)osmLineFeatureClass).Update(deleteQueryFilter, false);
-                                deleteRow = deleteCursor.NextRow();
-
-                                while (deleteRow != null)
+                                if (osmIDFieldIndex > -1)
                                 {
-                                    deleteRow.Delete();
+                                    string elementID = editRow.get_Value(osmIDFieldIndex) as string;
+                                    if (relationsInAOI.ContainsKey(elementID))
+                                    {
+                                        relation currentRelation = relationsInAOI[elementID];
 
-                                    deleteRow = deleteCursor.NextRow();
+                                        manipulateRelationRow(currentRelation, ref editRow, internalExtensionVersion, osmIDFieldIndex, tagCollectionFieldIndex, osmSupportingElementFieldIndex, osmUserFieldIndex, osmUIDFieldIndex, osmVisibleFieldIndex, osmVersionFieldIndex, osmChangesetFieldIndex, osmTimeStampFieldIndex, osmMembersFieldIndex);
+
+                                        // remove the current relation from the list
+                                        relationsInAOI.Remove(elementID);
+
+                                        rowCursor.UpdateRow(editRow);
+
+                                        if (useVerboseLogging)
+                                        {
+                                            message.AddMessage(string.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_modifymessage"), resourceManager.GetString("GPTools_OSM_relation"), currentRelation.id));
+                                        }
+                                    }
                                 }
-                            }
 
-                            foreach (string whereClause in polygonWhereClauses)
+                                editRow = rowCursor.NextRow();
+                            }
+                        }
+                        #endregion
+
+                        #region create - relations in table
+                        // at this point we should have only relations left that need to be created
+                        rowCursor = relationTable.Insert(true);
+                        comReleaser.ManageLifetime(rowCursor);
+
+                        foreach (var rel in relationsInAOI)
+                        {
+                            if (trackCancel.Continue() == false)
+                                return;
+
+
+                            editRow = relationTable.CreateRowBuffer() as IRow;
+
+                            relation currentRelation = rel.Value;
+
+                            manipulateRelationRow(currentRelation, ref editRow, internalExtensionVersion, osmIDFieldIndex, tagCollectionFieldIndex, osmSupportingElementFieldIndex, osmUserFieldIndex, osmUIDFieldIndex, osmVisibleFieldIndex, osmVersionFieldIndex, osmChangesetFieldIndex, osmTimeStampFieldIndex, osmMembersFieldIndex);
+
+                            rowCursor.InsertRow((IRowBuffer)editRow);
+
+                            if (useVerboseLogging)
                             {
-                                if (trackCancel.Continue() == false)
-                                    return;
-
-                                deleteQueryFilter.WhereClause = polygonIDs + " IN " + whereClause;
-
-                                deleteCursor = ((ITable)osmPolygonFeatureClass).Update(deleteQueryFilter, false);
-                                deleteRow = deleteCursor.NextRow();
-
-                                while (deleteRow != null)
-                                {
-                                    deleteRow.Delete();
-
-                                    deleteRow = deleteCursor.NextRow();
-                                }
+                                message.AddMessage(string.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_createmessage"), resourceManager.GetString("GPTools_OSM_relation"), currentRelation.id));
                             }
+                        }
+                        #endregion
 
-                            foreach (string whereClause in relationWhereClauses)
+                        break;
+                    case "delete":
+                        ICursor deleteCursor = null;
+                        IRow deleteRow = null;
+
+                        IQueryFilter deleteQueryFilter = new QueryFilterClass();
+                        comReleaser.ManageLifetime(deleteQueryFilter);
+
+
+
+                        foreach (string whereClause in lineWhereClauses)
+                        {
+                            if (trackCancel.Continue() == false)
+                                return;
+
+                            deleteQueryFilter.WhereClause = lineIDs + " IN " + whereClause;
+
+                            deleteCursor = ((ITable)osmLineFeatureClass).Update(deleteQueryFilter, false);
+                            deleteRow = deleteCursor.NextRow();
+
+                            while (deleteRow != null)
                             {
-                                if (trackCancel.Continue() == false)
-                                    return;
+                                string relationID = String.Empty;
 
-                                deleteQueryFilter.WhereClause = relationIDs + " IN " + whereClause;
-
-                                deleteCursor = relationTable.Update(deleteQueryFilter, false);
-                                deleteRow = deleteCursor.NextRow();
-
-                                while (deleteRow != null)
+                                if (osmLineIDFieldIndex > -1)
                                 {
-                                    deleteRow.Delete();
-
-                                    deleteRow = deleteCursor.NextRow();
+                                    deleteRow.get_Value(osmLineIDFieldIndex);
                                 }
+
+                                deleteRow.Delete();
+
+                                if (useVerboseLogging)
+                                {
+                                    message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_deletemessage"), resourceManager.GetString("GPTools_OSM_relation"), relationID));
+                                }
+
+                                deleteRow = deleteCursor.NextRow();
                             }
+                        }
 
-                            break;
-                        default:
-                            break;
-                    }
+                        foreach (string whereClause in polygonWhereClauses)
+                        {
+                            if (trackCancel.Continue() == false)
+                                return;
 
+                            deleteQueryFilter.WhereClause = polygonIDs + " IN " + whereClause;
 
-                    if (useVerboseLogging == true)
-                    {
-                       // message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_createmessage"), resourceManager.GetString("GPTools_OSM_relation"), currentRelation.id));
-                    }
+                            deleteCursor = ((ITable)osmPolygonFeatureClass).Update(deleteQueryFilter, false);
+                            deleteRow = deleteCursor.NextRow();
 
+                            while (deleteRow != null)
+                            {
+                                string relationID = String.Empty;
 
+                                if (osmLineIDFieldIndex > -1)
+                                {
+                                    deleteRow.get_Value(osmLineIDFieldIndex);
+                                }
+
+                                deleteRow.Delete();
+
+                                if (useVerboseLogging)
+                                {
+                                    message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_deletemessage"), resourceManager.GetString("GPTools_OSM_relation"), relationID));
+                                }
+
+                                deleteRow = deleteCursor.NextRow();
+                            }
+                        }
+
+                        foreach (string whereClause in relationWhereClauses)
+                        {
+                            if (trackCancel.Continue() == false)
+                                return;
+
+                            deleteQueryFilter.WhereClause = relationIDs + " IN " + whereClause;
+
+                            deleteCursor = relationTable.Update(deleteQueryFilter, false);
+                            deleteRow = deleteCursor.NextRow();
+
+                            while (deleteRow != null)
+                            {
+                                string relationID = String.Empty;
+
+                                if (osmLineIDFieldIndex > -1)
+                                {
+                                    deleteRow.get_Value(osmLineIDFieldIndex);
+                                }
+
+                                deleteRow.Delete();
+
+                                if (useVerboseLogging)
+                                {
+                                    message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_deletemessage"), resourceManager.GetString("GPTools_OSM_relation"), relationID));
+                                }
+
+                                deleteRow = deleteCursor.NextRow();
+                            }
+                        }
+
+                        break;
+                    default:
+                        break;
                 }
             }
             catch (Exception ex)
@@ -2516,10 +2579,25 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                     bool isLine = OSMToolHelper.IsThisWayALine(item.Value);
 
+#if DEBUG
+                    DateTime startTime = DateTime.Now;
+                    if (useVerboseLogging)
+                    {
+                        message.AddMessage(String.Format("extracting geometry for way id {0}", item.Value.id));
+                    }
+#endif
+
                     if (isLine)
-                        wayGeometry = extractGeometryFromOSMFeature(item.Value, osmLineFeatureClass, osmPointFeatureClass, osmPointIDFieldIndex, internalExtensionVersion);
+                        wayGeometry = extractGeometryFromOSMFeature(item.Value, osmLineFeatureClass, osmPointFeatureClass, osmPointIDFieldIndex, internalExtensionVersion, comReleaser);
                     else
-                        wayGeometry = extractGeometryFromOSMFeature(item.Value, osmPolygonFeatureClass, osmPointFeatureClass, osmPointIDFieldIndex, internalExtensionVersion);
+                        wayGeometry = extractGeometryFromOSMFeature(item.Value, osmPolygonFeatureClass, osmPointFeatureClass, osmPointIDFieldIndex, internalExtensionVersion, comReleaser);
+
+#if DEBUG
+                    if (useVerboseLogging)
+                    {
+                        message.AddMessage(String.Format("found geometry in {0} sec", (new TimeSpan(DateTime.Now.Ticks - startTime.Ticks)).TotalSeconds));
+                    }
+#endif
 
                     // we are unable to complete the geometry, so let's continue with the next way
                     if (wayGeometry == null)
@@ -3075,7 +3153,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             return featureGeometry;
         }
 
-        private static IGeometry extractGeometryFromOSMFeature(way currentWay, IFeatureClass insertFeatureClass, IFeatureClass osmPointFeatureClass, int osmPointIDFieldIndex, int extensionVersion)
+        private static IGeometry extractGeometryFromOSMFeature(way currentWay, IFeatureClass insertFeatureClass, IFeatureClass osmPointFeatureClass, int osmPointIDFieldIndex, int extensionVersion, ComReleaser comReleaser)
         {
             IGeometry featureGeometry = null;
             IPointCollection wayPointCollection = null;
@@ -3133,8 +3211,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         osmIDQueryFilter.WhereClause = sqlPointOSMID + " IN " + request;
                         osmIDQueryFilter.SubFields = osmPointFeatureClass.OIDFieldName + ",OSMID," + osmPointFeatureClass.ShapeFieldName;
 
-                        using (ComReleaser comReleaser = new ComReleaser())
-                        {
+                        //using (ComReleaser comReleaser = new ComReleaser())
+                        //{
                             searchPointCursor = osmPointFeatureClass.Search(osmIDQueryFilter, false);
                             comReleaser.ManageLifetime(searchPointCursor);
 
@@ -3165,7 +3243,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                     nodeFeature = searchPointCursor.NextFeature();
                                 }
                             }
-                        }
+                        //}
 
                         if (regex.IsMatch(tempRequest))
                         {
@@ -3215,13 +3293,13 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         string tempRequest = osmIDRequest;
 
-                        using (ComReleaser innercomReleaser = new ComReleaser())
-                        {
+                        //using (ComReleaser innercomReleaser = new ComReleaser())
+                        //{
                             osmIDQueryFilter.WhereClause = sqlPointOSMID + " IN " + osmIDRequest;
                             osmIDQueryFilter.SubFields = osmPointFeatureClass.OIDFieldName + ",OSMID," + osmPointFeatureClass.ShapeFieldName;
 
                             searchPointCursor = osmPointFeatureClass.Update(osmIDQueryFilter, false);
-                            innercomReleaser.ManageLifetime(searchPointCursor);
+                            comReleaser.ManageLifetime(searchPointCursor);
 
                             IFeature nodeFeature = searchPointCursor.NextFeature();
 
@@ -3258,7 +3336,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                 nodeFeature = searchPointCursor.NextFeature();
                             }
-                        }
+                        //}
 
                         if (regex.IsMatch(tempRequest))
                         {
