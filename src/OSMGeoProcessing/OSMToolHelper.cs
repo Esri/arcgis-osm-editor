@@ -4334,7 +4334,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         {
                             using (ComReleaser comReleaser = new ComReleaser())
                             {
-                                osmIDQueryFilter.WhereClause = sqlPolyOSMID + " = " + currentRelationMember.@ref;
+                                osmIDQueryFilter.WhereClause = polygonFeatureClass.WhereClauseByExtensionVersion(currentRelationMember.@ref, "OSMID", 2);
 
                                 IFeatureCursor featureCursor = polygonFeatureClass.Search(osmIDQueryFilter, false);
                                 comReleaser.ManageLifetime(featureCursor);
