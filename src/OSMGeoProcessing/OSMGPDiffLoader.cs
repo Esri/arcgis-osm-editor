@@ -2309,7 +2309,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         }
                         #endregion
 
-                        #region create - modigy polygon relations
+                        #region create - modify polygon relations
                         foreach (string whereClause in polygonWhereClauses)
                         {
                             if (trackCancel.Continue() == false)
@@ -4209,15 +4209,28 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                     if (tagCollectionFieldIndex > -1)
                     {
+                        // if the current relation doesn't have keys we merge the tags from the outer rings to the relation
+                        if (!_osmUtility.DoesHaveKeys(createRelation))
+                        {
+                            IFeatureClass osmPolygonFeatureClass = editFeature.Table as IFeatureClass;
+                            relationTagList = osmToolHelper.MergeTagsFromOuterPolygonToRelation(createRelation, osmPolygonFeatureClass);
+                        }
+                            
+
                         _osmUtility.insertOSMTags(tagCollectionFieldIndex, editFeature, relationTagList.ToArray());
                     }
                 }
                 else
                 {
+                    // if no tags exist we'll attempt to merge the tags from the outer rings to the relation
                     IFeatureClass osmPolygonFeatureClass = editFeature.Table as IFeatureClass;
 
                     if (osmPolygonFeatureClass != null)
+                    {
                         relationTagList = osmToolHelper.MergeTagsFromOuterPolygonToRelation(createRelation, osmPolygonFeatureClass);
+
+                        _osmUtility.insertOSMTags(tagCollectionFieldIndex, editFeature, relationTagList.ToArray());
+                    }
                 }
 
                 if (osmSupportingElementFieldIndex > -1)
