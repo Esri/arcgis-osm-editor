@@ -4322,6 +4322,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             try
             {
                 int osmIDPolygonFieldIndex = polygonFeatureClass.FindField("OSMID");
+                int osmSupportingElementFieldIndex = polygonFeatureClass.FindField("osmSupportingElement");
                 string sqlPolyOSMID = polygonFeatureClass.SqlIdentifier("OSMID");
 
                 foreach (var relationItem in currentRelation.Items)
@@ -4336,7 +4337,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             {
                                 osmIDQueryFilter.WhereClause = polygonFeatureClass.WhereClauseByExtensionVersion(currentRelationMember.@ref, "OSMID", 2);
 
-                                IFeatureCursor featureCursor = polygonFeatureClass.Search(osmIDQueryFilter, false);
+                                IFeatureCursor featureCursor = polygonFeatureClass.Update(osmIDQueryFilter, false);
                                 comReleaser.ManageLifetime(featureCursor);
 
                                 IFeature foundPolygonFeature = featureCursor.NextFeature();
@@ -4345,6 +4346,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                     continue;
 
                                 tag[] foundTags = _osmUtility.retrieveOSMTags(foundPolygonFeature, osmIDPolygonFieldIndex, ((IDataset)polygonFeatureClass).Workspace);
+
+                                // set this feature from which we transfer to become a supporting element
+                                if (osmSupportingElementFieldIndex > -1)
+                                    foundPolygonFeature.set_Value(osmSupportingElementFieldIndex, "yes");
+
+                                featureCursor.UpdateFeature(foundPolygonFeature);
 
                                 foreach (tag currentWayTag in foundTags)
                                 {
