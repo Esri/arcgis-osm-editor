@@ -2526,19 +2526,22 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                                             int nodePositionIndex = nodeIDs.IndexOf(nodeOSMIDString, nodePositionDictionary[nodeOSMIDString]);
 
-                                                            // update the new position start search index
-                                                            nodePositionDictionary[nodeOSMIDString] = nodePositionIndex + 1;
-
-                                                            IPoint nodePoint = (IPoint)nodeFeature.ShapeCopy;
-                                                            nodePoint.ID = nodeFeature.OID;
-                                                            wayPointCollection.UpdatePoint(nodePositionIndex, nodePoint);
-
-                                                            // increase the reference counter
-                                                            if (osmWayRefCountFieldIndex != -1)
+                                                            if (nodePositionIndex > -1)
                                                             {
-                                                                nodeFeature.set_Value(osmWayRefCountFieldIndex, ((int)nodeFeature.get_Value(osmWayRefCountFieldIndex)) + 1);
+                                                                // update the new position start search index
+                                                                nodePositionDictionary[nodeOSMIDString] = nodePositionIndex + 1;
 
-                                                                updatePointCursor.UpdateFeature(nodeFeature);
+                                                                IPoint nodePoint = (IPoint)nodeFeature.ShapeCopy;
+                                                                nodePoint.ID = nodeFeature.OID;
+                                                                wayPointCollection.UpdatePoint(nodePositionIndex, nodePoint);
+
+                                                                // increase the reference counter
+                                                                if (osmWayRefCountFieldIndex != -1)
+                                                                {
+                                                                    nodeFeature.set_Value(osmWayRefCountFieldIndex, ((int)nodeFeature.get_Value(osmWayRefCountFieldIndex)) + 1);
+
+                                                                    updatePointCursor.UpdateFeature(nodeFeature);
+                                                                }
                                                             }
 
                                                             if (nodeFeature != null)
@@ -3475,9 +3478,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                                             if (!wayList.ContainsKey(memberItem.@ref))
                                                                 if (isPolyline)
-                                                                    wayList.Add(memberItem.@ref, "line");
+                                                                    wayList.Add(memberItem.@ref, "line" + "_" + memberItem.role);
                                                                 else
-                                                                    wayList.Add(memberItem.@ref, "polygon");
+                                                                    wayList.Add(memberItem.@ref, "polygon" + "_" + memberItem.role);
 
                                                             if (isPolyline)
                                                             {
@@ -3565,9 +3568,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                                             if (!wayList.ContainsKey(memberItem.@ref))
                                                                 if (isPolyline)
-                                                                    wayList.Add(memberItem.@ref, "line");
+                                                                    wayList.Add(memberItem.@ref, "line" + "_" + memberItem.role);
                                                                 else
-                                                                    wayList.Add(memberItem.@ref, "polygon");
+                                                                    wayList.Add(memberItem.@ref, "polygon" + "_" + memberItem.role);
 
                                                             if (osmRelationList == null)
                                                             {
@@ -3621,7 +3624,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                         return missingRelations;
                                                     }
 
-                                                    switch (wayKey.Value)
+                                                    string wayType = wayKey.Value.Split(new Char[]{'_'})[0];
+
+                                                    switch (wayType)
                                                     {
                                                         case "line":
                                                             osmIDQueryFilter.WhereClause = sqlLineOSMID + " = '" + wayKey.Key + "'";
@@ -3639,7 +3644,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                     using (ComReleaser relationComReleaser = new ComReleaser())
                                                     {
                                                         IFeatureCursor featureCursor = null;
-                                                        switch (wayKey.Value)
+                                                        switch (wayType)
                                                         {
                                                             case "line":
                                                                 featureCursor = osmLineFeatureClass.Search(osmIDQueryFilter, false);
@@ -3673,31 +3678,32 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                                     // the initial assessment if the feature is a supporting element based on the existence of tags
                                                                     // has been made, at this point I don't think there is a reason to reassess the nature of feature
                                                                     // based on its appearance in a relation
-                                                                    //if (osmSupportingElementPolygonFieldIndex > -1)
-                                                                    //{
-                                                                    //    // if the member of a relation has the role of "inner" and it has tags, then let's keep it
-                                                                    //    // as a standalone feature as well
-                                                                    //    // the geometry is then a hole in the relation but due to the tags it also has merits to be
-                                                                    //    // considered a stand-alone feature
-                                                                    //    if (wayKey.Value.ToLower().Equals("inner"))
-                                                                    //    {
-                                                                    //        if (!_osmUtility.DoesHaveKeys(partFeature, tagCollectionPolygonFieldIndex, null))
-                                                                    //        {
-                                                                    //            partFeature.set_Value(osmSupportingElementPolygonFieldIndex, "yes");
-                                                                    //        }
-                                                                    //    }
-                                                                    //    else
-                                                                    //    {
-                                                                    //        // relation member without an explicit role or the role of "outer" are turned into
-                                                                    //        // supporting features if they don't have relevant attribute
-                                                                    //        if (!_osmUtility.DoesHaveKeys(partFeature, tagCollectionPolylineFieldIndex, null))
-                                                                    //        {
-                                                                    //            partFeature.set_Value(osmSupportingElementPolygonFieldIndex, "yes");
-                                                                    //        }
-                                                                    //    }
-                                                                    //}
+                                                                    if (osmSupportingElementPolygonFieldIndex > -1)
+                                                                    {
+                                                                        string roleType = wayKey.Value.Split(new Char[] { '_' })[1];
 
-                                                                    //partFeature.Store();
+                                                                        // if the member of a relation has the role of "outer" and the tags are the same as that of the 
+                                                                        // of the relation parent, then mark it as a supporting element
+                                                                        if (roleType.ToLower().Equals("outer"))
+                                                                        {
+                                                                            if (_osmUtility.AreTagsTheSame(relationTagList, partFeature, tagCollectionPolygonFieldIndex, null))
+                                                                            {
+                                                                                partFeature.set_Value(osmSupportingElementPolygonFieldIndex, "yes");
+                                                                            }
+                                                                        }
+                                                                        //else
+                                                                        //{
+                                                                        //    // relation member without an explicit role or the role of "outer" are turned into
+                                                                        //    // supporting features if they don't have relevant attribute
+                                                                        //    if (!_osmUtility.DoesHaveKeys(partFeature, tagCollectionPolylineFieldIndex, null))
+                                                                        //    {
+                                                                        //        partFeature.set_Value(osmSupportingElementPolygonFieldIndex, "yes");
+                                                                        //    }
+                                                                        //}
+
+                                                                        partFeature.Store();
+
+                                                                    }
                                                                 }
                                                             }
                                                         //}
@@ -3906,15 +3912,23 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                                 relationPolylineGeometryCollection.AddGeometry(pathCollection.get_Geometry(0), ref missing, ref missing);
 
                                                                 // TE - 10/14/2014 - see comment above
-                                                                //if (osmSupportingElementPolylineFieldIndex > -1)
-                                                                //{
-                                                                //    if (!_osmUtility.DoesHaveKeys(partFeature, tagCollectionPolylineFieldIndex, null))
-                                                                //    {
-                                                                //        partFeature.set_Value(osmSupportingElementPolylineFieldIndex, "yes");
-                                                                //    }
-                                                                //}
+                                                                if (osmSupportingElementPolylineFieldIndex > -1)
+                                                                {
+                                                                    string roleType = wayKey.Value.Split(new Char[] { '_' })[1];
 
-                                                                //partFeature.Store();
+                                                                    // if the member of a relation has the role of "outer" and the tags are the same as that of the 
+                                                                    // of the relation parent, then mark it as a supporting element
+                                                                    if (roleType.ToLower().Equals("outer"))
+                                                                    {
+                                                                        if (!_osmUtility.AreTagsTheSame(relationTagList, partFeature, tagCollectionPolylineFieldIndex, null))
+                                                                        {
+                                                                            partFeature.set_Value(osmSupportingElementPolylineFieldIndex, "yes");
+                                                                        }
+                                                                    }
+                                                                }
+
+                                                                partFeature.Store();
+
                                                             }
                                                         }
                                                     }
