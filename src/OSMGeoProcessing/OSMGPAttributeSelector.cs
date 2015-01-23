@@ -95,7 +95,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 IFeatureClass osmFeatureClass = null;
                 ITable osmInputTable = null;
-                IQueryFilter osmQueryFilter = null;
+                IQueryFilter osmQueryFilter = new QueryFilterClass();
 
                 try
                 {
@@ -359,6 +359,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     message.AddError(120053, errorMessage);
                     return;
                 }
+
+                if (osmQueryFilter == null)
+                    osmQueryFilter = new QueryFilterClass();
 
                 if (useUpdateCursor)
                 {
@@ -908,7 +911,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
 
             IQueryFilter newQueryFilter = new QueryFilterClass();
-            newQueryFilter.WhereClause = osmQueryFilter.WhereClause;
+            if (osmQueryFilter != null)
+                newQueryFilter.WhereClause = osmQueryFilter.WhereClause;
             newQueryFilter.SubFields = "osmTags";
 
             IWorkspace datasetWorkspace = ((IDataset)osmInputTable).Workspace;

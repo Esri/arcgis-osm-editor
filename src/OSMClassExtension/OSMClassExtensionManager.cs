@@ -118,6 +118,10 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
             {
                 whereClause = table.SqlIdentifier(fieldName) + " = '" + Convert.ToString(osmID) + "'";
             }
+            else
+            {
+                whereClause = table.SqlIdentifier(fieldName) + " = '" + Convert.ToString(osmID) + "'";
+            }
 
             return whereClause;
         }

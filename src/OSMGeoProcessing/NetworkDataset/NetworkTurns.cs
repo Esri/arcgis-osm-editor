@@ -316,22 +316,38 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
             // get turn FROM-edge
             INetworkSource source = _networkDataset.get_SourceByName(((IDataset)osmTurn.FromFeature.Class).Name);
-            IEnumNetworkElement enumNetElements = query.get_EdgesByPosition(source.ID, osmTurn.FromFeature.OID, 0.0, false);
+            IEnumNetworkElement enumNetElements = null;
+
+            IRelationalOperator relationalOperator = ((IPolyline)osmTurn.ToFeature.Shape).FromPoint as IRelationalOperator;
+
+            bool useFromPointOfToFeature = relationalOperator.Contains(osmTurn.ViaFeature.Shape);
+
+            if (useFromPointOfToFeature)
+                enumNetElements = query.get_EdgesByPosition(source.ID, osmTurn.ToFeature.OID, 0, false);
+            else
+                enumNetElements = query.get_EdgesByPosition(source.ID, osmTurn.ToFeature.OID, 1, false);
+
             INetworkEdge edgeFrom = enumNetElements.Next() as INetworkEdge;
 
             // get the FROM-edge Junctions
             INetworkJunction fromJunction = query.CreateNetworkElement(esriNetworkElementType.esriNETJunction) as INetworkJunction;
             INetworkJunction toJunction = query.CreateNetworkElement(esriNetworkElementType.esriNETJunction) as INetworkJunction;
+
             edgeFrom.QueryJunctions(fromJunction, toJunction);
 
             // Get adjacent edges from the turn center junction
-            INetworkJunction junction = ((useToJunction) ? toJunction : fromJunction);
+            INetworkJunction junction = ((useFromPointOfToFeature) ? fromJunction : toJunction);
+
             for (int n = 0; n < junction.EdgeCount; ++n)
             {
                 INetworkEdge edge = query.CreateNetworkElement(esriNetworkElementType.esriNETEdge) as INetworkEdge;
-                junction.QueryEdge(n, true, edge);
+                if (useFromPointOfToFeature)
+                    junction.QueryEdge(n, true, edge);
+                else
+                    junction.QueryEdge(n, false, edge);
 
-                if ((edge.OID == osmTurn.FromFeature.OID) || (edge.OID == osmTurn.ToFeature.OID))
+                //if ((edge.SourceID == osmTurn.FromFeature.OID) || (edge.SourceID == osmTurn.ToFeature.OID))
+                if ((edge.OID == osmTurn.ToFeature.OID))
                     continue;
 
                 yield return edge;

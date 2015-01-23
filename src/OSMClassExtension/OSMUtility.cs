@@ -1169,6 +1169,62 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
         }
 
         /// <summary>
+        /// Compare the list of tags und the given feature to see if they are same. Only relevant tags are compared.
+        /// Non-relevant tags are "created_by", "source", "attribution", "version", "note", "type".
+        /// </summary>
+        /// <param name="relationTags"></param>
+        /// <param name="row"></param>
+        /// <param name="tagFieldIndex"></param>
+        /// <param name="currentWorkspace"></param>
+        /// <returns>Boolean indicating if the relevant tags are the same.</returns>
+        public bool AreTagsTheSame(IList<tag> relationTags, IRow row, int tagFieldIndex, IWorkspace currentWorkspace)
+        {
+            bool tagsAreTheSame = true;
+
+            try
+            {
+                IList<tag> relevantRelationTags = RetrieveRelevantTags(relationTags);
+
+                tag[] wayTags = retrieveOSMTags(row, tagFieldIndex, currentWorkspace);
+
+                IList<tag> relevantWayTags = RetrieveRelevantTags(new List<tag>(wayTags));
+
+                if (relevantWayTags.Count != relevantRelationTags.Count)
+                {
+                    tagsAreTheSame = false;
+                    return tagsAreTheSame;
+                }
+
+                foreach (var wayTag in relevantWayTags)
+                {
+                    if (!relevantRelationTags.Contains(wayTag, new TagKeyValueComparer()))
+                    {
+                        tagsAreTheSame = false;
+                        return tagsAreTheSame;
+                    }
+                }
+            }
+            catch { }
+
+            return tagsAreTheSame;
+        }
+
+        private IList<tag> RetrieveRelevantTags(IList<tag> originalTags)
+        {
+            IList<tag> relevantTags = new List<tag>();
+
+            string[] non_relevant = {"created_by", "source", "attribution", "note", "version", "type"};
+
+            foreach (var currentTag in originalTags)
+            {
+                if (!System.Array.Exists(non_relevant, str => str.ToLower().Equals(currentTag.k)))
+                    relevantTags.Add(currentTag);
+            }
+
+            return relevantTags;
+        }
+
+        /// <summary>
         /// Given a row object from a feature class determines if valid tags exist.
         /// </summary>
         /// <param name="row">Row object from a feature class</param>
