@@ -1384,47 +1384,38 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
         /// <returns>Boolean indicating if the way has relevant tags or not.</returns>
         public bool DoesHaveKeys(way currentway)
         {
+            IList<tag> relevantTags = new List<tag>();
             bool doesHaveKeys = false;
-            bool partsOverride = false;
 
             try
             {
-                if (currentway.tag != null)
+                string[] non_relevant = { "created_by", "source", "attribution", "note", "version", "type" };
+
+                foreach (var currentTag in currentway.tag)
                 {
-                    foreach (tag waytag in currentway.tag)
+                    if (!System.Array.Exists(non_relevant, str => str.ToLower().Equals(currentTag.k)))
+                        relevantTags.Add(currentTag);
+                }
+
+                if (relevantTags.Count > 0)
+                {
+                    doesHaveKeys = true;
+
+                    foreach (var wayTag in relevantTags)
                     {
-                        if (waytag.k.ToLower().Equals("created_by"))
+                        if (wayTag.k.ToLower().Contains("building:part"))
                         {
-                        }
-                        else if (waytag.k.ToLower().Equals("source"))
-                        {
-                        }
-                        else if (waytag.k.ToLower().Equals("attribution"))
-                        {
-                        }
-                        else if (waytag.k.ToLower().Equals("note"))
-                        {
-                        }
-                        else if (waytag.k.ToLower().Contains("building:part"))
-                        {
-                            // however see exception below
-                            partsOverride = true;
-                        }
-                        else if (waytag.k.ToLower().Equals("building"))
-                        {
-                            // the exception is the existence of the building tag itself
-                            // if it does exist then we don't want to flag it as a supporting element
-                            partsOverride = false;
-                        }
-                        else
-                        {
-                            doesHaveKeys = true;
+                            doesHaveKeys = false;
+
+                            // the exception is the existence of both building:part and building,
+                            // then building will take precedence
+                            if (relevantTags.Contains(new tag() { k = "building" }, new TagKeyComparer()))
+                            {
+                                doesHaveKeys = true;
+                                break;
+                            }
                         }
                     }
-
-                    // the building:part key sets the flag be a supporting elements, hence the trigger override
-                    if (partsOverride)
-                        doesHaveKeys = false;
                 }
             }
             catch (Exception ex)
