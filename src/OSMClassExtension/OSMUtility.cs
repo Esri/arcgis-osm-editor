@@ -1407,7 +1407,14 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                         }
                         else if (waytag.k.ToLower().Contains("building:part"))
                         {
+                            // however see exception below
                             partsOverride = true;
+                        }
+                        else if (waytag.k.ToLower().Equals("building"))
+                        {
+                            // the exception is the existence of the building tag itself
+                            // if it does exist then we don't want to flag it as a supporting element
+                            partsOverride = false;
                         }
                         else
                         {
