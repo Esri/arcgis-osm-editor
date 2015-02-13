@@ -20,7 +20,7 @@ cd ..
 
 rem then let's go build all aditional languages
 
-set OSMEditorVersion=2.1.0.0
+set OSMEditorVersion=2.3.0.0
 
 cd OSMGeoProcessing\languages
 
