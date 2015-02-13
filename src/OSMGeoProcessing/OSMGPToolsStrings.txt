@@ -250,3 +250,5 @@ GPTools_OSM_ways=ways
 GPTools_OSM_relations=relations
 GPTools_OSM_superrelations=super-relations
 GPTools_OSMGPDiffLoader_loadtime_message=The diff loaded in {0} minutes.
+GPTools_OSMFileLoader_schemaCategory=Adjust input schema
+GPTools_OSMFileLoader_attributeSchemaSelection=Add OSM tag keys to schema

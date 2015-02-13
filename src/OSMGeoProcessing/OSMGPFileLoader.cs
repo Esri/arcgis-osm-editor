@@ -1123,7 +1123,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 tagKeyDataType2.MemberDataType = tagKeyDataType;
 
                 attributeSelect.Name = "in_attributeselect";
-                attributeSelect.DisplayName = resourceManager.GetString("GPTools_OSMGPAttributeSelector_inputAttributes");
+                attributeSelect.DisplayName = resourceManager.GetString("GPTools_OSMFileLoader_attributeSchemaSelection");
+                attributeSelect.Category = resourceManager.GetString("GPTools_OSMFileLoader_schemaCategory");
                 attributeSelect.ParameterType = esriGPParameterType.esriGPParameterTypeOptional;
                 attributeSelect.Direction = esriGPParameterDirection.esriGPParameterDirectionInput;
                 attributeSelect.Domain = (IGPDomain)tagKeyDomains;
