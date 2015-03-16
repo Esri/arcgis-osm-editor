@@ -1,23 +1,19 @@
 # arcgis-osm-editor
 
-ArcGIS Editor for OpenStreetMap - Welcome!
-
-ArcGIS Editor for OpenStreetMap is a toolset for GIS users to access and contribute to OpenStreetMap through their ArcGIS Desktop or Server environment.  Learn more at [the ArcGIS Editor for OSM wiki page](https://github.com/Esri/arcgis-osm-editor/wiki).
+ArcGIS Editor for OpenStreetMap - Welcome
+ArcGIS Editor for OpenStreetMap is a toolset for GIS users to access and contribute to OpenStreetMap through their Desktop or Server environment.  Learn more [here](http://www.esri.com/osmeditor).
 
 ## Features
-* Download data from OSM into a file geodatabase - get data from the current extent or load from an .osm file
+* Download data from OSM into a file geodatabase - download from current extent or load from .osm file
 * Create your own planet (.osm) files
 * Edit OSM data in ArcGIS
 * Upload edits back to OSM
 * Create routing networks from OSM data
-* Create custom feature services based on OSM data
 
 ## Instructions
 1. Compiled setups (if you just want to install in ArcGIS and not deal with the code) can be downloaded from ArcGIS Online.  For the 10.3 installer, download from here http://www.arcgis.com/home/item.html?id=75716d933f1c40a784243198e0dc11a1.
 
-
 2. Read documentation at http://github.com/Esri/arcgis-osm-editor/wiki/Documentation on how to use the tools
-
 
 3. If you want to work with the code:
 	
@@ -41,7 +37,6 @@ ArcGIS Editor for OpenStreetMap is a toolset for GIS users to access and contrib
 ## Resources
 
 * [OpenStreetMap](http://www.openstreetmap.org)
-* [OpenStreetMap wiki] (http://wiki.openstreetmap.org/wiki/ArcGIS_Editor_for_OSM)
 
 ## Issues
 

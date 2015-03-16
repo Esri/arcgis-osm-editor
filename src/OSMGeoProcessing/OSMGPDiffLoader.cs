@@ -1523,7 +1523,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 {
                     #region create multipart polygon geometry
 
-                    ((IPointIDAware)relationMPPolygon).PointIDAware = true;
                     ISpatialFilter osmIDQueryFilter = new SpatialFilterClass();
                     string sqlPolyOSMID = osmPolygonFeatureClass.SqlIdentifier("OSMID");
                     object missing = Type.Missing;
@@ -1697,7 +1696,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         message.AddWarning(String.Format(resourceManager.GetString("GPTools_OSMGPDiffLoader_relationskipped_noline"), currentRelation.id));
                         return;
                     }
-                    ((IPointIDAware)relationMPPolyline).PointIDAware = true;
 
                     mpFeature.Shape = detectedGeometry;
 
