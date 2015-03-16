@@ -118,8 +118,35 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
             {
                 whereClause = table.SqlIdentifier(fieldName) + " = '" + Convert.ToString(osmID) + "'";
             }
+            else
+            {
+                whereClause = table.SqlIdentifier(fieldName) + " = '" + Convert.ToString(osmID) + "'";
+            }
 
             return whereClause;
+        }
+
+        /// <summary>
+        /// Returns an array of field names for fields that have the 'required' flag.
+        /// </summary>
+        /// <returns>Returns an array of field names for fields that have the 'required' flag.
+        /// If no required fields are found, or the table is null an empty array is returned.</returns>
+        public static string[] ExtractRequiredFields(this IFeatureClass table)
+        {
+            List<string> requiredFields = new List<string>();
+
+            if (table == null)
+                return requiredFields.ToArray();
+
+            for (int fieldIndex = 0; fieldIndex < table.Fields.FieldCount; fieldIndex++)
+            {
+                if (table.Fields.get_Field(fieldIndex).Required == true)
+                {
+                    requiredFields.Add(table.Fields.get_Field(fieldIndex).Name);
+                }
+            }
+
+            return requiredFields.ToArray();
         }
 
 

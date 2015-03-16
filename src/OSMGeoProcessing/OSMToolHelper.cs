@@ -138,6 +138,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         }
 
         #region"Create OSM Point FeatureClass"
+        internal IFeatureClass CreatePointFeatureClass(ESRI.ArcGIS.Geodatabase.IWorkspace2 workspace, ESRI.ArcGIS.Geodatabase.IFeatureDataset featureDataset, System.String featureClassName, ESRI.ArcGIS.Geodatabase.IFields fields, ESRI.ArcGIS.esriSystem.UID CLSID, ESRI.ArcGIS.esriSystem.UID CLSEXT, System.String strConfigKeyword, OSMDomains osmDomains, string metadataAbstract, string metadataPurpose)
+        {
+            return CreatePointFeatureClass(workspace, featureDataset, featureClassName, fields, CLSID, CLSEXT, strConfigKeyword, osmDomains, metadataAbstract, metadataPurpose, null);
+        }
+
+
         ///<summary>Simple helper to create a featureclass in a geodatabase.</summary>
         /// 
         ///<param name="workspace">An IWorkspace2 interface</param>
@@ -170,7 +176,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         ///      keywords, refer to the ArcSDE documentation. When not using an ArcSDE table use an empty 
         ///      string (ex: "").
         ///</remarks>
-        internal IFeatureClass CreatePointFeatureClass(ESRI.ArcGIS.Geodatabase.IWorkspace2 workspace, ESRI.ArcGIS.Geodatabase.IFeatureDataset featureDataset, System.String featureClassName, ESRI.ArcGIS.Geodatabase.IFields fields, ESRI.ArcGIS.esriSystem.UID CLSID, ESRI.ArcGIS.esriSystem.UID CLSEXT, System.String strConfigKeyword, OSMDomains osmDomains, string metadataAbstract, string metadataPurpose)
+        internal IFeatureClass CreatePointFeatureClass(ESRI.ArcGIS.Geodatabase.IWorkspace2 workspace, ESRI.ArcGIS.Geodatabase.IFeatureDataset featureDataset, System.String featureClassName, ESRI.ArcGIS.Geodatabase.IFields fields, ESRI.ArcGIS.esriSystem.UID CLSID, ESRI.ArcGIS.esriSystem.UID CLSEXT, System.String strConfigKeyword, OSMDomains osmDomains, string metadataAbstract, string metadataPurpose, List<string> additionalTagFields)
         {
             if (featureClassName == "") return null; // name was not passed in 
 
@@ -189,6 +195,14 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         return featureClass;
                     }
+                }
+
+                String illegalCharacters = String.Empty;
+
+                ISQLSyntax sqlSyntax = workspace as ISQLSyntax;
+                if (sqlSyntax != null)
+                {
+                    illegalCharacters = sqlSyntax.GetInvalidCharacters();
                 }
 
                 // assign the class id value if not assigned
@@ -336,6 +350,20 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     //osmTrackChangesField.DefaultValue_2 = 0;
                     //fieldsEdit.AddField((IField)osmTrackChangesField);
 
+                    if (additionalTagFields != null)
+                    {
+                        foreach (string nameOfTag in additionalTagFields)
+                        {
+                            IFieldEdit osmTagAttributeField = new FieldClass() as IFieldEdit;
+                            osmTagAttributeField.Name_2 = OSMToolHelper.convert2AttributeFieldName(nameOfTag, illegalCharacters);
+                            osmTagAttributeField.AliasName_2 = nameOfTag + _resourceManager.GetString("GPTools_OSMGPAttributeSelector_aliasaddition");
+                            osmTagAttributeField.Type_2 = esriFieldType.esriFieldTypeString;
+                            osmTagAttributeField.Length_2 = 100;
+                            osmTagAttributeField.Required_2 = false;
+
+                            fieldsEdit.AddField((IField)osmTagAttributeField);
+                        }
+                    }
 
                     fields = (ESRI.ArcGIS.Geodatabase.IFields)fieldsEdit; // Explicit Cast
                 }
@@ -785,6 +813,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         #endregion
 
         #region"Create OSM Line FeatureClass"
+        internal ESRI.ArcGIS.Geodatabase.IFeatureClass CreateLineFeatureClass(ESRI.ArcGIS.Geodatabase.IWorkspace2 workspace, ESRI.ArcGIS.Geodatabase.IFeatureDataset featureDataset, System.String featureClassName, ESRI.ArcGIS.Geodatabase.IFields fields, ESRI.ArcGIS.esriSystem.UID CLSID, ESRI.ArcGIS.esriSystem.UID CLSEXT, System.String strConfigKeyword, OSMDomains osmDomains, string metadataAbstract, string metadataPurpose)
+        {
+            return CreateLineFeatureClass(workspace, featureDataset, featureClassName, fields, CLSID, CLSEXT, strConfigKeyword, osmDomains, metadataAbstract, metadataPurpose, null);
+        }
+
         ///<summary>Simple helper to create a featureclass in a geodatabase.</summary>
         /// 
         ///<param name="workspace">An IWorkspace2 interface</param>
@@ -817,7 +850,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         ///      keywords, refer to the ArcSDE documentation. When not using an ArcSDE table use an empty 
         ///      string (ex: "").
         ///</remarks>
-        internal ESRI.ArcGIS.Geodatabase.IFeatureClass CreateLineFeatureClass(ESRI.ArcGIS.Geodatabase.IWorkspace2 workspace, ESRI.ArcGIS.Geodatabase.IFeatureDataset featureDataset, System.String featureClassName, ESRI.ArcGIS.Geodatabase.IFields fields, ESRI.ArcGIS.esriSystem.UID CLSID, ESRI.ArcGIS.esriSystem.UID CLSEXT, System.String strConfigKeyword, OSMDomains osmDomains, string metadataAbstract, string metadataPurpose)
+        internal ESRI.ArcGIS.Geodatabase.IFeatureClass CreateLineFeatureClass(ESRI.ArcGIS.Geodatabase.IWorkspace2 workspace, ESRI.ArcGIS.Geodatabase.IFeatureDataset featureDataset, System.String featureClassName, ESRI.ArcGIS.Geodatabase.IFields fields, ESRI.ArcGIS.esriSystem.UID CLSID, ESRI.ArcGIS.esriSystem.UID CLSEXT, System.String strConfigKeyword, OSMDomains osmDomains, string metadataAbstract, string metadataPurpose, List<String> additionalTagFields)
         {
             if (featureClassName == "") return null; // name was not passed in 
 
@@ -836,6 +869,14 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         return featureClass;
                     }
+                }
+
+                String illegalCharacters = String.Empty;
+
+                ISQLSyntax sqlSyntax = workspace as ISQLSyntax;
+                if (sqlSyntax != null)
+                {
+                    illegalCharacters = sqlSyntax.GetInvalidCharacters();
                 }
 
                 // assign the class id value if not assigned
@@ -989,6 +1030,21 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     //osmTrackChangesField.DefaultValue_2 = 0;
                     //fieldsEdit.AddField((IField)osmTrackChangesField);
 
+                    if (additionalTagFields != null)
+                    {
+                        foreach (string nameOfTag in additionalTagFields)
+                        {
+                            IFieldEdit osmTagAttributeField = new FieldClass() as IFieldEdit;
+                            osmTagAttributeField.Name_2 = OSMToolHelper.convert2AttributeFieldName(nameOfTag, illegalCharacters);
+                            osmTagAttributeField.AliasName_2 = nameOfTag + _resourceManager.GetString("GPTools_OSMGPAttributeSelector_aliasaddition");
+                            osmTagAttributeField.Type_2 = esriFieldType.esriFieldTypeString;
+                            osmTagAttributeField.Length_2 = 100;
+                            osmTagAttributeField.Required_2 = false;
+
+                            fieldsEdit.AddField((IField)osmTagAttributeField);
+                        }
+                    }
+
                     fields = (ESRI.ArcGIS.Geodatabase.IFields)fieldsEdit; // Explicit Cast
                 }
 
@@ -1066,6 +1122,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         #endregion
 
         #region"Create OSM Polygon FeatureClass"
+        internal ESRI.ArcGIS.Geodatabase.IFeatureClass CreatePolygonFeatureClass(ESRI.ArcGIS.Geodatabase.IWorkspace2 workspace, ESRI.ArcGIS.Geodatabase.IFeatureDataset featureDataset, System.String featureClassName, ESRI.ArcGIS.Geodatabase.IFields fields, ESRI.ArcGIS.esriSystem.UID CLSID, ESRI.ArcGIS.esriSystem.UID CLSEXT, System.String strConfigKeyword, OSMDomains osmDomains, string metadataAbstract, string metadataPurpose)
+        {
+            return CreatePolygonFeatureClass(workspace, featureDataset, featureClassName, fields, CLSID, CLSEXT, strConfigKeyword, osmDomains, metadataAbstract, metadataPurpose, null);
+        }
+
         ///<summary>Simple helper to create a featureclass in a geodatabase.</summary>
         /// 
         ///<param name="workspace">An IWorkspace2 interface</param>
@@ -1098,7 +1159,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         ///      keywords, refer to the ArcSDE documentation. When not using an ArcSDE table use an empty 
         ///      string (ex: "").
         ///</remarks>
-        internal ESRI.ArcGIS.Geodatabase.IFeatureClass CreatePolygonFeatureClass(ESRI.ArcGIS.Geodatabase.IWorkspace2 workspace, ESRI.ArcGIS.Geodatabase.IFeatureDataset featureDataset, System.String featureClassName, ESRI.ArcGIS.Geodatabase.IFields fields, ESRI.ArcGIS.esriSystem.UID CLSID, ESRI.ArcGIS.esriSystem.UID CLSEXT, System.String strConfigKeyword, OSMDomains osmDomains, string metadataAbstract, string metadataPurpose)
+        internal ESRI.ArcGIS.Geodatabase.IFeatureClass CreatePolygonFeatureClass(ESRI.ArcGIS.Geodatabase.IWorkspace2 workspace, ESRI.ArcGIS.Geodatabase.IFeatureDataset featureDataset, System.String featureClassName, ESRI.ArcGIS.Geodatabase.IFields fields, ESRI.ArcGIS.esriSystem.UID CLSID, ESRI.ArcGIS.esriSystem.UID CLSEXT, System.String strConfigKeyword, OSMDomains osmDomains, string metadataAbstract, string metadataPurpose, List<string> additionalTagFields)
         {
             if (featureClassName == "") return null; // name was not passed in 
 
@@ -1118,6 +1179,15 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         return featureClass;
                     }
+                }
+
+
+                String illegalCharacters = String.Empty;
+
+                ISQLSyntax sqlSyntax = workspace as ISQLSyntax;
+                if (sqlSyntax != null)
+                {
+                    illegalCharacters = sqlSyntax.GetInvalidCharacters();
                 }
 
                 // assign the class id value if not assigned
@@ -1270,7 +1340,20 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     //osmTrackChangesField.DefaultValue_2 = 0;
                     //fieldsEdit.AddField((IField)osmTrackChangesField);
 
+                    if (additionalTagFields != null)
+                    {
+                        foreach (string nameOfTag in additionalTagFields)
+                        {
+                            IFieldEdit osmTagAttributeField = new FieldClass() as IFieldEdit;
+                            osmTagAttributeField.Name_2 = OSMToolHelper.convert2AttributeFieldName(nameOfTag, illegalCharacters);
+                            osmTagAttributeField.AliasName_2 = nameOfTag + _resourceManager.GetString("GPTools_OSMGPAttributeSelector_aliasaddition");
+                            osmTagAttributeField.Type_2 = esriFieldType.esriFieldTypeString;
+                            osmTagAttributeField.Length_2 = 100;
+                            osmTagAttributeField.Required_2 = false;
 
+                            fieldsEdit.AddField((IField)osmTagAttributeField);
+                        }
+                    }
 
                     fields = (ESRI.ArcGIS.Geodatabase.IFields)fieldsEdit; // Explicit Cast
                 }
@@ -1610,7 +1693,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                             pointFeature.set_Value(osmPointIDFieldIndex, currentNode.id);
 
                                             string isSupportingNode = "";
-                                            if (_osmUtility.DoesHaveKeys(currentNode))
+                                            if (_osmUtility.DoesHaveKeys(currentNode.tag))
                                             {
                                                 // if case it has tags I assume that the node presents an entity of it own,
                                                 // hence it is not a supporting node in the context of supporting a way or relation
@@ -1937,8 +2020,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
             return locationString;
         }
-
-
 
         private string GetLocationString(IGPValue gpValue, IFeatureClass featureClass)
         {
@@ -2445,19 +2526,22 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                                             int nodePositionIndex = nodeIDs.IndexOf(nodeOSMIDString, nodePositionDictionary[nodeOSMIDString]);
 
-                                                            // update the new position start search index
-                                                            nodePositionDictionary[nodeOSMIDString] = nodePositionIndex + 1;
-
-                                                            IPoint nodePoint = (IPoint)nodeFeature.ShapeCopy;
-                                                            nodePoint.ID = nodeFeature.OID;
-                                                            wayPointCollection.UpdatePoint(nodePositionIndex, nodePoint);
-
-                                                            // increase the reference counter
-                                                            if (osmWayRefCountFieldIndex != -1)
+                                                            if (nodePositionIndex > -1)
                                                             {
-                                                                nodeFeature.set_Value(osmWayRefCountFieldIndex, ((int)nodeFeature.get_Value(osmWayRefCountFieldIndex)) + 1);
+                                                                // update the new position start search index
+                                                                nodePositionDictionary[nodeOSMIDString] = nodePositionIndex + 1;
 
-                                                                updatePointCursor.UpdateFeature(nodeFeature);
+                                                                IPoint nodePoint = (IPoint)nodeFeature.ShapeCopy;
+                                                                nodePoint.ID = nodeFeature.OID;
+                                                                wayPointCollection.UpdatePoint(nodePositionIndex, nodePoint);
+
+                                                                // increase the reference counter
+                                                                if (osmWayRefCountFieldIndex != -1)
+                                                                {
+                                                                    nodeFeature.set_Value(osmWayRefCountFieldIndex, ((int)nodeFeature.get_Value(osmWayRefCountFieldIndex)) + 1);
+
+                                                                    updatePointCursor.UpdateFeature(nodeFeature);
+                                                                }
                                                             }
 
                                                             if (nodeFeature != null)
@@ -2621,13 +2705,13 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                             {
                                                 if (osmSupportingElementPolylineFieldIndex > -1)
                                                 {
-                                                    if (currentWay.tag == null)
+                                                    if (_osmUtility.DoesHaveKeys(currentWay))
                                                     {
-                                                        featureLineBuffer.set_Value(osmSupportingElementPolylineFieldIndex, "yes");
+                                                        featureLineBuffer.set_Value(osmSupportingElementPolylineFieldIndex, "no");
                                                     }
                                                     else
                                                     {
-                                                        featureLineBuffer.set_Value(osmSupportingElementPolylineFieldIndex, "no");
+                                                        featureLineBuffer.set_Value(osmSupportingElementPolylineFieldIndex, "yes");
                                                     }
                                                 }
                                             }
@@ -2635,13 +2719,13 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                             {
                                                 if (osmSupportingElementPolygonFieldIndex > -1)
                                                 {
-                                                    if (currentWay.tag == null)
+                                                    if (_osmUtility.DoesHaveKeys(currentWay))
                                                     {
-                                                        featurePolygonBuffer.set_Value(osmSupportingElementPolygonFieldIndex, "yes");
+                                                        featurePolygonBuffer.set_Value(osmSupportingElementPolygonFieldIndex, "no");
                                                     }
                                                     else
                                                     {
-                                                        featurePolygonBuffer.set_Value(osmSupportingElementPolygonFieldIndex, "no");
+                                                        featurePolygonBuffer.set_Value(osmSupportingElementPolygonFieldIndex, "yes");
                                                     }
                                                 }
                                             }
@@ -2913,7 +2997,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         }
 
 
-        internal void countOSMStuff(string osmFileLocation, ref int nodeCapacity, ref int wayCapacity, ref int relationCapacity, ref ITrackCancel CancelTracker)
+        internal void countOSMStuff(string osmFileLocation, ref long nodeCapacity, ref long wayCapacity, ref long relationCapacity, ref ITrackCancel CancelTracker)
         {
             using (System.Xml.XmlReader osmFileXmlReader = System.Xml.XmlReader.Create(osmFileLocation))
             {
@@ -2949,6 +3033,162 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
         }
 
+        internal Dictionary<esriGeometryType, List<string>> countOSMCapacityAndTags(string osmFileLocation, ref long nodeCapacity, ref long wayCapacity, ref long relationCapacity, ref ITrackCancel CancelTracker)
+        {
+            Dictionary<esriGeometryType, List<string>> attributesDictionary = new Dictionary<esriGeometryType, List<string>>();
+
+            try
+            {
+                XmlSerializer nodeSerializer = new XmlSerializer(typeof(node));
+                XmlSerializer waySerializer = new XmlSerializer(typeof(way));
+                XmlSerializer relationSerializer = new XmlSerializer(typeof(relation));
+
+                List<string> pointTags = new List<string>();
+                List<string> lineTags = new List<string>();
+                List<string> polygonTags = new List<string>();
+
+                using (System.Xml.XmlReader osmFileXmlReader = System.Xml.XmlReader.Create(osmFileLocation))
+                {
+                    osmFileXmlReader.MoveToContent();
+
+                    while (osmFileXmlReader.Read())
+                    {
+                        if (CancelTracker.Continue())
+                        {
+                            if (osmFileXmlReader.IsStartElement())
+                            {
+                                string currentNodeName = osmFileXmlReader.Name;
+
+                                switch (currentNodeName)
+                                {
+                                    case "node":
+                                        string currentNodeString = osmFileXmlReader.ReadOuterXml();
+                                        // turn the xml node representation into a node class representation
+                                        ESRI.ArcGIS.OSM.OSMClassExtension.node currentNode = null;
+                                        using (StringReader nodeReader = new System.IO.StringReader(currentNodeString))
+                                        {
+                                            try
+                                            {
+                                                currentNode = nodeSerializer.Deserialize(nodeReader) as ESRI.ArcGIS.OSM.OSMClassExtension.node;
+                                            }
+                                            catch { }
+                                        }
+
+                                        if (currentNode != null)
+                                        {
+                                            if (currentNode.tag != null)
+                                            {
+                                                foreach (tag currentTag in currentNode.tag)
+                                                {
+                                                    if (!pointTags.Contains(currentTag.k))
+                                                    {
+                                                        pointTags.Add(currentTag.k);
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        nodeCapacity++;
+                                        break;
+                                    case "way":
+                                        wayCapacity++;
+
+                                        string currentWayString = osmFileXmlReader.ReadOuterXml();
+                                        // turn the xml node representation into a node class representation
+                                        ESRI.ArcGIS.OSM.OSMClassExtension.way currentWay = null;
+                                        using (StringReader wayReader = new System.IO.StringReader(currentWayString))
+                                        {
+                                            try
+                                            {
+                                                currentWay = waySerializer.Deserialize(wayReader) as ESRI.ArcGIS.OSM.OSMClassExtension.way;
+                                            }
+                                            catch { }
+                                        }
+
+                                        if (currentWay != null)
+                                        {
+                                            if (currentWay.tag != null)
+                                            {
+                                                foreach (tag currentTag in currentWay.tag)
+                                                {
+                                                    if (OSMToolHelper.IsThisWayALine(currentWay) && !lineTags.Contains(currentTag.k))
+                                                    {
+                                                        lineTags.Add(currentTag.k);
+                                                    }
+                                                    else if (!polygonTags.Contains(currentTag.k))
+                                                    {
+                                                        polygonTags.Add(currentTag.k);
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        break;
+                                    case "relation":
+                                        relationCapacity++;
+
+                                        // for relation let's NOT do an exhaustive determine if we have a polygon or maybe a multipart polyline
+                                        // or maybe a super relation
+                                        string currentRelationString = osmFileXmlReader.ReadOuterXml();
+
+                                        ESRI.ArcGIS.OSM.OSMClassExtension.relation currentRelation = null;
+                                        using (StringReader relationReader = new System.IO.StringReader(currentRelationString))
+                                        {
+                                            try
+                                            {
+                                                currentRelation = relationSerializer.Deserialize(relationReader) as ESRI.ArcGIS.OSM.OSMClassExtension.relation;
+                                            }
+                                            catch { }
+                                        }
+
+                                        if (currentRelation != null)
+                                        {
+                                            if (currentRelation.Items != null)
+                                            {
+                                                bool polygonTagDetected = false;
+
+                                                foreach (var item in currentRelation.Items)
+                                                {
+                                                    if (item is ESRI.ArcGIS.OSM.OSMClassExtension.tag)
+                                                    {
+                                                        ESRI.ArcGIS.OSM.OSMClassExtension.tag currentTag = item as ESRI.ArcGIS.OSM.OSMClassExtension.tag;
+
+                                                        if (polygonTagDetected)
+                                                        {
+                                                            if (!polygonTags.Contains(currentTag.k))
+                                                            {
+                                                                polygonTags.Add(currentTag.k);
+                                                            }
+                                                        }
+                                                        else if (currentTag.k.ToUpper().Equals("TYPE"))
+                                                        {
+                                                            if ((currentTag.v.ToUpper().Equals("POLYGON") || currentTag.v.ToUpper().Equals("MULTIPOLYGON")))
+                                                            {
+                                                                polygonTagDetected = true;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+
+                    osmFileXmlReader.Close();
+                }
+
+                attributesDictionary.Add(esriGeometryType.esriGeometryPoint, pointTags);
+                attributesDictionary.Add(esriGeometryType.esriGeometryPolyline, lineTags);
+                attributesDictionary.Add(esriGeometryType.esriGeometryPolygon, polygonTags);
+            }
+
+            catch { }
+
+            return attributesDictionary;
+        }
 
         internal List<string> loadOSMRelations(string osmFileLocation, ref ITrackCancel TrackCancel, ref IGPMessages message, IGPValue targetGPValue, IFeatureClass osmPointFeatureClass, IFeatureClass osmLineFeatureClass, IFeatureClass osmPolygonFeatureClass, int relationCapacity, ITable relationTable, OSMDomains availableDomains, bool fastLoad, bool checkForExisting)
         {
@@ -3133,6 +3373,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                             relationDebugCount = relationDebugCount + 1;
                                             esriGeometryType detectedGeometryType = determineRelationGeometryType(osmLineFeatureClass, osmPolygonFeatureClass, relationTable, currentRelation);
 
+                                            #region Check if already exists when syncing
                                             if (checkForExisting)
                                             {
                                                 switch (detectedGeometryType)
@@ -3193,6 +3434,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                         break;
                                                 }
                                             }
+                                            #endregion
 
                                             List<tag> relationTagList = new List<tag>();
                                             List<member> relationMemberList = new List<member>();
@@ -3222,11 +3464,25 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                     {
                                                         case memberType.way:
 
+                                                            // check the referenced item on the relation
+                                                            // - the referenced way still be either line or polygon
+                                                            bool isPolyline = true;
+                                                            if (detectedGeometryType == esriGeometryType.esriGeometryPolyline)
+                                                            {
+                                                                isPolyline = true;
+                                                            }
+                                                            else 
+                                                            {
+                                                                isPolyline =  IsThisWayALine(memberItem.@ref, osmLineFeatureClass, lineSQLIdentifier, osmPolygonFeatureClass, polygonSQLIdentifier); 
+                                                            }
+
                                                             if (!wayList.ContainsKey(memberItem.@ref))
-                                                                wayList.Add(memberItem.@ref, memberItem.role);
+                                                                if (isPolyline)
+                                                                    wayList.Add(memberItem.@ref, "line" + "_" + memberItem.role);
+                                                                else
+                                                                    wayList.Add(memberItem.@ref, "polygon" + "_" + memberItem.role);
 
-
-                                                            if (IsThisWayALine(memberItem.@ref, osmLineFeatureClass, lineSQLIdentifier, osmPolygonFeatureClass, polygonSQLIdentifier))
+                                                            if (isPolyline)
                                                             {
                                                                 if (osmLineList == null)
                                                                 {
@@ -3298,6 +3554,24 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                             break;
                                                         case memberType.relation:
 
+                                                            // check the referenced item on the relation
+                                                            // - the referenced relation still be either line or polygon
+                                                            isPolyline = true;
+                                                            if (detectedGeometryType == esriGeometryType.esriGeometryPolyline)
+                                                            {
+                                                                isPolyline = true;
+                                                            }
+                                                            else
+                                                            {
+                                                                isPolyline = IsThisWayALine(memberItem.@ref, osmLineFeatureClass, lineSQLIdentifier, osmPolygonFeatureClass, polygonSQLIdentifier);
+                                                            }
+
+                                                            if (!wayList.ContainsKey(memberItem.@ref))
+                                                                if (isPolyline)
+                                                                    wayList.Add(memberItem.@ref, "line" + "_" + memberItem.role);
+                                                                else
+                                                                    wayList.Add(memberItem.@ref, "polygon" + "_" + memberItem.role);
+
                                                             if (osmRelationList == null)
                                                             {
                                                                 osmRelationList = new List<OSMRelation>();
@@ -3328,18 +3602,18 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                                 IPolygon relationMPPolygon = new PolygonClass();
                                                 relationMPPolygon.SpatialReference = ((IGeoDataset)osmPolygonFeatureClass).SpatialReference;
-                                                ((IPointIDAware)relationMPPolygon).PointIDAware = true;
 
                                                 ISegmentCollection relationPolygonGeometryCollection = relationMPPolygon as ISegmentCollection;
 
                                                 IQueryFilter osmIDQueryFilter = new QueryFilterClass();
                                                 string sqlPolyOSMID = osmPolygonFeatureClass.SqlIdentifier("OSMID");
+                                                string sqlLineOSMID = osmLineFeatureClass.SqlIdentifier("OSMID");
                                                 object missing = Type.Missing;
                                                 bool relationComplete = true;
 
                                                 // loop through the list of referenced ways that are listed in a relation
                                                 // for each of the items we need to make a decision if they have merit to qualify as stand-alone features
-                                                // due to the presence of meaningful attributes (tags)
+                                                // due to the presence of meaningful attributes (tags) <-- changed TE 10/14/2014
                                                 foreach (KeyValuePair<string, string> wayKey in wayList)
                                                 {
                                                     if (relationComplete == false)
@@ -3350,13 +3624,38 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                         return missingRelations;
                                                     }
 
-                                                    osmIDQueryFilter.WhereClause = sqlPolyOSMID + " = '" + wayKey.Key + "'";
+                                                    string wayType = wayKey.Value.Split(new Char[]{'_'})[0];
+
+                                                    switch (wayType)
+                                                    {
+                                                        case "line":
+                                                            osmIDQueryFilter.WhereClause = sqlLineOSMID + " = '" + wayKey.Key + "'";
+                                                            break;
+                                                        case "polygon":
+                                                            osmIDQueryFilter.WhereClause = sqlPolyOSMID + " = '" + wayKey.Key + "'";
+                                                            break;
+                                                        default:
+                                                            break;
+                                                    }
+                                                    
 
                                                     System.Diagnostics.Debug.WriteLine("Relation (Polygon) #: " + relationDebugCount + " :___: " + currentRelation.id + " :___: " + wayKey.Key);
 
                                                     using (ComReleaser relationComReleaser = new ComReleaser())
                                                     {
-                                                        IFeatureCursor featureCursor = osmPolygonFeatureClass.Search(osmIDQueryFilter, false);
+                                                        IFeatureCursor featureCursor = null;
+                                                        switch (wayType)
+                                                        {
+                                                            case "line":
+                                                                featureCursor = osmLineFeatureClass.Search(osmIDQueryFilter, false);
+                                                                break;
+                                                            case "polygon":
+                                                                featureCursor = osmPolygonFeatureClass.Search(osmIDQueryFilter, false);
+                                                                break;
+                                                            default:
+                                                                break;
+                                                        }
+                                                            
                                                         relationComReleaser.ManageLifetime(featureCursor);
 
                                                         IFeature partFeature = featureCursor.NextFeature();
@@ -3375,89 +3674,95 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                                     // add it to the new geometry and mark the added geometry as a supporting element
                                                                     relationPolygonGeometryCollection.AddSegmentCollection((ISegmentCollection)ringCollection.get_Geometry(0));
 
+                                                                    // TE - 10/14/2014 ( 1/5/2015 -- still under consideration)
+                                                                    // the initial assessment if the feature is a supporting element based on the existence of tags
+                                                                    // has been made, at this point I don't think there is a reason to reassess the nature of feature
+                                                                    // based on its appearance in a relation
                                                                     if (osmSupportingElementPolygonFieldIndex > -1)
                                                                     {
-                                                                        // if the member of a relation has the role of "inner" and it has tags, then let's keep it
-                                                                        // as a standalone feature as well
-                                                                        // the geometry is then a hole in the relation but due to the tags it also has merits to be
-                                                                        // considered a stand-alone feature
-                                                                        if (wayKey.Value.ToLower().Equals("inner"))
+                                                                        string roleType = wayKey.Value.Split(new Char[] { '_' })[1];
+
+                                                                        // if the member of a relation has the role of "outer" and the tags are the same as that of the 
+                                                                        // of the relation parent, then mark it as a supporting element
+                                                                        if (roleType.ToLower().Equals("outer"))
                                                                         {
-                                                                            if (!_osmUtility.DoesHaveKeys(partFeature, tagCollectionPolygonFieldIndex, null))
+                                                                            if (_osmUtility.AreTagsTheSame(relationTagList, partFeature, tagCollectionPolygonFieldIndex, null))
                                                                             {
                                                                                 partFeature.set_Value(osmSupportingElementPolygonFieldIndex, "yes");
                                                                             }
                                                                         }
-                                                                        else
-                                                                        {
-                                                                            // relation member without an explicit role or the role of "outer" are turned into
-                                                                            // supporting features if they don't have relevant attribute
-                                                                            if (!_osmUtility.DoesHaveKeys(partFeature, tagCollectionPolylineFieldIndex, null))
-                                                                            {
-                                                                                partFeature.set_Value(osmSupportingElementPolygonFieldIndex, "yes");
-                                                                            }
-                                                                        }
-                                                                    }
-
-                                                                    partFeature.Store();
-                                                                }
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            // it still can be a line geometry that will be pieced together into a polygon
-                                                            IFeatureCursor lineFeatureCursor = osmLineFeatureClass.Search(osmIDQueryFilter, false);
-                                                            relationComReleaser.ManageLifetime(lineFeatureCursor);
-
-                                                            partFeature = lineFeatureCursor.NextFeature();
-
-                                                            if (partFeature != null)
-                                                            {
-                                                                IGeometryCollection ringCollection = partFeature.Shape as IGeometryCollection;
-
-                                                                // test for available content in the geometry collection  
-                                                                if (ringCollection.GeometryCount > 0)
-                                                                {
-                                                                    // test if we dealing with a valid geometry
-                                                                    if (ringCollection.get_Geometry(0).IsEmpty == false)
-                                                                    {
-                                                                        // add it to the new geometry and mark the added geometry as a supporting element
-                                                                        relationPolygonGeometryCollection.AddSegmentCollection((ISegmentCollection)ringCollection.get_Geometry(0));
-
-                                                                        if (osmSupportingElementPolylineFieldIndex > -1)
-                                                                        {
-                                                                            // if the member of a relation has the role of "inner" and it has tags, then let's keep it
-                                                                            // as a standalone feature as well
-                                                                            // the geometry is then a hole in the relation but due to the tags it also has merits to be
-                                                                            // considered a stand-alone feature
-                                                                            if (wayKey.Value.ToLower().Equals("inner"))
-                                                                            {
-                                                                                if (!_osmUtility.DoesHaveKeys(partFeature, tagCollectionPolylineFieldIndex, null))
-                                                                                {
-                                                                                    partFeature.set_Value(osmSupportingElementPolylineFieldIndex, "yes");
-                                                                                }
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                // relation member without an explicit role or the role of "outer" are turned into
-                                                                                // supporting features if they don't have relevant attribute
-                                                                                if (!_osmUtility.DoesHaveKeys(partFeature, tagCollectionPolylineFieldIndex, null))
-                                                                                {
-                                                                                    partFeature.set_Value(osmSupportingElementPolylineFieldIndex, "yes");
-                                                                                }
-                                                                            }
-                                                                        }
+                                                                        //else
+                                                                        //{
+                                                                        //    // relation member without an explicit role or the role of "outer" are turned into
+                                                                        //    // supporting features if they don't have relevant attribute
+                                                                        //    if (!_osmUtility.DoesHaveKeys(partFeature, tagCollectionPolylineFieldIndex, null))
+                                                                        //    {
+                                                                        //        partFeature.set_Value(osmSupportingElementPolygonFieldIndex, "yes");
+                                                                        //    }
+                                                                        //}
 
                                                                         partFeature.Store();
+
                                                                     }
                                                                 }
+                                                            }
+                                                        //}
+                                                        //else
+                                                        //{
+                                                        //    // it still can be a line geometry that will be pieced together into a polygon
+                                                        //    IFeatureCursor lineFeatureCursor = osmLineFeatureClass.Search(osmIDQueryFilter, false);
+                                                        //    relationComReleaser.ManageLifetime(lineFeatureCursor);
+
+                                                        //    partFeature = lineFeatureCursor.NextFeature();
+
+                                                        //    if (partFeature != null)
+                                                        //    {
+                                                        //        IGeometryCollection ringCollection = partFeature.Shape as IGeometryCollection;
+
+                                                        //        // test for available content in the geometry collection  
+                                                        //        if (ringCollection.GeometryCount > 0)
+                                                        //        {
+                                                        //            // test if we dealing with a valid geometry
+                                                        //            if (ringCollection.get_Geometry(0).IsEmpty == false)
+                                                        //            {
+                                                        //                // add it to the new geometry and mark the added geometry as a supporting element
+                                                        //                relationPolygonGeometryCollection.AddSegmentCollection((ISegmentCollection)ringCollection.get_Geometry(0));
+
+                                                        //                // TE - 10/14/2014 -- see comment above
+                                                        //                //if (osmSupportingElementPolylineFieldIndex > -1)
+                                                        //                //{
+                                                        //                //    // if the member of a relation has the role of "inner" and it has tags, then let's keep it
+                                                        //                //    // as a standalone feature as well
+                                                        //                //    // the geometry is then a hole in the relation but due to the tags it also has merits to be
+                                                        //                //    // considered a stand-alone feature
+                                                        //                //    if (wayKey.Value.ToLower().Equals("inner"))
+                                                        //                //    {
+                                                        //                //        if (!_osmUtility.DoesHaveKeys(partFeature, tagCollectionPolylineFieldIndex, null))
+                                                        //                //        {
+                                                        //                //            partFeature.set_Value(osmSupportingElementPolylineFieldIndex, "yes");
+                                                        //                //        }
+                                                        //                //    }
+                                                        //                //    else
+                                                        //                //    {
+                                                        //                //        // relation member without an explicit role or the role of "outer" are turned into
+                                                        //                //        // supporting features if they don't have relevant attribute
+                                                        //                //        if (!_osmUtility.DoesHaveKeys(partFeature, tagCollectionPolylineFieldIndex, null))
+                                                        //                //        {
+                                                        //                //            partFeature.set_Value(osmSupportingElementPolylineFieldIndex, "yes");
+                                                        //                //        }
+                                                        //                //    }
+                                                        //                //}
+
+                                                        //                //partFeature.Store();
+                                                        //            }
+                                                        //        }
                                                             }
                                                             else
                                                             {
                                                                 relationComplete = false;
                                                                 continue;
                                                             }
-                                                        }
+                                                        //}
                                                     }
                                                 }
 
@@ -3573,7 +3878,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                                 IPolyline relationMPPolyline = new PolylineClass();
                                                 relationMPPolyline.SpatialReference = ((IGeoDataset)osmLineFeatureClass).SpatialReference;
-                                                ((IPointIDAware)relationMPPolyline).PointIDAware = true;
 
                                                 IGeometryCollection relationPolylineGeometryCollection = relationMPPolyline as IGeometryCollection;
 
@@ -3607,15 +3911,24 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                                 IGeometryCollection pathCollection = partFeature.Shape as IGeometryCollection;
                                                                 relationPolylineGeometryCollection.AddGeometry(pathCollection.get_Geometry(0), ref missing, ref missing);
 
+                                                                // TE - 10/14/2014 - see comment above
                                                                 if (osmSupportingElementPolylineFieldIndex > -1)
                                                                 {
-                                                                    if (!_osmUtility.DoesHaveKeys(partFeature, tagCollectionPolylineFieldIndex, null))
+                                                                    string roleType = wayKey.Value.Split(new Char[] { '_' })[1];
+
+                                                                    // if the member of a relation has the role of "outer" and the tags are the same as that of the 
+                                                                    // of the relation parent, then mark it as a supporting element
+                                                                    if (roleType.ToLower().Equals("outer"))
                                                                     {
-                                                                        partFeature.set_Value(osmSupportingElementPolylineFieldIndex, "yes");
+                                                                        if (!_osmUtility.AreTagsTheSame(relationTagList, partFeature, tagCollectionPolylineFieldIndex, null))
+                                                                        {
+                                                                            partFeature.set_Value(osmSupportingElementPolylineFieldIndex, "yes");
+                                                                        }
                                                                     }
                                                                 }
 
                                                                 partFeature.Store();
+
                                                             }
                                                         }
                                                     }
@@ -3992,8 +4305,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
         }
 
-
-        private bool IsThisWayALine(string osmID, IFeatureClass lineFeatureClass, string lineQueryIdentifier, IFeatureClass polygonFeatureClass, string polygonQueryIdentifier)
+        internal bool IsThisWayALine(string osmID, IFeatureClass lineFeatureClass, string lineQueryIdentifier, IFeatureClass polygonFeatureClass, string polygonQueryIdentifier)
         {
             bool isALine = true;
 
@@ -4024,6 +4336,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             try
             {
                 int osmIDPolygonFieldIndex = polygonFeatureClass.FindField("OSMID");
+                int osmSupportingElementFieldIndex = polygonFeatureClass.FindField("osmSupportingElement");
                 string sqlPolyOSMID = polygonFeatureClass.SqlIdentifier("OSMID");
 
                 foreach (var relationItem in currentRelation.Items)
@@ -4036,9 +4349,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         {
                             using (ComReleaser comReleaser = new ComReleaser())
                             {
-                                osmIDQueryFilter.WhereClause = sqlPolyOSMID + " = " + currentRelationMember.@ref;
+                                osmIDQueryFilter.WhereClause = polygonFeatureClass.WhereClauseByExtensionVersion(currentRelationMember.@ref, "OSMID", 2);
 
-                                IFeatureCursor featureCursor = polygonFeatureClass.Search(osmIDQueryFilter, false);
+                                IFeatureCursor featureCursor = polygonFeatureClass.Update(osmIDQueryFilter, false);
                                 comReleaser.ManageLifetime(featureCursor);
 
                                 IFeature foundPolygonFeature = featureCursor.NextFeature();
@@ -4047,6 +4360,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                     continue;
 
                                 tag[] foundTags = _osmUtility.retrieveOSMTags(foundPolygonFeature, osmIDPolygonFieldIndex, ((IDataset)polygonFeatureClass).Workspace);
+
+                                // set this feature from which we transfer to become a supporting element
+                                if (osmSupportingElementFieldIndex > -1)
+                                    foundPolygonFeature.set_Value(osmSupportingElementFieldIndex, "yes");
+
+                                featureCursor.UpdateFeature(foundPolygonFeature);
 
                                 foreach (tag currentWayTag in foundTags)
                                 {
@@ -4082,7 +4401,49 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
             return mergedTagList.Values.ToList();
         }
+     
+        public static string convert2OSMKey(string attributeFieldName, string IllegalCharacters)
+        {
+            string osmKey = attributeFieldName.Substring(4);
 
+            // older encodings until version 2.0
+            osmKey = osmKey.Replace("__", ":");
+            osmKey = osmKey.Replace("_b_", " ");
+            osmKey = osmKey.Replace("_d_", ".");
+            osmKey = osmKey.Replace("_c_", ",");
+            osmKey = osmKey.Replace("_sc_", ";");
+
+            // ensure to safely encode all illegal SQL characters
+            if (!String.IsNullOrEmpty(IllegalCharacters))
+            {
+                char[] illegals = IllegalCharacters.ToCharArray();
+                foreach (char offender in illegals)
+                {
+                    osmKey = osmKey.Replace("_" + ((int)offender).ToString() + "_", offender.ToString());
+                }
+            }
+
+            return osmKey.ToString();
+        }
+
+        public static string convert2AttributeFieldName(string OSMKey, string IllegalCharacters)
+        {
+            string attributeFieldName = OSMKey;
+
+            // ensure to safely encode all illegal SQL characters
+            if (!String.IsNullOrEmpty(IllegalCharacters))
+            {
+                char[] illegals = IllegalCharacters.ToCharArray();
+                foreach (char offender in illegals)
+                {
+                    attributeFieldName = attributeFieldName.Replace(offender.ToString(), "_" + ((int)offender).ToString() + "_");
+                }
+            }
+
+            attributeFieldName = "osm_" + attributeFieldName;
+
+            return attributeFieldName;
+        }
 
         public static bool IsThisWayALine(way currentway)
         {
@@ -4124,6 +4485,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         isCoastline = true;
                         isALine = true;
+                        return isALine;
                     }
 
                     if (currentway.tag.Contains(highwayTag, new TagKeyComparer()))
@@ -4147,6 +4509,70 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
 
             return isALine;
+        }
+
+        // split to osm element ids into manageable chunks of db requests
+        internal List<string> SplitOSMIDRequests<T>(List<T> osmElements, int extensionVersion) where T : class
+        {
+            List<string> osmIDRequests = new List<string>();
+
+            if (osmElements == null)
+                return osmIDRequests;
+
+            if (osmElements.Count == 0)
+                return osmIDRequests;
+
+            try
+            {
+                StringBuilder newQueryString = new StringBuilder();
+                newQueryString.Append("(");
+
+                foreach (T currentElement in osmElements)
+                {
+                    string elementID = String.Empty;
+                    if (currentElement is node)
+                        elementID = (currentElement as node).id;
+                    else if (currentElement is way)
+                        elementID = (currentElement as way).id;
+                    else if (currentElement is relation)
+                        elementID = (currentElement as relation).id;
+
+                    if (extensionVersion == 1)
+                        newQueryString.Append(elementID + ",");
+                    else if (extensionVersion == 2)
+                    {
+                        newQueryString.Append("'");
+                        newQueryString.Append(elementID);
+                        newQueryString.Append("'");
+                        newQueryString.Append(",");
+                    }
+
+                    // not too sure about this hard coded length of 2048
+                    // since the SQL implementation is data source dependent
+                    if (newQueryString.Length > 2048)
+                    {
+                        newQueryString = newQueryString.Remove(newQueryString.Length - 1, 1);
+
+                        newQueryString.Append(")");
+                        osmIDRequests.Add(newQueryString.ToString());
+
+                        newQueryString = new StringBuilder();
+                        newQueryString.Append("(");
+                    }
+                }
+
+                if (newQueryString.Length > 2)
+                {
+                    newQueryString = newQueryString.Remove(newQueryString.Length - 1, 1);
+                    newQueryString.Append(")");
+                    osmIDRequests.Add(newQueryString.ToString());
+                }
+            }
+            catch
+            {
+            }
+
+            return osmIDRequests;
         }
 
         // split to node ids into manageable chunks of db requests
@@ -4177,9 +4603,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         newQueryString.Append(",");
                     }
 
-                    // not too sure about this hard coded length of 6500
+                    // not too sure about this hard coded length of 2048
                     // since the SQL implementation is data source dependent
-                    if (newQueryString.Length > 6500)
+                    if (newQueryString.Length > 2048)
                     {
                         newQueryString = newQueryString.Remove(newQueryString.Length - 1, 1);
 
@@ -4287,6 +4713,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     if (lineFeatureClass != null)
                     {
                         osmIDQueryFilter.WhereClause = lineFeatureClass.WhereClauseByExtensionVersion(osmIDtoFind, "OSMID", 2);
+                        osmIDQueryFilter.SubFields = lineFeatureClass.OIDFieldName + "," + lineFeatureClass.ShapeFieldName;
+
                         IFeatureCursor lineFeatureCursor = lineFeatureClass.Search(osmIDQueryFilter, false);
                         comReleaser.ManageLifetime(lineFeatureCursor);
 
@@ -4298,6 +4726,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         }
 
                         osmIDQueryFilter.WhereClause = polygonFeatureClass.WhereClauseByExtensionVersion(osmIDtoFind, "OSMID", 2);
+                        osmIDQueryFilter.SubFields = polygonFeatureClass.OIDFieldName + "," + polygonFeatureClass.ShapeFieldName;
+
                         IFeatureCursor polygonFeatureCursor = polygonFeatureClass.Search(osmIDQueryFilter, false);
                         comReleaser.ManageLifetime(polygonFeatureCursor);
 
@@ -4309,6 +4739,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         }
 
                         osmIDQueryFilter.WhereClause = relationTable.WhereClauseByExtensionVersion(osmIDtoFind, "OSMID", 2);
+                        osmIDQueryFilter.SubFields = relationTable.OIDFieldName;
+
                         ICursor relationCursor = relationTable.Search(osmIDQueryFilter, false);
                         comReleaser.ManageLifetime(relationCursor);
 
@@ -4341,26 +4773,46 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             string geoType = String.Empty;
             bool isUniform = true;
 
+            if (currentRelation.Items != null)
+            {
+                foreach (var item in currentRelation.Items)
+                {
+                    if (item is ESRI.ArcGIS.OSM.OSMClassExtension.tag)
+                    {
+                        ESRI.ArcGIS.OSM.OSMClassExtension.tag currentTag = item as ESRI.ArcGIS.OSM.OSMClassExtension.tag;
+
+                        if (currentTag.k.ToUpper().Equals("TYPE"))
+                        {
+                            if ((currentTag.v.ToUpper().Equals("POLYGON") || currentTag.v.ToUpper().Equals("MULTIPOLYGON") || currentTag.v.ToUpper().Equals("BOUNDARY")))
+                            {
+                                detectedGeometryType = esriGeometryType.esriGeometryPolygon;
+                                // now , it could be argued that the descriptive tag of 'polygon' is not sufficient to ensure 
+                                // or guarantuee that the geometry is indeed a 'polygon'
+                                return detectedGeometryType;
+                            }
+                        }
+                        // consider administrative boundaries as polygonal in their type
+                        else if (currentTag.k.ToUpper().Equals("BOUNDARY"))
+                        {
+                            if ((currentTag.v.ToUpper().Equals("ADMINISTRATIVE")))
+                            {
+                                detectedGeometryType = esriGeometryType.esriGeometryPolygon;
+                                // now , it could be argued that the descriptive tag of 'polygon' is not sufficient to ensure 
+                                // or guarantuee that the geometry is indeed a 'polygon'
+                                return detectedGeometryType;
+                            }
+                        }
+                    }
+                }
+            }
+
             try
             {
                 if (currentRelation.Items != null)
                 {
                     foreach (var item in currentRelation.Items)
                     {
-                        if (item is ESRI.ArcGIS.OSM.OSMClassExtension.tag)
-                        {
-                            ESRI.ArcGIS.OSM.OSMClassExtension.tag currentTag = item as ESRI.ArcGIS.OSM.OSMClassExtension.tag;
-
-                            if (currentTag.k.ToUpper().Equals("TYPE"))
-                            {
-                                if ((currentTag.v.ToUpper().Equals("POLYGON") || currentTag.v.ToUpper().Equals("MULTIPOLYGON")))
-                                {
-                                    detectedGeometryType = esriGeometryType.esriGeometryPolygon;
-                                    break;
-                                }
-                            }
-                        }
-                        else if (item is ESRI.ArcGIS.OSM.OSMClassExtension.member)
+                        if (item is ESRI.ArcGIS.OSM.OSMClassExtension.member)
                         {
                             // test if ways and nodes are mixed
                             if (String.IsNullOrEmpty(geoType))
@@ -4372,6 +4824,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 if (geoType != ((ESRI.ArcGIS.OSM.OSMClassExtension.member)item).type.ToString())
                                 {
                                     isUniform = false;
+                                    break;
                                 }
                             }
 
@@ -4387,6 +4840,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 foundGeometry == osmRelationGeometryType.osmHybridGeometry)
                             {
                                 isUniform = false;
+                                break;
                             }
                         }
                     }
@@ -4402,31 +4856,31 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         detectedGeometryType = esriGeometryType.esriGeometryNull;
                     }
-                }
-                else if (detectedGeometryType != esriGeometryType.esriGeometryPolygon) // if there was no tag identifying a multipart polygon we need to "walk" it to find what it is
-                {
-                    osmRelationGeometryType walkedGeometryType = walkRelationGeometry(osmLineFeatureClass, osmPolygonFeatureClass, relationTable, currentRelation);
-
-                    switch (walkedGeometryType)
+                    else if (detectedGeometryType != esriGeometryType.esriGeometryPolygon) // if there was no tag identifying a multipart polygon we need to "walk" it to find what it is
                     {
-                        case osmRelationGeometryType.osmPoint:
-                            detectedGeometryType = esriGeometryType.esriGeometryPoint;
-                            break;
-                        case osmRelationGeometryType.osmPolyline:
-                            detectedGeometryType = esriGeometryType.esriGeometryPolyline;
-                            break;
-                        case osmRelationGeometryType.osmPolygon:
-                            detectedGeometryType = esriGeometryType.esriGeometryPolygon;
-                            break;
-                        case osmRelationGeometryType.osmHybridGeometry:
-                            detectedGeometryType = esriGeometryType.esriGeometryNull;
-                            break;
-                        case osmRelationGeometryType.osmUnknownGeometry:
-                            detectedGeometryType = esriGeometryType.esriGeometryNull;
-                            break;
-                        default:
-                            detectedGeometryType = esriGeometryType.esriGeometryNull;
-                            break;
+                        osmRelationGeometryType walkedGeometryType = walkRelationGeometry(osmLineFeatureClass, osmPolygonFeatureClass, relationTable, currentRelation);
+
+                        switch (walkedGeometryType)
+                        {
+                            case osmRelationGeometryType.osmPoint:
+                                detectedGeometryType = esriGeometryType.esriGeometryPoint;
+                                break;
+                            case osmRelationGeometryType.osmPolyline:
+                                detectedGeometryType = esriGeometryType.esriGeometryPolyline;
+                                break;
+                            case osmRelationGeometryType.osmPolygon:
+                                detectedGeometryType = esriGeometryType.esriGeometryPolygon;
+                                break;
+                            case osmRelationGeometryType.osmHybridGeometry:
+                                detectedGeometryType = esriGeometryType.esriGeometryNull;
+                                break;
+                            case osmRelationGeometryType.osmUnknownGeometry:
+                                detectedGeometryType = esriGeometryType.esriGeometryNull;
+                                break;
+                            default:
+                                detectedGeometryType = esriGeometryType.esriGeometryNull;
+                                break;
+                        }
                     }
                 }
             }
@@ -4463,6 +4917,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             if (osmLineFeatureClass != null)
                             {
                                 osmIDQueryFilter.WhereClause = osmLineFeatureClass.WhereClauseByExtensionVersion(memberItem.@ref, "OSMID", 2);
+                                osmIDQueryFilter.SubFields = osmLineFeatureClass.OIDFieldName + "," + osmLineFeatureClass.ShapeFieldName;
+
                                 IFeatureCursor lineFeatureCursor = osmLineFeatureClass.Search(osmIDQueryFilter, false);
                                 comReleaser.ManageLifetime(lineFeatureCursor);
 
@@ -4493,9 +4949,14 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                     {
                                         nodeCountDictionary.Add(lastPointID, 1);
                                     }
+
+                                    // if we found a match in the lines so there is no need to check in the polygons
+                                    continue;
                                 }
 
                                 osmIDQueryFilter.WhereClause = osmPolygonFeatureClass.WhereClauseByExtensionVersion(memberItem.@ref, "OSMID", 2);
+                                osmIDQueryFilter.SubFields = osmPolygonFeatureClass.OIDFieldName + "," + osmPolygonFeatureClass.ShapeFieldName;
+
                                 IFeatureCursor polygonFeatureCursor = osmPolygonFeatureClass.Search(osmIDQueryFilter, false);
                                 comReleaser.ManageLifetime(polygonFeatureCursor);
 
@@ -4515,9 +4976,14 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                     {
                                         nodeCountDictionary.Add(firstPointID, 2);
                                     }
+
+                                    // if we found a match in the polygons go to the next item
+                                    continue;
                                 }
 
                                 osmIDQueryFilter.WhereClause = relationTable.WhereClauseByExtensionVersion(memberItem.@ref, "OSMID", 2);
+                                osmIDQueryFilter.SubFields = relationTable.OIDFieldName;
+
                                 ICursor relationCursor = relationTable.Search(osmIDQueryFilter, false);
                                 comReleaser.ManageLifetime(relationCursor);
 

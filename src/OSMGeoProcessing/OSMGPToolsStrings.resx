@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="GPTools_factoryname" xml:space="preserve">
     <value>OpenStreetMap Tools</value>
@@ -833,5 +833,38 @@
   </data>
   <data name="GPTools_Utility_RelationLoadError" xml:space="preserve">
     <value>General error in the relation loading routine ({0}).</value>
+  </data>
+  <data name="GPTools_OSMGPUpload_username" xml:space="preserve">
+    <value>User name</value>
+  </data>
+  <data name="GPTools_OSMGPUpload_password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_createmodify_message" xml:space="preserve">
+    <value>{0} {1} considered for creation or update.</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_delete_message" xml:space="preserve">
+    <value>{0} {1} considered for deletion.</value>
+  </data>
+  <data name="GPTools_OSM_nodes" xml:space="preserve">
+    <value>nodes</value>
+  </data>
+  <data name="GPTools_OSM_ways" xml:space="preserve">
+    <value>ways</value>
+  </data>
+  <data name="GPTools_OSM_relations" xml:space="preserve">
+    <value>relations</value>
+  </data>
+  <data name="GPTools_OSM_superrelations" xml:space="preserve">
+    <value>super-relations</value>
+  </data>
+  <data name="GPTools_OSMGPDiffLoader_loadtime_message" xml:space="preserve">
+    <value>The diff loaded in {0} minutes.</value>
+  </data>
+  <data name="GPTools_OSMFileLoader_schemaCategory" xml:space="preserve">
+    <value>Adjust input schema</value>
+  </data>
+  <data name="GPTools_OSMFileLoader_attributeSchemaSelection" xml:space="preserve">
+    <value>Add OSM tag keys to schema</value>
   </data>
 </root>

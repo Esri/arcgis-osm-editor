@@ -32,7 +32,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         Dictionary<string, OSMToolHelper.simplePointRef> osmNodeDictionary = null; 
 
         string m_DisplayName = String.Empty;
-        int in_osmFileNumber, in_conserveMemoryNumber, out_targetDatasetNumber, out_osmPointsNumber, out_osmLinesNumber, out_osmPolygonsNumber, out_RelationTableNumber, out_RevTableNumber;
+        int in_osmFileNumber, in_conserveMemoryNumber, in_attributeSelector, out_targetDatasetNumber, out_osmPointsNumber, out_osmLinesNumber, out_osmPolygonsNumber, out_RelationTableNumber, out_RevTableNumber;
         ResourceManager resourceManager = null;
         OSMGPFactory osmGPFactory = null;
         Dictionary<string, string> m_editorConfigurationSettings = null;
@@ -120,15 +120,75 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 message.AddMessage(resourceManager.GetString("GPTools_OSMGPFileReader_countingNodes"));
-                int nodeCapacity = 0;
-                int wayCapacity = 0;
-                int relationCapacity = 0;
+                long nodeCapacity = 0;
+                long wayCapacity = 0;
+                long relationCapacity = 0;
 
-                osmToolHelper.countOSMStuff(osmFileLocationString.GetAsText(), ref nodeCapacity, ref wayCapacity, ref relationCapacity, ref TrackCancel);
+                Dictionary<esriGeometryType, List<string>> attributeTags = new Dictionary<esriGeometryType, List<string>>();
+
+                IGPParameter tagCollectionParameter = paramvalues.get_Element(in_attributeSelector) as IGPParameter;
+                IGPMultiValue tagCollectionGPValue = gpUtilities3.UnpackGPValue(tagCollectionParameter) as IGPMultiValue;
+
+                List<String> tagstoExtract = null;
+
+                if (tagCollectionGPValue.Count > 0)
+                {
+                    tagstoExtract = new List<string>();
+
+                    for (int valueIndex = 0; valueIndex < tagCollectionGPValue.Count; valueIndex++)
+                    {
+                        string nameOfTag = tagCollectionGPValue.get_Value(valueIndex).GetAsText();
+
+                        if (nameOfTag.ToUpper().Equals("ALL"))
+                        {
+                            tagstoExtract = new List<string>();
+                            break;
+                        }
+                        else
+                        {
+                            tagstoExtract.Add(nameOfTag);
+                        }
+                    }
+                }
+
+                // if there is an "ALL" keyword then we scan for all tags, otherwise we only add the desired tags to the feature classes and do a 'quick'
+                // count scan
+
+                if (tagstoExtract != null)
+                {
+                    if (tagstoExtract.Count > 0)
+                    {
+                        // if the number of tags is > 0 then do a simple feature count and take name tags names from the gp value
+                        osmToolHelper.countOSMStuff(osmFileLocationString.GetAsText(), ref nodeCapacity, ref wayCapacity, ref relationCapacity, ref TrackCancel);
+                        attributeTags.Add(esriGeometryType.esriGeometryPoint, tagstoExtract);
+                        attributeTags.Add(esriGeometryType.esriGeometryPolyline, tagstoExtract);
+                        attributeTags.Add(esriGeometryType.esriGeometryPolygon, tagstoExtract);
+                    }
+                    else
+                    {
+                        // the count should be zero if we encountered the "ALL" keyword 
+                        // in this case count the features and create a list of unique tags
+                        attributeTags = osmToolHelper.countOSMCapacityAndTags(osmFileLocationString.GetAsText(), ref nodeCapacity, ref wayCapacity, ref relationCapacity, ref TrackCancel);
+                    }
+                }
+                else
+                {
+                    // no tags we defined, hence we do a simple count and create an empty list indicating that no additional fields
+                    // need to be created
+                    osmToolHelper.countOSMStuff(osmFileLocationString.GetAsText(), ref nodeCapacity, ref wayCapacity, ref relationCapacity, ref TrackCancel);
+                    attributeTags.Add(esriGeometryType.esriGeometryPoint, new List<string>());
+                    attributeTags.Add(esriGeometryType.esriGeometryPolyline, new List<string>());
+                    attributeTags.Add(esriGeometryType.esriGeometryPolygon, new List<string>());
+                }
+
+                if (nodeCapacity == 0 && wayCapacity == 0 && relationCapacity == 0)
+                {
+                    return;
+                }
 
                 if (conserveMemoryGPValue.Value == false)
                 {
-                    osmNodeDictionary = new Dictionary<string, OSMToolHelper.simplePointRef>(nodeCapacity);
+                    osmNodeDictionary = new Dictionary<string, OSMToolHelper.simplePointRef>(Convert.ToInt32(nodeCapacity));
                 }
 
                 message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPFileReader_countedElements"), nodeCapacity, wayCapacity, relationCapacity));
@@ -331,7 +391,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 // points
                 try
                 {
-                    osmPointFeatureClass = osmToolHelper.CreatePointFeatureClass((IWorkspace2)featureWorkspace, targetFeatureDataset, targetDataElement.Name + "_osm_pt", null, null, null, storageKeyword, availableDomains, metadataAbstract, metadataPurpose);
+                    osmPointFeatureClass = osmToolHelper.CreatePointFeatureClass((IWorkspace2)featureWorkspace, targetFeatureDataset, targetDataElement.Name + "_osm_pt", null, null, null, storageKeyword, availableDomains, metadataAbstract, metadataPurpose, attributeTags[esriGeometryType.esriGeometryPoint]);
                 }
                 catch (Exception ex)
                 {
@@ -373,7 +433,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 // lines
                 try
                 {
-                    osmLineFeatureClass = osmToolHelper.CreateLineFeatureClass((IWorkspace2)featureWorkspace, targetFeatureDataset, targetDataElement.Name + "_osm_ln", null, null, null, storageKeyword, availableDomains, metadataAbstract, metadataPurpose);
+                    osmLineFeatureClass = osmToolHelper.CreateLineFeatureClass((IWorkspace2)featureWorkspace, targetFeatureDataset, targetDataElement.Name + "_osm_ln", null, null, null, storageKeyword, availableDomains, metadataAbstract, metadataPurpose, attributeTags[esriGeometryType.esriGeometryPolyline]);
                 }
                 catch (Exception ex)
                 {
@@ -415,7 +475,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 // polygons
                 try
                 {
-                    osmPolygonFeatureClass = osmToolHelper.CreatePolygonFeatureClass((IWorkspace2)featureWorkspace, targetFeatureDataset, targetDataElement.Name + "_osm_ply", null, null, null, storageKeyword, availableDomains, metadataAbstract, metadataPurpose);
+                    osmPolygonFeatureClass = osmToolHelper.CreatePolygonFeatureClass((IWorkspace2)featureWorkspace, targetFeatureDataset, targetDataElement.Name + "_osm_ply", null, null, null, storageKeyword, availableDomains, metadataAbstract, metadataPurpose, attributeTags[esriGeometryType.esriGeometryPolygon]);
                 }
                 catch (Exception ex)
                 {
@@ -535,6 +595,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
                 #endregion
 
+                bool fastLoad = false;
 
                 //// check for user interruption
                 //if (TrackCancel.Continue() == false)
@@ -643,7 +704,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 IGeoProcessor2 geoProcessor = new GeoProcessorClass();
 
                 #region load points
-                osmToolHelper.loadOSMNodes(osmFileLocationString.GetAsText(), ref TrackCancel, ref message, targetDatasetGPValue, osmPointFeatureClass, conserveMemoryGPValue.Value, false, nodeCapacity, ref osmNodeDictionary, featureWorkspace, downloadSpatialReference, availableDomains, false);
+                osmToolHelper.loadOSMNodes(osmFileLocationString.GetAsText(), ref TrackCancel, ref message, targetDatasetGPValue, osmPointFeatureClass, conserveMemoryGPValue.Value, fastLoad, Convert.ToInt32(nodeCapacity), ref osmNodeDictionary, featureWorkspace, downloadSpatialReference, availableDomains, false);
                 #endregion
 
 
@@ -653,7 +714,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 #region load ways
-                List<string> missingWays = osmToolHelper.loadOSMWays(osmFileLocationString.GetAsText(), ref TrackCancel, ref message, targetDatasetGPValue, osmPointFeatureClass, osmLineFeatureClass, osmPolygonFeatureClass, conserveMemoryGPValue.Value, false, wayCapacity, ref osmNodeDictionary, featureWorkspace, downloadSpatialReference, availableDomains, false);
+                List<string> missingWays = osmToolHelper.loadOSMWays(osmFileLocationString.GetAsText(), ref TrackCancel, ref message, targetDatasetGPValue, osmPointFeatureClass, osmLineFeatureClass, osmPolygonFeatureClass, conserveMemoryGPValue.Value, fastLoad, Convert.ToInt32(wayCapacity), ref osmNodeDictionary, featureWorkspace, downloadSpatialReference, availableDomains, false);
                 #endregion
 
                 if (downloadSpatialReference != null)
@@ -719,7 +780,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 #region load relations
-                List<string> missingRelations = osmToolHelper.loadOSMRelations(osmFileLocationString.GetAsText(), ref TrackCancel, ref message, targetDatasetGPValue, osmPointFeatureClass, osmLineFeatureClass, osmPolygonFeatureClass, relationCapacity, relationTable, availableDomains, false, false);
+                List<string> missingRelations = osmToolHelper.loadOSMRelations(osmFileLocationString.GetAsText(), ref TrackCancel, ref message, targetDatasetGPValue, osmPointFeatureClass, osmLineFeatureClass, osmPolygonFeatureClass, Convert.ToInt32(relationCapacity), relationTable, availableDomains, fastLoad, false);
                 #endregion
 
                 // check for user interruption
@@ -903,23 +964,27 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             {
                 try
                 {
-                    if (osmPointFeatureClass != null)
-                    {
-                        osmPointFeatureClass.ApplyOSMClassExtension();
-                        ComReleaser.ReleaseCOMObject(osmPointFeatureClass);
-                    }
+                    // TE -- 1/7/2015
+                    // this is a 'breaking' change as the default loader won't no longer enable the edit extension
+                    // the reasoning here is that most users would like the OSM in a 'read-only' fashion, and don't need to track 
+                    // changes to be properly transmitted back to the OSM server
+                    //if (osmPointFeatureClass != null)
+                    //{
+                    //    osmPointFeatureClass.ApplyOSMClassExtension();
+                    //    ComReleaser.ReleaseCOMObject(osmPointFeatureClass);
+                    //}
 
-                    if (osmLineFeatureClass != null)
-                    {
-                        osmLineFeatureClass.ApplyOSMClassExtension();
-                        ComReleaser.ReleaseCOMObject(osmLineFeatureClass);
-                    }
+                    //if (osmLineFeatureClass != null)
+                    //{
+                    //    osmLineFeatureClass.ApplyOSMClassExtension();
+                    //    ComReleaser.ReleaseCOMObject(osmLineFeatureClass);
+                    //}
 
-                    if (osmPolygonFeatureClass != null)
-                    {
-                        osmPolygonFeatureClass.ApplyOSMClassExtension();
-                        ComReleaser.ReleaseCOMObject(osmPolygonFeatureClass);
-                    }
+                    //if (osmPolygonFeatureClass != null)
+                    //{
+                    //    osmPolygonFeatureClass.ApplyOSMClassExtension();
+                    //    ComReleaser.ReleaseCOMObject(osmPolygonFeatureClass);
+                    //}
 
                     osmToolHelper = null;
 
@@ -1044,6 +1109,28 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 conserveMemory.DisplayName = resourceManager.GetString("GPTools_OSMGPFileReader_conserveMemory_desc");
                 conserveMemory.Name = "in_conserveMemory";
 
+                // attribute multi select parameter
+                IGPParameterEdit3 attributeSelect = new GPParameterClass() as IGPParameterEdit3;
+
+                IGPDataType tagKeyDataType = new GPStringTypeClass();
+                IGPMultiValue tagKeysMultiValue = new GPMultiValueClass();
+                tagKeysMultiValue.MemberDataType = tagKeyDataType;
+
+                IGPCodedValueDomain tagKeyDomains = new GPCodedValueDomainClass();
+                tagKeyDomains.AddStringCode("ALL", "ALL");
+
+                IGPMultiValueType tagKeyDataType2 = new GPMultiValueTypeClass();
+                tagKeyDataType2.MemberDataType = tagKeyDataType;
+
+                attributeSelect.Name = "in_attributeselect";
+                attributeSelect.DisplayName = resourceManager.GetString("GPTools_OSMFileLoader_attributeSchemaSelection");
+                attributeSelect.Category = resourceManager.GetString("GPTools_OSMFileLoader_schemaCategory");
+                attributeSelect.ParameterType = esriGPParameterType.esriGPParameterTypeOptional;
+                attributeSelect.Direction = esriGPParameterDirection.esriGPParameterDirectionInput;
+                attributeSelect.Domain = (IGPDomain)tagKeyDomains;
+                attributeSelect.DataType = (IGPDataType)tagKeyDataType2;
+                attributeSelect.Value = (IGPValue)tagKeysMultiValue;
+
                 // target dataset (required)
                 IGPParameterEdit3 targetDataset = new GPParameterClass() as IGPParameterEdit3;
                 targetDataset.DataType = new DEFeatureDatasetTypeClass();
@@ -1105,17 +1192,21 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 parameterArray.Add(conserveMemory);
                 in_conserveMemoryNumber = 1;
 
+                in_attributeSelector = 2;
+                parameterArray.Add(attributeSelect);
+
+                
                 parameterArray.Add(targetDataset);
-                out_targetDatasetNumber = 2;
+                out_targetDatasetNumber = 3;
 
                 parameterArray.Add(osmPoints);
-                out_osmPointsNumber = 3;
+                out_osmPointsNumber = 4;
 
                 parameterArray.Add(osmLines);
-                out_osmLinesNumber = 4;
+                out_osmLinesNumber = 5;
 
                 parameterArray.Add(osmPolygons);
-                out_osmPolygonsNumber = 5;
+                out_osmPolygonsNumber = 6;
 
                 return parameterArray;
             }
@@ -1209,57 +1300,174 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
             IDEFeatureDataset targetDEFeatureDataset = targetDatasetGPValue as IDEFeatureDataset;
 
+            IGPParameter3 outPointsFeatureClassParameter = null;
+            IGPValue outPointsFeatureClass = null;
+            string outpointsPath = String.Empty;
 
-            if (((IGPValue)targetDEFeatureDataset).GetAsText().Length == 0)
+            IGPParameter3 outLinesFeatureClassParameter = null;
+            IGPValue outLinesFeatureClass = null;
+            string outlinesPath = String.Empty;
+
+            IGPParameter3 outPolygonFeatureClassParameter = null;
+            IGPValue outPolygonFeatureClass = null;
+            string outpolygonsPath = String.Empty;
+
+            if (((IGPValue)targetDEFeatureDataset).GetAsText().Length != 0)
             {
-                return;
+                IDataElement dataElement = targetDEFeatureDataset as IDataElement;
+                try
+                {
+                    gpUtilities3.QualifyOutputDataElement(gpUtilities3.UnpackGPValue(targetDatasetParameter));
+                }
+                catch
+                {
+                    return;
+                }
+
+                string nameOfPointFeatureClass = dataElement.GetBaseName() + "_osm_pt";
+                string nameOfLineFeatureClass = dataElement.GetBaseName() + "_osm_ln";
+                string nameOfPolygonFeatureClass = dataElement.GetBaseName() + "_osm_ply";
+
+
+                try
+                {
+                    outpointsPath = dataElement.CatalogPath + System.IO.Path.DirectorySeparatorChar + nameOfPointFeatureClass;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                }
+                outPointsFeatureClassParameter = paramvalues.get_Element(out_osmPointsNumber) as IGPParameter3;
+                outPointsFeatureClass = gpUtilities3.UnpackGPValue(outPointsFeatureClassParameter);
+
+                outlinesPath = dataElement.CatalogPath + System.IO.Path.DirectorySeparatorChar + nameOfLineFeatureClass;
+                outLinesFeatureClassParameter = paramvalues.get_Element(out_osmLinesNumber) as IGPParameter3;
+                outLinesFeatureClass = gpUtilities3.UnpackGPValue(outLinesFeatureClassParameter);
+
+                outpolygonsPath = dataElement.CatalogPath + System.IO.Path.DirectorySeparatorChar + nameOfPolygonFeatureClass;
+                outPolygonFeatureClassParameter = paramvalues.get_Element(out_osmPolygonsNumber) as IGPParameter3;
+                outPolygonFeatureClass = gpUtilities3.UnpackGPValue(outPolygonFeatureClassParameter);
             }
 
-            IDataElement dataElement = targetDEFeatureDataset as IDataElement;
-            try
+
+            // TE - 10/20/2014
+            if (((IGPParameter)paramvalues.get_Element(in_attributeSelector)).Altered)
             {
-                gpUtilities3.QualifyOutputDataElement(gpUtilities3.UnpackGPValue(targetDatasetParameter));
-            }
-            catch
-            {
-                return;
+                IGPParameter tagCollectionParameter = paramvalues.get_Element(in_attributeSelector) as IGPParameter;
+                IGPMultiValue tagCollectionGPValue = gpUtilities3.UnpackGPValue(tagCollectionParameter) as IGPMultiValue;
+
+                IGPCodedValueDomain codedTagDomain = tagCollectionParameter.Domain as IGPCodedValueDomain;
+
+                for (int attributeValueIndex = 0; attributeValueIndex < tagCollectionGPValue.Count; attributeValueIndex++)
+                {
+                    string valueString = tagCollectionGPValue.get_Value(attributeValueIndex).GetAsText();
+                    IGPValue testFieldValue = codedTagDomain.FindValue(valueString);
+
+                    if (testFieldValue == null)
+                    {
+                        codedTagDomain.AddStringCode(valueString, valueString);
+                    }
+                }
+
+                string illegalCharacters = "`~@#$%^&()-+=,{}.![];";
+                IFieldsEdit fieldsEdit = new FieldsClass();
+
+                for (int valueIndex = 0; valueIndex < tagCollectionGPValue.Count; valueIndex++)
+                {
+                    string tagString = tagCollectionGPValue.get_Value(valueIndex).GetAsText();
+
+                    if (tagString != "ALL")
+                    {
+                        // Check if the input field already exists.
+                        string cleanedTagKey = OSMToolHelper.convert2AttributeFieldName(tagString, illegalCharacters);
+
+                        IFieldEdit fieldEdit = new FieldClass();
+                        fieldEdit.Name_2 = cleanedTagKey;
+                        fieldEdit.AliasName_2 = tagCollectionGPValue.get_Value(valueIndex).GetAsText();
+                        fieldEdit.Type_2 = esriFieldType.esriFieldTypeString;
+                        fieldEdit.Length_2 = 100;
+                        fieldsEdit.AddField(fieldEdit);
+                    }
+                }
+                IFields fields = fieldsEdit as IFields;
+
+                // Get the derived output feature class schema and empty the additional fields. This ensures 
+                // that you don't get dublicate entries. 
+                if (outPointsFeatureClassParameter != null)
+                {
+                    IGPFeatureSchema polySchema = outPolygonFeatureClassParameter.Schema as IGPFeatureSchema;
+                    if (polySchema != null)
+                    {
+                        // Add the additional field to the polygon output.
+                        polySchema.AdditionalFields = fields;
+                    }
+                    else
+                    {
+                        polySchema = new GPFeatureSchemaClass();
+                        polySchema.AdditionalFields = fields;
+                        polySchema.GeometryType = esriGeometryType.esriGeometryPolygon;
+                        polySchema.FeatureType = esriFeatureType.esriFTSimple;
+                    }
+                }
+
+                if (outLinesFeatureClassParameter != null)
+                {
+                    IGPFeatureSchema lineSchema = outLinesFeatureClassParameter.Schema as IGPFeatureSchema;
+                    if (lineSchema != null)
+                    {
+                        // Add the additional field to the line output.
+                        lineSchema.AdditionalFields = fields;
+                    }
+                    else
+                    {
+                        lineSchema = new GPFeatureSchemaClass();
+                        lineSchema.AdditionalFields = fields;
+                        lineSchema.GeometryType = esriGeometryType.esriGeometryPolyline;
+                        lineSchema.FeatureType = esriFeatureType.esriFTSimple;
+                    }
+                }
+
+
+                if (outPointsFeatureClassParameter != null)
+                {
+                    IGPFeatureSchema pointSchema = outPointsFeatureClassParameter.Schema as IGPFeatureSchema;
+                    if (pointSchema != null)
+                    {
+                        // Add the additional field to the point output.
+                        pointSchema.AdditionalFields = fields;
+                    }
+                    else
+                    {
+                        pointSchema = new GPFeatureSchemaClass();
+                        pointSchema.AdditionalFields = fields;
+                        pointSchema.GeometryType = esriGeometryType.esriGeometryPoint;
+                        pointSchema.FeatureType = esriFeatureType.esriFTSimple;
+                    }
+                }
             }
 
-            string nameOfPointFeatureClass = dataElement.GetBaseName() + "_osm_pt";
-            string nameOfLineFeatureClass = dataElement.GetBaseName() + "_osm_ln";
-            string nameOfPolygonFeatureClass = dataElement.GetBaseName() + "_osm_ply";
-
-            string outpointsPath = null;
-            try
+            if (outPointsFeatureClassParameter != null)
             {
-                outpointsPath = dataElement.CatalogPath + System.IO.Path.DirectorySeparatorChar + nameOfPointFeatureClass;
+                outPointsFeatureClass.SetAsText(outpointsPath);
+                gpUtilities3.PackGPValue(outPointsFeatureClass, outPointsFeatureClassParameter);
             }
-            catch (Exception ex)
+
+            if (outLinesFeatureClassParameter != null)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                outLinesFeatureClass.SetAsText(outlinesPath);
+                gpUtilities3.PackGPValue(outLinesFeatureClass, outLinesFeatureClassParameter);
             }
-            IGPParameter outPointsFeatureClassParameter = paramvalues.get_Element(out_osmPointsNumber) as IGPParameter;
-            IGPValue outPointsFeatureClass = gpUtilities3.UnpackGPValue(outPointsFeatureClassParameter);
-            outPointsFeatureClass.SetAsText(outpointsPath);
-            gpUtilities3.PackGPValue(outPointsFeatureClass, outPointsFeatureClassParameter);
 
-            string outlinesPath = dataElement.CatalogPath + System.IO.Path.DirectorySeparatorChar + nameOfLineFeatureClass;
-            IGPParameter outLinesFeatureClassParameter = paramvalues.get_Element(out_osmLinesNumber) as IGPParameter;
-            IGPValue outLinesFeatureClass = gpUtilities3.UnpackGPValue(outLinesFeatureClassParameter);
-            outLinesFeatureClass.SetAsText(outlinesPath);
-            gpUtilities3.PackGPValue(outLinesFeatureClass, outLinesFeatureClassParameter);
-
-            string outpolygonsPath = dataElement.CatalogPath + System.IO.Path.DirectorySeparatorChar + nameOfPolygonFeatureClass;
-            IGPParameter outPolygonFeatureClassParameter = paramvalues.get_Element(out_osmPolygonsNumber) as IGPParameter;
-            IGPValue outPolygonFeatureClass = gpUtilities3.UnpackGPValue(outPolygonFeatureClassParameter);
-            outPolygonFeatureClass.SetAsText(outpolygonsPath);
-            gpUtilities3.PackGPValue(outPolygonFeatureClass, outPolygonFeatureClassParameter);
+            if (outPolygonFeatureClassParameter != null)
+            {
+                outPolygonFeatureClass.SetAsText(outpolygonsPath);
+                gpUtilities3.PackGPValue(outPolygonFeatureClass, outPolygonFeatureClassParameter);
+            }
 
             gpUtilities3.ReleaseInternals();
 
             if (gpUtilities3 != null)
                 ComReleaser.ReleaseCOMObject(gpUtilities3);
-
         }
 
         public ESRI.ArcGIS.Geodatabase.IGPMessages Validate(ESRI.ArcGIS.esriSystem.IArray paramvalues, bool updateValues, ESRI.ArcGIS.Geoprocessing.IGPEnvironmentManager envMgr)

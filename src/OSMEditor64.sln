@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{C42C6DBF-113B-4C0E-BA35-357A088ED422}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSMClassExtension64", "OSMClassExtension64\OSMClassExtension64.csproj", "{534CAEF4-0F82-4EC1-A7D2-70748B125F66}"
@@ -29,9 +31,10 @@ Global
 		{534CAEF4-0F82-4EC1-A7D2-70748B125F66}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{534CAEF4-0F82-4EC1-A7D2-70748B125F66}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{534CAEF4-0F82-4EC1-A7D2-70748B125F66}.Release|x86.ActiveCfg = Release|Any CPU
-		{A16E03A2-50B7-4A65-9944-7952D2761773}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{A16E03A2-50B7-4A65-9944-7952D2761773}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{A16E03A2-50B7-4A65-9944-7952D2761773}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{A16E03A2-50B7-4A65-9944-7952D2761773}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A16E03A2-50B7-4A65-9944-7952D2761773}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A16E03A2-50B7-4A65-9944-7952D2761773}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{A16E03A2-50B7-4A65-9944-7952D2761773}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{A16E03A2-50B7-4A65-9944-7952D2761773}.Debug|x86.ActiveCfg = Debug|x86
 		{A16E03A2-50B7-4A65-9944-7952D2761773}.Debug|x86.Build.0 = Debug|x86
 		{A16E03A2-50B7-4A65-9944-7952D2761773}.Release|Any CPU.ActiveCfg = Release|x86

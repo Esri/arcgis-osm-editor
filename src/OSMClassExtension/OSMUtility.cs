@@ -92,7 +92,7 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
             }
         }
 
-        public void insertMembers(int osmMembersRelationFieldIndex, IRow insertRow, member[] relationMembers)
+        public void insertMembers(int osmMembersRelationFieldIndex, ref IRow insertRow, member[] relationMembers)
         {
             if (insertRow.Fields.get_Field(osmMembersRelationFieldIndex).Type == esriFieldType.esriFieldTypeBlob)
             {
@@ -1169,6 +1169,62 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
         }
 
         /// <summary>
+        /// Compare the list of tags und the given feature to see if they are same. Only relevant tags are compared.
+        /// Non-relevant tags are "created_by", "source", "attribution", "version", "note", "type".
+        /// </summary>
+        /// <param name="relationTags"></param>
+        /// <param name="row"></param>
+        /// <param name="tagFieldIndex"></param>
+        /// <param name="currentWorkspace"></param>
+        /// <returns>Boolean indicating if the relevant tags are the same.</returns>
+        public bool AreTagsTheSame(IList<tag> relationTags, IRow row, int tagFieldIndex, IWorkspace currentWorkspace)
+        {
+            bool tagsAreTheSame = true;
+
+            try
+            {
+                IList<tag> relevantRelationTags = RetrieveRelevantTags(relationTags);
+
+                tag[] wayTags = retrieveOSMTags(row, tagFieldIndex, currentWorkspace);
+
+                IList<tag> relevantWayTags = RetrieveRelevantTags(new List<tag>(wayTags));
+
+                if (relevantWayTags.Count != relevantRelationTags.Count)
+                {
+                    tagsAreTheSame = false;
+                    return tagsAreTheSame;
+                }
+
+                foreach (var wayTag in relevantWayTags)
+                {
+                    if (!relevantRelationTags.Contains(wayTag, new TagKeyValueComparer()))
+                    {
+                        tagsAreTheSame = false;
+                        return tagsAreTheSame;
+                    }
+                }
+            }
+            catch { }
+
+            return tagsAreTheSame;
+        }
+
+        private IList<tag> RetrieveRelevantTags(IList<tag> originalTags)
+        {
+            IList<tag> relevantTags = new List<tag>();
+
+            string[] non_relevant = {"created_by", "source", "attribution", "note", "version", "type"};
+
+            foreach (var currentTag in originalTags)
+            {
+                if (!System.Array.Exists(non_relevant, str => str.ToLower().Equals(currentTag.k)))
+                    relevantTags.Add(currentTag);
+            }
+
+            return relevantTags;
+        }
+
+        /// <summary>
         /// Given a row object from a feature class determines if valid tags exist.
         /// </summary>
         /// <param name="row">Row object from a feature class</param>
@@ -1226,14 +1282,16 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
         /// </summary>
         /// <param name="currentnode">OpenStreetMap node object to be examined. Non-relevant tags are 'created_by', 'source', 'attribution', and 'note'. </param>
         /// <returns>Boolean indicating if the node has relevant tags or not.</returns>
-        public bool DoesHaveKeys(node currentnode)
+        public bool DoesHaveKeys(tag[] tags)
         {
             bool doesHaveKeys = false;
+            bool partsOverride = false;
+
             try
             {
-                if (currentnode.tag != null)
+                if (tags != null)
                 {
-                    foreach (tag nodetag in currentnode.tag)
+                    foreach (tag nodetag in tags)
                     {
                         if (nodetag.k.ToLower().Equals("created_by"))
                         {
@@ -1245,6 +1303,9 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                         {
                         }
                         else if (nodetag.k.ToLower().Equals("note"))
+                        {
+                        }
+                        else if (nodetag.k.ToLower().Contains("building:part"))
                         {
                         }
                         else
@@ -1323,30 +1384,36 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
         /// <returns>Boolean indicating if the way has relevant tags or not.</returns>
         public bool DoesHaveKeys(way currentway)
         {
+            IList<tag> relevantTags = new List<tag>();
             bool doesHaveKeys = false;
 
             try
             {
-                if (currentway.tag != null)
+                string[] non_relevant = { "created_by", "source", "attribution", "note", "version", "type" };
+
+                foreach (var currentTag in currentway.tag)
                 {
-                    foreach (tag waytag in currentway.tag)
+                    if (!System.Array.Exists(non_relevant, str => str.ToLower().Equals(currentTag.k)))
+                        relevantTags.Add(currentTag);
+                }
+
+                if (relevantTags.Count > 0)
+                {
+                    doesHaveKeys = true;
+
+                    foreach (var wayTag in relevantTags)
                     {
-                        if (waytag.k.ToLower().Equals("created_by"))
+                        if (wayTag.k.ToLower().Contains("building:part"))
                         {
-                        }
-                        else if (waytag.k.ToLower().Equals("source"))
-                        {
-                        }
-                        else if (waytag.k.ToLower().Equals("attribution"))
-                        {
-                        }
-                        else if (waytag.k.ToLower().Equals("note"))
-                        {
-                        }
-                        else
-                        {
-                            doesHaveKeys = true;
-                            break;
+                            doesHaveKeys = false;
+
+                            // the exception is the existence of both building:part and building,
+                            // then building will take precedence
+                            if (relevantTags.Contains(new tag() { k = "building" }, new TagKeyComparer()))
+                            {
+                                doesHaveKeys = true;
+                                break;
+                            }
                         }
                     }
                 }

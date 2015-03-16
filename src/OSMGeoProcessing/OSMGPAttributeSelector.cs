@@ -95,7 +95,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 IFeatureClass osmFeatureClass = null;
                 ITable osmInputTable = null;
-                IQueryFilter osmQueryFilter = null;
+                IQueryFilter osmQueryFilter = new QueryFilterClass();
 
                 try
                 {
@@ -144,35 +144,25 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 // check if the tag collection includes the keyword "ALL", if does then we'll need to extract all tags
-                bool extractAll = false;
+                string whatTagsToExtract = String.Empty;
+
                 for (int valueIndex = 0; valueIndex < tagCollectionGPValue.Count; valueIndex++)
                 {
                     if (tagCollectionGPValue.get_Value(valueIndex).GetAsText().Equals("ALL"))
                     {
-                        extractAll = true;
+                        whatTagsToExtract = "ALL";
                         break;
                     }
+                    else if (tagCollectionGPValue.get_Value(valueIndex).GetAsText().Equals("EXISTING_TAG_FIELDS"))
+                    {
+                        whatTagsToExtract = "EXISTING";
+                        break;
+                    }
+                    else
+                    {
+                        whatTagsToExtract = "SPECIFIC";
+                    }
                 }
-                //if (extractAll)
-                //{
-                //    if (osmTagKeyCodedValues == null)
-                //        extractAllTags(ref osmTagKeyCodedValues, osmInputTable, osmQueryFilter, osmTagCollectionFieldIndex, false);
-
-                //    if (osmTagKeyCodedValues == null)
-                //    {
-                //        message.AddAbort(resourceManager.GetString("GPTools_OSMGPAttributeSelector_Unable2RetrieveTags"));
-                //        return;
-                //    }
-
-                //    // empty the existing gp multivalue object
-                //    tagCollectionGPValue = new GPMultiValueClass();
-
-                //    // fill the coded domain in gp multivalue object
-                //    for (int valueIndex = 0; valueIndex < osmTagKeyCodedValues.CodeCount; valueIndex++)
-                //    {
-                //        tagCollectionGPValue.AddValue(osmTagKeyCodedValues.get_Value(valueIndex));
-                //    }
-                //}
 
                 // get an overall feature count as that determines the progress indicator
                 int featureCount = osmInputTable.RowCount(osmQueryFilter);
@@ -207,6 +197,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 IFieldsEdit fieldsEdit = osmInputTable.Fields as IFieldsEdit;
 
+                List<String> tagstoExtract = new List<string>();
+                for (int valueIndex = 0; valueIndex < tagCollectionGPValue.Count; valueIndex++)
+                {
+                    tagstoExtract.Add(tagCollectionGPValue.get_Value(valueIndex).GetAsText());
+                }
+
 
                 using (SchemaLockManager lockMgr = new SchemaLockManager(osmInputTable))
                 {
@@ -215,97 +211,112 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         string tagKey = String.Empty;
                         ESRI.ArcGIS.Geoprocessing.IGeoProcessor2 gp = new ESRI.ArcGIS.Geoprocessing.GeoProcessorClass();
 
-                        // if we have explicitly defined tags to extract then go through the list of values now
-                        if (extractAll == false)
+                        switch (whatTagsToExtract)
                         {
-                            for (int valueIndex = 0; valueIndex < tagCollectionGPValue.Count; valueIndex++)
-                            {
-                                if (TrackCancel.Continue() == false)
-                                    return;
+                            case "ALL":
+                                List<string> listofAllTags = extractAllTags(osmInputTable, osmQueryFilter, osmTagCollectionFieldIndex);
 
-                                try
+                                foreach (string nameOfTag in listofAllTags)
                                 {
-                                    // Check if the input field already exists.
-                                    string nameofTag = tagCollectionGPValue.get_Value(valueIndex).GetAsText();
-                                    tagKey = convert2AttributeFieldName(nameofTag, illegalCharacters);
-
-                                    int fieldIndex = osmInputTable.FindField(tagKey);
-
-                                    if (fieldIndex < 0)
+                                    if (TrackCancel.Continue() == false)
                                     {
-                                        // generate a new attribute field
-                                        IFieldEdit fieldEdit = new FieldClass();
-                                        fieldEdit.Name_2 = tagKey;
-                                        fieldEdit.AliasName_2 = nameofTag + resourceManager.GetString("GPTools_OSMGPAttributeSelector_aliasaddition");
-                                        fieldEdit.Type_2 = esriFieldType.esriFieldTypeString;
-                                        fieldEdit.Length_2 = 100;
-
-                                        osmInputTable.AddField(fieldEdit);
-
-                                        message.AddMessage(string.Format(resourceManager.GetString("GPTools_OSMGPAttributeSelector_addField"), tagKey, nameofTag));
-
-                                        // re-generate the attribute index
-                                        fieldIndex = osmInputTable.FindField(tagKey);
+                                        return;
                                     }
 
-                                    if (fieldIndex > 0)
+                                    try
                                     {
-                                        tagsAttributesIndices.Add(nameofTag, fieldIndex);
+                                        // Check if the input field already exists.
+                                        tagKey = OSMToolHelper.convert2AttributeFieldName(nameOfTag, illegalCharacters);
+
+                                        int fieldIndex = osmInputTable.FindField(tagKey);
+
+                                        if (fieldIndex < 0)
+                                        {
+                                            // generate a new attribute field
+                                            IFieldEdit fieldEdit = new FieldClass();
+                                            fieldEdit.Name_2 = tagKey;
+                                            fieldEdit.AliasName_2 = nameOfTag + resourceManager.GetString("GPTools_OSMGPAttributeSelector_aliasaddition");
+                                            fieldEdit.Type_2 = esriFieldType.esriFieldTypeString;
+                                            fieldEdit.Length_2 = 100;
+
+                                            osmInputTable.AddField(fieldEdit);
+
+                                            message.AddMessage(string.Format(resourceManager.GetString("GPTools_OSMGPAttributeSelector_addField"), tagKey, nameOfTag));
+
+                                            // re-generate the attribute index
+                                            fieldIndex = osmInputTable.FindField(tagKey);
+                                        }
+
+                                        if (fieldIndex > 0)
+                                        {
+                                            tagsAttributesIndices.Add(nameOfTag, fieldIndex);
+                                            attributeFieldLength.Add(fieldIndex, osmInputTable.Fields.get_Field(fieldIndex).Length);
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        // the key is already there, this might result because from multiple upper and lower-case combinations of the same key
+                                        message.AddWarning(ex.Message + " (" + OSMToolHelper.convert2OSMKey(tagKey, illegalCharacters) + ")");
+                                    }
+                                }
+                                break;
+                            case "EXISTING":
+                                for (int fieldIndex = 0; fieldIndex < osmInputTable.Fields.FieldCount; fieldIndex++)
+                                {
+                                    IField currentField = osmInputTable.Fields.get_Field(fieldIndex);
+                                    if (currentField.Required == false && currentField.Name.StartsWith("osm_"))
+                                    {
+                                        tagsAttributesIndices.Add(OSMToolHelper.convert2OSMKey(currentField.Name, illegalCharacters), fieldIndex);
                                         attributeFieldLength.Add(fieldIndex, osmInputTable.Fields.get_Field(fieldIndex).Length);
                                     }
                                 }
-                                catch (Exception ex)
+                                break;
+                            default:
+                                // if we have explicitly defined tags to extract then go through the list of values now
+                                foreach (string nameOfTag in tagstoExtract)
                                 {
-                                    // the key is already there, this might result because from multiple upper and lower-case combinations of the same key
-                                    message.AddWarning(ex.Message + " (" + convert2OSMKey(tagKey, illegalCharacters) + ")");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            List<string> listofAllTags = extractAllTags(osmInputTable, osmQueryFilter, osmTagCollectionFieldIndex);
-
-                            foreach (string nameOfTag in listofAllTags)
-                            {
-                                if (TrackCancel.Continue() == false)
-                                    return;
-
-                                try
-                                {
-                                    // Check if the input field already exists.
-                                    tagKey = convert2AttributeFieldName(nameOfTag, illegalCharacters);
-
-                                    int fieldIndex = osmInputTable.FindField(tagKey);
-
-                                    if (fieldIndex < 0)
+                                    if (TrackCancel.Continue() == false)
                                     {
-                                        // generate a new attribute field
-                                        IFieldEdit fieldEdit = new FieldClass();
-                                        fieldEdit.Name_2 = tagKey;
-                                        fieldEdit.AliasName_2 = nameOfTag + resourceManager.GetString("GPTools_OSMGPAttributeSelector_aliasaddition");
-                                        fieldEdit.Type_2 = esriFieldType.esriFieldTypeString;
-                                        fieldEdit.Length_2 = 100;
-
-                                        osmInputTable.AddField(fieldEdit);
-
-                                        message.AddMessage(string.Format(resourceManager.GetString("GPTools_OSMGPAttributeSelector_addField"), tagKey, nameOfTag));
-
-                                        // re-generate the attribute index
-                                        fieldIndex = osmInputTable.FindField(tagKey);
+                                        return;
                                     }
 
-                                    if (fieldIndex > 0)
+                                    try
                                     {
-                                        tagsAttributesIndices.Add(nameOfTag, fieldIndex);
-                                        attributeFieldLength.Add(fieldIndex, osmInputTable.Fields.get_Field(fieldIndex).Length);
+                                        // Check if the input field already exists.
+                                        tagKey = OSMToolHelper.convert2AttributeFieldName(nameOfTag, illegalCharacters);
+
+                                        int fieldIndex = osmInputTable.FindField(tagKey);
+
+                                        if (fieldIndex < 0)
+                                        {
+                                            // generate a new attribute field
+                                            IFieldEdit fieldEdit = new FieldClass();
+                                            fieldEdit.Name_2 = tagKey;
+                                            fieldEdit.AliasName_2 = nameOfTag + resourceManager.GetString("GPTools_OSMGPAttributeSelector_aliasaddition");
+                                            fieldEdit.Type_2 = esriFieldType.esriFieldTypeString;
+                                            fieldEdit.Length_2 = 100;
+
+                                            osmInputTable.AddField(fieldEdit);
+
+                                            message.AddMessage(string.Format(resourceManager.GetString("GPTools_OSMGPAttributeSelector_addField"), tagKey, nameOfTag));
+
+                                            // re-generate the attribute index
+                                            fieldIndex = osmInputTable.FindField(tagKey);
+                                        }
+
+                                        if (fieldIndex > 0)
+                                        {
+                                            tagsAttributesIndices.Add(nameOfTag, fieldIndex);
+                                            attributeFieldLength.Add(fieldIndex, osmInputTable.Fields.get_Field(fieldIndex).Length);
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        // the key is already there, this might result because from multiple upper and lower-case combinations of the same key
+                                        message.AddWarning(ex.Message + " (" + OSMToolHelper.convert2OSMKey(tagKey, illegalCharacters) + ")");
                                     }
                                 }
-                                catch (Exception ex)
-                                {
-                                    // the key is already there, this might result because from multiple upper and lower-case combinations of the same key
-                                    message.AddWarning(ex.Message + " (" + convert2OSMKey(tagKey, illegalCharacters) + ")");
-                                }
-                            }
+                                break;
                         }
                     }
                     catch (Exception ex)
@@ -349,9 +360,25 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     return;
                 }
 
+                if (osmQueryFilter == null)
+                    osmQueryFilter = new QueryFilterClass();
+
+                if (useUpdateCursor)
+                {
+                    // convert the selected fields into a comma separated string to limit the returned row buffer (fields)
+                    string FieldsString = String.Join(",", tagsAttributesIndices.Keys.Select(s => OSMToolHelper.convert2AttributeFieldName(s, illegalCharacters)).ToArray());
+                    if (osmInputTable is IFeatureClass)
+                    {
+                        osmQueryFilter.SubFields = FieldsString + ",osmTags," + ((IFeatureClass)osmInputTable).ShapeFieldName;
+                    }
+                    else
+                    {
+                        osmQueryFilter.SubFields = FieldsString + ",osmTags";
+                    }
+                }
+
                 using (ComReleaser comReleaser = new ComReleaser())
                 {
-
                     using (SchemaLockManager lockMgr = new SchemaLockManager(osmInputTable))
                     {
                         // get an update cursor for all the features to process
@@ -471,48 +498,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
         }
 
-        public static string convert2OSMKey(string attributeFieldName, string IllegalCharacters)
-        {
-            string osmKey = attributeFieldName.Substring(4);
-
-            // older encodings until version 2.0
-            osmKey = osmKey.Replace("__", ":");
-            osmKey = osmKey.Replace("_b_", " ");
-            osmKey = osmKey.Replace("_d_", ".");
-            osmKey = osmKey.Replace("_c_", ",");
-            osmKey = osmKey.Replace("_sc_", ";");
-
-            // ensure to safely encode all illegal SQL characters
-            if (!String.IsNullOrEmpty(IllegalCharacters))
-            {
-                char[] illegals = IllegalCharacters.ToCharArray();
-                foreach (char offender in illegals)
-                {
-                    osmKey = osmKey.Replace("_" + ((int)offender).ToString() + "_", offender.ToString());
-                }
-            }
-
-            return osmKey.ToString();
-        }
-
-        private string convert2AttributeFieldName(string OSMKey, string IllegalCharacters)
-        {
-            string attributeFieldName = OSMKey;
-
-            // ensure to safely encode all illegal SQL characters
-            if (!String.IsNullOrEmpty(IllegalCharacters))
-            {
-                char[] illegals = IllegalCharacters.ToCharArray();
-                foreach (char offender in illegals)
-                {
-                    attributeFieldName = attributeFieldName.Replace(offender.ToString(), "_" + ((int)offender).ToString() + "_");
-                }
-            }
-
-            attributeFieldName = "osm_" + attributeFieldName;
-
-            return attributeFieldName;
-        }
 
 
         public ESRI.ArcGIS.esriSystem.IName FullName
@@ -603,10 +588,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 IGPParameterEdit3 inputFeatureClass = new GPParameterClass() as IGPParameterEdit3;
 
                 IGPCompositeDataType inputCompositeDataType = new GPCompositeDataTypeClass();
-                //inputCompositeDataType.AddDataType(new GPFeatureLayerTypeClass());
-                //inputCompositeDataType.AddDataType(new GPTableViewTypeClass());
-                //inputFeatureClass.DataType = (IGPDataType) inputCompositeDataType;
-                inputFeatureClass.DataType = new GPFeatureLayerTypeClass();
+                inputCompositeDataType.AddDataType(new GPFeatureLayerTypeClass());
+                inputCompositeDataType.AddDataType(new GPTableViewTypeClass());
+                inputFeatureClass.DataType = (IGPDataType)inputCompositeDataType;
+                //inputFeatureClass.DataType = new GPFeatureLayerTypeClass();
                 // Default Value object is GPFeatureLayer
                 inputFeatureClass.Value = new GPFeatureLayerClass();
                 inputFeatureClass.Direction = esriGPParameterDirection.esriGPParameterDirectionInput;
@@ -625,6 +610,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 IGPCodedValueDomain tagKeyDomains = new GPCodedValueDomainClass();
                 tagKeyDomains.AddStringCode("ALL", "ALL");
+                tagKeyDomains.AddStringCode("EXISTING_TAG_FIELDS", "EXISTING_TAG_FIELDS");
 
                 IGPMultiValueType tagKeyDataType2 = new GPMultiValueTypeClass();
                 tagKeyDataType2.MemberDataType = tagKeyDataType;
@@ -681,50 +667,67 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             {
                 IGPUtilities3 gpUtilities3 = new GPUtilitiesClass();
 
-                IGPValue inputOSMGPValue = gpUtilities3.UnpackGPValue(paramvalues.get_Element(in_osmFeatureClass));
+                IGPParameter3 inputOSMParameter = paramvalues.get_Element(in_osmFeatureClass) as IGPParameter3;
+                IGPValue inputOSMGPValue = null;
+
+                // check if the input is of type variable
+                if (inputOSMParameter.Value is IGPVariable)
+                {
+                    // also check if the variable contains a derived value
+                    // -- which in this context means a featureclass that will be produced during execution but 
+                    // doesn't exist yet
+                    IGPVariable inputOSMVariable = inputOSMParameter.Value as IGPVariable;
+                    if (!inputOSMVariable.Derived)
+                        inputOSMGPValue = gpUtilities3.UnpackGPValue(paramvalues.get_Element(in_osmFeatureClass));
+                }
+                else
+                {
+                    inputOSMGPValue = gpUtilities3.UnpackGPValue(paramvalues.get_Element(in_osmFeatureClass));
+                }
 
                 IFeatureClass osmFeatureClass = null;
                 ITable osmInputTable = null;
                 IQueryFilter osmQueryFilter = null;
-
-
-                try
-                {
-                    gpUtilities3.DecodeFeatureLayer(inputOSMGPValue, out osmFeatureClass, out osmQueryFilter);
-                    osmInputTable = osmFeatureClass as ITable;
-                }
-                catch { }
-
-                try
-                {
-                    if (osmInputTable == null)
-                    {
-                        gpUtilities3.DecodeTableView(inputOSMGPValue, out osmInputTable, out osmQueryFilter);
-                    }
-                }
-                catch { }
-
-                if (osmInputTable == null)
-                {
-                    return;
-                }
-
                 String illegalCharacters = String.Empty;
 
-                ISQLSyntax sqlSyntax = ((IDataset)osmInputTable).Workspace as ISQLSyntax;
-                if (sqlSyntax != null)
+                if (inputOSMGPValue != null)
                 {
-                    illegalCharacters = sqlSyntax.GetInvalidCharacters();
-                }
+                    try
+                    {
+                        gpUtilities3.DecodeFeatureLayer(inputOSMGPValue, out osmFeatureClass, out osmQueryFilter);
+                        osmInputTable = osmFeatureClass as ITable;
+                    }
+                    catch { }
 
-                // find the field that holds tag binary/xml field
-                int osmTagCollectionFieldIndex = osmInputTable.FindField("osmTags");
+                    try
+                    {
+                        if (osmInputTable == null)
+                        {
+                            gpUtilities3.DecodeTableView(inputOSMGPValue, out osmInputTable, out osmQueryFilter);
+                        }
+                    }
+                    catch { }
+
+                    if (osmInputTable == null)
+                    {
+                        return;
+                    }
+
+                    ISQLSyntax sqlSyntax = ((IDataset)osmInputTable).Workspace as ISQLSyntax;
+                    if (sqlSyntax != null)
+                    {
+                        illegalCharacters = sqlSyntax.GetInvalidCharacters();
+                    }
+
+                    // find the field that holds tag binary/xml field
+                    int osmTagCollectionFieldIndex = osmInputTable.FindField("osmTags");
 
 
-                // if the Field doesn't exist - wasn't found (index = -1) get out
-                if (osmTagCollectionFieldIndex == -1)
-                {
-                    return;
+                    // if the Field doesn't exist - wasn't found (index = -1) get out
+                    if (osmTagCollectionFieldIndex == -1)
+                    {
+                        return;
+                    }
                 }
 
                 if (((IGPParameter)paramvalues.get_Element(in_attributeSelector)).Altered)
@@ -761,7 +764,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         if (tagString != "ALL")
                         {
                             // Check if the input field already exists.
-                            string cleanedTagKey = convert2AttributeFieldName(tagString, illegalCharacters);
+                            string cleanedTagKey = OSMToolHelper.convert2AttributeFieldName(tagString, illegalCharacters);
                             IField tagField = gpUtilities3.FindField(inputOSMGPValue, cleanedTagKey);
                             if (tagField == null)
                             {
@@ -907,6 +910,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 return listOfAllTags.ToList();
             }
 
+            IQueryFilter newQueryFilter = new QueryFilterClass();
+            if (osmQueryFilter != null)
+                newQueryFilter.WhereClause = osmQueryFilter.WhereClause;
+            newQueryFilter.SubFields = "osmTags";
+
             IWorkspace datasetWorkspace = ((IDataset)osmInputTable).Workspace;
 
             using (ComReleaser comReleaser = new ComReleaser())
@@ -918,7 +926,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 //osmQueryFilter.SubFields = osmInputTable.Fields.get_Field(osmTagCollectionFieldIndex).Name;
 
-                ICursor osmCursor = osmInputTable.Search(osmQueryFilter, false);
+                ICursor osmCursor = osmInputTable.Search(newQueryFilter, false);
                 comReleaser.ManageLifetime(osmCursor);
 
                 IRow osmRow = osmCursor.NextRow();

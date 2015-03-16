@@ -967,300 +967,304 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
             bool trackChanges = true;
             int osmTrackChangesFieldIndex = currentObjectFeatureClass.FindField("osmTrackChanges");
 
-            // if the feature geometry has changed make sure the matching point do exist in the _osm_pt feature class
-            // as well as that the geometry is tested for coincident nodes
-            if (((IFeatureChanges)changeFeature).ShapeChanged)
+            try
             {
-                IGeometry oldGeometry = ((IFeatureChanges)changeFeature).OriginalShape;
+                // if the feature geometry has changed make sure the matching point do exist in the _osm_pt feature class
+                // as well as that the geometry is tested for coincident nodes
+                if (((IFeatureChanges)changeFeature).ShapeChanged)
+                {
+                    IGeometry oldGeometry = ((IFeatureChanges)changeFeature).OriginalShape;
 
 #if DEBUG
-                // debug code
-                #region ID tests
-                if (oldGeometry.GeometryType != esriGeometryType.esriGeometryPoint)
-                {
-                    IEnumVertex enum1 = ((IPointCollection)oldGeometry).EnumVertices as IEnumVertex;
-
-                    if (enum1 != null)
+                    // debug code
+                    #region ID tests
+                    if (oldGeometry.GeometryType != esriGeometryType.esriGeometryPoint)
                     {
-                        IPoint p1 = null;
-                        int partIndex1 = -1;
-                        int vertexIndex1 = -1;
+                        IEnumVertex enum1 = ((IPointCollection)oldGeometry).EnumVertices as IEnumVertex;
 
-                        enum1.Next(out p1, out partIndex1, out vertexIndex1);
-
-                        while (p1 != null)
+                        if (enum1 != null)
                         {
+                            IPoint p1 = null;
+                            int partIndex1 = -1;
+                            int vertexIndex1 = -1;
+
                             enum1.Next(out p1, out partIndex1, out vertexIndex1);
+
+                            while (p1 != null)
+                            {
+                                enum1.Next(out p1, out partIndex1, out vertexIndex1);
+                            }
                         }
                     }
-                }
-                #endregion
+                    #endregion
 #endif
 
 
-                IGeometry currentGeometry = changeFeature.Shape;
+                    IGeometry currentGeometry = changeFeature.Shape;
 
 #if DEBUG
-                // debug code
-                #region ID tests
-                if (currentGeometry.GeometryType != esriGeometryType.esriGeometryPoint)
-                {
-                    IEnumVertex enum2 = ((IPointCollection)currentGeometry).EnumVertices as IEnumVertex;
-
-                    if (enum2 != null)
+                    // debug code
+                    #region ID tests
+                    if (currentGeometry.GeometryType != esriGeometryType.esriGeometryPoint)
                     {
-                        IPoint p2 = null;
-                        int partIndex2 = -1;
-                        int vertexIndex2 = -1;
+                        IEnumVertex enum2 = ((IPointCollection)currentGeometry).EnumVertices as IEnumVertex;
 
-                        enum2.Next(out p2, out partIndex2, out vertexIndex2);
-
-                        while (p2 != null)
+                        if (enum2 != null)
                         {
+                            IPoint p2 = null;
+                            int partIndex2 = -1;
+                            int vertexIndex2 = -1;
+
                             enum2.Next(out p2, out partIndex2, out vertexIndex2);
+
+                            while (p2 != null)
+                            {
+                                enum2.Next(out p2, out partIndex2, out vertexIndex2);
+                            }
                         }
                     }
-                }
-                #endregion
+                    #endregion
 #endif
 
 
-                IRelationalOperator relationalOperator = currentGeometry as IRelationalOperator;
+                    IRelationalOperator relationalOperator = currentGeometry as IRelationalOperator;
 
-                bool equalPointCount = true;
-                if (currentGeometry is IPointCollection)
-                {
-                    equalPointCount = ((IPointCollection)currentGeometry).PointCount != ((IPointCollection)oldGeometry).PointCount;
-                }
-
-                if ((relationalOperator.Equals(oldGeometry) == false) || equalPointCount)
-                {
-                    // in case we are dealing with a point feature check if the point was updated to coincide with another node
-                    // if this is the case then the new node merges with the existing node and its attributes
-                    if (changeFeature.Shape.GeometryType == esriGeometryType.esriGeometryPoint)
+                    bool equalPointCount = true;
+                    if (currentGeometry is IPointCollection)
                     {
-                        // check if there are connected polygon or lines features
-                        //CheckforMovingAwayFromFeature(changeFeature, trackChanges);
-
-                        UpdateMergeNode(changeFeature, revisionTable);
+                        equalPointCount = ((IPointCollection)currentGeometry).PointCount != ((IPointCollection)oldGeometry).PointCount;
                     }
-                    else
+
+                    if ((relationalOperator.Equals(oldGeometry) == false) || equalPointCount)
                     {
-                        // find the point feature class that contains the nodes
-                        IFeatureClass pointFeatureClass = null;
-                        pointFeatureClass = findMatchingFeatureClass(changeFeature, esriGeometryType.esriGeometryPoint);
-
-                        if (pointFeatureClass == null)
+                        // in case we are dealing with a point feature check if the point was updated to coincide with another node
+                        // if this is the case then the new node merges with the existing node and its attributes
+                        if (changeFeature.Shape.GeometryType == esriGeometryType.esriGeometryPoint)
                         {
-                            System.Diagnostics.Debug.WriteLine("unable to locate point (osm node) feature class. defering updates to stop edit operation.");
-                            return;
+                            // check if there are connected polygon or lines features
+                            //CheckforMovingAwayFromFeature(changeFeature, trackChanges);
+
+                            UpdateMergeNode(changeFeature, revisionTable);
                         }
-
-
-                        // handle the special case of more than 2000 vertices 
-                        // and multipart entities
-                        object MissingValue = Missing.Value;
-
-                        // lines of nodes larger than 2000 are split into multiple features
-                        IPointCollection pointCollection = null;
-                        IGeometryCollection changedGeometryCollection = null;
-
-                        pointCollection = changeFeature.Shape as IPointCollection;
-
-                        // in case of a merge operation the new geometry is empty and old one contains the updates
-                        // if this is actually the case then something is terribly wrong and we shouldn't continue at this point
-                        // (this seems to happen occasionally - not expected and not quite reproducible)
-                        if (pointCollection.PointCount == 0)
+                        else
                         {
-                            throw new ArgumentOutOfRangeException("changedObject", resourceManager.GetString("OSMClassExtension_emptyGeometry"));
-                            //pointCollection = ((IFeatureChanges)changeFeature).OriginalShape as IPointCollection;
-                        }
+                            // find the point feature class that contains the nodes
+                            IFeatureClass pointFeatureClass = null;
+                            pointFeatureClass = findMatchingFeatureClass(changeFeature, esriGeometryType.esriGeometryPoint);
 
-                        changedGeometryCollection = changeFeature.Shape as IGeometryCollection;
-
-                        if (changedGeometryCollection.GeometryCount == 0)
-                        {
-                            changedGeometryCollection = ((IFeatureChanges)changeFeature).OriginalShape as IGeometryCollection;
-                        }
-
-                        int osmChangeFeatureIDFieldIndex = currentObjectFeatureClass.FindField("OSMID");
-                        int osmChangeFeatureVersionFieldIndex = currentObjectFeatureClass.FindField("osmversion");
-                        int osmChangeFeatureSupportElementFieldIndex = currentObjectFeatureClass.FindField("osmSupportingElement");
-                        int osmChangeFeatureIsMemberOfFieldIndex = currentObjectFeatureClass.FindField("osmMemberOf");
-                        int osmChangeFeatureTimeStampFieldIndex = currentObjectFeatureClass.FindField("osmtimestamp");
-
-                        DecrementTemporaryIndex();
-
-                        // depending on the incoming geometry type loop through all the points and make sure that they are put into chunks of 
-                        // 2000 nodes/points
-                        pointCollection = createOSMRelationNodeClusters("change", changeFeature, osmChangeFeatureIDFieldIndex, osmChangeFeatureVersionFieldIndex, osmChangeFeatureSupportElementFieldIndex, osmChangeFeatureIsMemberOfFieldIndex, osmChangeFeatureTimeStampFieldIndex, osmTrackChangesFieldIndex, trackChanges);
-
-                        // otherwise we have to do some node matching
-                        // - create if node doesn't exist yet
-                        // - update if the node/vertex already existed
-                        // - delete if the node/vertex was removed
-                        IPointIDAware topGeometryIDAware = pointCollection as IPointIDAware;
-
-                        if (topGeometryIDAware != null)
-                        {
-                            topGeometryIDAware.PointIDAware = true;
-                        }
-
-                        int pointSupportElementFieldIndex = pointFeatureClass.FindField("osmSupportingElement");
-                        int pointosmIDFieldIndex = pointFeatureClass.FindField("osmID");
-                        int pointwayRefCountFieldIndex = pointFeatureClass.FindField("wayRefCount");
-                        int pointVersionFieldIndex = pointFeatureClass.FindField("osmVersion");
-                        int pointisMemberOfFieldIndex = pointFeatureClass.FindField("osmMemberOf");
-                        int pointTrackChangesFieldIndex = pointFeatureClass.FindField("osmTrackChanges");
-
-                        long changeRowOSMID = -1;
-                        if (osmChangeFeatureIDFieldIndex > -1)
-                        {
-                            changeRowOSMID = Convert.ToInt64(changedObject.get_Value(osmChangeFeatureIDFieldIndex));
-                        }
-
-                        IGeometryCollection changeGeometryCollection = pointCollection as IGeometryCollection;
-
-                        // loop through all vertices and check for coincident and new points
-                        pointCollection = checkAllPoints(changeFeature, pointFeatureClass, "modify", osmChangeFeatureIDFieldIndex, pointCollection, trackChanges);
-
-                        changeFeature.Shape = (IGeometry)pointCollection;
-
-                        // now let's check the old geometry if we need to delete a node
-                        List<int> nowMissingNodes = findDeletedNodeIDs(((IFeatureChanges)changeFeature).OriginalShape, changeFeature.Shape);
-
-                        // no deleted nodes were detected
-                        // we are done at this point
-                        if (nowMissingNodes.Count > 0)
-                        {
-                            string sqlPointOSMID = pointFeatureClass.SqlIdentifier("OSMID");
-
-                            foreach (int deleteNodeID in nowMissingNodes)
+                            if (pointFeatureClass == null)
                             {
-                                IQueryFilter queryfilter = new QueryFilter();
-                                IFeature foundFeature = null;
-                                if (_ExtensionVersion == 1)
+                                System.Diagnostics.Debug.WriteLine("unable to locate point (osm node) feature class. defering updates to stop edit operation.");
+                                return;
+                            }
+
+
+                            // handle the special case of more than 2000 vertices 
+                            // and multipart entities
+                            object MissingValue = Missing.Value;
+
+                            // lines of nodes larger than 2000 are split into multiple features
+                            IPointCollection pointCollection = null;
+                            IGeometryCollection changedGeometryCollection = null;
+
+                            pointCollection = changeFeature.Shape as IPointCollection;
+
+                            // in case of a merge operation the new geometry is empty and old one contains the updates
+                            // if this is actually the case then something is terribly wrong and we shouldn't continue at this point
+                            // (this seems to happen occasionally - not expected and not quite reproducible)
+                            if (pointCollection.PointCount == 0)
+                            {
+                                throw new ArgumentOutOfRangeException("changedObject", resourceManager.GetString("OSMClassExtension_emptyGeometry"));
+                                //pointCollection = ((IFeatureChanges)changeFeature).OriginalShape as IPointCollection;
+                            }
+
+                            changedGeometryCollection = changeFeature.Shape as IGeometryCollection;
+
+                            if (changedGeometryCollection.GeometryCount == 0)
+                            {
+                                changedGeometryCollection = ((IFeatureChanges)changeFeature).OriginalShape as IGeometryCollection;
+                            }
+
+                            int osmChangeFeatureIDFieldIndex = currentObjectFeatureClass.FindField("OSMID");
+                            int osmChangeFeatureVersionFieldIndex = currentObjectFeatureClass.FindField("osmversion");
+                            int osmChangeFeatureSupportElementFieldIndex = currentObjectFeatureClass.FindField("osmSupportingElement");
+                            int osmChangeFeatureIsMemberOfFieldIndex = currentObjectFeatureClass.FindField("osmMemberOf");
+                            int osmChangeFeatureTimeStampFieldIndex = currentObjectFeatureClass.FindField("osmtimestamp");
+
+                            DecrementTemporaryIndex();
+
+                            // depending on the incoming geometry type loop through all the points and make sure that they are put into chunks of 
+                            // 2000 nodes/points
+                            pointCollection = createOSMRelationNodeClusters("change", changeFeature, osmChangeFeatureIDFieldIndex, osmChangeFeatureVersionFieldIndex, osmChangeFeatureSupportElementFieldIndex, osmChangeFeatureIsMemberOfFieldIndex, osmChangeFeatureTimeStampFieldIndex, osmTrackChangesFieldIndex, trackChanges);
+
+                            // otherwise we have to do some node matching
+                            // - create if node doesn't exist yet
+                            // - update if the node/vertex already existed
+                            // - delete if the node/vertex was removed
+                            IPointIDAware topGeometryIDAware = pointCollection as IPointIDAware;
+
+                            if (topGeometryIDAware != null)
+                            {
+                                topGeometryIDAware.PointIDAware = true;
+                            }
+
+                            int pointSupportElementFieldIndex = pointFeatureClass.FindField("osmSupportingElement");
+                            int pointosmIDFieldIndex = pointFeatureClass.FindField("osmID");
+                            int pointwayRefCountFieldIndex = pointFeatureClass.FindField("wayRefCount");
+                            int pointVersionFieldIndex = pointFeatureClass.FindField("osmVersion");
+                            int pointisMemberOfFieldIndex = pointFeatureClass.FindField("osmMemberOf");
+                            int pointTrackChangesFieldIndex = pointFeatureClass.FindField("osmTrackChanges");
+
+                            long changeRowOSMID = -1;
+                            if (osmChangeFeatureIDFieldIndex > -1)
+                            {
+                                changeRowOSMID = Convert.ToInt64(changedObject.get_Value(osmChangeFeatureIDFieldIndex));
+                            }
+
+                            IGeometryCollection changeGeometryCollection = pointCollection as IGeometryCollection;
+
+                            // loop through all vertices and check for coincident and new points
+                            pointCollection = checkAllPoints(changeFeature, pointFeatureClass, "modify", osmChangeFeatureIDFieldIndex, pointCollection, trackChanges);
+
+                            changeFeature.Shape = (IGeometry)pointCollection;
+
+                            // now let's check the old geometry if we need to delete a node
+                            List<int> nowMissingNodes = findDeletedNodeIDs(((IFeatureChanges)changeFeature).OriginalShape, changeFeature.Shape);
+
+                            // no deleted nodes were detected
+                            // we are done at this point
+                            if (nowMissingNodes.Count > 0)
+                            {
+                                string sqlPointOSMID = pointFeatureClass.SqlIdentifier("OSMID");
+
+                                foreach (int deleteNodeID in nowMissingNodes)
                                 {
-                                    queryfilter.WhereClause = pointFeatureClass.WhereClauseByExtensionVersion(deleteNodeID, "OSMID", _ExtensionVersion);
-
-                                    IFeatureCursor searchCursor = pointFeatureClass.Search(queryfilter, false);
-                                    foundFeature = searchCursor.NextFeature();
-                                }
-                                else if (_ExtensionVersion == 2)
-                                {
-                                    try
+                                    IQueryFilter queryfilter = new QueryFilter();
+                                    IFeature foundFeature = null;
+                                    if (_ExtensionVersion == 1)
                                     {
-                                        foundFeature = pointFeatureClass.GetFeature(deleteNodeID);
+                                        queryfilter.WhereClause = pointFeatureClass.WhereClauseByExtensionVersion(deleteNodeID, "OSMID", _ExtensionVersion);
+
+                                        IFeatureCursor searchCursor = pointFeatureClass.Search(queryfilter, false);
+                                        foundFeature = searchCursor.NextFeature();
                                     }
-                                    catch
+                                    else if (_ExtensionVersion == 2)
                                     {
-                                        foundFeature = null;
-                                    }
-                                }
-
-                                if (foundFeature != null)
-                                {
-                                    int wayRefCount = 0;
-
-                                    if (pointwayRefCountFieldIndex > -1)
-                                    {
-                                        wayRefCount = Convert.ToInt32(foundFeature.get_Value(pointwayRefCountFieldIndex));
-                                    }
-
-
-                                    if (wayRefCount > 1)
-                                    {
-                                        foundFeature.set_Value(pointwayRefCountFieldIndex, wayRefCount - 1);
-
-                                        //if (pointTrackChangesFieldIndex > -1)
-                                        //{
-                                        //    if (trackChanges == false)
-                                        //    {
-                                        //        foundFeature.set_Value(pointTrackChangesFieldIndex, 1);
-                                        //    }
-                                        //}
-
-                                        foundFeature.Store();
-                                    }
-                                    else
-                                    {
-                                        // delete the vertex from the parent feature as well
-                                        List<string> isMembersOf = _osmUtility.retrieveIsMemberOf(foundFeature, pointisMemberOfFieldIndex);
-
-                                        Dictionary<string, string> isMembersOfIDsAndTypes = _osmUtility.parseIsMemberOfList(isMembersOf);
-
-                                        #region use isMemberOf info to determine relationship to parent
-                                        IFeatureClass fc = (IFeatureClass)changedObject.Class;
-                                        string sqlOSMID = fc.SqlIdentifier("OSMID");
-
-                                        foreach (string currentParentID in isMembersOfIDsAndTypes.Keys)
+                                        try
                                         {
-                                            using (ComReleaser comReleaser = new ComReleaser())
+                                            foundFeature = pointFeatureClass.GetFeature(deleteNodeID);
+                                        }
+                                        catch
+                                        {
+                                            foundFeature = null;
+                                        }
+                                    }
+
+                                    if (foundFeature != null)
+                                    {
+                                        int wayRefCount = 0;
+
+                                        if (pointwayRefCountFieldIndex > -1)
+                                        {
+                                            wayRefCount = Convert.ToInt32(foundFeature.get_Value(pointwayRefCountFieldIndex));
+                                        }
+
+
+                                        if (wayRefCount > 1)
+                                        {
+                                            foundFeature.set_Value(pointwayRefCountFieldIndex, wayRefCount - 1);
+
+                                            //if (pointTrackChangesFieldIndex > -1)
+                                            //{
+                                            //    if (trackChanges == false)
+                                            //    {
+                                            //        foundFeature.set_Value(pointTrackChangesFieldIndex, 1);
+                                            //    }
+                                            //}
+
+                                            foundFeature.Store();
+                                        }
+                                        else
+                                        {
+                                            // delete the vertex from the parent feature as well
+                                            List<string> isMembersOf = _osmUtility.retrieveIsMemberOf(foundFeature, pointisMemberOfFieldIndex);
+
+                                            Dictionary<string, string> isMembersOfIDsAndTypes = _osmUtility.parseIsMemberOfList(isMembersOf);
+
+                                            #region use isMemberOf info to determine relationship to parent
+                                            IFeatureClass fc = (IFeatureClass)changedObject.Class;
+                                            string sqlOSMID = fc.SqlIdentifier("OSMID");
+
+                                            foreach (string currentParentID in isMembersOfIDsAndTypes.Keys)
                                             {
-                                                IQueryFilter parentIDFilter = new QueryFilterClass();
-                                                parentIDFilter.WhereClause = sqlOSMID + " = " + currentParentID;
-
-                                                IFeatureCursor parentUpdateFeatureCursor = fc.Search(parentIDFilter, false);
-                                                comReleaser.ManageLifetime(parentUpdateFeatureCursor);
-
-                                                IFeature currentParentFeature = parentUpdateFeatureCursor.NextFeature();
-
-                                                // for each of the found parents, loop through and remove the point
-                                                while (currentParentFeature != null)
+                                                using (ComReleaser comReleaser = new ComReleaser())
                                                 {
-                                                    bool geometryChanged = false;
-                                                    IPointCollection parentPointCollection = currentParentFeature.Shape as IPointCollection;
+                                                    IQueryFilter parentIDFilter = new QueryFilterClass();
+                                                    parentIDFilter.WhereClause = sqlOSMID + " = " + currentParentID;
 
-                                                    if (parentPointCollection != null)
+                                                    IFeatureCursor parentUpdateFeatureCursor = fc.Search(parentIDFilter, false);
+                                                    comReleaser.ManageLifetime(parentUpdateFeatureCursor);
+
+                                                    IFeature currentParentFeature = parentUpdateFeatureCursor.NextFeature();
+
+                                                    // for each of the found parents, loop through and remove the point
+                                                    while (currentParentFeature != null)
                                                     {
-                                                        for (int parentPointIndex = 0; parentPointIndex < parentPointCollection.PointCount; parentPointIndex++)
-                                                        {
-                                                            IPoint currentTestPoint = parentPointCollection.get_Point(parentPointIndex);
+                                                        bool geometryChanged = false;
+                                                        IPointCollection parentPointCollection = currentParentFeature.Shape as IPointCollection;
 
-                                                            if (currentTestPoint.ID.Equals(deleteNodeID))
+                                                        if (parentPointCollection != null)
+                                                        {
+                                                            for (int parentPointIndex = 0; parentPointIndex < parentPointCollection.PointCount; parentPointIndex++)
                                                             {
-                                                                geometryChanged = true;
-                                                                parentPointCollection.RemovePoints(parentPointIndex, 1);
+                                                                IPoint currentTestPoint = parentPointCollection.get_Point(parentPointIndex);
+
+                                                                if (currentTestPoint.ID.Equals(deleteNodeID))
+                                                                {
+                                                                    geometryChanged = true;
+                                                                    parentPointCollection.RemovePoints(parentPointIndex, 1);
+                                                                }
                                                             }
                                                         }
+
+                                                        if (geometryChanged)
+                                                        {
+                                                            currentParentFeature.Shape = parentPointCollection as IGeometry;
+
+                                                            //if (trackChanges == false)
+                                                            //{
+                                                            //    if (osmTrackChangesFieldIndex > -1)
+                                                            //    {
+                                                            //        currentParentFeature.set_Value(osmTrackChangesFieldIndex, 0);
+                                                            //    }
+                                                            //}
+
+                                                            // persist the changes back to the database
+                                                            currentParentFeature.Store();
+                                                        }
+
+                                                        currentParentFeature = parentUpdateFeatureCursor.NextFeature();
                                                     }
-
-                                                    if (geometryChanged)
-                                                    {
-                                                        currentParentFeature.Shape = parentPointCollection as IGeometry;
-
-                                                        //if (trackChanges == false)
-                                                        //{
-                                                        //    if (osmTrackChangesFieldIndex > -1)
-                                                        //    {
-                                                        //        currentParentFeature.set_Value(osmTrackChangesFieldIndex, 0);
-                                                        //    }
-                                                        //}
-
-                                                        // persist the changes back to the database
-                                                        currentParentFeature.Store();
-                                                    }
-
-                                                    currentParentFeature = parentUpdateFeatureCursor.NextFeature();
                                                 }
                                             }
-                                        }
-                                        #endregion
+                                            #endregion
 
-                                        foundFeature.Delete();
+                                            foundFeature.Delete();
+                                        }
                                     }
-                                }
-                            } // for each of the missing nodes
-                        } // missing nodes count larger than 0 
-                    }  // geometry type test
-                } // IRelationOp::Equal test
-                else
-                {
-                    // This means the shape is only different by vertex IDs or some other metadata
-                    //   so reset the shape to the original geometry to get back the IDs
-                    changeFeature.Shape = oldGeometry;
-                }
-            } // shape.changed
+                                } // for each of the missing nodes
+                            } // missing nodes count larger than 0 
+                        }  // geometry type test
+                    } // IRelationOp::Equal test
+                    else
+                    {
+                        // This means the shape is only different by vertex IDs or some other metadata
+                        //   so reset the shape to the original geometry to get back the IDs
+                        changeFeature.Shape = oldGeometry;
+                    }
+                } // shape.changed
+            }
+            catch { }
 
             int currentFeatureOSMIDIndex = changeFeature.Fields.FindField("OSMID");
             int currentFeatureVersionIndex = changeFeature.Fields.FindField("osmversion");
