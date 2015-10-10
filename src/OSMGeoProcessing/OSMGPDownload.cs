@@ -418,7 +418,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
                 #endregion
 
-                IGPEnvironment configKeyword = getEnvironment(envMgr, "configKeyword");
+                IGPEnvironment configKeyword = OSMToolHelper.getEnvironment(envMgr, "configKeyword");
                 IGPString gpString = null;
                 if (configKeyword != null)
                     gpString = configKeyword.Value as IGPString;
@@ -1012,27 +1012,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             return osmDocumentLocation;
         }
 
-        public static IGPEnvironment getEnvironment(IGPEnvironmentManager environmentManager, string name)
-        {
-            IGPUtilities3 gpUtils = new GPUtilitiesClass();
-            IGPEnvironment returnEnv = null;
 
-            try
-            {
-                if (environmentManager.GetLocalEnvironments().Count > 0)
-                    returnEnv = gpUtils.GetEnvironment(environmentManager.GetLocalEnvironments(), name);
-
-                if (returnEnv == null)
-                    returnEnv = gpUtils.GetEnvironment(environmentManager.GetEnvironments(), name);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-                System.Diagnostics.Debug.WriteLine(ex.StackTrace);
-            }
-
-            return returnEnv;
-        }
 
         public ESRI.ArcGIS.esriSystem.IName FullName
         {

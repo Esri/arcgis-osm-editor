@@ -168,6 +168,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         // the count should be zero if we encountered the "ALL" keyword 
                         // in this case count the features and create a list of unique tags
+                        // this is a slow process process - be patient for large files
                         attributeTags = osmToolHelper.countOSMCapacityAndTags(osmFileLocationString.GetAsText(), ref nodeCapacity, ref wayCapacity, ref relationCapacity, ref TrackCancel);
                     }
                 }
@@ -358,7 +359,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 Marshal.ReleaseComObject(wgs84);
                 Marshal.ReleaseComObject(spatialReferenceFactory);
 
-                IGPEnvironment configKeyword = OSMGPDownload.getEnvironment(envMgr, "configKeyword");
+                IGPEnvironment configKeyword = OSMToolHelper.getEnvironment(envMgr, "configKeyword");
                 IGPString gpString = configKeyword.Value as IGPString;
 
                 string storageKeyword = String.Empty;
@@ -707,6 +708,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 osmToolHelper.loadOSMNodes(osmFileLocationString.GetAsText(), ref TrackCancel, ref message, targetDatasetGPValue, osmPointFeatureClass, conserveMemoryGPValue.Value, fastLoad, Convert.ToInt32(nodeCapacity), ref osmNodeDictionary, featureWorkspace, downloadSpatialReference, availableDomains, false);
                 #endregion
 
+                // ----------------------------------------------
+                //return;
+                // ----------------------------------------------
 
                 if (TrackCancel.Continue() == false)
                 {
