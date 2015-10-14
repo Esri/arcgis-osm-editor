@@ -23,7 +23,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         OSMGPFactory osmGPFactory = null;
 
 
-        int in_osmFileNumber, out_osmPointsNumber, out_osmLinesNumber, out_osmPolygonsNumber, in_deleteSupportNodes, in_pointFieldNames, in_lineFieldNames, in_polygonFieldNames;
+        int in_osmFileNumber, out_osmPointsNumber, out_osmLinesNumber, out_osmPolygonsNumber, 
+            in_deleteSupportNodesNumber, in_deleteOSMSourceFileNumber, in_pointFieldNamesNumber, 
+            in_lineFieldNamesNumber, in_polygonFieldNamesNumber;
         Dictionary<string, string> m_editorConfigurationSettings = null;
 
 
@@ -185,7 +187,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 string[] pointFCNameElements = osmPointsFeatureClassGPValue.GetAsText().Split(System.IO.Path.DirectorySeparatorChar);
 
 
-                IGPParameter tagPointCollectionParameter = paramvalues.get_Element(in_pointFieldNames) as IGPParameter;
+                IGPParameter tagPointCollectionParameter = paramvalues.get_Element(in_pointFieldNamesNumber) as IGPParameter;
                 IGPMultiValue tagPointCollectionGPValue = gpUtilities3.UnpackGPValue(tagPointCollectionParameter) as IGPMultiValue;
 
                 List<String> pointTagstoExtract = null;
@@ -250,7 +252,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 string[] lineFCNameElements = osmLineFeatureClassGPValue.GetAsText().Split(System.IO.Path.DirectorySeparatorChar);
 
 
-                IGPParameter tagLineCollectionParameter = paramvalues.get_Element(in_lineFieldNames) as IGPParameter;
+                IGPParameter tagLineCollectionParameter = paramvalues.get_Element(in_lineFieldNamesNumber) as IGPParameter;
                 IGPMultiValue tagLineCollectionGPValue = gpUtilities3.UnpackGPValue(tagLineCollectionParameter) as IGPMultiValue;
 
                 List<String> lineTagstoExtract = null;
@@ -312,7 +314,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 string[] polygonFCNameElements = osmPolygonFeatureClassGPValue.GetAsText().Split(System.IO.Path.DirectorySeparatorChar);
 
-                IGPParameter tagPolygonCollectionParameter = paramvalues.get_Element(in_polygonFieldNames) as IGPParameter;
+                IGPParameter tagPolygonCollectionParameter = paramvalues.get_Element(in_polygonFieldNamesNumber) as IGPParameter;
                 IGPMultiValue tagPolygonCollectionGPValue = gpUtilities3.UnpackGPValue(tagPolygonCollectionParameter) as IGPMultiValue;
 
                 List<String> polygonTagstoExtract = null;
@@ -395,6 +397,21 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 osmToolHelper.splitOSMFile(osmFileLocationString.GetAsText(), scratchWorkspaceFolder, nodeCapacity, wayCapacity, relationCapacity, numberOfThreads,
                     out nodeOSMFileNames, out nodeGDBFileNames, out wayOSMFileNames, out wayGDBFileNames, out relationOSMFileNames, out relationGDBFileNames);
 
+                IGPParameter deleteSourceOSMFileParameter = paramvalues.get_Element(in_deleteOSMSourceFileNumber) as IGPParameter;
+                IGPBoolean deleteSourceOSMFileGPValue = gpUtilities3.UnpackGPValue(deleteSourceOSMFileParameter) as IGPBoolean;
+
+                if (deleteSourceOSMFileGPValue.Value)
+                {
+                    try
+                    {
+                        System.IO.File.Delete(osmFileLocationString.GetAsText());
+                    }
+                    catch (Exception ex)
+                    {
+                        message.AddWarning(ex.Message);
+                    }
+                }
+
                 if (TrackCancel.Continue() == false)
                 {
                     return;
@@ -422,11 +439,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 IGeoProcessor2 geoProcessor = new GeoProcessorClass();
 
-                IGPParameter deleteSupportingNodesParameter = paramvalues.get_Element(in_deleteSupportNodes) as IGPParameter;
+                IGPParameter deleteSupportingNodesParameter = paramvalues.get_Element(in_deleteSupportNodesNumber) as IGPParameter;
                 IGPBoolean deleteSupportingNodesGPValue = gpUtilities3.UnpackGPValue(deleteSupportingNodesParameter) as IGPBoolean;
 
                 #region load points
-                osmToolHelper.loadOSMNodes(nodeOSMFileNames, nodeGDBFileNames, pointFCNameElements[pointFCNameElements.Length - 1], osmPointsFeatureClassGPValue.GetAsText(), deleteSupportingNodesGPValue.Value, ref message, ref TrackCancel);
+                osmToolHelper.loadOSMNodes(nodeOSMFileNames, nodeGDBFileNames, pointFCNameElements[pointFCNameElements.Length - 1], osmPointsFeatureClassGPValue.GetAsText(), pointTagstoExtract, deleteSupportingNodesGPValue.Value, ref message, ref TrackCancel);
                 #endregion
 
                 if (TrackCancel.Continue() == false)
@@ -435,7 +452,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 #region load ways
-                osmToolHelper.loadOSMWays(wayOSMFileNames, osmPointsFeatureClassGPValue.GetAsText(), wayGDBFileNames, lineFCNameElements[lineFCNameElements.Length - 1], polygonFCNameElements[polygonFCNameElements.Length - 1], ref message,  ref TrackCancel);
+                osmToolHelper.loadOSMWays(wayOSMFileNames, osmPointsFeatureClassGPValue.GetAsText(), wayGDBFileNames, lineFCNameElements[lineFCNameElements.Length - 1], polygonFCNameElements[polygonFCNameElements.Length - 1], lineTagstoExtract, polygonTagstoExtract, ref message,  ref TrackCancel);
                 #endregion
 
                 #region for local geodatabases enforce spatial integrity
@@ -519,7 +536,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 #region load relations
-                osmToolHelper.loadOSMRelations(relationOSMFileNames, osmLineFeatureClassGPValue.GetAsText(), osmPolygonFeatureClassGPValue.GetAsText(), relationGDBFileNames,  ref TrackCancel, ref message);
+                osmToolHelper.loadOSMRelations(relationOSMFileNames, osmLineFeatureClassGPValue.GetAsText(), osmPolygonFeatureClassGPValue.GetAsText(), relationGDBFileNames, lineTagstoExtract, polygonTagstoExtract, ref TrackCancel, ref message);
                 #endregion
 
                 // check for user interruption
@@ -798,6 +815,26 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 osmPolygonFeatureClassDomain.AddType(ESRI.ArcGIS.Geometry.esriGeometryType.esriGeometryPolygon);
                 osmPolygons.Domain = osmPolygonFeatureClassDomain as IGPDomain;
 
+                IGPParameterEdit3 deleteOSMSourceFileParameter = new GPParameterClass() as IGPParameterEdit3;
+                IGPCodedValueDomain deleteOSMSourceFileDomain = new GPCodedValueDomainClass();
+
+                IGPBoolean deleteOSMSourceFileTrue = new GPBooleanClass();
+                deleteOSMSourceFileTrue.Value = true;
+                IGPBoolean deleteOSMSourceFileFalse = new GPBooleanClass();
+                deleteOSMSourceFileFalse.Value = false;
+
+                deleteOSMSourceFileDomain.AddCode((IGPValue)deleteOSMSourceFileTrue, "DELETE_OSM_FILE");
+                deleteOSMSourceFileDomain.AddCode((IGPValue)deleteOSMSourceFileFalse, "DO_NOT_DELETE_OSM_FILE");
+                deleteOSMSourceFileParameter.Domain = (IGPDomain)deleteOSMSourceFileDomain;
+                deleteOSMSourceFileParameter.Value = (IGPValue)deleteOSMSourceFileFalse;
+
+                deleteOSMSourceFileParameter.DataType = new GPBooleanTypeClass();
+                deleteOSMSourceFileParameter.Direction = esriGPParameterDirection.esriGPParameterDirectionInput;
+                deleteOSMSourceFileParameter.ParameterType = esriGPParameterType.esriGPParameterTypeOptional;
+                deleteOSMSourceFileParameter.DisplayName = resourceManager.GetString("GPTools_OSMGPMultiLoader_deleteOSMSource_desc");
+                deleteOSMSourceFileParameter.Name = "in_deleteOSMSourceFile";
+
+
                 IGPParameterEdit3 deleteSupportNodesParameter = new GPParameterClass() as IGPParameterEdit3;
                 IGPCodedValueDomain deleteSupportNodesDomain = new GPCodedValueDomainClass();
 
@@ -809,12 +846,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 deleteSupportNodesDomain.AddCode((IGPValue)deleteSupportNodesTrue, "DELETE_NODES");
                 deleteSupportNodesDomain.AddCode((IGPValue)deleteSupportNodesFalse, "DO_NOT_DELETE_NODES");
                 deleteSupportNodesParameter.Domain = (IGPDomain)deleteSupportNodesDomain;
-                deleteSupportNodesParameter.Value = (IGPValue)deleteSupportNodesTrue;
+                deleteSupportNodesParameter.Value = (IGPValue)deleteSupportNodesFalse;
 
                 deleteSupportNodesParameter.DataType = new GPBooleanTypeClass();
                 deleteSupportNodesParameter.Direction = esriGPParameterDirection.esriGPParameterDirectionInput;
                 deleteSupportNodesParameter.ParameterType = esriGPParameterType.esriGPParameterTypeOptional;
-                deleteSupportNodesParameter.DisplayName = resourceManager.GetString("GPTools_OSMGPFileReader_conserveMemory_desc");
+                deleteSupportNodesParameter.DisplayName = resourceManager.GetString("GPTools_OSMGPMultiLoader_deleteNodes_desc");
                 deleteSupportNodesParameter.Name = "in_deleteSupportNodes";
 
                 // field multi parameter
@@ -857,25 +894,28 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 in_osmFileNumber = 0;
 
                 parameterArray.Add(loadPointFieldsParameter);
-                in_pointFieldNames = 1;
+                in_pointFieldNamesNumber = 1;
 
                 parameterArray.Add(loadLineFieldsParameter);
-                in_lineFieldNames = 2;
+                in_lineFieldNamesNumber = 2;
 
                 parameterArray.Add(loadPolygonFieldsParameter);
-                in_polygonFieldNames = 3;
+                in_polygonFieldNamesNumber = 3;
 
                 parameterArray.Add(deleteSupportNodesParameter);
-                in_deleteSupportNodes = 4;
+                in_deleteSupportNodesNumber = 4;
+
+                parameterArray.Add(deleteOSMSourceFileParameter);
+                in_deleteOSMSourceFileNumber = 5;
 
                 parameterArray.Add(osmPoints);
-                out_osmPointsNumber = 5;
+                out_osmPointsNumber = 6;
 
                 parameterArray.Add(osmLines);
-                out_osmLinesNumber = 6;
+                out_osmLinesNumber = 7;
 
                 parameterArray.Add(osmPolygons);
-                out_osmPolygonsNumber = 7;
+                out_osmPolygonsNumber = 8;
 
                 return parameterArray;
             }

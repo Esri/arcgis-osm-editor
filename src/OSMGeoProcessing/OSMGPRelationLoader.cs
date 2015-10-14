@@ -189,7 +189,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 osmSourceLineFeatureClassGPValue.GetAsText(), 
                 osmSourcePolygonFeatureClassGPValue.GetAsText(),
                 osmTargetLineFeatureClassGPValue.GetAsText(), 
-                osmTargetPolygonFeatureClassGPValue.GetAsText());
+                osmTargetPolygonFeatureClassGPValue.GetAsText(),
+                lineTagstoExtract, polygonTagstoExtract);
 
 
         }

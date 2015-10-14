@@ -895,7 +895,10 @@
     <value>OpenStreetMap polygon features</value>
   </data>
   <data name="GPTools_OSMGPMultiLoader_deleteNodes_desc" xml:space="preserve">
-    <value>Delete Supporting Nodes</value>
+    <value>Delete supporting nodes</value>
+  </data>
+  <data name="GPTools_OSMGPMultiLoader_deleteOSMSource_desc" xml:space="preserve">
+    <value>Delete OSM source file</value>
   </data>
   <data name="GPTools_OSMGPMultiLoader_problemaccessingfile" xml:space="preserve">
     <value>Problem accessing the OSM file ({0}).</value>
