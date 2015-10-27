@@ -122,7 +122,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 // the default value is to use half the cores for additional threads - I am aware that we are comparing apples and oranges but I need a number
                 int numberOfThreads = Convert.ToInt32(System.Environment.ProcessorCount / 2);
 
-                if (!String.IsNullOrEmpty(parallelProcessingFactorString.Value))
+                if (!(parallelProcessingFactorEnvironment.Value.IsEmpty()))
                 {
                     if (!Int32.TryParse(parallelProcessingFactorString.Value, out numberOfThreads))
                     {
@@ -148,25 +148,28 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 // determine the temp folder to be use for the intermediate files
                 IGPEnvironment scratchWorkspaceEnvironment = OSMToolHelper.getEnvironment(envMgr, "scratchWorkspace");
-                IGPString scratchWorkspaceGPString = scratchWorkspaceEnvironment.Value as IGPString;
+                IDEWorkspace deWorkspace = scratchWorkspaceEnvironment.Value as IDEWorkspace;
                 String scratchWorkspaceFolder = String.Empty;
 
-                if (scratchWorkspaceGPString != null)
+                if (deWorkspace != null)
                 {
-                    if (String.IsNullOrEmpty(scratchWorkspaceGPString.Value))
-                        scratchWorkspaceFolder = System.IO.Path.GetTempPath();
+                    if (scratchWorkspaceEnvironment.Value.IsEmpty())
+                    {
+                        scratchWorkspaceFolder = (new System.IO.FileInfo(osmFileLocationString.GetAsText())).DirectoryName;
+                    }
                     else
                     {
-                        if (scratchWorkspaceGPString.Value.Contains(".gdb"))
+                        if (deWorkspace.WorkspaceType == esriWorkspaceType.esriRemoteDatabaseWorkspace)
                         {
-                            scratchWorkspaceFolder = (new System.IO.FileInfo(scratchWorkspaceGPString.Value)).DirectoryName;
+                            scratchWorkspaceFolder = System.IO.Path.GetTempPath();
+                        }
+                        else if (deWorkspace.WorkspaceType == esriWorkspaceType.esriFileSystemWorkspace)
+                        {
+                            scratchWorkspaceFolder = ((IDataElement)deWorkspace).CatalogPath;
                         }
                         else
                         {
-                            if (System.IO.Directory.Exists(scratchWorkspaceGPString.Value))
-                                scratchWorkspaceFolder = scratchWorkspaceGPString.Value;
-                            else
-                                scratchWorkspaceFolder = System.IO.Path.GetTempPath();
+                            scratchWorkspaceFolder = (new System.IO.FileInfo(((IDataElement)deWorkspace).CatalogPath)).DirectoryName;
                         }
                     }
                 }
@@ -436,7 +439,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 // define variables helping to invoke core tools for data management
                 IGeoProcessorResult2 gpResults2 = null;
-
                 IGeoProcessor2 geoProcessor = new GeoProcessorClass();
 
                 IGPParameter deleteSupportingNodesParameter = paramvalues.get_Element(in_deleteSupportNodesNumber) as IGPParameter;
@@ -629,20 +631,51 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 {
                     message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPMultiLoader_remove_supportNodes")));
 
-                    // delete the points considered 'supporting elements'
+                    storedOriginalLocal = geoProcessor.AddOutputsToMap;
+                    geoProcessor.AddOutputsToMap = false;
+
+                    // create a layer file to select the points that have attributes
                     osmPointFeatureClass = ((IFeatureWorkspace)pointFeatureWorkspace).OpenFeatureClass(pointFCNameElements[pointFCNameElements.Length - 1]);
 
-                    int supportingElementFieldIndex = osmPointFeatureClass.Fields.FindField("osmSupportingElement");
+                    IVariantArray makeFeatureLayerParameterArray = new VarArrayClass();
+                    makeFeatureLayerParameterArray.Add(osmPointsFeatureClassGPValue.GetAsText());
 
-                    if (supportingElementFieldIndex > -1)
-                    {
-                        ((ITable)osmPointFeatureClass).DeleteSearchedRows(new QueryFilterClass()
-                        {
-                            WhereClause = String.Format("{0} = 'yes'", osmPointFeatureClass.SqlIdentifier("osmSupportingElement"))
-                        });
-                    }
+                    string tempLayerFile = System.IO.Path.GetTempFileName();
+                    makeFeatureLayerParameterArray.Add(tempLayerFile);
+                    makeFeatureLayerParameterArray.Add(String.Format("{0} = 'no'", osmPointFeatureClass.SqlIdentifier("osmSupportingElement")));
+
+                    geoProcessor.Execute("MakeFeatureLayer_management", makeFeatureLayerParameterArray, TrackCancel);
+
+                    // copy the features into its own feature class
+                    IVariantArray copyFeatureParametersArray = new VarArrayClass();
+                    copyFeatureParametersArray.Add(tempLayerFile);
+
+                    string tempFeatureClass = String.Join("\\", new string[] { 
+                        ((IWorkspace)pointFeatureWorkspace).PathName, "t_" + pointFCNameElements[pointFCNameElements.Length - 1] });
+                    copyFeatureParametersArray.Add(tempFeatureClass);
+
+                    geoProcessor.Execute("CopyFeatures_management", copyFeatureParametersArray, TrackCancel);
+
+                    // delete the temp file
+                    System.IO.File.Delete(tempLayerFile);
+
+                    // delete the original feature class
+                    IVariantArray deleteParameterArray = new VarArrayClass();
+                    deleteParameterArray.Add(osmPointsFeatureClassGPValue.GetAsText());
+
+                    geoProcessor.Execute("Delete_management", deleteParameterArray, TrackCancel);
+
+                    // rename the temp feature class back to the original
+                    IVariantArray renameParameterArray = new VarArrayClass();
+                    renameParameterArray.Add(tempFeatureClass);
+                    renameParameterArray.Add(osmPointsFeatureClassGPValue.GetAsText());
+
+                    geoProcessor.Execute("Rename_management", renameParameterArray, TrackCancel);
+
+                    geoProcessor.AddOutputsToMap = storedOriginalLocal;
 
                     ComReleaser.ReleaseCOMObject(osmPointFeatureClass);
+                    ComReleaser.ReleaseCOMObject(geoProcessor);
                 }
 
                 gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;

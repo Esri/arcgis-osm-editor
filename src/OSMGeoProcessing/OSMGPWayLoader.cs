@@ -178,7 +178,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             IGPParameter osmPointFeatureClassParameter = paramvalues.get_Element(1) as IGPParameter;
             IGPValue osmPointFeatureClassGPValue = gpUtilities3.UnpackGPValue(osmPointFeatureClassParameter) as IGPValue;
 
-
             string[] gdbComponents = new string[polygonFCNameElements.Length - 1];
             System.Array.Copy(lineFCNameElements, gdbComponents, lineFCNameElements.Length - 1);
             string fileGDBLocation = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), gdbComponents);

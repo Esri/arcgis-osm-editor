@@ -516,7 +516,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 // Check for Desktop first
                 foreach (RuntimeInfo item in installedRuntimes)
                 {
-                    
                     if (String.Compare(item.Product.ToString(), "Desktop", true) == 0)
                         installationDirectory = item.Path;
                 }

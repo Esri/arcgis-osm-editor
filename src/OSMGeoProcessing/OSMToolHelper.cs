@@ -21,6 +21,7 @@ using ESRI.ArcGIS.DataSourcesGDB;
 using System.Xml.Linq;
 using System.Threading;
 using ESRI.ArcGIS.DataSourcesFile;
+using System.Collections;
 
 
 namespace ESRI.ArcGIS.OSM.GeoProcessing
@@ -2236,6 +2237,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                     IFeatureWorkspace sourceWorkspace = null;
                     string sourceFCNameString = String.Empty;
+
+                    string[] sourcePointFCElements = sourcePointsFeatureClassName.Split(new char[] { System.IO.Path.DirectorySeparatorChar });
+                    sourceFCNameString = sourcePointFCElements[sourcePointFCElements.Length - 1];
+
                     if (sourcePointsFeatureClassName.Contains(fileGDBLocation))
                     {
                         // re-use the existing workspace connection
@@ -2246,8 +2251,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         IWorkspaceFactory sourceWorkspaceFactory = guessWorkspaceFactory(sourcePointsFeatureClassName);
                         comReleaser.ManageLifetime(sourceWorkspaceFactory);
 
-                        string[] sourcePointFCElements = sourcePointsFeatureClassName.Split(new char[] { System.IO.Path.DirectorySeparatorChar });
-                        sourceFCNameString = sourcePointFCElements[sourcePointFCElements.Length - 1];
                         sourceWorkspace = sourceWorkspaceFactory.OpenFromFile(sourcePointsFeatureClassName.Substring(0, sourcePointsFeatureClassName.Length - sourceFCNameString.Length - 1), 0) as IFeatureWorkspace;
                         comReleaser.ManageLifetime(sourceWorkspace);
                     }
@@ -2392,13 +2395,16 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         string nodeOSMIDString = Convert.ToString(nodeFeature.get_Value(osmPointIDFieldIndex));
 
                                         // remove the ID from the request string
+                                        // this has the problem of potentially removing the start and the end point
+                                        // there will be an additional test to see if the last point is empty
                                         idCompareString = idCompareString.Replace(nodeOSMIDString, String.Empty);
 
                                         wayPointCollection.UpdatePoint(nodePositionDictionary[nodeOSMIDString][0], (IPoint)nodeFeature.ShapeCopy);
 
-                                        // remove the used index from the dictionary
-                                        // this is for a situation like roundabouts where the start and end are the same but still considered a linear feature
-                                        nodePositionDictionary[nodeOSMIDString].RemoveAt(0);
+                                        foreach (var index in nodePositionDictionary[nodeOSMIDString])
+                                        {
+                                            wayPointCollection.UpdatePoint(index, (IPoint)nodeFeature.ShapeCopy);
+                                        }
 
                                         if (nodeFeature != null)
                                             Marshal.ReleaseComObject(nodeFeature);
@@ -2429,7 +2435,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                     System.Diagnostics.Debug.WriteLine(wayOSMID);
                                     System.Diagnostics.Debug.WriteLine(exs.Message);
                                 }
-                                lineFeature.set_Value(osmLineIDFieldIndex, wayOSMID);
                             }
                         }
                         else
@@ -2439,14 +2444,16 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                             wayPointCollection = wayPolygon as IPointCollection;
 
-                            Dictionary<string, int> nodePositionDictionary = new Dictionary<string, int>(nodes.Count);
+                            Dictionary<string, List<int>> nodePositionDictionary = new Dictionary<string, List<int>>(nodes.Count);
 
                             // build a list of node ids we can use to determine the point index in the line geometry
                             // -- it is assumed that there are no duplicate nodes in the area
                             for (int index = 0; index < nodes.Count; index++)
                             {
-                                if (!nodePositionDictionary.ContainsKey(nodes[index]))
-                                    nodePositionDictionary.Add(nodes[index], index);
+                                if (nodePositionDictionary.ContainsKey(nodes[index]))
+                                    nodePositionDictionary[nodes[index]].Add(index);
+                                else
+                                    nodePositionDictionary.Add(nodes[index], new List<int>() { index });
                                 wayPointCollection.AddPoint(new PointClass());
                             }
 
@@ -2469,7 +2476,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                         idCompareString = idCompareString.Replace(nodeOSMIDString, String.Empty);
 
-                                        wayPointCollection.UpdatePoint(nodePositionDictionary[nodeOSMIDString], (IPoint)nodeFeature.ShapeCopy);
+                                        foreach (var index in nodePositionDictionary[nodeOSMIDString])
+                                        {
+                                            wayPointCollection.UpdatePoint(index, (IPoint)nodeFeature.ShapeCopy);    
+                                        }
 
                                         if (nodeFeature != null)
                                             Marshal.ReleaseComObject(nodeFeature);
@@ -2500,7 +2510,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                     System.Diagnostics.Debug.WriteLine(wayOSMID);
                                     System.Diagnostics.Debug.WriteLine(exs.Message);
                                 }
-                                polygonFeature.set_Value(osmPolygonIDFieldIndex, wayOSMID);
                             }
                         }
 
@@ -2508,10 +2517,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         if (wayIsLine)
                         {
                             insertTags(mainLineAttributeFieldIndices,tagCollectionLineFieldIndex, lineFeature, tags.ToArray());
+                            lineFeature.set_Value(osmLineIDFieldIndex, wayOSMID);
                         }
                         else
                         {
                             insertTags(mainPolygonAttributeFieldIndices, tagCollectionPolygonFieldIndex, polygonFeature, tags.ToArray());
+                            polygonFeature.set_Value(osmPolygonIDFieldIndex, wayOSMID);
                         }
 
                         try
@@ -2548,6 +2559,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             System.Diagnostics.Debug.WriteLine(ex.Message);
                             System.Diagnostics.Debug.WriteLine(ex.StackTrace);
                         }
+
+                        // if we encounter a whitespace, attempt to find the next way if it exists
+                        if (wayFileXmlReader.NodeType != XmlNodeType.Element)
+                            wayFileXmlReader.ReadToFollowing("way");
 
                     } while (wayFileXmlReader.Name == "way");
 
@@ -2646,7 +2661,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                         if (tags.Count > 0)
                         {
-                            insertTags(mainPointAttributeFieldIndices, tagCollectionPointFieldIndex, pointFeature, tags.ToArray());
                             pointFeature.set_Value(osmSupportingElementPointFieldIndex, "no");
                         }
                         else
@@ -2654,6 +2668,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                         try
                         {
+                            insertTags(mainPointAttributeFieldIndices, tagCollectionPointFieldIndex, pointFeature, tags.ToArray());
+
                             pointInsertCursor.InsertFeature(pointFeature);
                         }
                         catch (Exception inEx)
@@ -2672,6 +2688,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         }
 
                         counter++;
+
+                        // if we encounter a whitespace, attempt to find the next node if it exists
+                        if (nodeFileXmlReader.NodeType != XmlNodeType.Element)
+                            nodeFileXmlReader.ReadToFollowing("node");
 
                     } while (nodeFileXmlReader.Name == "node");
 
@@ -2844,7 +2864,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         writer.WriteLine("import arcpy, sys");
                         writer.WriteLine("");
-                        writer.WriteLine("# load the standard OpenStreetMap bpx as it references the core OSM tools");
+                        writer.WriteLine("# load the standard OpenStreetMap tool box as it references the core OSM tools");
                         writer.WriteLine(String.Format("arcpy.ImportToolbox(r'{0}')", toolboxPath));
                         writer.WriteLine("arcpy.env.overwriteOutput = True");
                         writer.WriteLine("");
@@ -2919,7 +2939,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         writer.WriteLine("import arcpy, sys");
                         writer.WriteLine("");
-                        writer.WriteLine("# load the standard OpenStreetMap bpx as it references the core OSM tools");
+                        writer.WriteLine("# load the standard OpenStreetMap tool box as it references the core OSM tools");
                         writer.WriteLine(String.Format("arcpy.ImportToolbox(r'{0}')", toolboxPath));
                         writer.WriteLine("arcpy.env.overwriteOutput = True");
                         writer.WriteLine("");
@@ -2990,7 +3010,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         writer.WriteLine("import arcpy, sys");
                         writer.WriteLine("");
-                        writer.WriteLine("# load the standard OpenStreetMap bpx as it references the core OSM tools");
+                        writer.WriteLine("# load the standard OpenStreetMap tool box as it references the core OSM tools");
                         writer.WriteLine(String.Format("arcpy.ImportToolbox(r'{0}')", toolboxPath));
                         writer.WriteLine("arcpy.env.overwriteOutput = True");
                         writer.WriteLine("");
@@ -3716,11 +3736,13 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         {
             if (tagsToInsert != null)
             {
+                TagKeyComparer tagKeyComparer = new TagKeyComparer();
+
                 foreach (var fieldName in AttributeFieldIndices.Keys)
                 {
                     string keyName = convert2OSMKey(fieldName, string.Empty);
 
-                    if (tagsToInsert.Contains(new tag() { k = keyName }, new TagKeyComparer()))
+                    if (tagsToInsert.Contains(new tag() { k = keyName }, tagKeyComparer))
                     {
                         tag item = tagsToInsert.Where(t => t.k == keyName).First();
 
@@ -5293,6 +5315,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     catch
                     { }
 
+                    TagKeyValueComparer routeTagComparer = new TagKeyValueComparer();
 
                     do {
 
@@ -5331,11 +5354,16 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             }
                         }
 
-                        //if (members.ContainsKey("way"))
-                        //    itemIDs.AddRange(members["way"]);
 
-                        //if (members.ContainsKey("relation"))
-                        //    itemIDs.AddRange(members["relation"]);
+                        bool isRoute = false;
+                        // check for the existence of a route tag -> indicating a linear feature and overrules the geometry determination
+                        // of polygon or polyline
+                        tag routeTag = new tag() { k = "type", v = "route" };
+                        if (tags.Contains(routeTag, routeTagComparer))
+                        {
+                            isRoute = true;
+                        }
+
 
                         // attempt to assemble the relation feature from the way and relation IDs
                         if (itemIDs.Count > 0)
@@ -5344,17 +5372,13 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                             List<string> idRequests = SplitOSMIDRequests(itemIDs);
                             List<IGeometry> itemGeometries = new List<IGeometry>(itemIDs.Count);
-                            Dictionary<string, List<int>> itemPositionDictionary = new Dictionary<string, List<int>>(itemIDs.Count);
+                            Dictionary<string, int> itemPositionDictionary = new Dictionary<string, int>(itemIDs.Count);
 
                             // build a list of way ids we can use to determine the order in the relation
                             for (int index = 0; index < itemIDs.Count; index++)
                             {
                                 itemGeometries.Add(new PointClass());
-
-                                if (!itemPositionDictionary.ContainsKey(itemIDs[index]))
-                                    itemPositionDictionary.Add(itemIDs[index], new List<int>() { index });
-                                else
-                                    itemPositionDictionary[itemIDs[index]].Add(index);
+                                itemPositionDictionary[itemIDs[index]] = index;
                             }
 
                             List<string> polygonIDs = new List<string>();
@@ -5379,23 +5403,21 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         // remove the ID from the request string
                                         idCompareString = idCompareString.Replace(lineOSMIDString, String.Empty);
 
-                                        itemGeometries[itemPositionDictionary[lineOSMIDString][0]] = lineFeature.ShapeCopy;
+                                        itemGeometries[itemPositionDictionary[lineOSMIDString]] = lineFeature.ShapeCopy;
 
-                                        // remove the used index from the dictionary
-                                       itemPositionDictionary[lineOSMIDString].RemoveAt(0);
-
-                                       lineFeature = searchLineCursor.NextFeature();
+                                        lineFeature = searchLineCursor.NextFeature();
                                     }
 
-                                    idCompareString = CleanReportedIDs(idCompareString);
+                                }
 
-                                    // after removing the commas we should be left with only paranthesis left, meaning a string of length 2
-                                    // if we have more then we have found a missing way as a line we still need to search the polygons
-                                    if (idCompareString.Length > 2)
-                                    {
-                                        string[] wayIDs = idCompareString.Substring(1, idCompareString.Length - 2).Split(",".ToCharArray());
-                                        polygonIDs.AddRange(wayIDs);
-                                    }
+                                idCompareString = CleanReportedIDs(idCompareString);
+
+                                // after removing the commas we should be left with only paranthesis left, meaning a string of length 2
+                                // if we have more then we have found a missing way as a line we still need to search the polygons
+                                if (idCompareString.Length > 2)
+                                {
+                                    string[] wayIDs = idCompareString.Substring(1, idCompareString.Length - 2).Split(",".ToCharArray());
+                                    polygonIDs.AddRange(wayIDs);
                                 }
                             }
 
@@ -5421,23 +5443,20 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         // remove the ID from the request string
                                         idCompareString = idCompareString.Replace(polygonOSMIDString, String.Empty);
 
-                                        itemGeometries[itemPositionDictionary[polygonOSMIDString][0]] = polygonFeature.ShapeCopy;
-
-                                        // remove the used index from the dictionary
-                                        itemPositionDictionary[polygonOSMIDString].RemoveAt(0);
+                                        itemGeometries[itemPositionDictionary[polygonOSMIDString]] = polygonFeature.ShapeCopy;
 
                                         polygonFeature = searchPolygonCursor.NextFeature();
                                     }
+                                }
 
-                                    idCompareString = CleanReportedIDs(idCompareString);
+                                idCompareString = CleanReportedIDs(idCompareString);
 
-                                    // after removing the commas we should be left with only paranthesis left, meaning a string of length 2
-                                    // if we have more then we have found a missing way as a line we still need to search the polygons
-                                    if (idCompareString.Length > 2)
-                                    {
-                                        relationIsComplete = false;
-                                        break;
-                                    }
+                                // after removing the commas we should be left with only paranthesis left, meaning a string of length 2
+                                // if we have more then we have found a missing way as a line we still need to search the polygons
+                                if (idCompareString.Length > 2)
+                                {
+                                    relationIsComplete = false;
+                                    break;
                                 }
                             }
 
@@ -5447,8 +5466,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 IPoint partFromPoint = null;
                                 IPoint partToPoint = null;
 
-                                foreach (var wayGeometry in itemGeometries)
+                                //foreach (var wayGeometry in itemGeometries)
+                                for (int i = 0; i < itemGeometries.Count; i++)
                                 {
+                                    IGeometry wayGeometry = itemGeometries[i];
+
                                     IGeometry geometry = ((IClone)wayGeometry).Clone() as IGeometry;
 
                                     if (geometry is IPoint)
@@ -5467,19 +5489,25 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                     {
                                         if (geometry is IPolygon)
                                         {
-                                            relationParts.Add(geometry as IPointCollection);
-                                            isArea = true;
+                                            // in case of routes drop area features
+                                            if (!isRoute)
+                                            {
+                                                relationParts.Add(geometry as IPointCollection);
+                                                isArea = true;
+                                            }
                                         }
                                         else
                                         {
                                             bool ContinueConnect = ((IRelationalOperator)partToPoint).Equals(((ICurve)geometry).FromPoint);
                                             bool AreaConnect = false;
+                                            bool isFlipped = false;
 
                                             if (ContinueConnect == false)
                                             {
                                                 // flip the piece once to check variations
                                                 ICurve flipGeometry = ((IClone)geometry).Clone() as ICurve;
                                                 flipGeometry.ReverseOrientation();
+                                                isFlipped = true;
 
                                                 ContinueConnect = ((IRelationalOperator)partToPoint).Equals(flipGeometry.FromPoint);
                                                 AreaConnect = ((IRelationalOperator)partFromPoint).Equals(flipGeometry.ToPoint);
@@ -5491,7 +5519,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                             // if the to point of the current feature and the from of the point collection are equal then the relation closes 
                                             // would be considered an area. 
-                                            if (AreaConnect)
+                                            if (AreaConnect & ContinueConnect & !isRoute)
                                             {
                                                 isArea = true;
 
@@ -5519,9 +5547,17 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                             // otherwise there is a discontinuation and we'll start a new part
                                             else
                                             {
-                                                partFromPoint = ((IClone)((ICurve)geometry).FromPoint).Clone() as IPoint;
-                                                partToPoint = ((IClone)((ICurve)geometry).ToPoint).Clone() as IPoint;
-                                                relationParts.Add(geometry as IPointCollection);
+                                                // if it was flipped then reverse the orientation otherwise we could be double-flipping and closing
+                                                // on the next way
+                                                IGeometry newPart = ((IClone)geometry).Clone() as IGeometry; ;
+                                                if (isFlipped)
+                                                {
+                                                    ((ICurve)newPart).ReverseOrientation();
+                                                }
+
+                                                partFromPoint = ((IClone)((ICurve)newPart).FromPoint).Clone() as IPoint;
+                                                partToPoint = ((IClone)((ICurve)newPart).ToPoint).Clone() as IPoint;
+                                                relationParts.Add(newPart as IPointCollection);
                                             }
                                         }
                                     }
@@ -5603,6 +5639,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 }
                             }
                         }
+
+                        // if we encounter a whitespace, attempt to find the next relation if it exists
+                        if (relationFileXmlReader.NodeType != XmlNodeType.Element)
+                            relationFileXmlReader.ReadToFollowing("relation");
 
                     } while (relationFileXmlReader.Name == "relation");
 
@@ -6878,13 +6918,13 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             return attributeFieldName;
         }
 
-        public static bool IsThisWayALine(List<tag> tags, List<string> nodes)
+        public static bool IsThisWayALine(List<tag> tags, List<string> nodeIDs)
         {
             bool isALine = true;
 
             try
             {
-                if (nodes[0] == nodes[nodes.Count - 1])
+                if (nodeIDs[0] == nodeIDs[nodeIDs.Count - 1])
                 {
                     isALine = false;
                 }
@@ -6909,12 +6949,16 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 highwayTag.k = "highway";
                 highwayTag.v = "something";
 
-                if (tags.Contains(coastlineTag, new TagKeyValueComparer()))
-                {
-                    isCoastline = true;
-                    isALine = true;
-                    return isALine;
-                }
+                tag routeTag = new tag();
+                routeTag.k = "type";
+                routeTag.v = "route";
+
+                //if (tags.Contains(coastlineTag, new TagKeyValueComparer()))
+                //{
+                //    isCoastline = true;
+                //    isALine = true;
+                //    return isALine;
+                //}
 
                 if (tags.Contains(highwayTag, new TagKeyComparer()))
                 {
@@ -6923,10 +6967,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 if (tags.Contains(areaTag, new TagKeyValueComparer()))
                 {
-                    if (isCoastline == false)
-                    {
-                        isALine = false;
-                    }
+                    isALine = false;
+                }
+
+                if (tags.Contains(routeTag, new TagKeyValueComparer()))
+                {
+                    isALine = true;
                 }
             }
             catch (Exception ex)
@@ -7560,6 +7606,188 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
 
             return testedGeometry;
+        }
+    }
+
+    /// <summary>
+    /// Adaptation from the implementation at
+    /// https://code.google.com/p/tambon/source/browse/trunk/AHGeo/GeoHash.cs
+    /// </summary>
+    static internal class GeoHash
+    {
+        private static Char[] _Digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8',
+                        '9', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k', 'm', 'n', 'p',
+                        'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
+
+        private static int _NumberOfBits = 6 * 5;
+        private static Dictionary<Char, Int32> _LookupTable = CreateLookup();
+
+        private static Dictionary<Char, Int32> CreateLookup()
+        {
+
+            Dictionary<Char, Int32> result = new Dictionary<char, Int32>();
+            Int32 i = 0;
+
+            foreach (Char c in _Digits)
+            {
+                result[c] = i;
+                i++;
+            }
+
+            return result;
+        }
+
+        private static double GeoHashDecode(BitArray bits, double floorValue, double ceilingValue)
+        {
+            Double middle = 0;
+            Double floor = floorValue;
+            Double ceiling = ceilingValue;
+
+            for (Int32 i = 0; i < bits.Length; i++)
+            {
+                middle = (floor + ceiling) / 2;
+
+                if (bits[i])
+                {
+                    floor = middle;
+                }
+                else
+                {
+                    ceiling = middle;
+                }
+            }
+
+            return middle;
+        }
+
+        private static BitArray GeoHashEncode(double value, double floorValue, double ceilingValue)
+        {
+            BitArray result = new BitArray(_NumberOfBits);
+            Double floor = floorValue;
+            Double ceiling = ceilingValue;
+
+            for (Int32 i = 0; i < _NumberOfBits; i++)
+            {
+                Double middle = (floor + ceiling) / 2;
+
+                if (value >= middle)
+                {
+                    result[i] = true;
+                    floor = middle;
+                }
+                else
+                {
+                    result[i] = false;
+                    ceiling = middle;
+                }
+            }
+
+            return result;
+        }
+
+        private static String EncodeBase32(String binaryStringValue)
+        {
+            StringBuilder buffer = new StringBuilder();
+            String binaryString = binaryStringValue;
+
+            while (binaryString.Length > 0)
+            {
+                String currentBlock = binaryString.Substring(0, 5).PadLeft(5, '0');
+
+                if (binaryString.Length > 5)
+                {
+                    binaryString = binaryString.Substring(5, binaryString.Length - 5);
+                }
+                else
+                {
+                    binaryString = String.Empty;
+                }
+
+                Int32 value = Convert.ToInt32(currentBlock, 2);
+                buffer.Append(_Digits[value]);
+            }
+
+            String result = buffer.ToString();
+
+            return result;
+        }
+
+        internal static IPoint DecodeGeoHash(String value)
+        {
+            StringBuilder lBuffer = new StringBuilder();
+
+            foreach (Char c in value)
+            {
+                if (!_LookupTable.ContainsKey(c))
+                {
+                    throw new ArgumentException("Invalid character " + c);
+                }
+
+                Int32 i = _LookupTable[c] + 32;
+                lBuffer.Append(Convert.ToString(i, 2).Substring(1));
+            }
+
+            BitArray lonset = new BitArray(_NumberOfBits);
+            BitArray latset = new BitArray(_NumberOfBits);
+
+            //even bits
+            int j = 0;
+
+            for (int i = 0; i < _NumberOfBits * 2; i += 2)
+            {
+                Boolean isSet = false;
+
+                if (i < lBuffer.Length)
+                {
+                    isSet = lBuffer[i] == '1';
+                }
+
+                lonset[j] = isSet;
+                j++;
+            }
+
+            //odd bits
+            j = 0;
+
+            for (int i = 1; i < _NumberOfBits * 2; i += 2)
+            {
+                Boolean isSet = false;
+
+                if (i < lBuffer.Length)
+                {
+                    isSet = lBuffer[i] == '1';
+                }
+
+                latset[j] = isSet;
+                j++;
+            }
+
+            double longitude = GeoHashDecode(lonset, -180, 180);
+            double latitude = GeoHashDecode(latset, -90, 90);
+
+            IPoint pointResult = new PointClass() { X = longitude, Y = latitude };
+
+            return pointResult;
+        }
+
+        internal static String EncodeGeoHash(IPoint data, Int32 accuracy)
+        {
+            BitArray latitudeBits = GeoHashEncode(data.Y, -90, 90);
+            BitArray longitudeBits = GeoHashEncode(data.X, -180, 180);
+
+            StringBuilder buffer = new StringBuilder();
+
+            for (Int32 i = 0; i < _NumberOfBits; i++)
+            {
+                buffer.Append((longitudeBits[i]) ? '1' : '0');
+                buffer.Append((latitudeBits[i]) ? '1' : '0');
+            }
+
+            String binaryValue = buffer.ToString();
+            String result = EncodeBase32(binaryValue);
+
+            result = result.Substring(0, accuracy);
+            return result;
         }
     }
 }

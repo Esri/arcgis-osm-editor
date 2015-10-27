@@ -946,7 +946,7 @@
     <value>OSM File</value>
   </data>
   <data name="GPTools_OSMGPNodeLoader_osmPoints_desc" xml:space="preserve">
-    <value>OpenstreetMap point features</value>
+    <value>OpenStreetMap point features</value>
   </data>
   <data name="GPTools_OSMGPNodeLoader_fieldNames_desc" xml:space="preserve">
     <value>Node tag keys to load for point features</value>
@@ -964,16 +964,19 @@
     <value>OSM File</value>
   </data>
   <data name="GPTools_OSMGPWayLoader_osmLines_desc" xml:space="preserve">
-    <value>OpenstreetMap line features</value>
+    <value>OpenStreetMap line features</value>
   </data>
   <data name="GPTools_OSMGPWayLoader_osmPolygons_desc" xml:space="preserve">
-    <value>OpenstreetMap polygon features</value>
+    <value>OpenStreetMap polygon features</value>
   </data>
   <data name="GPTools_OSMGPWayLoader_lineFieldNames_desc" xml:space="preserve">
     <value>Way tag keys to load for line features</value>
   </data>
   <data name="GPTools_OSMGPWayLoader_polygonFieldNames_desc" xml:space="preserve">
     <value>Way tag keys to load for polygon features</value>
+  </data>
+  <data name="GPTools_OSMGPWayLoader_osmpointFeatureClass_desc" xml:space="preserve">
+    <value>Source OpenStreetMap point features</value>
   </data>
   <data name="GPTools_OSMGPRelationLoader_categoryName" xml:space="preserve">
     <value>Data Delivery</value>
@@ -988,19 +991,19 @@
     <value>OSM File</value>
   </data>
   <data name="GPTools_OSMGPRelationLoader_osmLines_desc" xml:space="preserve">
-    <value>Source OpenstreetMap line features</value>
+    <value>Source OpenStreetMap line features</value>
   </data>
   <data name="GPTools_OSMGPRelationLoader_osmPolygons_desc" xml:space="preserve">
-    <value>Source OpenstreetMap polygon features</value>
+    <value>Source OpenStreetMap polygon features</value>
   </data>
   <data name="GPTools_OSMGPRelationLoader_osmpointFeatureClass_desc" xml:space="preserve">
-    <value>Loaded OpenstreetMap Point/Node features</value>
+    <value>Loaded OpenStreetMap Point/Node features</value>
   </data>
   <data name="GPTools_OSMGPRelationLoader_osmOutLines_desc" xml:space="preserve">
-    <value>OpenstreetMap line features</value>
+    <value>OpenStreetMap line features</value>
   </data>
   <data name="GPTools_OSMGPRelationLoader_osmOutPolygons_desc" xml:space="preserve">
-    <value>OpenstreetMap polygon features</value>
+    <value>OpenStreetMap polygon features</value>
   </data>
   <data name="GPTools_OSMGPRelationLoader_lineFieldNames_desc" xml:space="preserve">
     <value>Relation tag keys to load for line features</value>
