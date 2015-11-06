@@ -74,14 +74,17 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             IGPParameter osmFileParameter = paramvalues.get_Element(0) as IGPParameter;
             IGPValue osmFileLocationString = gpUtilities3.UnpackGPValue(osmFileParameter) as IGPValue;
 
-            IGPParameter osmSourceLineFeatureClassParameter = paramvalues.get_Element(1) as IGPParameter;
+            IGPParameter loadSuperRelationParameter = paramvalues.get_Element(1) as IGPParameter;
+            IGPBoolean loadSuperRelationGPValue = gpUtilities3.UnpackGPValue(loadSuperRelationParameter) as IGPBoolean;
+
+            IGPParameter osmSourceLineFeatureClassParameter = paramvalues.get_Element(2) as IGPParameter;
             IGPValue osmSourceLineFeatureClassGPValue = gpUtilities3.UnpackGPValue(osmSourceLineFeatureClassParameter) as IGPValue;
 
-            IGPParameter osmSourcePolygonFeatureClassParameter = paramvalues.get_Element(2) as IGPParameter;
+            IGPParameter osmSourcePolygonFeatureClassParameter = paramvalues.get_Element(3) as IGPParameter;
             IGPValue osmSourcePolygonFeatureClassGPValue = gpUtilities3.UnpackGPValue(osmSourcePolygonFeatureClassParameter) as IGPValue;
 
 
-            IGPParameter osmTargetLineFeatureClassParameter = paramvalues.get_Element(5) as IGPParameter;
+            IGPParameter osmTargetLineFeatureClassParameter = paramvalues.get_Element(6) as IGPParameter;
             IGPValue osmTargetLineFeatureClassGPValue = gpUtilities3.UnpackGPValue(osmTargetLineFeatureClassParameter) as IGPValue;
 
             IName workspaceName = gpUtilities3.CreateParentFromCatalogPath(osmTargetLineFeatureClassGPValue.GetAsText());
@@ -91,7 +94,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
             IFeatureClass osmLineFeatureClass = null;
 
-            IGPParameter tagLineCollectionParameter = paramvalues.get_Element(3) as IGPParameter;
+            IGPParameter tagLineCollectionParameter = paramvalues.get_Element(4) as IGPParameter;
             IGPMultiValue tagLineCollectionGPValue = gpUtilities3.UnpackGPValue(tagLineCollectionParameter) as IGPMultiValue;
 
             List<String> lineTagstoExtract = null;
@@ -130,7 +133,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
 
 
-            IGPParameter osmTargetPolygonFeatureClassParameter = paramvalues.get_Element(6) as IGPParameter;
+            IGPParameter osmTargetPolygonFeatureClassParameter = paramvalues.get_Element(7) as IGPParameter;
             IGPValue osmTargetPolygonFeatureClassGPValue = gpUtilities3.UnpackGPValue(osmTargetPolygonFeatureClassParameter) as IGPValue;
 
             workspaceName = gpUtilities3.CreateParentFromCatalogPath(osmTargetPolygonFeatureClassGPValue.GetAsText());
@@ -140,7 +143,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
             IFeatureClass osmPolygonFeatureClass = null;
 
-            IGPParameter tagPolygonCollectionParameter = paramvalues.get_Element(4) as IGPParameter;
+            IGPParameter tagPolygonCollectionParameter = paramvalues.get_Element(5) as IGPParameter;
             IGPMultiValue tagPolygonCollectionGPValue = gpUtilities3.UnpackGPValue(tagPolygonCollectionParameter) as IGPMultiValue;
 
             List<String> polygonTagstoExtract = null;
@@ -190,7 +193,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 osmSourcePolygonFeatureClassGPValue.GetAsText(),
                 osmTargetLineFeatureClassGPValue.GetAsText(), 
                 osmTargetPolygonFeatureClassGPValue.GetAsText(),
-                lineTagstoExtract, polygonTagstoExtract);
+                lineTagstoExtract, polygonTagstoExtract, loadSuperRelationGPValue.Value);
 
 
         }
@@ -287,6 +290,27 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 osmRelationFileParameter.Name = "in_osmRelationFile";
                 osmRelationFileParameter.ParameterType = esriGPParameterType.esriGPParameterTypeRequired;
 
+                // load super-relation parameter
+                IGPParameterEdit3 loadSuperRelationParameter = new GPParameterClass() as IGPParameterEdit3;
+                IGPCodedValueDomain loadSuperRelationDomain = new GPCodedValueDomainClass();
+
+                IGPBoolean loadSuperRelationTrue = new GPBooleanClass();
+                loadSuperRelationTrue.Value = true;
+                IGPBoolean loadSuperRelationFalse = new GPBooleanClass();
+                loadSuperRelationFalse.Value = false;
+
+                loadSuperRelationDomain.AddCode((IGPValue)loadSuperRelationTrue, "LOAD_SUPER_RELATION");
+                loadSuperRelationDomain.AddCode((IGPValue)loadSuperRelationFalse, "DO_NOT_LOAD_SUPER_RELATION");
+                loadSuperRelationParameter.Domain = (IGPDomain)loadSuperRelationDomain;
+                loadSuperRelationParameter.Value = (IGPValue)loadSuperRelationFalse;
+
+                loadSuperRelationParameter.DataType = new GPBooleanTypeClass();
+                loadSuperRelationParameter.Direction = esriGPParameterDirection.esriGPParameterDirectionInput;
+                loadSuperRelationParameter.ParameterType = esriGPParameterType.esriGPParameterTypeOptional;
+                loadSuperRelationParameter.DisplayName = resourceManager.GetString("GPTools_OSMGPRelationLoader_loadSuperRelations_desc");
+                loadSuperRelationParameter.Name = "in_loadSuperRelation";
+
+
                 IGPParameterEdit3 osmLinesParameter = new GPParameterClass() as IGPParameterEdit3;
                 osmLinesParameter.DataType = new DEFeatureClassTypeClass();
                 osmLinesParameter.Direction = esriGPParameterDirection.esriGPParameterDirectionInput;
@@ -365,6 +389,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 // add all the parameters into the info array
                 parameters.Add(osmRelationFileParameter);
+                parameters.Add(loadSuperRelationParameter);
                 parameters.Add(osmLinesParameter);
                 parameters.Add(osmPolygonsParameter);
                 parameters.Add(loadLineFieldsParameter);

@@ -94,8 +94,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 tagstoExtract = OSMToolHelper.OSMSmallFeatureClassFields();
             }
 
+            IGPParameter useFeatureBufferParameter = paramvalues.get_Element(2) as IGPParameter;
+            IGPBoolean useFeatureBufferGPValue = gpUtilities3.UnpackGPValue(useFeatureBufferParameter) as IGPBoolean;
 
-            IGPParameter osmPointsFeatureClassParameter = paramvalues.get_Element(2) as IGPParameter;
+            IGPParameter osmPointsFeatureClassParameter = paramvalues.get_Element(3) as IGPParameter;
             IGPValue osmPointsFeatureClassGPValue = gpUtilities3.UnpackGPValue(osmPointsFeatureClassParameter) as IGPValue;
 
             IName workspaceName = gpUtilities3.CreateParentFromCatalogPath(osmPointsFeatureClassGPValue.GetAsText());
@@ -124,7 +126,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             string[] gdbComponents = new string[pointFCNameElements.Length - 1];
             System.Array.Copy(pointFCNameElements, gdbComponents, pointFCNameElements.Length - 1);
             string fileGDBLocation = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), gdbComponents);
-            osmToolHelper.smallLoadOSMNode(osmFileLocationString.GetAsText(), fileGDBLocation, pointFCNameElements[pointFCNameElements.Length - 1], tagstoExtract);
+            osmToolHelper.smallLoadOSMNode(osmFileLocationString.GetAsText(), fileGDBLocation, pointFCNameElements[pointFCNameElements.Length - 1], tagstoExtract, useFeatureBufferGPValue.Value);
 
         }
 
@@ -238,6 +240,27 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 loadFieldsParameter.DataType = (IGPDataType)fieldNameDataType2;
                 loadFieldsParameter.Value = (IGPValue)fieldNameMultiValue;
 
+                // use buffer paranmeter
+                IGPParameterEdit3 useFeatureBufferParameter = new GPParameterClass() as IGPParameterEdit3;
+                IGPCodedValueDomain useFeatureBufferDomain = new GPCodedValueDomainClass();
+
+                IGPBoolean useFeatureBufferTrue = new GPBooleanClass();
+                useFeatureBufferTrue.Value = true;
+                IGPBoolean useFeatureBufferFalse = new GPBooleanClass();
+                useFeatureBufferFalse.Value = false;
+
+                useFeatureBufferDomain.AddCode((IGPValue)useFeatureBufferTrue, "USE_CACHE");
+                useFeatureBufferDomain.AddCode((IGPValue)useFeatureBufferFalse, "DO_NOT_USE_CACHE");
+                useFeatureBufferParameter.Domain = (IGPDomain)useFeatureBufferDomain;
+                useFeatureBufferParameter.Value = (IGPValue)useFeatureBufferFalse;
+
+                useFeatureBufferParameter.DataType = new GPBooleanTypeClass();
+                useFeatureBufferParameter.Direction = esriGPParameterDirection.esriGPParameterDirectionInput;
+                useFeatureBufferParameter.ParameterType = esriGPParameterType.esriGPParameterTypeOptional;
+                useFeatureBufferParameter.DisplayName = resourceManager.GetString("GPTools_OSMGPNodeLoader_useCache_desc");
+                useFeatureBufferParameter.Name = "in_useFeatureCache";
+
+
                 IGPParameterEdit3 osmPoints = new GPParameterClass() as IGPParameterEdit3;
                 osmPoints.DataType = new DEFeatureClassTypeClass();
                 osmPoints.Direction = esriGPParameterDirection.esriGPParameterDirectionOutput;
@@ -253,6 +276,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 parameters.Add(osmNodeFile);
 
                 parameters.Add(loadFieldsParameter);
+
+                parameters.Add(useFeatureBufferParameter);
 
                 parameters.Add(osmPoints);
 

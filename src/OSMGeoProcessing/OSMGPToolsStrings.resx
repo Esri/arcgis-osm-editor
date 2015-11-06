@@ -874,7 +874,7 @@
     <value>OSM File Loader (Load only)</value>
   </data>
   <data name="GPTools_OSMGPMultiLoader_desc" xml:space="preserve">
-    <value>Load OSM file without the metadata. Data loaded without tools cannot be uploaded back to the OSM server.</value>
+    <value>Load OSM file without the metadata. Data loaded without the metadata cannot be uploaded back to the OSM server.</value>
   </data>
   <data name="GPTools_OSMGPMultiLoader_osmfile_desc" xml:space="preserve">
     <value>OSM File</value>
@@ -927,6 +927,12 @@
   <data name="GPTools_OSMGPMultiLoader_doneloading_relations" xml:space="preserve">
     <value>Done loading relations (Elapsed Time: {0} hours {1} minutes {2} seconds).</value>
   </data>
+  <data name="GPTools_OSMGPMultiLoader_loading_super_relations" xml:space="preserve">
+    <value>Loading super relations...</value>
+  </data>
+  <data name="GPTools_OSMGPMultiLoader_doneloading_super_relations" xml:space="preserve">
+    <value>Done loading super relations (Elapsed Time: {0} hours {1} minutes {2} seconds).</value>
+  </data>
   <data name="GPTools_OSMGPMultiLoader_remove_supportNodes" xml:space="preserve">
     <value>Removing support nodes...</value>
   </data>
@@ -950,6 +956,9 @@
   </data>
   <data name="GPTools_OSMGPNodeLoader_fieldNames_desc" xml:space="preserve">
     <value>Node tag keys to load for point features</value>
+  </data>
+  <data name="GPTools_OSMGPNodeLoader_useCache_desc" xml:space="preserve">
+    <value>Use feature cache</value>
   </data>
   <data name="GPTools_OSMGPWayLoader_categoryName" xml:space="preserve">
     <value>Data Delivery</value>
@@ -1010,5 +1019,8 @@
   </data>
   <data name="GPTools_OSMGPRelationLoader_polygonFieldNames_desc" xml:space="preserve">
     <value>Relation tag keys to load for polygon features</value>
+  </data>
+  <data name="GPTools_OSMGPRelationLoader_loadSuperRelations_desc" xml:space="preserve">
+    <value>Load super relations</value>
   </data>
 </root>
