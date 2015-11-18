@@ -7126,7 +7126,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                 try
                                                 {
                                                     rowCursor.InsertRow(rowBuffer);
-                                                    relationCount = relationCount + 1;
 
                                                     relationIndexRebuildRequired = true;
                                                 }
@@ -7166,6 +7165,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                     updateIsMemberOf(osmLineFeatureClass, osmMemberOfPolylineFieldIndex, polygonFeature.polygonID, polygonFeature.relationList);
                                                 }
                                             }
+
+                                            relationCount = relationCount + 1;
 
                                             if (stepProgressor != null)
                                             {

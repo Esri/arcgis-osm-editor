@@ -630,7 +630,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 {
                     if (File.Exists(executingAssembly.Directory.FullName + System.IO.Path.DirectorySeparatorChar + "OSMFeaturesProperties.xml"))
                     {
-                        configurationSettings.Add("osmfeatureporpertiesfilepath", executingAssembly.Directory.FullName + System.IO.Path.DirectorySeparatorChar + "OSMFeaturesProperties.xml");
+                        configurationSettings.Add("osmfeaturepropertiesfilepath", executingAssembly.Directory.FullName + System.IO.Path.DirectorySeparatorChar + "OSMFeaturesProperties.xml");
                     }
                 }
             }
