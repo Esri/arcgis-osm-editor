@@ -2327,6 +2327,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     catch
                     { }
 
+                    // do a 'small' query to establish an instance for a cursor and manage the cursor throughout the loading process
+                    osmIDQueryFilter.WhereClause = sqlPointOSMID + " IN ('n1')";
+                    IFeatureCursor searchPointCursor = sourcePointsFeatureClass.Search(osmIDQueryFilter, false);
+                    comReleaser.ManageLifetime(searchPointCursor);
+
                     do
                     {
                         string wayOSMID = "w" + wayFileXmlReader.GetAttribute("id");
@@ -2383,45 +2388,39 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             {
                                 string idCompareString = request;
                                 osmIDQueryFilter.WhereClause = sqlPointOSMID + " IN " + request;
-                                using (ComReleaser innerComReleaser = new ComReleaser())
+
+                                searchPointCursor = sourcePointsFeatureClass.Search(osmIDQueryFilter, false);
+
+                                IFeature nodeFeature = searchPointCursor.NextFeature();
+
+                                while (nodeFeature != null)
                                 {
-                                    IFeatureCursor searchPointCursor = sourcePointsFeatureClass.Search(osmIDQueryFilter, true);
-                                    innerComReleaser.ManageLifetime(searchPointCursor);
+                                    // determine the index of the point in with respect to the node position
+                                    string nodeOSMIDString = Convert.ToString(nodeFeature.get_Value(osmPointIDFieldIndex));
 
-                                    IFeature nodeFeature = searchPointCursor.NextFeature();
+                                    // remove the ID from the request string
+                                    // this has the problem of potentially removing the start and the end point
+                                    // there will be an additional test to see if the last point is empty
+                                    idCompareString = idCompareString.Replace(nodeOSMIDString, String.Empty);
 
-                                    while (nodeFeature != null)
+                                    wayPointCollection.UpdatePoint(nodePositionDictionary[nodeOSMIDString][0], (IPoint)nodeFeature.ShapeCopy);
+
+                                    foreach (var index in nodePositionDictionary[nodeOSMIDString])
                                     {
-                                        // determine the index of the point in with respect to the node position
-                                        string nodeOSMIDString = Convert.ToString(nodeFeature.get_Value(osmPointIDFieldIndex));
-
-                                        // remove the ID from the request string
-                                        // this has the problem of potentially removing the start and the end point
-                                        // there will be an additional test to see if the last point is empty
-                                        idCompareString = idCompareString.Replace(nodeOSMIDString, String.Empty);
-
-                                        wayPointCollection.UpdatePoint(nodePositionDictionary[nodeOSMIDString][0], (IPoint)nodeFeature.ShapeCopy);
-
-                                        foreach (var index in nodePositionDictionary[nodeOSMIDString])
-                                        {
-                                            wayPointCollection.UpdatePoint(index, (IPoint)nodeFeature.ShapeCopy);
-                                        }
-
-                                        if (nodeFeature != null)
-                                            Marshal.ReleaseComObject(nodeFeature);
-
-                                        nodeFeature = searchPointCursor.NextFeature();
+                                        wayPointCollection.UpdatePoint(index, (IPoint)nodeFeature.ShapeCopy);
                                     }
 
-                                    idCompareString = CleanReportedIDs(idCompareString);
+                                    nodeFeature = searchPointCursor.NextFeature();
+                                }
 
-                                    // after removing the commas we should be left with only paranthesis left, meaning a string of length 2
-                                    // if we have more then we have found a missing node, resulting in an incomplete way geometry
-                                    if (idCompareString.Length > 2)
-                                    {
-                                        wayIsComplete = false;
-                                        break;
-                                    }
+                                idCompareString = CleanReportedIDs(idCompareString);
+
+                                // after removing the commas we should be left with only paranthesis left, meaning a string of length 2
+                                // if we have more then we have found a missing node, resulting in an incomplete way geometry
+                                if (idCompareString.Length > 2)
+                                {
+                                    wayIsComplete = false;
+                                    break;
                                 }
                             }
 
@@ -2462,39 +2461,32 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             {
                                 string idCompareString = osmIDRequest;
 
-                                using (ComReleaser innercomReleaser = new ComReleaser())
+                                osmIDQueryFilter.WhereClause = sqlPointOSMID + " IN " + osmIDRequest;
+                                searchPointCursor = sourcePointsFeatureClass.Search(osmIDQueryFilter, false);
+
+                                IFeature nodeFeature = searchPointCursor.NextFeature();
+
+                                while (nodeFeature != null)
                                 {
-                                    osmIDQueryFilter.WhereClause = sqlPointOSMID + " IN " + osmIDRequest;
-                                    IFeatureCursor searchPointCursor = sourcePointsFeatureClass.Search(osmIDQueryFilter, false);
-                                    innercomReleaser.ManageLifetime(searchPointCursor);
+                                    // determine the index of the point in with respect to the node position
+                                    string nodeOSMIDString = Convert.ToString(nodeFeature.get_Value(osmPointIDFieldIndex));
 
-                                    IFeature nodeFeature = searchPointCursor.NextFeature();
+                                    idCompareString = idCompareString.Replace(nodeOSMIDString, String.Empty);
 
-                                    while (nodeFeature != null)
+                                    foreach (var index in nodePositionDictionary[nodeOSMIDString])
                                     {
-                                        // determine the index of the point in with respect to the node position
-                                        string nodeOSMIDString = Convert.ToString(nodeFeature.get_Value(osmPointIDFieldIndex));
-
-                                        idCompareString = idCompareString.Replace(nodeOSMIDString, String.Empty);
-
-                                        foreach (var index in nodePositionDictionary[nodeOSMIDString])
-                                        {
-                                            wayPointCollection.UpdatePoint(index, (IPoint)nodeFeature.ShapeCopy);    
-                                        }
-
-                                        if (nodeFeature != null)
-                                            Marshal.ReleaseComObject(nodeFeature);
-
-                                        nodeFeature = searchPointCursor.NextFeature();
+                                        wayPointCollection.UpdatePoint(index, (IPoint)nodeFeature.ShapeCopy);
                                     }
 
-                                    idCompareString = CleanReportedIDs(idCompareString);
+                                    nodeFeature = searchPointCursor.NextFeature();
+                                }
 
-                                    if (idCompareString.Length > 2)
-                                    {
-                                        wayIsComplete = false;
-                                        break;
-                                    }
+                                idCompareString = CleanReportedIDs(idCompareString);
+
+                                if (idCompareString.Length > 2)
+                                {
+                                    wayIsComplete = false;
+                                    break;
                                 }
                             }
 
@@ -3505,7 +3497,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                 }
                                             }
 
-                                            //insertTags(osmPointDomainAttributeFieldIndices, osmPointDomainAttributeFieldLength, tagCollectionPointFieldIndex, pointFeature, currentNode.tag);
+                                            insertTags(osmPointDomainAttributeFieldIndices, osmPointDomainAttributeFieldLength, tagCollectionPointFieldIndex, pointFeature, currentNode.tag);
 
                                             if (fastLoad == false)
                                             {
@@ -5458,6 +5450,13 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     }
                     catch { }
 
+                    polygonOSMIDQueryFilter.WhereClause = sourceSQLPolygonOSMID + " IN ('w1')";
+                    IFeatureCursor searchPolygonCursor = sourcePolygonFeatureClass.Search(polygonOSMIDQueryFilter, false);
+                    comReleaser.ManageLifetime(searchPolygonCursor);
+
+                    lineOSMIDQueryFilter.WhereClause = sourceSQLLineOSMID + " IN ('w1')";
+                    IFeatureCursor searchLineCursor = sourceLineFeatureClass.Search(lineOSMIDQueryFilter, false);
+                    comReleaser.ManageLifetime(searchLineCursor);
 
                     TagKeyValueComparer routeTagComparer = new TagKeyValueComparer();
 
@@ -5591,10 +5590,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 {
                                     string idCompareString = request;
                                     lineOSMIDQueryFilter.WhereClause = sourceSQLLineOSMID + " IN " + request;
-                                    using (ComReleaser innerComReleaser = new ComReleaser())
-                                    {
-                                        IFeatureCursor searchLineCursor = sourceLineFeatureClass.Search(lineOSMIDQueryFilter, false);
-                                        innerComReleaser.ManageLifetime(searchLineCursor);
+
+                                    searchLineCursor = sourceLineFeatureClass.Search(lineOSMIDQueryFilter, false);
 
                                         IFeature lineFeature = searchLineCursor.NextFeature();
 
@@ -5610,8 +5607,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                             lineFeature = searchLineCursor.NextFeature();
                                         }
-
-                                    }
 
                                     idCompareString = CleanReportedIDs(idCompareString);
 
@@ -5632,10 +5627,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                     string idCompareString = request;
                                     polygonOSMIDQueryFilter.WhereClause = sourceSQLPolygonOSMID + " IN " + request;
 
-                                    using (ComReleaser innerComReleaser = new ComReleaser())
-                                    {
-                                        IFeatureCursor searchPolygonCursor = sourcePolygonFeatureClass.Search(polygonOSMIDQueryFilter, false);
-                                        innerComReleaser.ManageLifetime(searchPolygonCursor);
+                                    searchPolygonCursor = sourcePolygonFeatureClass.Search(polygonOSMIDQueryFilter, false);
 
                                         IFeature polygonFeature = searchPolygonCursor.NextFeature();
 
@@ -5651,7 +5643,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                             polygonFeature = searchPolygonCursor.NextFeature();
                                         }
-                                    }
 
                                     idCompareString = CleanReportedIDs(idCompareString);
 
@@ -5859,34 +5850,30 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                 string idCompareString = request;
                                                 outerPolygonQueryFilter.WhereClause = sourceSQLPolygonOSMID + " IN " + request;
 
-                                                using (ComReleaser innerComReleaser = new ComReleaser())
+                                                searchPolygonCursor = sourcePolygonFeatureClass.Search(outerPolygonQueryFilter, false);
+
+                                                IFeature polygonFeature = searchPolygonCursor.NextFeature();
+
+                                                while (polygonFeature != null)
                                                 {
-                                                    IFeatureCursor searchPolygonCursor = sourcePolygonFeatureClass.Search(outerPolygonQueryFilter, false);
-                                                    innerComReleaser.ManageLifetime(searchPolygonCursor);
+                                                    // determine the ID of the polygon in with respect to the way position
+                                                    tag[] outerRingsTags = _osmUtility.retrieveOSMTags(polygonFeature, osmTargetPolygonTagCollectionFieldIndex, null);
 
-                                                    IFeature polygonFeature = searchPolygonCursor.NextFeature();
-
-                                                    while (polygonFeature != null)
+                                                    if (outerRingsTags != null)
                                                     {
-                                                        // determine the ID of the polygon in with respect to the way position
-                                                        tag[] outerRingsTags = _osmUtility.retrieveOSMTags(polygonFeature, osmTargetPolygonTagCollectionFieldIndex, null);
-
-                                                        if (outerRingsTags != null)
+                                                        if (outerRingsTags.Count() > 0)
                                                         {
-                                                            if (outerRingsTags.Count() > 0)
+                                                            foreach (var outerTag in outerRingsTags)
                                                             {
-                                                                foreach (var outerTag in outerRingsTags)
+                                                                if (!tags.Contains(outerTag, new TagKeyComparer()))
                                                                 {
-                                                                    if (!tags.Contains(outerTag, new TagKeyComparer()))
-                                                                    {
-                                                                        tags.Add(outerTag);
-                                                                    }
+                                                                    tags.Add(outerTag);
                                                                 }
                                                             }
                                                         }
-
-                                                        polygonFeature = searchPolygonCursor.NextFeature();
                                                     }
+
+                                                    polygonFeature = searchPolygonCursor.NextFeature();
                                                 }
                                             }
                                         }
