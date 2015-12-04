@@ -191,7 +191,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 tag createdByTag = new tag();
                 createdByTag.k = "created_by";
-                createdByTag.v = "ArcGIS Editor for OpenStreetMap (10.2)";
+                createdByTag.v = "ArcGIS Editor for OpenStreetMap";
                 changeSetTags.Add(createdByTag);
 
                 tag commentTag = new tag();
@@ -277,7 +277,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
 
                 IGPParameter revisionTableParameter = paramvalues.get_Element(in_changesTablesNumber) as IGPParameter;
-                int featureUpdateCounter = 1;
+                int featureUpdateCounter = 0;
 
                 IQueryFilter revisionTableQueryFilter = null;
 
