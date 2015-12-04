@@ -708,7 +708,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 // hardcoded the value for conserving memory - TE, 11/2015
                 // the reasoning here is that the speed is difference is only about 20% for smaller datasets and it shouldn't be used for larger datasets
                 // due to the 32bit memory limit
-                osmToolHelper.loadOSMNodes(osmFileLocationString.GetAsText(), ref TrackCancel, ref message, targetDatasetGPValue, osmPointFeatureClass, false, fastLoad, Convert.ToInt32(nodeCapacity), ref osmNodeDictionary, featureWorkspace, downloadSpatialReference, availableDomains, false);
+                osmToolHelper.loadOSMNodes(osmFileLocationString.GetAsText(), ref TrackCancel, ref message, targetDatasetGPValue, osmPointFeatureClass, true, fastLoad, Convert.ToInt32(nodeCapacity), ref osmNodeDictionary, featureWorkspace, downloadSpatialReference, availableDomains, false);
                 #endregion
 
                 // ----------------------------------------------
@@ -721,7 +721,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 #region load ways
-                List<string> missingWays = osmToolHelper.loadOSMWays(osmFileLocationString.GetAsText(), ref TrackCancel, ref message, targetDatasetGPValue, osmPointFeatureClass, osmLineFeatureClass, osmPolygonFeatureClass, false, fastLoad, Convert.ToInt32(wayCapacity), ref osmNodeDictionary, featureWorkspace, downloadSpatialReference, availableDomains, false);
+                List<string> missingWays = osmToolHelper.loadOSMWays(osmFileLocationString.GetAsText(), ref TrackCancel, ref message, targetDatasetGPValue, osmPointFeatureClass, osmLineFeatureClass, osmPolygonFeatureClass, true, fastLoad, Convert.ToInt32(wayCapacity), ref osmNodeDictionary, featureWorkspace, downloadSpatialReference, availableDomains, false);
                 #endregion
 
                 if (downloadSpatialReference != null)
