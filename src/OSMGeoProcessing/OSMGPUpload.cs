@@ -520,7 +520,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                 // if the overall number of uploaded elements is too big for a single changeset we do need to split it up
                                 // into multiple sets
-                                if ((featureUpdateCounter % maxElementsinChangeSet) == 0)
+                                if (featureUpdateCounter > 0 & (featureUpdateCounter % maxElementsinChangeSet) == 0)
                                 {
                                     // add any outstanding creations to the changeset items
                                     if (listOfCreates != null && uploadCreates != null)
