@@ -2994,6 +2994,22 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                                     foundFeature.Store();
                                 }
 
+                                else if (!comparison && action.ToLower(CultureInfo.InvariantCulture).Equals("create"))
+                                {
+                                    // for split the new higher-order geometry contains the (existing) nodes but it will also
+                                    // be deleted later-on due to the split behavior
+                                    // update the ref count on the node
+                                    if (pointwayRefCountFieldIndex > -1)
+                                    {
+                                        int currentRefCount = Convert.ToInt32(foundFeature.get_Value(pointwayRefCountFieldIndex));
+
+                                        currentRefCount = currentRefCount + 1;
+                                        foundFeature.set_Value(pointwayRefCountFieldIndex, currentRefCount);
+
+                                        foundFeature.Store();
+                                    }
+                                }
+
                                 addVertexCounter = addVertexCounter + 1;
                             }
                             else
