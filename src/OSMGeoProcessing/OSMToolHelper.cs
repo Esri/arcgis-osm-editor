@@ -249,8 +249,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         }
                         catch (Exception ex)
                         {
+#if DEBUG
                             System.Diagnostics.Debug.WriteLine(ex.Message);
                             System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+#endif
                         }
 
                         fieldsEdit.AddField((IField)domainField);
@@ -398,8 +400,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         geometryDef.GeometryType_2 = esriGeometryType.esriGeometryPoint;
                         geometryDef.HasZ_2 = false;
                         geometryDef.HasM_2 = false;
-                        geometryDef.GridCount_2 = 1;
-                        geometryDef.set_GridSize(0, 0);
+                        //geometryDef.GridCount_2 = 1;
+                        //geometryDef.set_GridSize(0, 0);
 
                         geometryDef.SpatialReference_2 = ((IGeoDataset)featureDataset).SpatialReference;
 
@@ -464,8 +466,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
             catch (Exception ex)
             {
+#if DEBUG
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+#endif
                 throw;
             }
 
@@ -583,8 +587,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         geometryDef.GeometryType_2 = esriGeometryType.esriGeometryPoint;
                         geometryDef.HasZ_2 = false;
                         geometryDef.HasM_2 = false;
-                        geometryDef.GridCount_2 = 1;
-                        geometryDef.set_GridSize(0, 0);
+                        //geometryDef.GridCount_2 = 1;
+                        //geometryDef.set_GridSize(0, 0);
 
                         geometryDef.SpatialReference_2 = wgs84;
 
@@ -620,10 +624,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
             catch (Exception ex)
             {
+#if DEBUG
                 System.Diagnostics.Debug.WriteLine(((IWorkspace)workspace).PathName);
                 System.Diagnostics.Debug.WriteLine(featureClassName);
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+#endif
                 throw;
             }
 
@@ -696,10 +702,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     // if a table with the same name already exists delete it....
                     table = featureWorkspace.OpenTable(tableName);
 
-                    if (!DeleteDataset((IDataset)table))
-                    {
+                    //if (!DeleteDataset((IDataset)table))
+                    //{
                         return table;
-                    }
+                    //}
                 }
 
                 uid.Value = "esriGeoDatabase.Object";
@@ -1081,8 +1087,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         }
                         catch (Exception ex)
                         {
+#if DEBUG
                             System.Diagnostics.Debug.WriteLine(ex.Message);
                             System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+#endif
                         }
 
                         fieldsEdit.AddField((IField)domainField);
@@ -1236,8 +1244,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         geometryDef.GeometryType_2 = esriGeometryType.esriGeometryPolyline;
                         geometryDef.HasZ_2 = false;
                         geometryDef.HasM_2 = false;
-                        geometryDef.GridCount_2 = 1;
-                        geometryDef.set_GridSize(0, 0);
+                        //geometryDef.GridCount_2 = 1;
+                        //geometryDef.set_GridSize(0, 0);
 
                         geometryDef.SpatialReference_2 = ((IGeoDataset)featureDataset).SpatialReference;
 
@@ -1399,8 +1407,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         geometryDef.GeometryType_2 = esriGeometryType.esriGeometryPolyline;
                         geometryDef.HasZ_2 = false;
                         geometryDef.HasM_2 = false;
-                        geometryDef.GridCount_2 = 1;
-                        geometryDef.set_GridSize(0, 0);
+                        //geometryDef.GridCount_2 = 1;
+                        //geometryDef.set_GridSize(0, 0);
 
                         ISpatialReferenceFactory spatialReferenceFactory = new SpatialReferenceEnvironmentClass() as ISpatialReferenceFactory;
                         ISpatialReference wgs84 = spatialReferenceFactory.CreateGeographicCoordinateSystem((int)esriSRGeoCSType.esriSRGeoCS_WGS1984) as ISpatialReference;
@@ -1539,8 +1547,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         }
                         catch (Exception ex)
                         {
+#if DEBUG
                             System.Diagnostics.Debug.WriteLine(ex.Message);
                             System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+#endif
                         }
 
                         fieldsEdit.AddField((IField)domainField);
@@ -1693,8 +1703,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         geometryDef.GeometryType_2 = esriGeometryType.esriGeometryPolygon;
                         geometryDef.HasZ_2 = false;
                         geometryDef.HasM_2 = false;
-                        geometryDef.GridCount_2 = 1;
-                        geometryDef.set_GridSize(0, 0);
+                        //geometryDef.GridCount_2 = 1;
+                        //geometryDef.set_GridSize(0, 0);
 
                         geometryDef.SpatialReference_2 = ((IGeoDataset)featureDataset).SpatialReference;
 
@@ -1855,8 +1865,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         geometryDef.GeometryType_2 = esriGeometryType.esriGeometryPolygon;
                         geometryDef.HasZ_2 = false;
                         geometryDef.HasM_2 = false;
-                        geometryDef.GridCount_2 = 1;
-                        geometryDef.set_GridSize(0, 0);
+                        //geometryDef.GridCount_2 = 1;
+                        //geometryDef.set_GridSize(0, 0);
 
                         ISpatialReferenceFactory spatialReferenceFactory = new SpatialReferenceEnvironmentClass() as ISpatialReferenceFactory;
                         ISpatialReference wgs84 = spatialReferenceFactory.CreateGeographicCoordinateSystem((int)esriSRGeoCSType.esriSRGeoCS_WGS1984) as ISpatialReference;
@@ -1999,6 +2009,70 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
             return featureClassArray;
         }
+
+        //internal void BuildSpatialIndex(IGPValue gpFeatureClass, Geoprocessor.Geoprocessor geoProcessor, IGPUtilities gpUtil, ITrackCancel trackCancel, IGPMessages message)
+        //{
+        //    if ((gpFeatureClass == null) || (geoProcessor == null) || (gpUtil == null))
+        //        return;
+
+        //    // Check if the feature class supports spatial index grids
+        //    IFeatureClass fc = gpUtil.OpenDataset(gpFeatureClass) as IFeatureClass;
+        //    if (fc == null)
+        //        return;
+
+        //    int idxShapeField = fc.FindField(fc.ShapeFieldName);
+        //    if (idxShapeField >= 0)
+        //    {
+        //        IField shapeField = fc.Fields.get_Field(idxShapeField);
+        //        if (shapeField.GeometryDef.GridCount > 0)
+        //        {
+        //            if (shapeField.GeometryDef.get_GridSize(0) == -2.0)
+        //                return;
+        //        }
+        //    }
+
+        //    // Create the new spatial index grid
+        //    bool storedOriginal = geoProcessor.AddOutputsToMap;
+
+        //    try
+        //    {
+        //        geoProcessor.AddOutputsToMap = false;
+
+        //        DataManagementTools.CalculateDefaultGridIndex calculateDefaultGridIndex =
+        //            new DataManagementTools.CalculateDefaultGridIndex(gpFeatureClass);
+        //        IGeoProcessorResult2 gpResults2 =
+        //            geoProcessor.Execute(calculateDefaultGridIndex, trackCancel) as IGeoProcessorResult2;
+        //        message.AddMessages(gpResults2.GetResultMessages());
+
+        //        if (gpResults2 != null)
+        //        {
+        //            DataManagementTools.RemoveSpatialIndex removeSpatialIndex =
+        //                new DataManagementTools.RemoveSpatialIndex(gpFeatureClass.GetAsText());
+        //            removeSpatialIndex.out_feature_class = gpFeatureClass.GetAsText();
+        //            gpResults2 = geoProcessor.Execute(removeSpatialIndex, trackCancel) as IGeoProcessorResult2;
+        //            message.AddMessages(gpResults2.GetResultMessages());
+
+        //            DataManagementTools.AddSpatialIndex addSpatialIndex =
+        //                new DataManagementTools.AddSpatialIndex(gpFeatureClass.GetAsText());
+        //            addSpatialIndex.out_feature_class = gpFeatureClass.GetAsText();
+
+        //            addSpatialIndex.spatial_grid_1 = calculateDefaultGridIndex.grid_index1;
+        //            addSpatialIndex.spatial_grid_2 = calculateDefaultGridIndex.grid_index2;
+        //            addSpatialIndex.spatial_grid_3 = calculateDefaultGridIndex.grid_index3;
+
+        //            gpResults2 = geoProcessor.Execute(addSpatialIndex, trackCancel) as IGeoProcessorResult2;
+        //            message.AddMessages(gpResults2.GetResultMessages());
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        message.AddWarning(ex.Message);
+        //    }
+        //    finally
+        //    {
+        //        geoProcessor.AddOutputsToMap = storedOriginal;
+        //    }
+        //}
 
         /// <summary>
         /// Generate equal paritions for each capacity
@@ -2432,8 +2506,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 }
                                 catch (Exception exs)
                                 {
+#if DEBUG
                                     System.Diagnostics.Debug.WriteLine(wayOSMID);
                                     System.Diagnostics.Debug.WriteLine(exs.Message);
+#endif
                                 }
                             }
                         }
@@ -2501,8 +2577,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 }
                                 catch (Exception exs)
                                 {
+#if DEBUG
                                     System.Diagnostics.Debug.WriteLine(wayOSMID);
                                     System.Diagnostics.Debug.WriteLine(exs.Message);
+#endif
                                 }
                             }
                         }
@@ -2546,12 +2624,14 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         }
                         catch (Exception ex)
                         {
+#if DEBUG
                             foreach (var item in tags)
                             {
                                 System.Diagnostics.Debug.WriteLine(string.Format("{0},{1}", item.k, item.v));
                             }
                             System.Diagnostics.Debug.WriteLine(ex.Message);
                             System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+#endif
                         }
 
                         // if we encounter a whitespace, attempt to find the next way if it exists
@@ -2564,12 +2644,14 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
                 catch (Exception ex)
                 {
+#if DEBUG
                     System.Diagnostics.Debug.WriteLine(osmFileLocation);
                     System.Diagnostics.Debug.WriteLine(sourcePointsFeatureClassName);
                     System.Diagnostics.Debug.WriteLine(fileGDBLocation);
                     System.Diagnostics.Debug.WriteLine(ex.Message);
                     System.Diagnostics.Debug.WriteLine(ex.StackTrace);
                     System.Diagnostics.Debug.WriteLine(ex.Source);
+#endif
                 }
                 finally
                 {
@@ -2673,12 +2755,14 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         }
                         catch (Exception inEx)
                         {
+#if DEBUG
                             foreach (var item in tags)
                             {
                                 System.Diagnostics.Debug.WriteLine(string.Format("{0},{1}", item.k, item.v));
                             }
                             System.Diagnostics.Debug.WriteLine(inEx.Message);
                             System.Diagnostics.Debug.WriteLine(inEx.StackTrace);
+#endif
                         }
 
                         if ((counter % 50000) == 0)
@@ -2698,142 +2782,16 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
                 catch (Exception ex)
                 {
+#if DEBUG
                     System.Diagnostics.Debug.WriteLine(ex.Message);
                     System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+#endif
                 }
                 finally
                 {
                 }
             }
         }
-
-        //internal void fastLoadOSMNodes(System.Object args)
-        //{
-        //    using (ComReleaser comReleaser = new ComReleaser())
-        //    {
-
-        //        List<tag> tags = null;
-
-        //        try
-        //        {
-
-        //            string osmFileLocation = (args as List<string>)[0];
-        //            string fileGDBLocation = (args as List<string>)[1];
-        //            string featureClassName = (args as List<string>)[2];
-
-        //            IWorkspaceFactory2 workspaceFactory = new FileGDBWorkspaceFactoryClass();
-        //            comReleaser.ManageLifetime(workspaceFactory);
-        //            IFeatureWorkspace nodeWorkspace = workspaceFactory.OpenFromFile(fileGDBLocation, 0) as IFeatureWorkspace;
-        //            comReleaser.ManageLifetime(nodeWorkspace);
-
-        //            IFeatureClass nodeFeatureClass = nodeWorkspace.OpenFeatureClass(featureClassName);
-        //            comReleaser.ManageLifetime(nodeFeatureClass);
-
-        //            XmlReader nodeFileXmlReader = XmlReader.Create(osmFileLocation);
-        //            nodeFileXmlReader.ReadToFollowing("node");
-
-        //            int osmPointIDFieldIndex = nodeFeatureClass.FindField("OSMID");
-
-        //            Dictionary<string, int> mainPointAttributeFieldIndices = new Dictionary<string, int>();
-        //            foreach (string fieldName in OSMToolHelper.OSMSmallFeatureClassFields())
-        //            {
-        //                int currentFieldIndex = nodeFeatureClass.FindField(OSMToolHelper.convert2AttributeFieldName(fieldName, null));
-
-        //                if (currentFieldIndex != -1)
-        //                {
-        //                    mainPointAttributeFieldIndices.Add(OSMToolHelper.convert2AttributeFieldName(fieldName, null), currentFieldIndex);
-        //                }
-        //            }
-
-        //            int tagCollectionPointFieldIndex = nodeFeatureClass.FindField("osmTags");
-        //            int osmSupportingElementPointFieldIndex = nodeFeatureClass.FindField("osmSupportingElement");
-
-        //            IFeatureBuffer pointFeature = nodeFeatureClass.CreateFeatureBuffer();
-        //            comReleaser.ManageLifetime(pointFeature);
-
-        //            IFeatureCursor pointInsertCursor = nodeFeatureClass.Insert(true);
-        //            comReleaser.ManageLifetime(pointInsertCursor);
-        //            CultureInfo en_us = new CultureInfo("en-US");
-
-        //            IPoint pointGeometry = null;
-        //            OSMUtility osmUtility = new OSMUtility();
-        //            long counter = 0;
-
-        //            ISpatialReferenceFactory spatialReferenceFactory = new SpatialReferenceEnvironmentClass() as ISpatialReferenceFactory;
-        //            ISpatialReference wgs84 = spatialReferenceFactory.CreateGeographicCoordinateSystem((int)esriSRGeoCSType.esriSRGeoCS_WGS1984) as ISpatialReference;
-
-        //            List<string> fieldsOfInterest = OSMToolHelper.OSMSmallFeatureClassFields();
-
-        //            do
-        //            {
-        //                string osmID = nodeFileXmlReader.GetAttribute("id");
-        //                double latitude = Convert.ToDouble(nodeFileXmlReader.GetAttribute("lat"), en_us);
-        //                double longitude = Convert.ToDouble(nodeFileXmlReader.GetAttribute("lon"), en_us);
-
-        //                string xmlTags = nodeFileXmlReader.ReadInnerXml();
-
-        //                tags = new List<tag>();
-
-        //                if (xmlTags.Length > 0)
-        //                {
-        //                    foreach (XElement item in ParseXml(xmlTags))
-        //                    {
-        //                        tags.Add(new tag() { k = item.Attribute("k").Value, v = item.Attribute("v").Value });
-        //                    }
-        //                }
-
-        //                pointGeometry = new PointClass();
-        //                pointGeometry.X = longitude;
-        //                pointGeometry.Y = latitude;
-        //                pointGeometry.SpatialReference = wgs84;
-
-        //                pointFeature.Shape = pointGeometry;
-
-        //                pointFeature.set_Value(osmPointIDFieldIndex, osmID);
-
-        //                osmUtility.insertOSMTags(tagCollectionPointFieldIndex, pointFeature, tags.ToArray());
-
-        //                IEnumerable<tag> tagstoStore = null;
-
-        //                if (tags.Count > 0)
-        //                {
-        //                    tagstoStore = tags.Where(t => fieldsOfInterest.Contains(t.k));
-        //                }
-
-        //                if (tagstoStore != null)
-        //                {
-        //                    foreach (var tag in tagstoStore)
-        //                    {
-        //                        pointFeature.set_Value(mainPointAttributeFieldIndices[OSMToolHelper.convert2AttributeFieldName(tag.k, null)], tag.v);
-        //                    }
-        //                }
-
-        //                pointInsertCursor.InsertFeature(pointFeature);
-
-        //                if ((counter % 50000) == 0)
-        //                {
-        //                    pointInsertCursor.Flush();
-        //                }
-
-        //                counter++;
-
-        //            } while (nodeFileXmlReader.Name == "node");
-
-        //            nodeFileXmlReader.Close();
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            System.Diagnostics.Debug.WriteLine(ex.Message);
-        //            System.Diagnostics.Debug.WriteLine(ex.StackTrace);
-        //        }
-        //        finally
-        //        {
-        //            if (Interlocked.Decrement(ref _numberOfThreads) == 0)
-        //                _manualResetEvent.Set();
-        //        }
-        //    }
-        //}
-
 
         internal void PythonLoadOSMRelations(System.Object args)
         {
@@ -2898,8 +2856,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
                 catch (Exception ex)
                 {
+#if DEBUG
                     System.Diagnostics.Debug.WriteLine(ex.Message);
                     System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+#endif
                 }
                 finally
                 {
@@ -2972,8 +2932,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
                 catch (Exception ex)
                 {
+#if DEBUG
                     System.Diagnostics.Debug.WriteLine(ex.Message);
                     System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+#endif
                 }
                 finally
                 {
@@ -3019,6 +2981,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         writer.WriteLine("arcpy.OSMGPNodeLoader_osmtools(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])");
                     }
 
+#if DEBUG
                     System.Diagnostics.Debug.WriteLine(String.Join(" ", new string[] {"/c python",
                             loadNodeScriptName,
                             osmFileLocation,
@@ -3027,6 +2990,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { fileGDBLocation, featureClassName })
                         })
                     );
+#endif
 
                     System.Diagnostics.ProcessStartInfo processStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", 
                         String.Join(" ", new string[] {"/c python",
@@ -3051,8 +3015,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
                 catch (Exception ex)
                 {
+#if DEBUG
                     System.Diagnostics.Debug.WriteLine(ex.Message);
                     System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+#endif
                 }
                 finally
                 {
@@ -3173,10 +3139,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 IGPMessages messages = gpResults.GetResultMessages();
                 toolMessages.AddMessages(gpResults.GetResultMessages());
 
+#if DEBUG
                 for (int i = 0; i < messages.Count; i++)
                 {
                     System.Diagnostics.Debug.WriteLine(messages.GetMessage(i).Description);
                 }
+#endif
 
                 // append all the polygons
                 parameterArray = new VarArrayClass();
@@ -3188,11 +3156,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 messages = gpResults.GetResultMessages();
                 toolMessages.AddMessages(gpResults.GetResultMessages());
 
+#if DEBUG
                 for (int i = 0; i < messages.Count; i++)
                 {
                     System.Diagnostics.Debug.WriteLine(messages.GetMessage(i).Description);
                 }
-
+#endif
 
                 // delete temp file geodatabases
                 for (int gdbIndex = 0; gdbIndex < wayGDBNames.Count; gdbIndex++)
@@ -3417,10 +3386,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         using (SchemaLockManager schemaLockManager = new SchemaLockManager(osmPointFeatureClass as ITable))
                         {
 
-                            if (((IWorkspace)featureWorkspace).WorkspaceFactory.WorkspaceType == esriWorkspaceType.esriRemoteDatabaseWorkspace)
-                            {
+                            //if (((IWorkspace)featureWorkspace).WorkspaceFactory.WorkspaceType == esriWorkspaceType.esriRemoteDatabaseWorkspace)
+                            //{
                                 pointFeatureLoad = osmPointFeatureClass as IFeatureClassLoad;
-                            }
+                            //}
 
                             IFeatureCursor pointInsertCursor = osmPointFeatureClass.Insert(true);
                             comReleaser.ManageLifetime(pointInsertCursor);
@@ -3577,7 +3546,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                             }
                                             catch (Exception ex)
                                             {
+#if DEBUG
                                                 System.Diagnostics.Debug.WriteLine(ex.Message);
+#endif
                                                 message.AddWarning(ex.Message);
                                             }
 
@@ -3596,7 +3567,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         }
                                         catch (Exception ex)
                                         {
+#if DEBUG
                                             System.Diagnostics.Debug.WriteLine(ex.Message);
+#endif
                                             message.AddWarning(ex.Message);
                                         }
                                         finally
@@ -4035,11 +4008,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         IFeatureCursor insertPolygonCursor = osmPolygonFeatureClass.Insert(true);
                         comReleaser.ManageLifetime(insertPolygonCursor);
 
-                        if (((IWorkspace)featureWorkspace).WorkspaceFactory.WorkspaceType == esriWorkspaceType.esriRemoteDatabaseWorkspace)
-                        {
+                        //if (((IWorkspace)featureWorkspace).WorkspaceFactory.WorkspaceType == esriWorkspaceType.esriRemoteDatabaseWorkspace)
+                        //{
                             lineFeatureLoad = osmLineFeatureClass as IFeatureClassLoad;
                             polygonFeatureLoad = osmPolygonFeatureClass as IFeatureClassLoad;
-                        }
+                        //}
 
                         if (lineFeatureLoad != null)
                         {
@@ -4104,11 +4077,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                             continue;
                                         }
 
-                                        featureLineBuffer = osmLineFeatureClass.CreateFeatureBuffer();
-                                        featurePolygonBuffer = osmPolygonFeatureClass.CreateFeatureBuffer();
+                                        //featureLineBuffer = osmLineFeatureClass.CreateFeatureBuffer();
+                                        //featurePolygonBuffer = osmPolygonFeatureClass.CreateFeatureBuffer();
 
                                         IPointCollection wayPointCollection = null;
                                         wayIsLine = IsThisWayALine(currentWay);
+
 
                                         if (wayIsLine)
                                         {
@@ -4266,6 +4240,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                 continue;
                                             }
 
+                                            featureLineBuffer = osmLineFeatureClass.CreateFeatureBuffer();
+
                                             featureLineBuffer.Shape = wayPolyline;
                                             featureLineBuffer.set_Value(osmLineIDFieldIndex, currentWay.id);
                                         }
@@ -4348,7 +4324,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                                 try
                                                 {
-                                                    osmIDQueryFilter.SubFields = osmPointFeatureClass.ShapeFieldName + "," + osmPointFeatureClass.Fields.get_Field(osmPointIDFieldIndex).Name + "," + osmPointFeatureClass.Fields.get_Field(osmWayRefCountFieldIndex).Name;
+                                                    osmIDQueryFilter.SubFields = osmPointFeatureClass.ShapeFieldName + "," + osmPointFeatureClass.Fields.get_Field(osmPointIDFieldIndex).Name + "," + osmPointFeatureClass.Fields.get_Field(osmWayRefCountFieldIndex).Name + "," + osmPointFeatureClass.OIDFieldName;
                                                 }
                                                 catch
                                                 { }
@@ -4375,7 +4351,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                                             int nodePositionIndex = nodeIDs.IndexOf(nodeOSMIDString, nodePositionDictionary[nodeOSMIDString]);
 
-                                                            if (nodePositionIndex > -1)
+                                                            while (nodePositionIndex > -1)
                                                             {
                                                                 // update the new position start search index
                                                                 nodePositionDictionary[nodeOSMIDString] = nodePositionIndex + 1;
@@ -4391,6 +4367,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                                                     updatePointCursor.UpdateFeature(nodeFeature);
                                                                 }
+
+                                                                nodePositionIndex = nodeIDs.IndexOf(nodeOSMIDString, nodePositionDictionary[nodeOSMIDString]);
                                                             }
 
                                                             if (nodeFeature != null)
@@ -4413,12 +4391,14 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                             if (wayIsComplete == false)
                                             {
-                                                continue;
+                                                missingWays.Add(currentWay.id);
+                                                continue; // continue to read the next way
                                             }
 
-                                            // remove the last point as OSM considers them to be coincident
-                                            wayPointCollection.RemovePoints(wayPointCollection.PointCount - 1, 1);
+                                            featurePolygonBuffer = osmPolygonFeatureClass.CreateFeatureBuffer();
+
                                             ((IPolygon)wayPointCollection).Close();
+                                            ((IPolygon)wayPointCollection).SimplifyPreserveFromTo();
 
                                             featurePolygonBuffer.Shape = (IPolygon)wayPointCollection;
                                             featurePolygonBuffer.set_Value(osmPolygonIDFieldIndex, currentWay.id);
@@ -4617,8 +4597,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                     }
                                     catch (Exception ex)
                                     {
+#if DEBUG
+                                        System.Diagnostics.Debug.WriteLine(String.Format("Feature OSMID {0}", currentWay.id));
                                         System.Diagnostics.Debug.WriteLine(ex.Message);
                                         System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+#endif
                                     }
                                     finally
                                     {
@@ -4804,8 +4787,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
             catch (Exception ex)
             {
+#if DEBUG
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+#endif
             }
 
             return returnEnv;
@@ -4901,7 +4886,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
             }
         }
-
 
         internal void countOSMStuff(string osmFileLocation, ref long nodeCapacity, ref long wayCapacity, ref long relationCapacity, ref ITrackCancel CancelTracker)
         {
@@ -5206,10 +5190,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 IGPMessages messages = gpResults.GetResultMessages();
                 toolMessages.AddMessages(gpResults.GetResultMessages());
 
+#if DEBUG
                 for (int i = 0; i < messages.Count; i++)
                 {
                     System.Diagnostics.Debug.WriteLine(messages.GetMessage(i).Description);
                 }
+#endif
 
                 // append all the polygons
                 parameterArray = new VarArrayClass();
@@ -5221,10 +5207,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 messages = gpResults.GetResultMessages();
                 toolMessages.AddMessages(gpResults.GetResultMessages());
 
+#if DEBUG
                 for (int i = 0; i < messages.Count; i++)
                 {
                     System.Diagnostics.Debug.WriteLine(messages.GetMessage(i).Description);
                 }
+#endif
 
                 // delete the temp loading fgdbs
                 for (int gdbIndex = 0; gdbIndex < relationGDBNames.Count; gdbIndex++)
@@ -5304,10 +5292,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 messages = gpResults.GetResultMessages();
                 toolMessages.AddMessages(gpResults.GetResultMessages());
 
+#if DEBUG
                 for (int i = 0; i < messages.Count; i++)
                 {
                     System.Diagnostics.Debug.WriteLine(messages.GetMessage(i).Description);
                 }
+#endif
 
                 // append all the polygons
                 parameterArray = new VarArrayClass();
@@ -5319,10 +5309,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 messages = gpResults.GetResultMessages();
                 toolMessages.AddMessages(gpResults.GetResultMessages());
 
+#if DEBUG
                 for (int i = 0; i < messages.Count; i++)
                 {
                     System.Diagnostics.Debug.WriteLine(messages.GetMessage(i).Description);
                 }
+#endif
 
                 // delete the temp loading fgdbs
                 for (int gdbIndex = 0; gdbIndex < relationGDBNames.Count; gdbIndex++)
@@ -5347,7 +5339,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
             }
         }
-
 
         internal void smallLoadOSMRelations(string osmFileLocation, string sourceLineFeatureClassLocation, string sourcePolygonFeatureClassLocation, string targetLineFeatureClassLocation, string targetPolygonFeatureClassLocation, List<string> lineFieldNames, List<string> polygonFieldNames, bool includeSuperRelations)
         {
@@ -5912,12 +5903,14 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         }
                                         catch (Exception inEx)
                                         {
+#if DEBUG
                                             foreach (var item in tags)
                                             {
                                                 System.Diagnostics.Debug.WriteLine(string.Format("{0},{1}", item.k, item.v));
                                             }
                                             System.Diagnostics.Debug.WriteLine(inEx.Message);
                                             System.Diagnostics.Debug.WriteLine(inEx.StackTrace);
+#endif
                                         }
                                     }
                                     else
@@ -5950,12 +5943,14 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         }
                                         catch (Exception inEx)
                                         {
+#if DEBUG
                                             foreach (var item in tags)
                                             {
                                                 System.Diagnostics.Debug.WriteLine(string.Format("{0},{1}", item.k, item.v));
                                             }
                                             System.Diagnostics.Debug.WriteLine(inEx.Message);
                                             System.Diagnostics.Debug.WriteLine(inEx.StackTrace);
+#endif
                                         }
                                     }
                                 }
@@ -5963,9 +5958,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         }
                         catch (Exception hmmEx)
                         {
+#if DEBUG
                             System.Diagnostics.Debug.WriteLine("Unexpected error : !!!!!!");
                             System.Diagnostics.Debug.WriteLine(hmmEx.Message);
                             System.Diagnostics.Debug.WriteLine(hmmEx.StackTrace);
+#endif
                         }
 
                         // if we encounter a whitespace, attempt to find the next relation if it exists
@@ -5977,8 +5974,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
                 catch (Exception ex)
                 {
+#if DEBUG
                     System.Diagnostics.Debug.WriteLine(ex.Message);
                     System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+#endif
                 }
                 finally
                 {
@@ -5987,7 +5986,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
             }
         }
-
 
         private List<IGeometryCollection> HarmonizeGeometries(List<IGeometryCollection> relationParts, bool isLinear)
         {
@@ -6312,17 +6310,19 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         using (SchemaLockManager linelock = new SchemaLockManager(osmLineFeatureClass as ITable), polygonLock = new SchemaLockManager(osmPolygonFeatureClass as ITable), relationLock = new SchemaLockManager(relationTable))
                         {
-                            IRowBuffer rowBuffer = null;
                             ICursor rowCursor = relationTable.Insert(true);
                             comReleaser.ManageLifetime(rowCursor);
+                            IRowBuffer rowBuffer = null;
 
-                            IFeatureBuffer lineFeatureBuffer = null;
                             IFeatureCursor lineFeatureInsertCursor = osmLineFeatureClass.Insert(true);
-                            comReleaser.ManageLifetime(lineFeatureInsertCursor);
 
-                            IFeatureBuffer polygonFeatureBuffer = null;
+                            comReleaser.ManageLifetime(lineFeatureInsertCursor);
+                            IFeatureBuffer lineFeatureBuffer = null;
+
                             IFeatureCursor polygonFeatureInsertCursor = osmPolygonFeatureClass.Insert(true);
+
                             comReleaser.ManageLifetime(polygonFeatureInsertCursor);
+                            IFeatureBuffer polygonFeatureBuffer = null;
 
                             int relationCount = 1;
                             int relationDebugCount = 1;
@@ -6432,10 +6432,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                             List<OSMLineFeature> osmLineList = null;
                                             List<OSMPolygonFeature> osmPolygonList = null;
                                             List<OSMRelation> osmRelationList = null;
-
-                                            rowBuffer = relationTable.CreateRowBuffer();
-                                            lineFeatureBuffer = osmLineFeatureClass.CreateFeatureBuffer();
-                                            polygonFeatureBuffer = osmPolygonFeatureClass.CreateFeatureBuffer();
 
                                             foreach (var item in currentRelation.Items)
                                             {
@@ -6582,8 +6578,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                             if (detectedGeometryType == esriGeometryType.esriGeometryPolygon)
                                             {
                                                 #region create multipart polygon geometry
-                                                //IFeature mpFeature = osmPolygonFeatureClass.CreateFeature();
-
                                                 IPolygon relationMPPolygon = new PolygonClass();
                                                 relationMPPolygon.SpatialReference = ((IGeoDataset)osmPolygonFeatureClass).SpatialReference;
 
@@ -6594,6 +6588,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                 string sqlLineOSMID = osmLineFeatureClass.SqlIdentifier("OSMID");
                                                 object missing = Type.Missing;
                                                 bool relationComplete = true;
+                                                string missingWayID = String.Empty;
 
                                                 // loop through the list of referenced ways that are listed in a relation
                                                 // for each of the items we need to make a decision if they have merit to qualify as stand-alone features
@@ -6622,9 +6617,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                             break;
                                                     }
                                                     
-
-                                                    System.Diagnostics.Debug.WriteLine("Relation (Polygon) #: " + relationDebugCount + " :___: " + currentRelation.id + " :___: " + wayKey.Key);
-
+#if DEBUG
+                                                    System.Diagnostics.Debug.WriteLine("Relation (Polygon) #: " + relationDebugCount + " :___: " + currentRelation.id + " :___: " + wayKey);
+#endif
                                                     using (ComReleaser relationComReleaser = new ComReleaser())
                                                     {
                                                         IFeatureCursor featureCursor = null;
@@ -6647,16 +6642,16 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                         // set the appropriate field attribute to become invisible as a standalone features
                                                         if (partFeature != null)
                                                         {
-                                                            IGeometryCollection ringCollection = partFeature.Shape as IGeometryCollection;
+                                                            ISegmentCollection ringCollection = partFeature.Shape as ISegmentCollection;
 
                                                             // test for available content in the geometry collection  
-                                                            if (ringCollection.GeometryCount > 0)
+                                                            if (ringCollection.SegmentCount > 0)
                                                             {
                                                                 // test if we dealing with a valid geometry
-                                                                if (ringCollection.get_Geometry(0).IsEmpty == false)
+                                                                if (ringCollection.get_Segment(0).IsEmpty == false)
                                                                 {
                                                                     // add it to the new geometry and mark the added geometry as a supporting element
-                                                                    relationPolygonGeometryCollection.AddSegmentCollection((ISegmentCollection)ringCollection.get_Geometry(0));
+                                                                    relationPolygonGeometryCollection.AddSegmentCollection(ringCollection);
 
                                                                     // TE - 10/14/2014 ( 1/5/2015 -- still under consideration)
                                                                     // the initial assessment if the feature is a supporting element based on the existence of tags
@@ -6675,6 +6670,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                                                 if (_osmUtility.AreTagsTheSame(relationTagList, partFeature, tagCollectionPolylineFieldIndex, null))
                                                                                 {
                                                                                     partFeature.set_Value(osmSupportingElementPolylineFieldIndex, "yes");
+                                                                                    partFeature.Store();
                                                                                 }
                                                                             }
                                                                             else
@@ -6682,6 +6678,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                                                 if (_osmUtility.AreTagsTheSame(relationTagList, partFeature, tagCollectionPolygonFieldIndex, null))
                                                                                 {
                                                                                     partFeature.set_Value(osmSupportingElementPolygonFieldIndex, "yes");
+                                                                                    partFeature.Store();
                                                                                 }
                                                                             }
                                                                         }
@@ -6694,9 +6691,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                                         //        partFeature.set_Value(osmSupportingElementPolygonFieldIndex, "yes");
                                                                         //    }
                                                                         //}
-
-                                                                        partFeature.Store();
-
                                                                     }
                                                                 }
                                                             }
@@ -6753,8 +6747,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                             }
                                                             else
                                                             {
+                                                                missingWayID = wayKey.Key;
                                                                 relationComplete = false;
-                                                                continue;
+                                                                break; 
                                                             }
                                                         //}
                                                     }
@@ -6764,11 +6759,16 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                 if (relationComplete == false)
                                                 {
                                                     missingRelations.Add(currentRelation.id);
+#if DEBUG
+                                                    System.Diagnostics.Debug.WriteLine("Incomplete Polygon # " + currentRelation.id + "; missing Way ID #" + missingWayID);
+#endif
                                                     continue;
                                                 }
 
                                                 // transform the added collections for geometries into a topological correct geometry representation
                                                 ((IPolygon4)relationMPPolygon).SimplifyEx(true, false, false);
+
+                                                polygonFeatureBuffer = osmPolygonFeatureClass.CreateFeatureBuffer();
 
                                                 polygonFeatureBuffer.Shape = relationMPPolygon;
 
@@ -6856,27 +6856,34 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                                 try
                                                 {
-                                                    //mpFeature.Store();
                                                     polygonFeatureInsertCursor.InsertFeature(polygonFeatureBuffer);
+
+                                                    //if ((relationCount % 5000) == 0)
+                                                    //{
+                                                    //    polygonFeatureInsertCursor.Flush();
+                                                    //}
                                                 }
                                                 catch (Exception ex)
                                                 {
-                                                    message.AddWarning(ex.Message);
+                                                    polygonFeatureInsertCursor.Flush();
+
+                                                    message.AddWarning(ex.Message + "(Polygon # " + currentRelation.id + ")");
+                                                    message.AddWarning(ex.StackTrace);
                                                 }
                                                 #endregion
                                             }
                                             else if (detectedGeometryType == esriGeometryType.esriGeometryPolyline)
                                             {
                                                 #region create multipart polyline geometry
-                                                //IFeature mpFeature = osmLineFeatureClass.CreateFeature();
-
                                                 IPolyline relationMPPolyline = new PolylineClass();
                                                 relationMPPolyline.SpatialReference = ((IGeoDataset)osmLineFeatureClass).SpatialReference;
 
-                                                IGeometryCollection relationPolylineGeometryCollection = relationMPPolyline as IGeometryCollection;
+                                                ISegmentCollection relationPolylineGeometryCollection = relationMPPolyline as ISegmentCollection;
 
                                                 IQueryFilter osmIDQueryFilter = new QueryFilterClass();
                                                 object missing = Type.Missing;
+                                                bool relationComplete = true;
+                                                string missingWayID = String.Empty;
 
                                                 // loop through the 
                                                 foreach (KeyValuePair<string, string> wayKey in wayList)
@@ -6887,9 +6894,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                     }
 
                                                     osmIDQueryFilter.WhereClause = osmLineFeatureClass.WhereClauseByExtensionVersion(wayKey.Key, "OSMID", 2);
-
+#if DEBUG
                                                     System.Diagnostics.Debug.WriteLine("Relation (Polyline) #: " + relationDebugCount + " :___: " + currentRelation.id + " :___: " + wayKey);
-
+#endif
                                                     using (ComReleaser relationComReleaser = new ComReleaser())
                                                     {
                                                         IFeatureCursor featureCursor = osmLineFeatureClass.Search(osmIDQueryFilter, false);
@@ -6902,8 +6909,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                         {
                                                             if (partFeature.Shape.IsEmpty == false)
                                                             {
-                                                                IGeometryCollection pathCollection = partFeature.Shape as IGeometryCollection;
-                                                                relationPolylineGeometryCollection.AddGeometry(pathCollection.get_Geometry(0), ref missing, ref missing);
+                                                                ISegmentCollection pathCollection = partFeature.Shape as ISegmentCollection;
+                                                                relationPolylineGeometryCollection.AddSegmentCollection(pathCollection);
 
                                                                 // TE - 10/14/2014 - see comment above
                                                                 if (osmSupportingElementPolylineFieldIndex > -1)
@@ -6917,16 +6924,31 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                                         if (!_osmUtility.AreTagsTheSame(relationTagList, partFeature, tagCollectionPolylineFieldIndex, null))
                                                                         {
                                                                             partFeature.set_Value(osmSupportingElementPolylineFieldIndex, "yes");
+                                                                            partFeature.Store();
                                                                         }
                                                                     }
                                                                 }
-
-                                                                partFeature.Store();
-
                                                             }
+                                                        }
+                                                        else
+                                                        {
+                                                            missingWayID = wayKey.Key;
+                                                            relationComplete = false;
+                                                            break;
                                                         }
                                                     }
                                                 }
+
+                                                if (relationComplete == false)
+                                                {
+                                                    missingRelations.Add(currentRelation.id);
+#if DEBUG
+                                                    System.Diagnostics.Debug.WriteLine("Incomplete Polyline # " + currentRelation.id + "; missing Way ID #" + missingWayID);
+#endif
+                                                    continue;
+                                                }
+
+                                                lineFeatureBuffer = osmLineFeatureClass.CreateFeatureBuffer();
 
                                                 lineFeatureBuffer.Shape = relationMPPolyline;
 
@@ -7007,17 +7029,26 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                 try
                                                 {
                                                     lineFeatureInsertCursor.InsertFeature(lineFeatureBuffer);
+
+                                                    //if ((relationCount % 5000) == 0)
+                                                    //{
+                                                    //    lineFeatureInsertCursor.Flush();
+                                                    //}
                                                 }
                                                 catch (Exception ex)
                                                 {
-                                                    message.AddWarning(ex.Message);
+                                                    lineFeatureInsertCursor.Flush();
+
+                                                    message.AddWarning(ex.Message + "(Line #" + currentRelation.id + ")");
                                                 }
                                                 #endregion
 
                                             }
                                             else if (detectedGeometryType == esriGeometryType.esriGeometryPoint)
                                             {
+#if DEBUG
                                                 System.Diagnostics.Debug.WriteLine("Relation #: " + relationDebugCount + " :____: POINT!!!");
+#endif
 
                                                 if (TrackCancel.Continue() == false)
                                                 {
@@ -7032,8 +7063,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                     return missingRelations;
                                                 }
 
-
+#if DEBUG
                                                 System.Diagnostics.Debug.WriteLine("Relation #: " + relationDebugCount + " :____: Kept as relation");
+#endif
+
+                                                rowBuffer = relationTable.CreateRowBuffer();
 
                                                 if (tagCollectionRelationFieldIndex != -1)
                                                 {
@@ -7114,11 +7148,19 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                 {
                                                     rowCursor.InsertRow(rowBuffer);
 
+                                                    //if ((relationCount % 5000) == 0)
+                                                    //{
+                                                    //    rowCursor.Flush();
+                                                    //}
+
                                                     relationIndexRebuildRequired = true;
                                                 }
                                                 catch (Exception ex)
                                                 {
-                                                    System.Diagnostics.Debug.WriteLine(ex.Message);
+#if DEBUG
+                                                    System.Diagnostics.Debug.WriteLine(ex.Message + " (row #" + currentRelation.id + ")");
+#endif
+                                                    message.AddWarning(ex.Message + " (row #" + currentRelation.id + ")");
                                                 }
 
                                                 // check for user interruption
@@ -7167,7 +7209,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         }
                                         catch (Exception ex)
                                         {
-                                            message.AddWarning(ex.Message);
+#if DEBUG
+                                            System.Diagnostics.Debug.WriteLine(ex.Message);
+                                            System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+#endif
                                         }
                                         finally
                                         {
@@ -7190,9 +7235,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                             currentRelation = null;
                                         }
-                                    }
-                                }
-                            }
+                                    } // relation element
+                                } // is start element?
+                            } // osmFileXmlReader
 
                             // close the OSM file
                             osmFileXmlReader.Close();
@@ -7443,20 +7488,22 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         public static bool IsThisWayALine(List<tag> tags, List<string> nodeIDs)
         {
             bool isALine = true;
+            bool startAndEndCoincide = false;
 
             try
             {
                 if (nodeIDs[0] == nodeIDs[nodeIDs.Count - 1])
                 {
+                    startAndEndCoincide = true;
                     isALine = false;
                 }
                 else
                 {
-                    isALine = true;
+                    startAndEndCoincide = false;
                 }
 
                 // coastlines are special cases and we will accept them as lines only
-                bool isCoastline = false;
+                //bool isCoastline = false;
 
                 tag coastlineTag = new tag();
                 coastlineTag.k = "natural";
@@ -7496,7 +7543,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 if (tags.Contains(areaTag, new TagKeyValueComparer()))
                 {
-                    isALine = false;
+                    if (startAndEndCoincide)
+                        isALine = false;
+                    else
+                        isALine = true;
                 }
 
                 if (tags.Contains(routeTag, new TagKeyValueComparer()))
@@ -7516,6 +7566,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         public static bool IsThisWayALine(way currentway)
         {
             bool isALine = true;
+            bool startAndEndCoincide = false;
 
             try
             {
@@ -7523,11 +7574,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 {
                     if (currentway.nd[0].@ref == currentway.nd[currentway.nd.Length - 1].@ref)
                     {
+                        startAndEndCoincide = true;
                         isALine = false;
                     }
                     else
                     {
-                        isALine = true;
+                        startAndEndCoincide = false;
                     }
                 }
 
@@ -7572,7 +7624,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         if (isCoastline == false)
                         {
-                            isALine = false;
+                            // only consider the area=yes combination if the way closes onto itself
+                            // otherwise it is most likely an attribute error
+                            if (startAndEndCoincide)
+                                isALine = false;
+                            else
+                                isALine = true;
                         }
                     }
                 }
@@ -7913,6 +7970,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 detectedGeometryType = esriGeometryType.esriGeometryPolygon;
                                 // now , it could be argued that the descriptive tag of 'polygon' is not sufficient to ensure 
                                 // or guarantuee that the geometry is indeed a 'polygon'
+                                return detectedGeometryType;
+                            }
+
+                            if ((currentTag.v.ToUpper().Equals("ROUTE")) || (currentTag.v.ToUpper().Equals("ROUTE_MASTER")) || (currentTag.v.ToUpper().Equals("NETWORK")))
+                            {
+                                detectedGeometryType = esriGeometryType.esriGeometryPolyline;
                                 return detectedGeometryType;
                             }
                         }
