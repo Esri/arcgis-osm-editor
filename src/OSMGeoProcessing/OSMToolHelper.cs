@@ -7376,6 +7376,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             try
             {
                 int osmIDPolygonFieldIndex = polygonFeatureClass.FindField("OSMID");
+                int tagFieldIndex = polygonFeatureClass.FindField("osmTags");
                 int osmSupportingElementFieldIndex = polygonFeatureClass.FindField("osmSupportingElement");
                 string sqlPolyOSMID = polygonFeatureClass.SqlIdentifier("OSMID");
 
@@ -7399,7 +7400,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 if (foundPolygonFeature == null)
                                     continue;
 
-                                tag[] foundTags = _osmUtility.retrieveOSMTags(foundPolygonFeature, osmIDPolygonFieldIndex, ((IDataset)polygonFeatureClass).Workspace);
+                                tag[] foundTags = _osmUtility.retrieveOSMTags(foundPolygonFeature, tagFieldIndex, ((IDataset)polygonFeatureClass).Workspace);
 
                                 // set this feature from which we transfer to become a supporting element
                                 if (osmSupportingElementFieldIndex > -1)
