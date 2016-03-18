@@ -1,4 +1,4 @@
-// (c) Copyright Esri, 2010 - 2013
+// (c) Copyright Esri, 2010 - 2016
 // This source is subject to the Apache 2.0 License.
 // Please see http://www.apache.org/licenses/LICENSE-2.0.html for details.
 // All other rights reserved.
@@ -191,7 +191,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 tag createdByTag = new tag();
                 createdByTag.k = "created_by";
-                createdByTag.v = "ArcGIS Editor for OpenStreetMap (10.2)";
+                createdByTag.v = "ArcGIS Editor for OpenStreetMap";
                 changeSetTags.Add(createdByTag);
 
                 tag commentTag = new tag();
@@ -277,7 +277,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
 
                 IGPParameter revisionTableParameter = paramvalues.get_Element(in_changesTablesNumber) as IGPParameter;
-                int featureUpdateCounter = 1;
+                int featureUpdateCounter = 0;
 
                 IQueryFilter revisionTableQueryFilter = null;
 
@@ -520,7 +520,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                 // if the overall number of uploaded elements is too big for a single changeset we do need to split it up
                                 // into multiple sets
-                                if ((featureUpdateCounter % maxElementsinChangeSet) == 0)
+                                if (featureUpdateCounter > 0 & (featureUpdateCounter % maxElementsinChangeSet) == 0)
                                 {
                                     // add any outstanding creations to the changeset items
                                     if (listOfCreates != null && uploadCreates != null)

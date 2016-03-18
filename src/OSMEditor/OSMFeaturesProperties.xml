@@ -1686,7 +1686,7 @@
       <tagvalue name="residential" />
       <tagvalue name="retail" />
     </tagkey>
-    <tagkey name="maxspeed" tagtype="tag_double" displayname="Maximum Speed" infoURL="http://wiki.openstreetmap.org/wiki/Key:maxspeed" />
+    <tagkey name="maxspeed" tagtype="tag_string" displayname="Maximum Speed" infoURL="http://wiki.openstreetmap.org/wiki/Key:maxspeed" />
     <tagkey name="service" tagytpe="list">
       <tagvalue name="parking_aisle" />
       <tagvalue name="driveway" />

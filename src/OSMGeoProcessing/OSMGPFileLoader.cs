@@ -1,4 +1,4 @@
-// (c) Copyright Esri, 2010 - 2013
+// (c) Copyright Esri, 2010 - 2016
 // This source is subject to the Apache 2.0 License.
 // Please see http://www.apache.org/licenses/LICENSE-2.0.html for details.
 // All other rights reserved.
@@ -168,6 +168,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         // the count should be zero if we encountered the "ALL" keyword 
                         // in this case count the features and create a list of unique tags
+                        // this is a slow process process - be patient for large files
                         attributeTags = osmToolHelper.countOSMCapacityAndTags(osmFileLocationString.GetAsText(), ref nodeCapacity, ref wayCapacity, ref relationCapacity, ref TrackCancel);
                     }
                 }
@@ -353,12 +354,16 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 ISpatialReferenceFactory spatialReferenceFactory = new SpatialReferenceEnvironmentClass() as ISpatialReferenceFactory;
                 ISpatialReference wgs84 = spatialReferenceFactory.CreateGeographicCoordinateSystem((int)esriSRGeoCSType.esriSRGeoCS_WGS1984) as ISpatialReference;
 
-                ISpatialReference downloadSpatialReference = gpUtilities3.GetGPSpRefEnv(envMgr, wgs84, null, 0, 0, 0, 0, null);
+                IEnvelope storageEnvelope = new EnvelopeClass();
+                storageEnvelope.SpatialReference = wgs84;
+                storageEnvelope.PutCoords(-180.0, -90.0, 180.0, 90.0);
+
+                ISpatialReference downloadSpatialReference = gpUtilities3.GetGPSpRefEnv(envMgr, wgs84, storageEnvelope, 0, 0, 0, 0, null);
 
                 Marshal.ReleaseComObject(wgs84);
                 Marshal.ReleaseComObject(spatialReferenceFactory);
 
-                IGPEnvironment configKeyword = OSMGPDownload.getEnvironment(envMgr, "configKeyword");
+                IGPEnvironment configKeyword = OSMToolHelper.getEnvironment(envMgr, "configKeyword");
                 IGPString gpString = configKeyword.Value as IGPString;
 
                 string storageKeyword = String.Empty;
@@ -597,114 +602,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 bool fastLoad = false;
 
-                //// check for user interruption
-                //if (TrackCancel.Continue() == false)
-                //{
-                //    message.AddAbort(resourceManager.GetString("GPTools_toolabort"));
-                //    return;
-                //}
-
-                //IFeatureCursor deleteCursor = null;
-                //using (ComReleaser comReleaser = new ComReleaser())
-                //{
-                //    // let's make sure that we clean out any old data that might have existed in the feature classes
-                //    deleteCursor = osmPointFeatureClass.Update(null, false);
-                //    comReleaser.ManageLifetime(deleteCursor);
-
-                //    for (IFeature feature = deleteCursor.NextFeature(); feature != null; feature = deleteCursor.NextFeature())
-                //    {
-                //        feature.Delete();
-
-                //        // check for user interruption
-                //        if (TrackCancel.Continue() == false)
-                //        {
-                //            message.AddAbort(resourceManager.GetString("GPTools_toolabort"));
-                //            return;
-                //        }
-
-                //    }
-                //}
-
-                //using (ComReleaser comReleaser = new ComReleaser())
-                //{
-                //    deleteCursor = osmLineFeatureClass.Update(null, false);
-                //    comReleaser.ManageLifetime(deleteCursor);
-
-                //    for (IFeature feature = deleteCursor.NextFeature(); feature != null; feature = deleteCursor.NextFeature())
-                //    {
-                //        feature.Delete();
-
-                //        // check for user interruption
-                //        if (TrackCancel.Continue() == false)
-                //        {
-                //            message.AddAbort(resourceManager.GetString("GPTools_toolabort"));
-                //            return;
-                //        }
-                //    }
-                //}
-
-                //using (ComReleaser comReleaser = new ComReleaser())
-                //{
-                //    deleteCursor = osmPolygonFeatureClass.Update(null, false);
-                //    comReleaser.ManageLifetime(deleteCursor);
-
-                //    for (IFeature feature = deleteCursor.NextFeature(); feature != null; feature = deleteCursor.NextFeature())
-                //    {
-                //        feature.Delete();
-
-                //        // check for user interruption
-                //        if (TrackCancel.Continue() == false)
-                //        {
-                //            message.AddAbort(resourceManager.GetString("GPTools_toolabort"));
-                //            return;
-                //        }
-                //    }
-                //}
-
-                //ICursor tableCursor = null;
-                //using (ComReleaser comReleaser = new ComReleaser())
-                //{
-                //    tableCursor = relationTable.Update(null, false);
-                //    comReleaser.ManageLifetime(tableCursor);
-
-                //    for (IRow row = tableCursor.NextRow(); row != null; row = tableCursor.NextRow())
-                //    {
-                //        row.Delete();
-
-                //        // check for user interruption
-                //        if (TrackCancel.Continue() == false)
-                //        {
-                //            message.AddAbort(resourceManager.GetString("GPTools_toolabort"));
-                //            return;
-                //        }
-                //    }
-                //}
-
-                //using (ComReleaser comReleaser = new ComReleaser())
-                //{
-                //    tableCursor = revisionTable.Update(null, false);
-                //    comReleaser.ManageLifetime(tableCursor);
-
-                //    for (IRow row = tableCursor.NextRow(); row != null; row = tableCursor.NextRow())
-                //    {
-                //        row.Delete();
-
-                //        // check for user interruption
-                //        if (TrackCancel.Continue() == false)
-                //        {
-                //            message.AddAbort(resourceManager.GetString("GPTools_toolabort"));
-                //            return;
-                //        }
-                //    }
-                //}
-
-                // define variables helping to invoke core tools for data management
-                IGeoProcessorResult2 gpResults2 = null;
-
-                IGeoProcessor2 geoProcessor = new GeoProcessorClass();
-
                 #region load points
-                osmToolHelper.loadOSMNodes(osmFileLocationString.GetAsText(), ref TrackCancel, ref message, targetDatasetGPValue, osmPointFeatureClass, conserveMemoryGPValue.Value, fastLoad, Convert.ToInt32(nodeCapacity), ref osmNodeDictionary, featureWorkspace, downloadSpatialReference, availableDomains, false);
+                // hardcoded the value for conserving memory - TE, 11/2015
+                // the reasoning here is that the speed is difference is only about 20% for smaller datasets and it shouldn't be used for larger datasets
+                // due to the 32bit memory limit
+                osmToolHelper.loadOSMNodes(osmFileLocationString.GetAsText(), ref TrackCancel, ref message, targetDatasetGPValue, osmPointFeatureClass, true, fastLoad, Convert.ToInt32(nodeCapacity), ref osmNodeDictionary, featureWorkspace, downloadSpatialReference, availableDomains, false);
                 #endregion
 
 
@@ -714,13 +616,19 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 #region load ways
-                List<string> missingWays = osmToolHelper.loadOSMWays(osmFileLocationString.GetAsText(), ref TrackCancel, ref message, targetDatasetGPValue, osmPointFeatureClass, osmLineFeatureClass, osmPolygonFeatureClass, conserveMemoryGPValue.Value, fastLoad, Convert.ToInt32(wayCapacity), ref osmNodeDictionary, featureWorkspace, downloadSpatialReference, availableDomains, false);
+                List<string> missingWays = osmToolHelper.loadOSMWays(osmFileLocationString.GetAsText(), ref TrackCancel, ref message, targetDatasetGPValue, osmPointFeatureClass, osmLineFeatureClass, osmPolygonFeatureClass, true, fastLoad, Convert.ToInt32(wayCapacity), ref osmNodeDictionary, featureWorkspace, downloadSpatialReference, availableDomains, false);
                 #endregion
 
                 if (downloadSpatialReference != null)
                     Marshal.ReleaseComObject(downloadSpatialReference);
 
+
                 #region for local geodatabases enforce spatial integrity
+
+                // define variables helping to invoke core tools for data management
+                IGeoProcessorResult2 gpResults2 = null;
+
+                IGeoProcessor2 geoProcessor = new GeoProcessorClass();
 
                 bool storedOriginalLocal = geoProcessor.AddOutputsToMap;
                 geoProcessor.AddOutputsToMap = false;
@@ -734,13 +642,19 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         IGPParameter outLinesParameter = paramvalues.get_Element(out_osmLinesNumber) as IGPParameter;
                         IGPValue lineFeatureClass = gpUtilities3.UnpackGPValue(outLinesParameter);
 
-                        DataManagementTools.RepairGeometry repairlineGeometry = new DataManagementTools.RepairGeometry(osmLineFeatureClass);
+                        DataManagementTools.RepairGeometry repairlineGeometry = new DataManagementTools.RepairGeometry();
 
                         IVariantArray repairGeometryParameterArray = new VarArrayClass();
                         repairGeometryParameterArray.Add(lineFeatureClass.GetAsText());
                         repairGeometryParameterArray.Add("DELETE_NULL");
 
                         gpResults2 = geoProcessor.Execute(repairlineGeometry.ToolName, repairGeometryParameterArray, TrackCancel) as IGeoProcessorResult2;
+                        message.AddMessages(gpResults2.GetResultMessages());
+
+                        IVariantArray removeSpatialIndexArray = new VarArrayClass();
+                        removeSpatialIndexArray.Add(lineFeatureClass.GetAsText());
+
+                        gpResults2 = geoProcessor.Execute("RemoveSpatialIndex_management", removeSpatialIndexArray, TrackCancel) as IGeoProcessorResult2;
                         message.AddMessages(gpResults2.GetResultMessages());
 
                         ComReleaser.ReleaseCOMObject(gpUtilities3);
@@ -756,13 +670,19 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         IGPParameter outPolygonParameter = paramvalues.get_Element(out_osmPolygonsNumber) as IGPParameter;
                         IGPValue polygonFeatureClass = gpUtilities3.UnpackGPValue(outPolygonParameter);
 
-                        DataManagementTools.RepairGeometry repairpolygonGeometry = new DataManagementTools.RepairGeometry(osmPolygonFeatureClass);
+                        DataManagementTools.RepairGeometry repairpolygonGeometry = new DataManagementTools.RepairGeometry();
 
                         IVariantArray repairGeometryParameterArray = new VarArrayClass();
                         repairGeometryParameterArray.Add(polygonFeatureClass.GetAsText());
                         repairGeometryParameterArray.Add("DELETE_NULL");
 
                         gpResults2 = geoProcessor.Execute(repairpolygonGeometry.ToolName, repairGeometryParameterArray, TrackCancel) as IGeoProcessorResult2;
+                        message.AddMessages(gpResults2.GetResultMessages());
+
+                        IVariantArray removeSpatialIndexArray = new VarArrayClass();
+                        removeSpatialIndexArray.Add(polygonFeatureClass.GetAsText());
+
+                        gpResults2 = geoProcessor.Execute("RemoveSpatialIndex_management", removeSpatialIndexArray, TrackCancel) as IGeoProcessorResult2;
                         message.AddMessages(gpResults2.GetResultMessages());
 
                         ComReleaser.ReleaseCOMObject(gpUtilities3);
@@ -788,29 +708,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 {
                     return;
                 }
-
-                //storedOriginalLocal = geoProcessor.AddOutputsToMap;
-                //try
-                //{
-                //    geoProcessor.AddOutputsToMap = false;
-
-                //    // add indexes for revisions
-                //    //IGPValue revisionTableGPValue = gpUtilities3.MakeGPValueFromObject(revisionTable);
-                //    string revisionTableString = targetDatasetGPValue.GetAsText() + System.IO.Path.DirectorySeparatorChar + ((IDataset)revisionTable).BrowseName;
-                //    IVariantArray parameterArrary2 = osmToolHelper.CreateAddIndexParameterArray(revisionTableString, "osmoldid;osmnewid", "osmID_IDX", "", "");
-                //    gpResults2 = geoProcessor.Execute("AddIndex_management", parameterArrary2, TrackCancel) as IGeoProcessorResult2;
-
-                //    message.AddMessages(gpResults2.GetResultMessages());
-                //}
-                //catch (Exception ex)
-                //{
-                //    message.AddWarning(ex.Message);
-                //}
-                //finally
-                //{
-                //    geoProcessor.AddOutputsToMap = storedOriginalLocal;
-                //}
-
 
                 #region update the references counts and member lists for nodes
 
@@ -1238,7 +1135,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
             }
 
-            // check one of the output feature classes for version compatibility
+
+            //// check one of the output feature classes for version compatibility
             IGPParameter pointFeatureClassParameter = paramvalues.get_Element(out_osmPointsNumber) as IGPParameter;
             IDEFeatureClass pointDEFeatureClass = gpUtilities3.UnpackGPValue(pointFeatureClassParameter) as IDEFeatureClass;
 
@@ -1251,12 +1149,15 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         IFeatureClass ptfc = gpUtilities3.Open(gpUtilities3.UnpackGPValue(pointFeatureClassParameter)) as IFeatureClass;
                         IPropertySet osmExtensionPropertySet = ptfc.ExtensionProperties;
 
+                        // TE - 01/22/2016
+                        // skip the anticipation of a propertyset off a feature class
+                        // with the change from last year not to apply the extension automatically this check is confusing users more than benefitting them
                         if (osmExtensionPropertySet == null)
                         {
-                            Messages.ReplaceError(out_targetDatasetNumber, -5, string.Format(resourceManager.GetString("GPTools_IncompatibleExtensionVersion"), 1, OSMClassExtensionManager.Version));
-                            Messages.ReplaceError(out_osmPointsNumber, -5, string.Format(resourceManager.GetString("GPTools_IncompatibleExtensionVersion"), 1, OSMClassExtensionManager.Version));
-                            Messages.ReplaceError(out_osmLinesNumber, -5, string.Format(resourceManager.GetString("GPTools_IncompatibleExtensionVersion"), 1, OSMClassExtensionManager.Version));
-                            Messages.ReplaceError(out_osmPolygonsNumber, -5, string.Format(resourceManager.GetString("GPTools_IncompatibleExtensionVersion"), 1, OSMClassExtensionManager.Version));
+                        //    Messages.ReplaceError(out_targetDatasetNumber, -5, string.Format(resourceManager.GetString("GPTools_IncompatibleExtensionVersion"), 1, OSMClassExtensionManager.Version));
+                        //    Messages.ReplaceError(out_osmPointsNumber, -5, string.Format(resourceManager.GetString("GPTools_IncompatibleExtensionVersion"), 1, OSMClassExtensionManager.Version));
+                        //    Messages.ReplaceError(out_osmLinesNumber, -5, string.Format(resourceManager.GetString("GPTools_IncompatibleExtensionVersion"), 1, OSMClassExtensionManager.Version));
+                        //    Messages.ReplaceError(out_osmPolygonsNumber, -5, string.Format(resourceManager.GetString("GPTools_IncompatibleExtensionVersion"), 1, OSMClassExtensionManager.Version));
                         }
                         else
                         {
