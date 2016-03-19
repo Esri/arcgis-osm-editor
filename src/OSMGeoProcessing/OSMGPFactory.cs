@@ -1,4 +1,4 @@
-// (c) Copyright Esri, 2010 - 2013
+// (c) Copyright Esri, 2010 - 2016
 // This source is subject to the Apache 2.0 License.
 // Please see http://www.apache.org/licenses/LICENSE-2.0.html for details.
 // All other rights reserved.
@@ -98,6 +98,26 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         internal const string m_CreateNetworkDatasetName = "OSMGPCreateNetworkDataset";
         string m_CreateNetworkDatasetCategory = "Data Management";
         string m_CreateNetworkDatasetDescription = "Create a network dataset from a given OSM dataset.";
+
+        string m_MultiLoaderDisplayName = "OSM Multi Loader (Load only)";
+        internal const string m_MultiLoaderName = "OSMGPMultiLoader";
+        string m_MultiLoaderCategory = "Data Delivery";
+        string m_MultiLoaderDescription = "Load OSM file without the metadata. Data loaded without tools cannot be uploaded back to the OSM server.";
+
+        string m_NodeLoaderDisplayName = "OSM Node Loader";
+        internal const string m_NodeLoaderName = "OSMGPNodeLoader";
+        string m_NodeLoaderCategory = "Data Delivery";
+        string m_NodeLoaderDescription = "Load OSM nodes.";
+
+        string m_WayLoaderDisplayName = "OSM Way Loader";
+        internal const string m_WayLoaderName = "OSMGPWayLoader";
+        string m_WayLoaderCategory = "Data Delivery";
+        string m_WayLoaderDescription = "Load OSM ways.";
+
+        string m_RelationLoaderDisplayName = "OSM Relation Loader";
+        internal const string m_RelationLoaderName = "OSMGPRelationLoader";
+        string m_RelationLoaderCategory = "Data Delivery";
+        string m_RelationLoaderDescription = "Load OSM relations.";
 
         #region "Component Category Registration"
         [ComRegisterFunction()]
@@ -202,6 +222,22 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 m_CreateNetworkDatasetCategory = resourceManager.GetString("GPTools_OSMGPAttributeSelector_categoryName");
                 m_CreateNetworkDatasetDisplayName = resourceManager.GetString("GPTools_OSMGPCreateNetworkDataset_displayname");
                 m_CreateNetworkDatasetDescription = resourceManager.GetString("GPTools_OSMGPCreateNetworkDataset_desc");
+
+                m_MultiLoaderCategory = resourceManager.GetString("GPTools_OSMGPMultiLoader_categoryName");
+                m_MultiLoaderDisplayName = resourceManager.GetString("GPTools_OSMGPMultiLoader_displayName");
+                m_MultiLoaderDescription = resourceManager.GetString("GPTools_OSMGPMultiLoader_desc");
+
+                m_NodeLoaderCategory = resourceManager.GetString("GPTools_OSMGPNodeLoader_categoryName");
+                m_NodeLoaderDisplayName = resourceManager.GetString("GPTools_OSMGPNodeLoader_displayName");
+                m_NodeLoaderDescription = resourceManager.GetString("GPTools_OSMGPNodeLoader_desc");
+
+                m_WayLoaderCategory = resourceManager.GetString("GPTools_OSMGPWayLoader_categoryName");
+                m_WayLoaderDisplayName = resourceManager.GetString("GPTools_OSMGPWayLoader_displayName");
+                m_WayLoaderDescription = resourceManager.GetString("GPTools_OSMGPWayLoader_desc");
+
+                m_RelationLoaderCategory = resourceManager.GetString("GPTools_OSMGPRelationLoader_categoryName");
+                m_RelationLoaderDisplayName = resourceManager.GetString("GPTools_OSMGPRelationLoader_displayName");
+                m_RelationLoaderDescription = resourceManager.GetString("GPTools_OSMGPRelationLoader_desc");
             }
             catch (Exception ex)
             {
@@ -275,6 +311,18 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 case m_CreateNetworkDatasetName:
                     IGPFunction osmGPCreateNetworkDataset = new OSMGPCreateNetworkDataset() as IGPFunction;
                     return osmGPCreateNetworkDataset;
+                case m_MultiLoaderName:
+                    IGPFunction osmGPMultiLoader = new OSMGPMultiLoader() as IGPFunction;
+                    return osmGPMultiLoader;
+                case m_NodeLoaderName:
+                    IGPFunction osmGPNodeLoader = new OSMGPNodeLoader() as IGPFunction;
+                    return osmGPNodeLoader;
+                case m_WayLoaderName:
+                    IGPFunction osmGPWayLoader = new OSMGPWayLoader() as IGPFunction;
+                    return osmGPWayLoader;
+                case m_RelationLoaderName:
+                    IGPFunction osmGPRelationLoader = new OSMGPRelationLoader() as IGPFunction;
+                    return osmGPRelationLoader;
                 default:
                     return null;
             }
@@ -377,6 +425,30 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     toolGPName.Category = m_CreateNetworkDatasetCategory;
                     toolGPName.Description = m_CreateNetworkDatasetDescription;
                     break;
+                case m_MultiLoaderName:
+                    toolGPName.Name = m_MultiLoaderName;
+                    toolGPName.DisplayName = m_MultiLoaderDisplayName;
+                    toolGPName.Category = m_MultiLoaderCategory;
+                    toolGPName.Description = m_MultiLoaderDescription;
+                    break;
+                case m_NodeLoaderName:
+                    toolGPName.Name = m_NodeLoaderName;
+                    toolGPName.DisplayName = m_NodeLoaderDisplayName;
+                    toolGPName.Category = m_NodeLoaderCategory;
+                    toolGPName.Description = m_NodeLoaderDescription;
+                    break;
+                case m_WayLoaderName:
+                    toolGPName.Name = m_WayLoaderName;
+                    toolGPName.DisplayName = m_WayLoaderDisplayName;
+                    toolGPName.Category = m_WayLoaderCategory;
+                    toolGPName.Description = m_WayLoaderDescription;
+                    break;
+                case m_RelationLoaderName:
+                    toolGPName.Name = m_RelationLoaderName;
+                    toolGPName.DisplayName = m_RelationLoaderDisplayName;
+                    toolGPName.Category = m_RelationLoaderCategory;
+                    toolGPName.Description = m_RelationLoaderDescription;
+                    break;
                 default:
                     return null;
             }
@@ -401,6 +473,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             allGPFunctionNames.Add(this.GetFunctionName(m_FeatureComparisonName));
             allGPFunctionNames.Add(this.GetFunctionName(m_Export2OSMName));
             allGPFunctionNames.Add(this.GetFunctionName(m_CreateNetworkDatasetName));
+            allGPFunctionNames.Add(this.GetFunctionName(m_MultiLoaderName));
+            allGPFunctionNames.Add(this.GetFunctionName(m_NodeLoaderName));
+            allGPFunctionNames.Add(this.GetFunctionName(m_WayLoaderName));
+            allGPFunctionNames.Add(this.GetFunctionName(m_RelationLoaderName));
 
             return (IEnumGPName)allGPFunctionNames;
         }
@@ -440,7 +516,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 // Check for Desktop first
                 foreach (RuntimeInfo item in installedRuntimes)
                 {
-                    
                     if (String.Compare(item.Product.ToString(), "Desktop", true) == 0)
                         installationDirectory = item.Path;
                 }
@@ -555,7 +630,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 {
                     if (File.Exists(executingAssembly.Directory.FullName + System.IO.Path.DirectorySeparatorChar + "OSMFeaturesProperties.xml"))
                     {
-                        configurationSettings.Add("osmfeatureporpertiesfilepath", executingAssembly.Directory.FullName + System.IO.Path.DirectorySeparatorChar + "OSMFeaturesProperties.xml");
+                        configurationSettings.Add("osmfeaturepropertiesfilepath", executingAssembly.Directory.FullName + System.IO.Path.DirectorySeparatorChar + "OSMFeaturesProperties.xml");
                     }
                 }
             }

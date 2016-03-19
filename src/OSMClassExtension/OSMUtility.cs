@@ -1,4 +1,4 @@
-﻿// (c) Copyright Esri, 2010 - 2013
+﻿// (c) Copyright Esri, 2010 - 2016
 // This source is subject to the Apache 2.0 License.
 // Please see http://www.apache.org/licenses/LICENSE-2.0.html for details.
 // All other rights reserved.
@@ -462,48 +462,52 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                 }
 
                 IEnumDomain enumDomain = workspaceDomains.Domains;
-                enumDomain.Reset();
-                IDomain currentDomain = enumDomain.Next();
 
-                while (currentDomain != null)
+                if (enumDomain != null)
                 {
-                    int extensionPosition = currentDomain.Name.IndexOf(extensionString);
+                    enumDomain.Reset();
+                    IDomain currentDomain = enumDomain.Next();
 
-                    // only check the attributes that are relevant for the current geometry type
-                    if (extensionPosition > 0)
+                    while (currentDomain != null)
                     {
-                        string attributeName = currentDomain.Name.Substring(0, extensionPosition);
-                        int attributefieldIndex = row.Fields.FindField(attributeName);
+                        int extensionPosition = currentDomain.Name.IndexOf(extensionString);
 
-                        if (attributefieldIndex > -1)
+                        // only check the attributes that are relevant for the current geometry type
+                        if (extensionPosition > 0)
                         {
-                            object attributeValue = row.get_Value(attributefieldIndex);
+                            string attributeName = currentDomain.Name.Substring(0, extensionPosition);
+                            int attributefieldIndex = row.Fields.FindField(attributeName);
 
-                            if (attributeValue != DBNull.Value)
+                            if (attributefieldIndex > -1)
                             {
-                                // check if the current attribute value is already in the tag listing
-                                if (tagDictionary.ContainsKey(attributeName) == false)
-                                {
-                                    // create a new tag to store
-                                    tag explicitAttributeTag = new tag();
-                                    explicitAttributeTag.k = attributeName;
-                                    explicitAttributeTag.v = Convert.ToString(attributeValue);
+                                object attributeValue = row.get_Value(attributefieldIndex);
 
-                                    if (String.IsNullOrEmpty(explicitAttributeTag.v) == false)
+                                if (attributeValue != DBNull.Value)
+                                {
+                                    // check if the current attribute value is already in the tag listing
+                                    if (tagDictionary.ContainsKey(attributeName) == false)
                                     {
-                                        tagDictionary.Add(attributeName, explicitAttributeTag);
+                                        // create a new tag to store
+                                        tag explicitAttributeTag = new tag();
+                                        explicitAttributeTag.k = attributeName;
+                                        explicitAttributeTag.v = Convert.ToString(attributeValue);
+
+                                        if (String.IsNullOrEmpty(explicitAttributeTag.v) == false)
+                                        {
+                                            tagDictionary.Add(attributeName, explicitAttributeTag);
+                                        }
                                     }
                                 }
                             }
                         }
+
+                        currentDomain = enumDomain.Next();
                     }
 
-                    currentDomain = enumDomain.Next();
+                    // copy the values back into the array
+                    retrievedTags = new tag[tagDictionary.Count];
+                    tagDictionary.Values.CopyTo(retrievedTags, 0);
                 }
-
-                // copy the values back into the array
-                retrievedTags = new tag[tagDictionary.Count];
-                tagDictionary.Values.CopyTo(retrievedTags, 0);
             }
             return retrievedTags;
         }
@@ -1386,6 +1390,12 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
         {
             IList<tag> relevantTags = new List<tag>();
             bool doesHaveKeys = false;
+
+            if (currentway == null)
+                throw new ArgumentNullException("currentway", "Unexpected value.");
+
+            if (currentway.tag == null)
+                return doesHaveKeys;
 
             try
             {
