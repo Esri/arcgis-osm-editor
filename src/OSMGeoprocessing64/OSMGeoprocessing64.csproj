@@ -150,6 +150,15 @@
     <Compile Include="..\OSMGeoProcessing\OSMGPFileLoader.cs">
       <Link>OSMGPFileLoader.cs</Link>
     </Compile>
+    <Compile Include="..\OSMGeoProcessing\OSMGPMultiLoader.cs">  
+      <Link>OSMGPMultiLoader.cs</Link>  
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\OSMGPNodeLoader.cs">  
+      <Link>OSMGPNodeLoader.cs</Link>  
+    </Compile>  
+    <Compile Include="..\OSMGeoProcessing\OSMGPRelationLoader.cs">  
+      <Link>OSMGPRelationLoader.cs</Link>  
+    </Compile>
     <Compile Include="..\OSMGeoProcessing\OSMGPRemoveExtension.cs">
       <Link>OSMGPRemoveExtension.cs</Link>
     </Compile>
@@ -158,6 +167,9 @@
     </Compile>
     <Compile Include="..\OSMGeoProcessing\OSMGPUpload.cs">
       <Link>OSMGPUpload.cs</Link>
+    </Compile>
+    <Compile Include="..\OSMGeoProcessing\OSMGPWayLoader.cs">  
+      <Link>OSMGPWayLoader.cs</Link>  
     </Compile>
     <Compile Include="..\OSMGeoProcessing\OsmRest\HttpUtils.cs">
       <Link>OsmRest\HttpUtils.cs</Link>
