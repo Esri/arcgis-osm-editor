@@ -1,4 +1,4 @@
-// (c) Copyright Esri, 2010 - 2013
+// (c) Copyright Esri, 2010 - 2016
 // This source is subject to the Apache 2.0 License.
 // Please see http://www.apache.org/licenses/LICENSE-2.0.html for details.
 // All other rights reserved.
@@ -418,7 +418,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
                 #endregion
 
-                IGPEnvironment configKeyword = getEnvironment(envMgr, "configKeyword");
+                IGPEnvironment configKeyword = OSMToolHelper.getEnvironment(envMgr, "configKeyword");
                 IGPString gpString = null;
                 if (configKeyword != null)
                     gpString = configKeyword.Value as IGPString;
@@ -1012,27 +1012,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             return osmDocumentLocation;
         }
 
-        public static IGPEnvironment getEnvironment(IGPEnvironmentManager environmentManager, string name)
-        {
-            IGPUtilities3 gpUtils = new GPUtilitiesClass();
-            IGPEnvironment returnEnv = null;
 
-            try
-            {
-                if (environmentManager.GetLocalEnvironments().Count > 0)
-                    returnEnv = gpUtils.GetEnvironment(environmentManager.GetLocalEnvironments(), name);
-
-                if (returnEnv == null)
-                    returnEnv = gpUtils.GetEnvironment(environmentManager.GetEnvironments(), name);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-                System.Diagnostics.Debug.WriteLine(ex.StackTrace);
-            }
-
-            return returnEnv;
-        }
 
         public ESRI.ArcGIS.esriSystem.IName FullName
         {
@@ -1595,70 +1575,5 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
         }
 
- 
-        private void BuildSpatialIndex(IGPValue gpFeatureClass, Geoprocessor.Geoprocessor geoProcessor, IGPUtilities gpUtil,
-            ITrackCancel trackCancel, IGPMessages message)
-        {
-            if ((gpFeatureClass == null) || (geoProcessor == null) || (gpUtil == null))
-                return;
-
-            // Check if the feature class supports spatial index grids
-            IFeatureClass fc = gpUtil.OpenDataset(gpFeatureClass) as IFeatureClass;
-            if (fc == null)
-                return;
-
-            int idxShapeField = fc.FindField(fc.ShapeFieldName);
-            if (idxShapeField >= 0)
-            {
-                IField shapeField = fc.Fields.get_Field(idxShapeField);
-                if (shapeField.GeometryDef.GridCount > 0)
-                {
-                    if (shapeField.GeometryDef.get_GridSize(0) == -2.0)
-                        return;
-                }
-            }
-
-            // Create the new spatial index grid
-            bool storedOriginal = geoProcessor.AddOutputsToMap;
-
-            try
-            {
-                geoProcessor.AddOutputsToMap = false;
-
-                DataManagementTools.CalculateDefaultGridIndex calculateDefaultGridIndex =
-                    new DataManagementTools.CalculateDefaultGridIndex(gpFeatureClass);
-                IGeoProcessorResult2 gpResults2 =
-                    geoProcessor.Execute(calculateDefaultGridIndex, trackCancel) as IGeoProcessorResult2;
-                message.AddMessages(gpResults2.GetResultMessages());
-
-                if (gpResults2 != null)
-                {
-                    DataManagementTools.RemoveSpatialIndex removeSpatialIndex =
-                        new DataManagementTools.RemoveSpatialIndex(gpFeatureClass.GetAsText());
-                    removeSpatialIndex.out_feature_class = gpFeatureClass.GetAsText();
-                    gpResults2 = geoProcessor.Execute(removeSpatialIndex, trackCancel) as IGeoProcessorResult2;
-                    message.AddMessages(gpResults2.GetResultMessages());
-
-                    DataManagementTools.AddSpatialIndex addSpatialIndex =
-                        new DataManagementTools.AddSpatialIndex(gpFeatureClass.GetAsText());
-                    addSpatialIndex.out_feature_class = gpFeatureClass.GetAsText();
-
-                    addSpatialIndex.spatial_grid_1 = calculateDefaultGridIndex.grid_index1;
-                    addSpatialIndex.spatial_grid_2 = calculateDefaultGridIndex.grid_index2;
-                    addSpatialIndex.spatial_grid_3 = calculateDefaultGridIndex.grid_index3;
-
-                    gpResults2 = geoProcessor.Execute(addSpatialIndex, trackCancel) as IGeoProcessorResult2;
-                    message.AddMessages(gpResults2.GetResultMessages());
-                }
-            }
-            catch (Exception ex)
-            {
-                message.AddWarning(ex.Message);
-            }
-            finally
-            {
-                geoProcessor.AddOutputsToMap = storedOriginal;
-            }
-        }
     }
 }

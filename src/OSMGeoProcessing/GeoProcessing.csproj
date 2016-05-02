@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ESRI.ArcGIS.OSM.GeoProcessing</RootNamespace>
     <AssemblyName>OSMGeoProcessing</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -50,10 +50,11 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <RegisterForComInterop>false</RegisterForComInterop>
+    <RegisterForComInterop>true</RegisterForComInterop>
     <PlatformTarget>x86</PlatformTarget>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -62,8 +63,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <RegisterForComInterop>false</RegisterForComInterop>
+    <RegisterForComInterop>true</RegisterForComInterop>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ESRI.ArcGIS.ADF, Version=10.0.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=x86">
@@ -147,11 +149,15 @@
     <Compile Include="OSMGPDownload.cs" />
     <Compile Include="OSMGPExport2OSM.cs" />
     <Compile Include="OSMGPFactory.cs" />
+    <Compile Include="OSMGPMultiLoader.cs" />
     <Compile Include="OSMGPFeatureComparison.cs" />
     <Compile Include="OSMGPFileLoader.cs" />
+    <Compile Include="OSMGPNodeLoader.cs" />
+    <Compile Include="OSMGPRelationLoader.cs" />
     <Compile Include="OSMGPRemoveExtension.cs" />
     <Compile Include="OSMGPSymbolizer.cs" />
     <Compile Include="OSMGPUpload.cs" />
+    <Compile Include="OSMGPWayLoader.cs" />
     <Compile Include="OsmRest\HttpUtils.cs" />
     <Compile Include="OsmRest\SerializeUtils.cs" />
     <Compile Include="OSMToolHelper.cs" />
