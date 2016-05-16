@@ -11,7 +11,9 @@ ArcGIS Editor for OpenStreetMap is a toolset for GIS users to access and contrib
 * Create routing networks from OSM data
 
 ## Instructions
-1. Compiled setups (if you just want to install in ArcGIS and not deal with the code) can be downloaded from ArcGIS Online.  For the 10.3 installer, download from here http://www.arcgis.com/home/item.html?id=75716d933f1c40a784243198e0dc11a1.
+1. Compiled setups (if you just want to install in ArcGIS and not deal with the code) can be downloaded from ArcGIS Online.  
+ - For the **10.3** installer, download from here https://www.arcgis.com/home/item.html?id=75716d933f1c40a784243198e0dc11a1
+ - For the **10.4** installer, download from here https://www.arcgis.com/home/item.html?id=c18d3d0d5c62465db60f89225fdd2698
 
 2. Read documentation at http://github.com/Esri/arcgis-osm-editor/wiki/Documentation on how to use the tools
 
@@ -31,7 +33,7 @@ ArcGIS Editor for OpenStreetMap is a toolset for GIS users to access and contrib
 ## Requirements
 
 * An OpenStreetMap login (create at https://www.openstreetmap.org/user/new)
-* ArcGIS for Desktop 10.3
+* ArcGIS for Desktop 10.3 or 10.4
 * Visual Studio 2010 (if you're working with the code)
 
 ## Resources
@@ -47,7 +49,7 @@ Find a bug or want to request a new feature?  Please let us know by submitting a
 Anyone and everyone is welcome to contribute. 
 
 ## Licensing
-Copyright 2015 Esri
+Copyright 2016 Esri
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
