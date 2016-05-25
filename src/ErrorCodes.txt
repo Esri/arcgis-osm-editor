@@ -38,3 +38,4 @@
 120100 - general node load error
 120101 - general way load error
 120102 - general relation load error
+120200 - multiloader, not in standalone feature class

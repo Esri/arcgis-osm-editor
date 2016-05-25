@@ -939,6 +939,9 @@
   <data name="GPTools_OSMGPMultiLoader_schemaCategory_desc" xml:space="preserve">
     <value>Schema information</value>
   </data>
+  <data name="GPTools_OSMGPMultiLoader_fc_only" xml:space="preserve">
+    <value>Please load {0} into a standalone feature class.</value>
+  </data>
   <data name="GPTools_OSMGPNodeLoader_categoryName" xml:space="preserve">
     <value>Data Delivery</value>
   </data>

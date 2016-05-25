@@ -277,6 +277,7 @@ GPTools_OSMGPMultiLoader_loading_super_relations=Loading super relations...
 GPTools_OSMGPMultiLoader_doneloading_super_relations=Done loading super relations (Elapsed Time: {0} hours {1} minutes {2} seconds).
 GPTools_OSMGPMultiLoader_remove_supportNodes=Removing support nodes...
 GPTools_OSMGPMultiLoader_schemaCategory_desc=Schema information
+GPTools_OSMGPMultiLoader_fc_only=Please load {0} into a standalone feature class.
 GPTools_OSMGPNodeLoader_categoryName=Data Delivery
 GPTools_OSMGPNodeLoader_displayName=OSM Node Loader
 GPTools_OSMGPNodeLoader_desc=Loads OSM Nodes.
