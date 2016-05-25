@@ -526,7 +526,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 {
                     string [] versionNumberComponents = realVersionAsString.Split('.');
                     if (versionNumberComponents.Length > 2)
-                        majorMinorVersion = string.Join(".", versionNumberComponents[0], versionNumberComponents[1]);
+                        majorMinorVersion = string.Join(".", new string[]{versionNumberComponents[0], versionNumberComponents[1]});
                 }
 
                 string desktopKeyName = "Desktop" + majorMinorVersion;
@@ -602,7 +602,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 {
                     string[] versionNumberComponents = realVersionAsString.Split('.');
                     if (versionNumberComponents.Length > 2)
-                        majorMinorVersion = string.Join(".", versionNumberComponents[0], versionNumberComponents[1]);
+                        majorMinorVersion = string.Join(".", new string[]{versionNumberComponents[0], versionNumberComponents[1]});
                 }
 
                 string pythonKeyName = "Python" + majorMinorVersion;
