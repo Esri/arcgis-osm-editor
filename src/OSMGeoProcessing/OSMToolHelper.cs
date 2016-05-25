@@ -2813,10 +2813,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     FileInfo parseFileInfo = new FileInfo(osmFileLocation);
                     string pyScriptFileName = parseFileInfo.Name.Split('.')[0] + ".py";
                     loadRelationsScriptName = System.IO.Path.GetTempPath() + pyScriptFileName;
-                    string toolboxPath = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(),
-                        new string[] {OSMGPFactory.GetArcGIS10InstallLocation(),
-                            @"ArcToolbox\Toolboxes\OpenStreetMap Toolbox.tbx"
-                        });
+                    string toolboxPath = System.IO.Path.Combine(OSMGPFactory.GetArcGIS10InstallLocation(),
+                            @"ArcToolbox\Toolboxes\OpenStreetMap Toolbox.tbx");
 
                     using (TextWriter writer = new StreamWriter(loadRelationsScriptName))
                     {
@@ -2829,8 +2827,14 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         writer.WriteLine("arcpy.OSMGPRelationLoader_osmtools(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8])");
                     }
 
+                    string arcgisPythonFolder = OSMGPFactory.GetPythonArcGISInstallLocation();
+
+                    if (String.IsNullOrEmpty(arcgisPythonFolder))
+                        throw new ArgumentOutOfRangeException(arcgisPythonFolder);
+
                     System.Diagnostics.ProcessStartInfo processStartInfo = new System.Diagnostics.ProcessStartInfo("cmd",
-                        String.Join(" ", new string[] {"/c python",
+                        String.Join(" ", new string[] {"/c",
+                            System.IO.Path.Combine(arcgisPythonFolder, "python.exe"),
                             loadRelationsScriptName,
                             osmFileLocation,
                             loadSuperRelations,
@@ -2891,10 +2895,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     FileInfo parseFileInfo = new FileInfo(osmFileLocation);
                     string pyScriptFileName = parseFileInfo.Name.Split('.')[0] + ".py";
                     loadWaysScriptName = System.IO.Path.GetTempPath() + pyScriptFileName;
-                    string toolboxPath = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(),
-                        new string[] {OSMGPFactory.GetArcGIS10InstallLocation(),
-                            @"ArcToolbox\Toolboxes\OpenStreetMap Toolbox.tbx"
-                        });
+                    string toolboxPath = System.IO.Path.Combine(OSMGPFactory.GetArcGIS10InstallLocation(),
+                            @"ArcToolbox\Toolboxes\OpenStreetMap Toolbox.tbx");
 
                     using (TextWriter writer = new StreamWriter(loadWaysScriptName))
                     {
@@ -2907,8 +2909,14 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         writer.WriteLine("arcpy.OSMGPWayLoader_osmtools(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6])");
                     }
 
+                    string arcgisPythonFolder = OSMGPFactory.GetPythonArcGISInstallLocation();
+
+                    if (String.IsNullOrEmpty(arcgisPythonFolder))
+                        throw new ArgumentOutOfRangeException(arcgisPythonFolder);
+
                     System.Diagnostics.ProcessStartInfo processStartInfo = new System.Diagnostics.ProcessStartInfo("cmd",
-                        String.Join(" ", new string[] {"/c python",
+                        String.Join(" ", new string[] {"/c",
+                            System.IO.Path.Combine(arcgisPythonFolder, "python.exe"),
                             loadWaysScriptName,
                             osmFileLocation,
                             sourcePointsFeatureClassLocation,
@@ -2965,10 +2973,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     FileInfo parseFileInfo = new FileInfo(fileGDBLocation);
                     string pyScriptFileName = parseFileInfo.Name.Split('.')[0] + ".py";
                     loadNodeScriptName = System.IO.Path.GetTempPath() + pyScriptFileName;
-                    string toolboxPath = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), 
-                        new string[] {OSMGPFactory.GetArcGIS10InstallLocation(),
-                            @"ArcToolbox\Toolboxes\OpenStreetMap Toolbox.tbx"
-                        });
+                    string toolboxPath = System.IO.Path.Combine(OSMGPFactory.GetArcGIS10InstallLocation(),
+                            @"ArcToolbox\Toolboxes\OpenStreetMap Toolbox.tbx");
 
                     using (TextWriter writer = new StreamWriter(loadNodeScriptName))
                     {
@@ -2981,8 +2987,13 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         writer.WriteLine("arcpy.OSMGPNodeLoader_osmtools(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])");
                     }
 
+                    string arcgisPythonFolder = OSMGPFactory.GetPythonArcGISInstallLocation();
+
+                    if (String.IsNullOrEmpty(arcgisPythonFolder))
+                        throw new ArgumentOutOfRangeException(arcgisPythonFolder);
+
 #if DEBUG
-                    System.Diagnostics.Debug.WriteLine(String.Join(" ", new string[] {"/c python",
+                    System.Diagnostics.Debug.WriteLine(String.Join(" ", new string[] {"/c",
                             loadNodeScriptName,
                             osmFileLocation,
                             fieldNames,
@@ -2993,7 +3004,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 #endif
 
                     System.Diagnostics.ProcessStartInfo processStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", 
-                        String.Join(" ", new string[] {"/c python",
+                        String.Join(" ", new string[] {"/c",
+                            System.IO.Path.Combine(arcgisPythonFolder, "python.exe"),
                             loadNodeScriptName,
                             osmFileLocation,
                             fieldNames,
@@ -3002,7 +3014,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         })
                         );
 
-                    processStartInfo.RedirectStandardOutput = true;
+                    //processStartInfo.RedirectStandardOutput = true;
+                    processStartInfo.RedirectStandardError = true;
                     processStartInfo.UseShellExecute = false;
 
                     processStartInfo.CreateNoWindow = true;
@@ -3011,7 +3024,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     loadProcess.StartInfo = processStartInfo;
                     loadProcess.Start();
 
-                    string result = loadProcess.StandardOutput.ReadToEnd();
+                    string result = loadProcess.StandardError.ReadToEnd();
                 }
                 catch (Exception ex)
                 {

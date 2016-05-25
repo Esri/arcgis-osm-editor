@@ -189,11 +189,28 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 IGPParameter osmPointsFeatureClassParameter = paramvalues.get_Element(out_osmPointsNumber) as IGPParameter;
                 IGPValue osmPointsFeatureClassGPValue = gpUtilities3.UnpackGPValue(osmPointsFeatureClassParameter) as IGPValue;
 
-                IName workspaceName = gpUtilities3.CreateParentFromCatalogPath(osmPointsFeatureClassGPValue.GetAsText());
-                IWorkspace2 pointFeatureWorkspace = workspaceName.Open() as IWorkspace2;
-
                 string[] pointFCNameElements = osmPointsFeatureClassGPValue.GetAsText().Split(System.IO.Path.DirectorySeparatorChar);
 
+                IName workspaceName = null;
+                try
+                {
+                    workspaceName = gpUtilities3.CreateParentFromCatalogPath(osmPointsFeatureClassGPValue.GetAsText());
+
+                    if (workspaceName is IDatasetName)
+                    {
+                        message.AddError(120200, String.Format(resourceManager.GetString("GPTools_OSMGPMultiLoader_fc_only"),
+                            pointFCNameElements[pointFCNameElements.Length - 1]));
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    message.AddError(120200, String.Format(resourceManager.GetString("GPTools_OSMGPMultiLoader_fc_only"), 
+                        pointFCNameElements[pointFCNameElements.Length - 1]));
+                    return;
+                }
+
+                IWorkspace2 pointFeatureWorkspace = workspaceName.Open() as IWorkspace2;
 
                 IGPParameter tagPointCollectionParameter = paramvalues.get_Element(in_pointFieldNamesNumber) as IGPParameter;
                 IGPMultiValue tagPointCollectionGPValue = gpUtilities3.UnpackGPValue(tagPointCollectionParameter) as IGPMultiValue;
@@ -254,11 +271,20 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 IGPParameter osmLineFeatureClassParameter = paramvalues.get_Element(out_osmLinesNumber) as IGPParameter;
                 IGPValue osmLineFeatureClassGPValue = gpUtilities3.UnpackGPValue(osmLineFeatureClassParameter) as IGPValue;
 
-                IName lineWorkspaceName = gpUtilities3.CreateParentFromCatalogPath(osmLineFeatureClassGPValue.GetAsText());
-                IWorkspace2 lineFeatureWorkspace = lineWorkspaceName.Open() as IWorkspace2;
-
                 string[] lineFCNameElements = osmLineFeatureClassGPValue.GetAsText().Split(System.IO.Path.DirectorySeparatorChar);
 
+                IName lineWorkspaceName = null;
+                try
+                {
+                    lineWorkspaceName = gpUtilities3.CreateParentFromCatalogPath(osmLineFeatureClassGPValue.GetAsText());
+                }
+                catch (Exception ex)
+                {
+                    message.AddError(120200, String.Format(resourceManager.GetString("GPTools_OSMGPMultiLoader_fc_only"),
+                        lineFCNameElements[lineFCNameElements.Length - 1]));
+                    return;
+                }
+                IWorkspace2 lineFeatureWorkspace = lineWorkspaceName.Open() as IWorkspace2;
 
                 IGPParameter tagLineCollectionParameter = paramvalues.get_Element(in_lineFieldNamesNumber) as IGPParameter;
                 IGPMultiValue tagLineCollectionGPValue = gpUtilities3.UnpackGPValue(tagLineCollectionParameter) as IGPMultiValue;
@@ -317,10 +343,22 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 IGPParameter osmPolygonFeatureClassParameter = paramvalues.get_Element(out_osmPolygonsNumber) as IGPParameter;
                 IGPValue osmPolygonFeatureClassGPValue = gpUtilities3.UnpackGPValue(osmPolygonFeatureClassParameter) as IGPValue;
 
-                IName polygonWorkspaceName = gpUtilities3.CreateParentFromCatalogPath(osmPolygonFeatureClassGPValue.GetAsText());
-                IWorkspace2 polygonFeatureWorkspace = polygonWorkspaceName.Open() as IWorkspace2;
-
                 string[] polygonFCNameElements = osmPolygonFeatureClassGPValue.GetAsText().Split(System.IO.Path.DirectorySeparatorChar);
+
+                IName polygonWorkspaceName = null;
+
+                try
+                {
+                    polygonWorkspaceName = gpUtilities3.CreateParentFromCatalogPath(osmPolygonFeatureClassGPValue.GetAsText());
+                }
+                catch (Exception ex)
+                {
+                    message.AddError(120200, String.Format(resourceManager.GetString("GPTools_OSMGPMultiLoader_fc_only"),
+                        polygonFCNameElements[polygonFCNameElements.Length - 1]));
+                    return;
+                }
+
+                IWorkspace2 polygonFeatureWorkspace = polygonWorkspaceName.Open() as IWorkspace2;
 
                 IGPParameter tagPolygonCollectionParameter = paramvalues.get_Element(in_polygonFieldNamesNumber) as IGPParameter;
                 IGPMultiValue tagPolygonCollectionGPValue = gpUtilities3.UnpackGPValue(tagPolygonCollectionParameter) as IGPMultiValue;
