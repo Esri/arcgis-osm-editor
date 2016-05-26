@@ -284,7 +284,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             if (String.IsNullOrEmpty(value))
                 return;
 
-            string authInfo = Encoding.Default.GetString(Convert.FromBase64String(value));
+            string authInfo = Encoding.UTF8.GetString(Convert.FromBase64String(value));
             string[] splitAuthInfo = authInfo.Split(":".ToCharArray());
 
             m_username = splitAuthInfo[0];
@@ -301,7 +301,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             try
             {
                     string authInfo = m_username + ":" + m_password;
-                    authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
+                    authInfo = Convert.ToBase64String(Encoding.UTF8.GetBytes(authInfo));
                     encodedAuthenticationString = authInfo;
             }
             catch { }
