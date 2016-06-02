@@ -2288,7 +2288,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
         }
 
-        internal void smallLoadOSMWay(string osmFileLocation, string sourcePointsFeatureClassName, string fileGDBLocation, string lineFeatureClassName, string polygonFeatureClassName, List<string> lineFieldNames, List<string> polygonFieldNames)
+        internal void smallLoadOSMWay(string osmFileLocation, string sourcePointsFeatureClassName, string lineGDBLocation, string lineFeatureClassName, string polygonGDBLocation, string polygonFeatureClassName, List<string> lineFieldNames, List<string> polygonFieldNames)
         {
             using (ComReleaser comReleaser = new ComReleaser())
             {
@@ -2299,15 +2299,21 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 try
                 {
-                    IWorkspaceFactory2 workspaceFactory = guessWorkspaceFactory(fileGDBLocation) as IWorkspaceFactory2;
-                    comReleaser.ManageLifetime(workspaceFactory);
-                    IFeatureWorkspace tempWorkspace = workspaceFactory.OpenFromFile(fileGDBLocation, 0) as IFeatureWorkspace;
-                    comReleaser.ManageLifetime(tempWorkspace);
+                    IWorkspaceFactory2 lineWorkspaceFactory = guessWorkspaceFactory(lineGDBLocation) as IWorkspaceFactory2;
+                    comReleaser.ManageLifetime(lineWorkspaceFactory);
+                    IFeatureWorkspace tempLineWorkspace = lineWorkspaceFactory.OpenFromFile(lineGDBLocation, 0) as IFeatureWorkspace;
+                    comReleaser.ManageLifetime(tempLineWorkspace);
 
-                    IFeatureClass lineFeatureClass = tempWorkspace.OpenFeatureClass(lineFeatureClassName);
+                    IFeatureClass lineFeatureClass = tempLineWorkspace.OpenFeatureClass(lineFeatureClassName);
                     comReleaser.ManageLifetime(lineFeatureClass);
 
-                    IFeatureClass polygonFeatureClass = tempWorkspace.OpenFeatureClass(polygonFeatureClassName);
+
+                    IWorkspaceFactory2 polygonWorkspaceFactory = guessWorkspaceFactory(polygonGDBLocation) as IWorkspaceFactory2;
+                    comReleaser.ManageLifetime(polygonWorkspaceFactory);
+                    IFeatureWorkspace tempPolygonWorkspace = polygonWorkspaceFactory.OpenFromFile(polygonGDBLocation, 0) as IFeatureWorkspace;
+                    comReleaser.ManageLifetime(tempPolygonWorkspace);
+
+                    IFeatureClass polygonFeatureClass = tempPolygonWorkspace.OpenFeatureClass(polygonFeatureClassName);
                     comReleaser.ManageLifetime(polygonFeatureClass);
 
                     IFeatureWorkspace sourceWorkspace = null;
@@ -2316,10 +2322,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     string[] sourcePointFCElements = sourcePointsFeatureClassName.Split(new char[] { System.IO.Path.DirectorySeparatorChar });
                     sourceFCNameString = sourcePointFCElements[sourcePointFCElements.Length - 1];
 
-                    if (sourcePointsFeatureClassName.Contains(fileGDBLocation))
+                    if (sourcePointsFeatureClassName.Contains(lineGDBLocation))
                     {
                         // re-use the existing workspace connection
-                        sourceWorkspace = tempWorkspace;
+                        sourceWorkspace = tempLineWorkspace;
                     }
                     else
                     {
@@ -2489,7 +2495,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                 idCompareString = CleanReportedIDs(idCompareString);
 
-                                // after removing the commas we should be left with only paranthesis left, meaning a string of length 2
+                                // after removing the commas we should be left with only parenthesis left, meaning a string of length 2
                                 // if we have more then we have found a missing node, resulting in an incomplete way geometry
                                 if (idCompareString.Length > 2)
                                 {
@@ -2647,7 +2653,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 #if DEBUG
                     System.Diagnostics.Debug.WriteLine(osmFileLocation);
                     System.Diagnostics.Debug.WriteLine(sourcePointsFeatureClassName);
-                    System.Diagnostics.Debug.WriteLine(fileGDBLocation);
+                    System.Diagnostics.Debug.WriteLine(lineGDBLocation);
                     System.Diagnostics.Debug.WriteLine(ex.Message);
                     System.Diagnostics.Debug.WriteLine(ex.StackTrace);
                     System.Diagnostics.Debug.WriteLine(ex.Source);
@@ -3044,13 +3050,14 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
         }
 
-        internal void loadOSMWays(List<string> osmWayFileNames, string sourcePointFCName, List<string> wayGDBNames, string lineFeatureClassName, string polygonFeatureClassName, List<string> lineFieldNames, List<string> polygonFieldNames, ref IGPMessages toolMessages, ref ITrackCancel CancelTracker)
+        internal void loadOSMWays(List<string> osmWayFileNames, string sourcePointFCName, string targetLineFCName, string targetPolygonFCName, List<string> wayGDBNames, string lineFeatureClassName, string polygonFeatureClassName, List<string> lineFieldNames, List<string> polygonFieldNames, ref IGPMessages toolMessages, ref ITrackCancel CancelTracker)
         {
             // create the point feature classes in the temporary loading fgdbs
             OSMToolHelper toolHelper = new OSMToolHelper();
             IGeoProcessor2 geoProcessor = new GeoProcessorClass() as IGeoProcessor2;
             geoProcessor.AddOutputsToMap = false;
             IGeoProcessorResult gpResults = null;
+            IVariantArray parameterArray = null;
 
             Stopwatch executionStopwatch = System.Diagnostics.Stopwatch.StartNew();
             toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_loading_ways")));
@@ -3058,25 +3065,22 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             // in the case of a single thread we can use the parent process directly to convert the osm to the target featureclass
             if (osmWayFileNames.Count == 1)
             {
-                IGPFunction wayLoader = new OSMGPWayLoader() as IGPFunction;
+                string[] lineFCNameElements = targetLineFCName.Split(System.IO.Path.DirectorySeparatorChar);
+                string[] lineGDBComponents = new string[lineFCNameElements.Length - 1];
+                System.Array.Copy(lineFCNameElements, lineGDBComponents, lineFCNameElements.Length - 1);
+                string lineGDBLocation = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), lineGDBComponents);
 
-                IGPUtilities gpUtilities = new GPUtilitiesClass();
-                IArray parameterValues = new ArrayClass();
-                parameterValues.Add(gpUtilities.CreateParameterValue(osmWayFileNames[0], new DEFileTypeClass(), esriGPParameterDirection.esriGPParameterDirectionInput));
-                parameterValues.Add(gpUtilities.CreateParameterValue(sourcePointFCName, new DEFeatureClassTypeClass(), esriGPParameterDirection.esriGPParameterDirectionInput));
-                parameterValues.Add(gpUtilities.CreateParameterValue(String.Join(";", lineFieldNames.ToArray()), new GPMultiValueTypeClass(), esriGPParameterDirection.esriGPParameterDirectionInput));
-                parameterValues.Add(gpUtilities.CreateParameterValue(String.Join(";", polygonFieldNames.ToArray()), new GPMultiValueTypeClass(), esriGPParameterDirection.esriGPParameterDirectionInput));
-                parameterValues.Add(gpUtilities.CreateParameterValue(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string [] {wayGDBNames[0], lineFeatureClassName}), new DEFeatureClassTypeClass(), esriGPParameterDirection.esriGPParameterDirectionOutput));
-                parameterValues.Add(gpUtilities.CreateParameterValue(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { wayGDBNames[0], polygonFeatureClassName}), new DEFeatureClassTypeClass(), esriGPParameterDirection.esriGPParameterDirectionOutput));
-                wayLoader.Execute(parameterValues, CancelTracker, null, toolMessages);
+                string[] polygonFCNameElements = targetPolygonFCName.Split(System.IO.Path.DirectorySeparatorChar);
+                string[] polygonGDBComponents = new string[polygonFCNameElements.Length - 1];
+                System.Array.Copy(polygonFCNameElements, polygonGDBComponents, polygonFCNameElements.Length - 1);
+                string polygonGDBLocation = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), polygonGDBComponents);
 
-                ComReleaser.ReleaseCOMObject(gpUtilities);
-
+                toolHelper.smallLoadOSMWay(osmWayFileNames[0], sourcePointFCName, lineGDBLocation, lineFCNameElements[lineFCNameElements.Length - 1],
+                    polygonGDBLocation, polygonFCNameElements[polygonFCNameElements.Length - 1], lineFieldNames, polygonFieldNames);
 
                 executionStopwatch.Stop();
                 TimeSpan wayLoadingTimeSpan = executionStopwatch.Elapsed;
                 toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_doneloading_ways"), wayLoadingTimeSpan.Hours, wayLoadingTimeSpan.Minutes, wayLoadingTimeSpan.Seconds));
-
             }
             else
             {
@@ -3143,9 +3147,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 string sourceFGDB = sourcePointFCName.Substring(0, sourcePointFCName.Length - pointFCElement[pointFCElement.Length - 1].Length - 1);
 
                 // append all the lines
-                IVariantArray parameterArray = new VarArrayClass();
+                parameterArray = new VarArrayClass();
                 parameterArray.Add(String.Join(";", linesFCNamesArray.ToArray()));
-                parameterArray.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { sourceFGDB, lineFeatureClassName }));
+                parameterArray.Add(targetLineFCName);
 
                 gpResults = geoProcessor.Execute("Append_management", parameterArray, CancelTracker);
 
@@ -3162,7 +3166,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 // append all the polygons
                 parameterArray = new VarArrayClass();
                 parameterArray.Add(String.Join(";", polygonFCNamesArray.ToArray()));
-                parameterArray.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { sourceFGDB, polygonFeatureClassName }));
+                parameterArray.Add(targetPolygonFCName);
 
                 gpResults = geoProcessor.Execute("Append_management", parameterArray, CancelTracker);
 
@@ -3187,18 +3191,19 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     }
                 }
 
-                // compute the OSM index on the target line featureclass
-                parameterArray = CreateAddIndexParameterArray(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { sourceFGDB, lineFeatureClassName }), "OSMID", "osmID_IDX", "UNIQUE", "");
-                gpResults = geoProcessor.Execute("AddIndex_management", parameterArray, CancelTracker);
-                toolMessages.AddMessages(gpResults.GetResultMessages());
-
-                // compute the OSM index on the target polygon featureclass
-                parameterArray = CreateAddIndexParameterArray(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { sourceFGDB, polygonFeatureClassName }), "OSMID", "osmID_IDX", "UNIQUE", "");
-                gpResults = geoProcessor.Execute("AddIndex_management", parameterArray, CancelTracker);
-                toolMessages.AddMessages(gpResults.GetResultMessages());
-
-                ComReleaser.ReleaseCOMObject(geoProcessor);
             }
+
+            // compute the OSM index on the target line featureclass
+            parameterArray = CreateAddIndexParameterArray(targetLineFCName, "OSMID", "osmID_IDX", "UNIQUE", "");
+            gpResults = geoProcessor.Execute("AddIndex_management", parameterArray, CancelTracker);
+            toolMessages.AddMessages(gpResults.GetResultMessages());
+
+            // compute the OSM index on the target polygon featureclass
+            parameterArray = CreateAddIndexParameterArray(targetPolygonFCName, "OSMID", "osmID_IDX", "UNIQUE", "");
+            gpResults = geoProcessor.Execute("AddIndex_management", parameterArray, CancelTracker);
+            toolMessages.AddMessages(gpResults.GetResultMessages());
+
+            ComReleaser.ReleaseCOMObject(geoProcessor);
         }
 
         internal void loadOSMNodes(List<string> osmNodeFileNames, List<string> nodeGDBNames, string featureClassName, string targetFeatureClass, List<string> tagsToLoad, bool deleteNodes, ref IGPMessages toolMessages, ref ITrackCancel CancelTracker)
@@ -3208,6 +3213,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             IGeoProcessor2 geoProcessor = new GeoProcessorClass() as IGeoProcessor2;
             geoProcessor.AddOutputsToMap = false;
             IGeoProcessorResult gpResults = null;
+            IVariantArray parameterArray = null;
 
             Stopwatch executionStopwatch = System.Diagnostics.Stopwatch.StartNew();
 
@@ -3221,17 +3227,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             // in the case of a single thread we can use the parent process directly to convert the osm to the target featureclass
             if (osmNodeFileNames.Count == 1)
             {
-                IGPFunction nodeLoader = new OSMGPNodeLoader() as IGPFunction;
-
-                IGPUtilities gpUtilities = new GPUtilitiesClass();
-                IArray parameterValues = new ArrayClass();
-                parameterValues.Add(gpUtilities.CreateParameterValue(osmNodeFileNames[0], new DEFileTypeClass(), esriGPParameterDirection.esriGPParameterDirectionInput));
-                parameterValues.Add(gpUtilities.CreateParameterValue(String.Join(";",tagsToLoad.ToArray()), new GPMultiValueTypeClass(), esriGPParameterDirection.esriGPParameterDirectionInput));
-                parameterValues.Add(gpUtilities.CreateParameterValue(useCacheString, new GPBooleanTypeClass(), esriGPParameterDirection.esriGPParameterDirectionInput));
-                parameterValues.Add(gpUtilities.CreateParameterValue(targetFeatureClass, new DEFeatureClassTypeClass(), esriGPParameterDirection.esriGPParameterDirectionOutput));
-                nodeLoader.Execute(parameterValues, CancelTracker, null, toolMessages);
-
-                ComReleaser.ReleaseCOMObject(gpUtilities);
+                toolHelper.smallLoadOSMNode(osmNodeFileNames[0], nodeGDBNames[0], targetFeatureClass, tagsToLoad, true);
 
                 executionStopwatch.Stop();
                 TimeSpan nodeLoadingTimeSpan = executionStopwatch.Elapsed;
@@ -3259,7 +3255,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 for (int i = 0; i < osmNodeFileNames.Count; i++)
                 {
                     Thread t = new Thread(new ParameterizedThreadStart(PythonLoadOSMNodes));
-                    t.Start(new List<string>() { osmNodeFileNames[i], nodeGDBNames[i], featureClassName, String.Join(";",tagsToLoad.ToArray()), useCacheString });
+                    t.Start(new List<string>() { osmNodeFileNames[i], nodeGDBNames[i], featureClassName, String.Join(";", tagsToLoad.ToArray()), useCacheString });
                 }
 
                 // wait for all nodes to complete loading before appending all into the target feature class
@@ -3290,7 +3286,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     fcNamesArray.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { nodeGDBNames[gdbIndex], featureClassName }));
                 }
 
-                IVariantArray parameterArray = new VarArrayClass();
+                parameterArray = new VarArrayClass();
                 parameterArray.Add(String.Join(";", fcNamesArray.ToArray()));
                 parameterArray.Add(targetFeatureClass);
 
@@ -3306,20 +3302,21 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     parameterArray.Add(nodeGDBNames[gdbIndex]);
                     geoProcessor.Execute("Delete_management", parameterArray, CancelTracker);
                 }
+            }
 
-                // compute the OSM index on the target featureclass
-                parameterArray = CreateAddIndexParameterArray(targetFeatureClass, "OSMID", "osmID_IDX", "UNIQUE", "");
+            // compute the OSM index on the target featureclass
+            parameterArray = CreateAddIndexParameterArray(targetFeatureClass, "OSMID", "osmID_IDX", "UNIQUE", "");
+            gpResults = geoProcessor.Execute("AddIndex_management", parameterArray, CancelTracker);
+            toolMessages.AddMessages(gpResults.GetResultMessages());
+
+            if (deleteNodes)
+            {
+                // compute the support element index on the target featureclass
+                parameterArray = CreateAddIndexParameterArray(targetFeatureClass, "osmSupportingElement", "supEl_IDX", "NON_UNIQUE", "");
                 gpResults = geoProcessor.Execute("AddIndex_management", parameterArray, CancelTracker);
                 toolMessages.AddMessages(gpResults.GetResultMessages());
-
-                if (deleteNodes)
-                {
-                    // compute the support element index on the target featureclass
-                    parameterArray = CreateAddIndexParameterArray(targetFeatureClass, "osmSupportingElement", "supEl_IDX", "NON_UNIQUE", "");
-                    gpResults = geoProcessor.Execute("AddIndex_management", parameterArray, CancelTracker);
-                    toolMessages.AddMessages(gpResults.GetResultMessages());
-                }
             }
+
             ComReleaser.ReleaseCOMObject(geoProcessor);
         }
 
@@ -5093,7 +5090,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             return attributesDictionary;
         }
 
-        internal void loadOSMRelations(List<string> osmRelationFileNames, string sourceLineFCName, string sourcePolygonFCName, List<string> relationGDBNames, List<string> lineFieldNames, List<string> polygonFieldNames, ref ITrackCancel TrackCancel, ref IGPMessages toolMessages)
+        internal void loadOSMRelations(List<string> osmRelationFileNames, string sourceLineFCName, string sourcePolygonFCName, string targetLineFCName, string targetPolygonFCName, List<string> relationGDBNames, List<string> lineFieldNames, List<string> polygonFieldNames, ref IGPMessages toolMessages, ref ITrackCancel TrackCancel)
         {
             // create the point feature classes in the temporary loading fgdbs
             OSMToolHelper toolHelper = new OSMToolHelper();
@@ -5115,29 +5112,28 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             // in the case of a single thread we can use the parent process directly to convert the osm to the target featureclass
             if (osmRelationFileNames.Count == 1)
             {
-                IGPFunction relationLoader = new OSMGPRelationLoader() as IGPFunction;
+                // do relations first
+                toolHelper.smallLoadOSMRelations(osmRelationFileNames[0], sourceLineFCName, sourcePolygonFCName, targetLineFCName, targetPolygonFCName,
+                    lineFieldNames, polygonFieldNames, false);
 
-                IGPUtilities gpUtilities = new GPUtilitiesClass();
-                IArray parameterValues = new ArrayClass();
-                parameterValues.Add(gpUtilities.CreateParameterValue(osmRelationFileNames[0], new DEFileTypeClass(), esriGPParameterDirection.esriGPParameterDirectionInput));
-                parameterValues.Add(gpUtilities.CreateParameterValue(loadSuperRelationParameterValue, new GPBooleanTypeClass(), esriGPParameterDirection.esriGPParameterDirectionInput));
-                parameterValues.Add(gpUtilities.CreateParameterValue(sourceLineFCName, new DEFeatureClassTypeClass(), esriGPParameterDirection.esriGPParameterDirectionInput));
-                parameterValues.Add(gpUtilities.CreateParameterValue(sourcePolygonFCName, new DEFeatureClassTypeClass(), esriGPParameterDirection.esriGPParameterDirectionInput));
-                parameterValues.Add(gpUtilities.CreateParameterValue(String.Join(";", lineFieldNames.ToArray()), new GPMultiValueTypeClass(), esriGPParameterDirection.esriGPParameterDirectionInput));
-                parameterValues.Add(gpUtilities.CreateParameterValue(String.Join(";", polygonFieldNames.ToArray()), new GPMultiValueTypeClass(), esriGPParameterDirection.esriGPParameterDirectionInput));
-                parameterValues.Add(gpUtilities.CreateParameterValue(
-                    String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { relationGDBNames[0], lineFeatureClassName }), 
-                    new DEFeatureClassTypeClass(), esriGPParameterDirection.esriGPParameterDirectionOutput));
-                parameterValues.Add(gpUtilities.CreateParameterValue(
-                    String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { relationGDBNames[0], polygonFeatureClassName }), 
-                    new DEFeatureClassTypeClass(), esriGPParameterDirection.esriGPParameterDirectionOutput));
-                relationLoader.Execute(parameterValues, TrackCancel, null, toolMessages);
-
-                ComReleaser.ReleaseCOMObject(gpUtilities);
 
                 executionStopwatch.Stop();
                 TimeSpan relationLoadingTimeSpan = executionStopwatch.Elapsed;
                 toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_doneloading_relations"), relationLoadingTimeSpan.Hours, relationLoadingTimeSpan.Minutes, relationLoadingTimeSpan.Seconds));
+
+
+                toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_loading_super_relations")));
+                executionStopwatch.Reset();
+                executionStopwatch.Start();
+
+
+                // then do super-relations
+                toolHelper.smallLoadOSMRelations(osmRelationFileNames[0], sourceLineFCName, sourcePolygonFCName, targetLineFCName, targetPolygonFCName,
+                    lineFieldNames, polygonFieldNames, true);
+
+                executionStopwatch.Stop();
+                relationLoadingTimeSpan = executionStopwatch.Elapsed;
+                toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_doneloading_super_relations"), relationLoadingTimeSpan.Hours, relationLoadingTimeSpan.Minutes, relationLoadingTimeSpan.Seconds));
             }
             else
             {
@@ -5196,7 +5192,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 // append all the lines
                 IVariantArray parameterArray = new VarArrayClass();
                 parameterArray.Add(String.Join(";", linesFCNamesArray.ToArray()));
-                parameterArray.Add(sourceLineFCName);
+                parameterArray.Add(targetLineFCName);
 
                 gpResults = geoProcessor.Execute("Append_management", parameterArray, TrackCancel);
 
@@ -5213,7 +5209,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 // append all the polygons
                 parameterArray = new VarArrayClass();
                 parameterArray.Add(String.Join(";", polygonFCNamesArray.ToArray()));
-                parameterArray.Add(sourcePolygonFCName);
+                parameterArray.Add(targetPolygonFCName);
 
                 gpResults = geoProcessor.Execute("Append_management", parameterArray, TrackCancel);
 
@@ -5298,7 +5294,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 // append all the lines
                 parameterArray = new VarArrayClass();
                 parameterArray.Add(String.Join(";", linesFCNamesArray.ToArray()));
-                parameterArray.Add(sourceLineFCName);
+                parameterArray.Add(targetLineFCName);
 
                 gpResults = geoProcessor.Execute("Append_management", parameterArray, TrackCancel);
 
@@ -5315,7 +5311,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 // append all the polygons
                 parameterArray = new VarArrayClass();
                 parameterArray.Add(String.Join(";", polygonFCNamesArray.ToArray()));
-                parameterArray.Add(sourcePolygonFCName);
+                parameterArray.Add(targetPolygonFCName);
 
                 gpResults = geoProcessor.Execute("Append_management", parameterArray, TrackCancel);
 
