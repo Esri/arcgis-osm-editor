@@ -64,14 +64,17 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 TrackCancel = new CancelTrackerClass();
             }
 
-            IGPEnvironment configKeyword = OSMToolHelper.getEnvironment(envMgr, "configKeyword");
-            IGPString gpString = configKeyword.Value as IGPString;
-
             string storageKeyword = String.Empty;
 
-            if (gpString != null)
+            IGPEnvironment configKeyword = OSMToolHelper.getEnvironment(envMgr, "configKeyword");
+            if (configKeyword != null)
             {
-                storageKeyword = gpString.Value;
+                IGPString gpString = configKeyword.Value as IGPString;
+
+                if (gpString != null)
+                {
+                    storageKeyword = gpString.Value;
+                }
             }
 
             IGPParameter osmFileParameter = paramvalues.get_Element(0) as IGPParameter;

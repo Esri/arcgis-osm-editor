@@ -189,12 +189,13 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 IGPParameter osmPointsFeatureClassParameter = paramvalues.get_Element(out_osmPointsNumber) as IGPParameter;
                 IGPValue osmPointsFeatureClassGPValue = gpUtilities3.UnpackGPValue(osmPointsFeatureClassParameter) as IGPValue;
 
-                string[] pointFCNameElements = osmPointsFeatureClassGPValue.GetAsText().Split(System.IO.Path.DirectorySeparatorChar);
+                string pointFCName = osmPointsFeatureClassGPValue.GetAsText();
+                string[] pointFCNameElements = pointFCName.Split(System.IO.Path.DirectorySeparatorChar);
 
                 IName workspaceName = null;
                 try
                 {
-                    workspaceName = gpUtilities3.CreateParentFromCatalogPath(osmPointsFeatureClassGPValue.GetAsText());
+                    workspaceName = gpUtilities3.CreateParentFromCatalogPath(pointFCName);
 
                     if (workspaceName is IDatasetName)
                     {
@@ -271,12 +272,13 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 IGPParameter osmLineFeatureClassParameter = paramvalues.get_Element(out_osmLinesNumber) as IGPParameter;
                 IGPValue osmLineFeatureClassGPValue = gpUtilities3.UnpackGPValue(osmLineFeatureClassParameter) as IGPValue;
 
-                string[] lineFCNameElements = osmLineFeatureClassGPValue.GetAsText().Split(System.IO.Path.DirectorySeparatorChar);
+                string lineFCName = osmLineFeatureClassGPValue.GetAsText();
+                string[] lineFCNameElements = lineFCName.Split(System.IO.Path.DirectorySeparatorChar);
 
                 IName lineWorkspaceName = null;
                 try
                 {
-                    lineWorkspaceName = gpUtilities3.CreateParentFromCatalogPath(osmLineFeatureClassGPValue.GetAsText());
+                    lineWorkspaceName = gpUtilities3.CreateParentFromCatalogPath(lineFCName);
                 }
                 catch (Exception ex)
                 {
@@ -343,13 +345,14 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 IGPParameter osmPolygonFeatureClassParameter = paramvalues.get_Element(out_osmPolygonsNumber) as IGPParameter;
                 IGPValue osmPolygonFeatureClassGPValue = gpUtilities3.UnpackGPValue(osmPolygonFeatureClassParameter) as IGPValue;
 
-                string[] polygonFCNameElements = osmPolygonFeatureClassGPValue.GetAsText().Split(System.IO.Path.DirectorySeparatorChar);
+                string polygonFCName = osmPolygonFeatureClassGPValue.GetAsText();
+                string[] polygonFCNameElements = polygonFCName.Split(System.IO.Path.DirectorySeparatorChar);
 
                 IName polygonWorkspaceName = null;
 
                 try
                 {
-                    polygonWorkspaceName = gpUtilities3.CreateParentFromCatalogPath(osmPolygonFeatureClassGPValue.GetAsText());
+                    polygonWorkspaceName = gpUtilities3.CreateParentFromCatalogPath(polygonFCName);
                 }
                 catch (Exception ex)
                 {
@@ -466,13 +469,19 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 if (nodeOSMFileNames.Count == 0)
                 {
                     nodeOSMFileNames.Add(osmFileLocationString.GetAsText());
-                    nodeGDBFileNames.Add(osmPointsFeatureClassGPValue.GetAsText());
+                    nodeGDBFileNames.Add(((IWorkspace)pointFeatureWorkspace).PathName);
 
                     wayOSMFileNames.Add(osmFileLocationString.GetAsText());
-                    wayGDBFileNames.Add(osmLineFeatureClassGPValue.GetAsText());
+                    wayGDBFileNames.Add(((IWorkspace)lineFeatureWorkspace).PathName);
 
                     relationOSMFileNames.Add(osmFileLocationString.GetAsText());
-                    relationGDBFileNames.Add(osmPolygonFeatureClassGPValue.GetAsText());
+                    relationGDBFileNames.Add(((IWorkspace)polygonFeatureWorkspace).PathName);
+                }
+                else if (nodeOSMFileNames.Count == 1)
+                {
+                    nodeGDBFileNames[0] = ((IWorkspace)pointFeatureWorkspace).PathName;
+                    wayGDBFileNames[0] = ((IWorkspace)lineFeatureWorkspace).PathName;
+                    relationGDBFileNames[0] = ((IWorkspace)polygonFeatureWorkspace).PathName;
                 }
                 else
                 {
@@ -488,7 +497,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 IGPBoolean deleteSupportingNodesGPValue = gpUtilities3.UnpackGPValue(deleteSupportingNodesParameter) as IGPBoolean;
 
                 #region load points
-                osmToolHelper.loadOSMNodes(nodeOSMFileNames, nodeGDBFileNames, pointFCNameElements[pointFCNameElements.Length - 1], osmPointsFeatureClassGPValue.GetAsText(), pointTagstoExtract, deleteSupportingNodesGPValue.Value, ref message, ref TrackCancel);
+                osmToolHelper.loadOSMNodes(nodeOSMFileNames, nodeGDBFileNames, pointFCNameElements[pointFCNameElements.Length - 1],
+                    pointFCName, pointTagstoExtract, deleteSupportingNodesGPValue.Value, ref message, ref TrackCancel);
                 #endregion
 
                 if (TrackCancel.Continue() == false)
@@ -497,7 +507,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 #region load ways
-                osmToolHelper.loadOSMWays(wayOSMFileNames, osmPointsFeatureClassGPValue.GetAsText(), wayGDBFileNames, lineFCNameElements[lineFCNameElements.Length - 1], polygonFCNameElements[polygonFCNameElements.Length - 1], lineTagstoExtract, polygonTagstoExtract, ref message,  ref TrackCancel);
+                osmToolHelper.loadOSMWays(wayOSMFileNames, pointFCName, lineFCName,
+                    polygonFCName, wayGDBFileNames, lineFCNameElements[lineFCNameElements.Length - 1], 
+                    polygonFCNameElements[polygonFCNameElements.Length - 1], lineTagstoExtract, polygonTagstoExtract, ref message,  ref TrackCancel);
                 #endregion
 
                 #region for local geodatabases enforce spatial integrity
@@ -581,7 +593,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 #region load relations
-                osmToolHelper.loadOSMRelations(relationOSMFileNames, osmLineFeatureClassGPValue.GetAsText(), osmPolygonFeatureClassGPValue.GetAsText(), relationGDBFileNames, lineTagstoExtract, polygonTagstoExtract, ref TrackCancel, ref message);
+                osmToolHelper.loadOSMRelations(relationOSMFileNames, lineFCName, polygonFCName,
+                    lineFCName, polygonFCName, relationGDBFileNames, lineTagstoExtract, 
+                    polygonTagstoExtract, ref message, ref TrackCancel);
                 #endregion
 
                 // check for user interruption
@@ -677,11 +691,15 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     storedOriginalLocal = geoProcessor.AddOutputsToMap;
                     geoProcessor.AddOutputsToMap = false;
 
+                    gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;
+                    workspaceName = gpUtilities3.CreateParentFromCatalogPath(pointFCName);
+                    pointFeatureWorkspace = workspaceName.Open() as IWorkspace2;
+
                     // create a layer file to select the points that have attributes
                     osmPointFeatureClass = ((IFeatureWorkspace)pointFeatureWorkspace).OpenFeatureClass(pointFCNameElements[pointFCNameElements.Length - 1]);
 
                     IVariantArray makeFeatureLayerParameterArray = new VarArrayClass();
-                    makeFeatureLayerParameterArray.Add(osmPointsFeatureClassGPValue.GetAsText());
+                    makeFeatureLayerParameterArray.Add(pointFCName);
 
                     string tempLayerFile = System.IO.Path.GetTempFileName();
                     makeFeatureLayerParameterArray.Add(tempLayerFile);
@@ -717,6 +735,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                     geoProcessor.AddOutputsToMap = storedOriginalLocal;
 
+                    ComReleaser.ReleaseCOMObject(pointFeatureWorkspace);
+                    ComReleaser.ReleaseCOMObject(workspaceName);
                     ComReleaser.ReleaseCOMObject(osmPointFeatureClass);
                     ComReleaser.ReleaseCOMObject(geoProcessor);
                 }
