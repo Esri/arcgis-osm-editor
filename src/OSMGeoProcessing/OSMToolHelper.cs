@@ -3227,7 +3227,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             // in the case of a single thread we can use the parent process directly to convert the osm to the target featureclass
             if (osmNodeFileNames.Count == 1)
             {
-                toolHelper.smallLoadOSMNode(osmNodeFileNames[0], nodeGDBNames[0], targetFeatureClass, tagsToLoad, true);
+                toolHelper.smallLoadOSMNode(osmNodeFileNames[0], nodeGDBNames[0], featureClassName, tagsToLoad, true);
 
                 executionStopwatch.Stop();
                 TimeSpan nodeLoadingTimeSpan = executionStopwatch.Elapsed;
