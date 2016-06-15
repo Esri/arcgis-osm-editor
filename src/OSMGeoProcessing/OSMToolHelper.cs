@@ -6959,6 +6959,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                                 lineFeatureBuffer = osmLineFeatureClass.CreateFeatureBuffer();
 
+                                                relationMPPolyline.SimplifyNetwork();
+
                                                 lineFeatureBuffer.Shape = relationMPPolyline;
 
                                                 insertTags(osmLineDomainAttributeFieldIndices, osmLineDomainAttributeFieldLength, tagCollectionPolylineFieldIndex, lineFeatureBuffer, relationTagList.ToArray());
