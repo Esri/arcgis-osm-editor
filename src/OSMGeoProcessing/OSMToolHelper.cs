@@ -2075,7 +2075,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         //}
 
         /// <summary>
-        /// Generate equal paritions for each capacity
+        /// Generate equal partitions for each capacity
         /// </summary>
         /// <param name="value">capacity number</param>
         /// <param name="count">number of partitions</param>
@@ -2838,21 +2838,22 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     if (String.IsNullOrEmpty(arcgisPythonFolder))
                         throw new ArgumentOutOfRangeException(arcgisPythonFolder);
 
-                    System.Diagnostics.ProcessStartInfo processStartInfo = new System.Diagnostics.ProcessStartInfo("cmd",
-                        String.Join(" ", new string[] {"/c",
-                            System.IO.Path.Combine(arcgisPythonFolder, "python.exe"),
-                            loadRelationsScriptName,
-                            osmFileLocation,
-                            loadSuperRelations,
-                            sourceLineFeatureClassLocation,
-                            sourcePolygonFeatureClassLocation,
-                            lineFieldNames,
-                            polygonFieldNames,
-                            lineFeatureClassLocation,
-                            polygonFeatureClassLocation
+                    System.Diagnostics.ProcessStartInfo processStartInfo = new System.Diagnostics.ProcessStartInfo(
+                        doubleQuote(System.IO.Path.Combine(arcgisPythonFolder, "python.exe")),
+                        String.Join(" ", new string[] {
+                            doubleQuote(loadRelationsScriptName),
+                            doubleQuote(osmFileLocation),
+                            doubleQuote(loadSuperRelations),
+                            doubleQuote(sourceLineFeatureClassLocation),
+                            doubleQuote(sourcePolygonFeatureClassLocation),
+                            doubleQuote(lineFieldNames),
+                            doubleQuote(polygonFieldNames),
+                            doubleQuote(lineFeatureClassLocation),
+                            doubleQuote(polygonFeatureClassLocation)
                         })
                         );
 
+                    processStartInfo.RedirectStandardError = true;
                     processStartInfo.RedirectStandardOutput = true;
                     processStartInfo.UseShellExecute = false;
 
@@ -2920,19 +2921,20 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     if (String.IsNullOrEmpty(arcgisPythonFolder))
                         throw new ArgumentOutOfRangeException(arcgisPythonFolder);
 
-                    System.Diagnostics.ProcessStartInfo processStartInfo = new System.Diagnostics.ProcessStartInfo("cmd",
-                        String.Join(" ", new string[] {"/c",
-                            System.IO.Path.Combine(arcgisPythonFolder, "python.exe"),
-                            loadWaysScriptName,
-                            osmFileLocation,
-                            sourcePointsFeatureClassLocation,
-                            lineFieldNames,
-                            polygonFieldNames,
-                            lineFeatureClassLocation,
-                            polygonFeatureClassLocation
+                    System.Diagnostics.ProcessStartInfo processStartInfo = new System.Diagnostics.ProcessStartInfo(
+                        doubleQuote(System.IO.Path.Combine(arcgisPythonFolder, "python.exe")),
+                        String.Join(" ", new string[] {
+                            doubleQuote(loadWaysScriptName),
+                            doubleQuote(osmFileLocation),
+                            doubleQuote(sourcePointsFeatureClassLocation),
+                            doubleQuote(lineFieldNames),
+                            doubleQuote(polygonFieldNames),
+                            doubleQuote(lineFeatureClassLocation),
+                            doubleQuote(polygonFeatureClassLocation)
                         })
                         );
 
+                    processStartInfo.RedirectStandardError = true;
                     processStartInfo.RedirectStandardOutput = true;
                     processStartInfo.UseShellExecute = false;
 
@@ -3000,22 +3002,23 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
 #if DEBUG
                     System.Diagnostics.Debug.WriteLine(String.Join(" ", new string[] {"/c",
-                            loadNodeScriptName,
-                            osmFileLocation,
-                            fieldNames,
-                            useCacheString,
-                            String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { fileGDBLocation, featureClassName })
+                            doubleQuote(System.IO.Path.Combine(arcgisPythonFolder, "python.exe")),
+                            doubleQuote(loadNodeScriptName),
+                            doubleQuote(osmFileLocation),
+                            doubleQuote(fieldNames),
+                            doubleQuote(useCacheString),
+                            doubleQuote(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { fileGDBLocation, featureClassName }))
                         })
                     );
 #endif
 
-                    System.Diagnostics.ProcessStartInfo processStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", 
-                        String.Join(" ", new string[] {"/c",
-                            System.IO.Path.Combine(arcgisPythonFolder, "python.exe"),
-                            loadNodeScriptName,
-                            osmFileLocation,
-                            fieldNames,
-                            useCacheString,
+                    System.Diagnostics.ProcessStartInfo processStartInfo = new System.Diagnostics.ProcessStartInfo(
+                        doubleQuote(System.IO.Path.Combine(arcgisPythonFolder, "python.exe")), 
+                        String.Join(" ", new string[] {
+                            doubleQuote(loadNodeScriptName),
+                            doubleQuote(osmFileLocation),
+                            doubleQuote(fieldNames),
+                            doubleQuote(useCacheString),
                             String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { fileGDBLocation, featureClassName })
                         })
                         );
@@ -3048,6 +3051,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         _manualResetEvent.Set();
                 }
             }
+        }
+
+        private string doubleQuote(string inputString)
+        {
+            return String.Format(@"""{0}""", inputString);
         }
 
         internal void loadOSMWays(List<string> osmWayFileNames, string sourcePointFCName, string targetLineFCName, string targetPolygonFCName, List<string> wayGDBNames, string lineFeatureClassName, string polygonFeatureClassName, List<string> lineFieldNames, List<string> polygonFieldNames, ref IGPMessages toolMessages, ref ITrackCancel CancelTracker)
