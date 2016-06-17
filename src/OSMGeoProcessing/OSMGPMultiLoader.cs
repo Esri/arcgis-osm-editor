@@ -133,7 +133,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         // this case we have a percent string
                         string resultString = Regex.Match(parallelProcessingFactorString.Value, @"\d+").Value;
-                        numberOfThreads = Convert.ToInt32(Int32.Parse(resultString) / 100 * System.Environment.ProcessorCount);
+                        numberOfThreads = Convert.ToInt32(Double.Parse(resultString) / 100 * System.Environment.ProcessorCount);
                     }
                 }
 
