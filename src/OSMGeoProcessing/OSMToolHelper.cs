@@ -3019,7 +3019,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             doubleQuote(osmFileLocation),
                             doubleQuote(fieldNames),
                             doubleQuote(useCacheString),
-                            String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { fileGDBLocation, featureClassName })
+                            doubleQuote(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { fileGDBLocation, featureClassName }))
                         })
                         );
 
