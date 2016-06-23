@@ -7288,6 +7288,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         geoProcessor.AddOutputsToMap = false;
 
+                        string fcLocation = GetLocationString(targetGPValue, osmLineFeatureClass);
+                        UpdateSpatialGridIndex(TrackCancel, message, geoProcessor, fcLocation);
+
+                        fcLocation = GetLocationString(targetGPValue, osmPolygonFeatureClass);
+                        UpdateSpatialGridIndex(TrackCancel, message, geoProcessor, fcLocation);
+
                         if (relationIndexRebuildRequired)
                         {
                             IIndexes tableIndexes = relationTable.Indexes;
