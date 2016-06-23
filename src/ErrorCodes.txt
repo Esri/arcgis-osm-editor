@@ -39,3 +39,4 @@
 120101 - general way load error
 120102 - general relation load error
 120200 - multiloader, not in standalone feature class
+120201 - mutliloader, needs unique feature class names

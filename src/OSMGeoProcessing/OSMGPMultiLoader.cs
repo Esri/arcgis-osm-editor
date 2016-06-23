@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Resources;
 using ESRI.ArcGIS.esriSystem;
@@ -105,21 +106,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     return;
                 }
 
-                long nodeCapacity = 0;
-                long wayCapacity = 0;
-                long relationCapacity = 0;
-
-                // this assume a clean, tidy XML file - if this is not the case, there will by sync issues later on
-                osmToolHelper.countOSMStuffFast(osmFileLocationString.GetAsText(), ref nodeCapacity, ref wayCapacity, ref relationCapacity, ref TrackCancel);
-
-                if (nodeCapacity == 0 && wayCapacity == 0 && relationCapacity == 0)
-                {
-                    return;
-                }
-
-                message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPMultiLoader_countedElements"), nodeCapacity, wayCapacity, relationCapacity));
-
-
                 // determine the number of threads to be used
                 IGPEnvironment parallelProcessingFactorEnvironment = OSMToolHelper.getEnvironment(envMgr, "parallelProcessingFactor");
                 IGPString parallelProcessingFactorString = parallelProcessingFactorEnvironment.Value as IGPString;
@@ -188,6 +174,38 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 IGPParameter osmPointsFeatureClassParameter = paramvalues.get_Element(out_osmPointsNumber) as IGPParameter;
                 IGPValue osmPointsFeatureClassGPValue = gpUtilities3.UnpackGPValue(osmPointsFeatureClassParameter) as IGPValue;
+
+                IGPParameter osmLineFeatureClassParameter = paramvalues.get_Element(out_osmLinesNumber) as IGPParameter;
+                IGPValue osmLineFeatureClassGPValue = gpUtilities3.UnpackGPValue(osmLineFeatureClassParameter) as IGPValue;
+
+                IGPParameter osmPolygonFeatureClassParameter = paramvalues.get_Element(out_osmPolygonsNumber) as IGPParameter;
+                IGPValue osmPolygonFeatureClassGPValue = gpUtilities3.UnpackGPValue(osmPolygonFeatureClassParameter) as IGPValue;
+
+                List<string> fcTargets = new List<string>() { osmPointsFeatureClassGPValue.GetAsText(), 
+                    osmLineFeatureClassGPValue.GetAsText(), osmPolygonFeatureClassGPValue.GetAsText() };
+                IEnumerable<string> uniqueFeatureClassTargets = fcTargets.Distinct();
+
+                if (uniqueFeatureClassTargets.Count() != 3)
+                {
+                    message.AddError(120201, String.Format(resourceManager.GetString("GPTools_OSMGPRelationLoader_not_unique_fc_names")));
+                    return;
+                }
+
+                // determine the number of nodes, ways and relation in the OSM file
+                long nodeCapacity = 0;
+                long wayCapacity = 0;
+                long relationCapacity = 0;
+
+                // this assume a clean, tidy XML file - if this is not the case, there will by sync issues later on
+                osmToolHelper.countOSMStuffFast(osmFileLocationString.GetAsText(), ref nodeCapacity, ref wayCapacity, ref relationCapacity, ref TrackCancel);
+
+                if (nodeCapacity == 0 && wayCapacity == 0 && relationCapacity == 0)
+                {
+                    return;
+                }
+
+                message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPMultiLoader_countedElements"), nodeCapacity, wayCapacity, relationCapacity));
+
 
                 string pointFCName = osmPointsFeatureClassGPValue.GetAsText();
                 string[] pointFCNameElements = pointFCName.Split(System.IO.Path.DirectorySeparatorChar);
@@ -268,10 +286,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 int tagCollectionPointFieldIndex = osmPointFeatureClass.FindField("osmTags");
                 int osmSupportingElementPointFieldIndex = osmPointFeatureClass.FindField("osmSupportingElement");
 
-
-                IGPParameter osmLineFeatureClassParameter = paramvalues.get_Element(out_osmLinesNumber) as IGPParameter;
-                IGPValue osmLineFeatureClassGPValue = gpUtilities3.UnpackGPValue(osmLineFeatureClassParameter) as IGPValue;
-
                 string lineFCName = osmLineFeatureClassGPValue.GetAsText();
                 string[] lineFCNameElements = lineFCName.Split(System.IO.Path.DirectorySeparatorChar);
 
@@ -341,9 +355,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 int tagCollectionPolylineFieldIndex = osmLineFeatureClass.FindField("osmTags");
                 int osmSupportingElementPolylineFieldIndex = osmLineFeatureClass.FindField("osmSupportingElement");
-
-                IGPParameter osmPolygonFeatureClassParameter = paramvalues.get_Element(out_osmPolygonsNumber) as IGPParameter;
-                IGPValue osmPolygonFeatureClassGPValue = gpUtilities3.UnpackGPValue(osmPolygonFeatureClassParameter) as IGPValue;
 
                 string polygonFCName = osmPolygonFeatureClassGPValue.GetAsText();
                 string[] polygonFCNameElements = polygonFCName.Split(System.IO.Path.DirectorySeparatorChar);
