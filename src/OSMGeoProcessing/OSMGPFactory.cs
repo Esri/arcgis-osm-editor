@@ -517,7 +517,23 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 arcgisKey = esriKey.OpenSubKey("ArcGIS");
 
                 if (arcgisKey == null)
-                    return m_foundInstallationDirectory;
+                {
+                    wow6432Key = softwareKey.OpenSubKey("Wow6432Node");
+
+                    if (wow6432Key == null)
+                        return m_foundInstallationDirectory;
+
+                    esriKey = wow6432Key.OpenSubKey("ESRI");
+
+                    if (esriKey == null)
+                        return m_foundInstallationDirectory;
+
+                    arcgisKey = esriKey.OpenSubKey("ArcGIS");
+
+                    if (arcgisKey == null)
+                        return m_foundInstallationDirectory;
+                }
+
 
                 realVersion = arcgisKey.GetValue("RealVersion");
                 string realVersionAsString = realVersion as String;
@@ -593,7 +609,23 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 arcgisKey = esriKey.OpenSubKey("ArcGIS");
 
                 if (arcgisKey == null)
-                    return m_foundInstallationDirectory;
+                {
+                    wow6432Key = softwareKey.OpenSubKey("Wow6432Node");
+
+                    if (wow6432Key == null)
+                        return m_foundInstallationDirectory;
+
+                    esriKey = wow6432Key.OpenSubKey("ESRI");
+
+                    if (esriKey == null)
+                        return m_foundInstallationDirectory;
+
+                    arcgisKey = esriKey.OpenSubKey("ArcGIS");
+
+                    if (arcgisKey == null)
+                        return m_foundInstallationDirectory;
+                }
+
 
                 realVersion = arcgisKey.GetValue("RealVersion");
                 string realVersionAsString = realVersion as String;
