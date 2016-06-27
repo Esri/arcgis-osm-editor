@@ -1937,7 +1937,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
         #endregion
 
-        private void UpdateSpatialGridIndex(ESRI.ArcGIS.esriSystem.ITrackCancel TrackCancel, ESRI.ArcGIS.Geodatabase.IGPMessages message, IGeoProcessor2 geoProcessor, string inputFeatureClass)
+        private void UpdateSpatialGridIndex(ESRI.ArcGIS.esriSystem.ITrackCancel TrackCancel, ESRI.ArcGIS.Geodatabase.IGPMessages message, IGeoProcessor2 geoProcessor, string inputFeatureClass, bool removeFirst)
         {
             IVariantArray parameterArrary = null;
             IGeoProcessorResult2 gpResults2 = null;
@@ -1962,7 +1962,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             // this is expected to fail if no such index exists
             try
             {
-                gpResults2 = geoProcessor.Execute("RemoveSpatialIndex_management", parameterArrary, TrackCancel) as IGeoProcessorResult2;
+                if (removeFirst)
+                    gpResults2 = geoProcessor.Execute("RemoveSpatialIndex_management", parameterArrary, TrackCancel) as IGeoProcessorResult2;
             }
             catch (Exception ex)
             {
@@ -2123,6 +2124,17 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             return parameterArrary;
         }
 
+        /// <summary>
+        /// Generates a random string of 11 characters
+        /// </summary>
+        /// <returns></returns>
+        private string GenerateRandomString()
+        {
+            string path = System.IO.Path.GetRandomFileName();
+            path = path.Replace(".", "");
+            return path;
+        }
+
         internal void splitOSMFile(string osmFileLocation, string tempFolder, long nodeCapacity, long wayCapacity, long relationCapacity, int numberOfThreads, out List<string> nodeFileNames, out List<string> nodeGDBNames, out List<string> wayFileNames, out List<string> wayGDBNames, out List<string> relationFileNames, out List<string> relationGDBNames)
         {
             long[] node_partitions = PartitionValue(nodeCapacity, numberOfThreads);
@@ -2152,19 +2164,19 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 // for the nodes    
                 newName = osmFileInfo.Name.Substring(0, osmFileInfo.Name.Length - osmFileInfo.Extension.Length) + "_n" + i.ToString() + osmFileInfo.Extension;
                 nodeFileNames.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { tempFolder, newName }));
-                gdbName = osmFileInfo.Name.Substring(0, osmFileInfo.Name.Length - osmFileInfo.Extension.Length) + "_n" + i.ToString() + ".gdb";
+                gdbName = osmFileInfo.Name.Substring(0, osmFileInfo.Name.Length - osmFileInfo.Extension.Length) + "_" + GenerateRandomString() + "_n" + i.ToString() + ".gdb";
                 nodeGDBNames.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { tempFolder, gdbName }));
 
                 // for the ways    
                 newName = osmFileInfo.Name.Substring(0, osmFileInfo.Name.Length - osmFileInfo.Extension.Length) + "_w" + i.ToString() + osmFileInfo.Extension;
                 wayFileNames.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { tempFolder, newName }));
-                gdbName = osmFileInfo.Name.Substring(0, osmFileInfo.Name.Length - osmFileInfo.Extension.Length) + "_w" + i.ToString() + ".gdb";
+                gdbName = osmFileInfo.Name.Substring(0, osmFileInfo.Name.Length - osmFileInfo.Extension.Length) + "_" + GenerateRandomString() + "_w" + i.ToString() + ".gdb";
                 wayGDBNames.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { tempFolder, gdbName }));
 
                 // for the relations
                 newName = osmFileInfo.Name.Substring(0, osmFileInfo.Name.Length - osmFileInfo.Extension.Length) + "_r" + i.ToString() + osmFileInfo.Extension;
-                relationFileNames.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { tempFolder, newName }));                
-                gdbName = osmFileInfo.Name.Substring(0, osmFileInfo.Name.Length - osmFileInfo.Extension.Length) + "_r" + i.ToString() + ".gdb";
+                relationFileNames.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { tempFolder, newName }));
+                gdbName = osmFileInfo.Name.Substring(0, osmFileInfo.Name.Length - osmFileInfo.Extension.Length) + "_" + GenerateRandomString() + "_r" + i.ToString() + ".gdb";
                 relationGDBNames.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { tempFolder, gdbName }));
             }
 
@@ -3100,8 +3112,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     for (int gdbIndex = 0; gdbIndex < wayGDBNames.Count; gdbIndex++)
                     {
                         FileInfo gdbFileInfo = new FileInfo(wayGDBNames[gdbIndex]);
-                        IWorkspaceName workspaceName = workspaceFactory.Create(gdbFileInfo.DirectoryName, gdbFileInfo.Name, new PropertySetClass(), 0);
-                        comReleaser.ManageLifetime(workspaceName);
+
+                        if (!gdbFileInfo.Exists)
+                        {
+                            IWorkspaceName workspaceName = workspaceFactory.Create(gdbFileInfo.DirectoryName, gdbFileInfo.Name, new PropertySetClass(), 0);
+                            comReleaser.ManageLifetime(workspaceName);
+                        }
                     }
                 }
 
@@ -3252,8 +3268,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     for (int gdbIndex = 1; gdbIndex < nodeGDBNames.Count; gdbIndex++)
                     {
                         FileInfo gdbFileInfo = new FileInfo(nodeGDBNames[gdbIndex]);
-                        IWorkspaceName workspaceName = workspaceFactory.Create(gdbFileInfo.DirectoryName, gdbFileInfo.Name, new PropertySetClass(), 0);
-                        comReleaser.ManageLifetime(workspaceName);
+
+                        if (!gdbFileInfo.Exists)
+                        {
+                            IWorkspaceName workspaceName = workspaceFactory.Create(gdbFileInfo.DirectoryName, gdbFileInfo.Name, new PropertySetClass(), 0);
+                            comReleaser.ManageLifetime(workspaceName);
+                        }
                     }
                 }
 
@@ -3701,7 +3721,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             {
                                 if (pointFeatureLoad == null)
                                 {
-                                    UpdateSpatialGridIndex(TrackCancel, message, geoProcessor, fcLocation);
+                                    UpdateSpatialGridIndex(TrackCancel, message, geoProcessor, fcLocation, true);
                                 }
                             }
                         }
@@ -4717,7 +4737,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             // in this case we are dealing with a file geodatabase
                             if (lineFeatureLoad == null)
                             {
-                                UpdateSpatialGridIndex(TrackCancel, message, geoProcessor, fcLocation);
+                                UpdateSpatialGridIndex(TrackCancel, message, geoProcessor, fcLocation, true);
                             }
                         }
                     }
@@ -4748,7 +4768,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         {
                             if (polygonFeatureLoad == null)
                             {
-                                UpdateSpatialGridIndex(TrackCancel, message, geoProcessor, fcLocation);
+                                UpdateSpatialGridIndex(TrackCancel, message, geoProcessor, fcLocation, true);
                             }
                         }
                     }
@@ -5154,8 +5174,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     for (int gdbIndex = 0; gdbIndex < relationGDBNames.Count; gdbIndex++)
                     {
                         FileInfo gdbFileInfo = new FileInfo(relationGDBNames[gdbIndex]);
-                        IWorkspaceName workspaceName = workspaceFactory.Create(gdbFileInfo.DirectoryName, gdbFileInfo.Name, new PropertySetClass(), 0);
-                        comReleaser.ManageLifetime(workspaceName);
+
+                        if (!gdbFileInfo.Exists)
+                        {
+                            IWorkspaceName workspaceName = workspaceFactory.Create(gdbFileInfo.DirectoryName, gdbFileInfo.Name, new PropertySetClass(), 0);
+                            comReleaser.ManageLifetime(workspaceName);
+                        }
                     }
                 }
 
@@ -5250,8 +5274,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     for (int gdbIndex = 0; gdbIndex < relationGDBNames.Count; gdbIndex++)
                     {
                         FileInfo gdbFileInfo = new FileInfo(relationGDBNames[gdbIndex]);
-                        IWorkspaceName workspaceName = workspaceFactory.Create(gdbFileInfo.DirectoryName, gdbFileInfo.Name, new PropertySetClass(), 0);
-                        comReleaser.ManageLifetime(workspaceName);
+
+                        if (!gdbFileInfo.Exists)
+                        {
+                            IWorkspaceName workspaceName = workspaceFactory.Create(gdbFileInfo.DirectoryName, gdbFileInfo.Name, new PropertySetClass(), 0);
+                            comReleaser.ManageLifetime(workspaceName);
+                        }
                     }
                 }
 
@@ -7289,10 +7317,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         geoProcessor.AddOutputsToMap = false;
 
                         string fcLocation = GetLocationString(targetGPValue, osmLineFeatureClass);
-                        UpdateSpatialGridIndex(TrackCancel, message, geoProcessor, fcLocation);
+                        UpdateSpatialGridIndex(TrackCancel, message, geoProcessor, fcLocation, false);
 
                         fcLocation = GetLocationString(targetGPValue, osmPolygonFeatureClass);
-                        UpdateSpatialGridIndex(TrackCancel, message, geoProcessor, fcLocation);
+                        UpdateSpatialGridIndex(TrackCancel, message, geoProcessor, fcLocation, false);
 
                         if (relationIndexRebuildRequired)
                         {
