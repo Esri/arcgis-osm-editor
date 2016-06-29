@@ -2161,22 +2161,25 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
             for (int i = 0; i < numberOfThreads; i++)
             {
-                // for the nodes    
-                newName = osmFileInfo.Name.Substring(0, osmFileInfo.Name.Length - osmFileInfo.Extension.Length) + "_n" + i.ToString() + osmFileInfo.Extension;
+                // for the nodes
+                string randomString = GenerateRandomString();
+                newName = osmFileInfo.Name.Substring(0, osmFileInfo.Name.Length - osmFileInfo.Extension.Length) + "_" + randomString + "_n" + i.ToString() + osmFileInfo.Extension;
                 nodeFileNames.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { tempFolder, newName }));
-                gdbName = osmFileInfo.Name.Substring(0, osmFileInfo.Name.Length - osmFileInfo.Extension.Length) + "_" + GenerateRandomString() + "_n" + i.ToString() + ".gdb";
+                gdbName = osmFileInfo.Name.Substring(0, osmFileInfo.Name.Length - osmFileInfo.Extension.Length) + "_" + randomString + "_n" + i.ToString() + ".gdb";
                 nodeGDBNames.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { tempFolder, gdbName }));
 
-                // for the ways    
-                newName = osmFileInfo.Name.Substring(0, osmFileInfo.Name.Length - osmFileInfo.Extension.Length) + "_w" + i.ToString() + osmFileInfo.Extension;
+                // for the ways
+                randomString = GenerateRandomString();
+                newName = osmFileInfo.Name.Substring(0, osmFileInfo.Name.Length - osmFileInfo.Extension.Length) + "_" + randomString + "_w" + i.ToString() + osmFileInfo.Extension;
                 wayFileNames.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { tempFolder, newName }));
-                gdbName = osmFileInfo.Name.Substring(0, osmFileInfo.Name.Length - osmFileInfo.Extension.Length) + "_" + GenerateRandomString() + "_w" + i.ToString() + ".gdb";
+                gdbName = osmFileInfo.Name.Substring(0, osmFileInfo.Name.Length - osmFileInfo.Extension.Length) + "_" + randomString + "_w" + i.ToString() + ".gdb";
                 wayGDBNames.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { tempFolder, gdbName }));
 
                 // for the relations
-                newName = osmFileInfo.Name.Substring(0, osmFileInfo.Name.Length - osmFileInfo.Extension.Length) + "_r" + i.ToString() + osmFileInfo.Extension;
+                randomString = GenerateRandomString();
+                newName = osmFileInfo.Name.Substring(0, osmFileInfo.Name.Length - osmFileInfo.Extension.Length) + "_" + randomString + "_r" + i.ToString() + osmFileInfo.Extension;
                 relationFileNames.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { tempFolder, newName }));
-                gdbName = osmFileInfo.Name.Substring(0, osmFileInfo.Name.Length - osmFileInfo.Extension.Length) + "_" + GenerateRandomString() + "_r" + i.ToString() + ".gdb";
+                gdbName = osmFileInfo.Name.Substring(0, osmFileInfo.Name.Length - osmFileInfo.Extension.Length) + "_" + randomString + "_r" + i.ToString() + ".gdb";
                 relationGDBNames.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { tempFolder, gdbName }));
             }
 
