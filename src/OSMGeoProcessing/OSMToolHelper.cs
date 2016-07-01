@@ -2533,6 +2533,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 #endif
                                 }
                             }
+                            else
+                                continue;
                         }
                         else
                         {
@@ -2604,6 +2606,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 #endif
                                 }
                             }
+                            else
+                                continue;
                         }
 
 
