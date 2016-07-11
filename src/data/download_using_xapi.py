@@ -2,7 +2,7 @@
 #
 import arcpy, urllib, urllib2
 import locale
-
+locale.setlocale(locale.LC_ALL, "")
 
 def xapidownload():
     try:
