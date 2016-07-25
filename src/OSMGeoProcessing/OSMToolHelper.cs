@@ -5883,7 +5883,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                     {
                                         #region transfer for outer tags to relation itself
                                         // if needed to one more request to assemble the information of the outer rings to be transfer to the "empty"
-                                        // relation enity
+                                        // relation entity
                                         if (checkOuter)
                                         {
                                             idRequests = SplitOSMIDRequests(outerIDs);
@@ -5935,8 +5935,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                         }
 
-                                        ((ITopologicalOperator2)relationPolygon).IsKnownSimple_2 = false;
-                                        ((IPolygon4)relationPolygon).SimplifyEx(true, false, false);
+                                        // TE - 7/25/2016, the simplification moves verticies
+                                        //((ITopologicalOperator2)relationPolygon).IsKnownSimple_2 = false;
+                                        //((IPolygon4)relationPolygon).SimplifyEx(true, false, false);
 
 
                                         // set the shape
