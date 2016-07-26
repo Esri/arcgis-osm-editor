@@ -990,6 +990,79 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         }
         #endregion
 
+        #region create scratch relation part count table
+        internal ESRI.ArcGIS.Geodatabase.ITable CreatePartCountTable(ESRI.ArcGIS.Geodatabase.IWorkspace2 workspace, System.String tableName, ESRI.ArcGIS.Geodatabase.IFields fields, string storageKeyword)
+        {
+            // create the behavior classid for the table
+            ESRI.ArcGIS.esriSystem.UID uid = new ESRI.ArcGIS.esriSystem.UIDClass();
+
+            if (workspace == null) return null; // valid feature workspace not passed in as an argument to the method
+
+            ESRI.ArcGIS.Geodatabase.ITable table = null;
+
+            try
+            {
+                ESRI.ArcGIS.Geodatabase.IFeatureWorkspace featureWorkspace = (ESRI.ArcGIS.Geodatabase.IFeatureWorkspace)workspace; // Explicit Cast
+
+                if (workspace.get_NameExists(ESRI.ArcGIS.Geodatabase.esriDatasetType.esriDTTable, tableName))
+                {
+                    // if a table with the same name already exists delete it....if that is not possible return the current instance
+                    table = featureWorkspace.OpenTable(tableName);
+
+                    if (!DeleteDataset((IDataset)table))
+                    {
+                        return table;
+                    }
+                }
+
+                uid.Value = "esriGeoDatabase.Object";
+
+                ESRI.ArcGIS.Geodatabase.IObjectClassDescription objectClassDescription = new ESRI.ArcGIS.Geodatabase.ObjectClassDescriptionClass();
+
+                // if a fields collection is not passed in then supply our own
+                if (fields == null)
+                {
+                    // create the fields using the required fields method
+                    fields = objectClassDescription.RequiredFields;
+                    ESRI.ArcGIS.Geodatabase.IFieldsEdit fieldsEdit = (ESRI.ArcGIS.Geodatabase.IFieldsEdit)fields; // Explicit Cast
+
+                    // 
+                    IFieldEdit sourceIDField = new FieldClass() as IFieldEdit;
+                    sourceIDField.Name_2 = "sourceID";
+                    sourceIDField.Required_2 = true;
+                    sourceIDField.Type_2 = esriFieldType.esriFieldTypeString;
+                    sourceIDField.Length_2 = 15;
+                    fieldsEdit.AddField((IField)sourceIDField);
+
+                    IFieldEdit osmCountField = new FieldClass() as IFieldEdit;
+                    osmCountField.Name_2 = "osmcount";
+                    osmCountField.Required_2 = true;
+                    osmCountField.Type_2 = esriFieldType.esriFieldTypeInteger;
+                    fieldsEdit.AddField((IField)osmCountField);
+
+                    fields = (ESRI.ArcGIS.Geodatabase.IFields)fieldsEdit; // Explicit Cast
+                }
+
+                // Use IFieldChecker to create a validated fields collection.
+                ESRI.ArcGIS.Geodatabase.IFieldChecker fieldChecker = new ESRI.ArcGIS.Geodatabase.FieldCheckerClass();
+                ESRI.ArcGIS.Geodatabase.IEnumFieldError enumFieldError = null;
+                ESRI.ArcGIS.Geodatabase.IFields validatedFields = null;
+                fieldChecker.ValidateWorkspace = (ESRI.ArcGIS.Geodatabase.IWorkspace)workspace;
+                fieldChecker.Validate(fields, out enumFieldError, out validatedFields);
+
+                // create and return the table
+                table = featureWorkspace.CreateTable(tableName, validatedFields, uid, null, storageKeyword);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return table;
+        }
+        #endregion
+
+        
         #region"Create OSM Line FeatureClass"
         internal ESRI.ArcGIS.Geodatabase.IFeatureClass CreateLineFeatureClass(ESRI.ArcGIS.Geodatabase.IWorkspace2 workspace, ESRI.ArcGIS.Geodatabase.IFeatureDataset featureDataset, System.String featureClassName, ESRI.ArcGIS.Geodatabase.IFields fields, ESRI.ArcGIS.esriSystem.UID CLSID, ESRI.ArcGIS.esriSystem.UID CLSEXT, System.String strConfigKeyword, OSMDomains osmDomains, string metadataAbstract, string metadataPurpose)
         {
@@ -5402,6 +5475,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 comReleaser.ManageLifetime(gpUtilities);
                 XmlReader relationFileXmlReader = null;
 
+                OSMUtility osmUtility = new OSMUtility();
+
                 try
                 {
                     // info about the source lines
@@ -5409,12 +5484,14 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     comReleaser.ManageLifetime(sourceLineFeatureClass);
                     int osmSourceLineIDFieldIndex = sourceLineFeatureClass.FindField("OSMID");
                     string sourceSQLLineOSMID = sourceLineFeatureClass.SqlIdentifier("OSMID");
+                    int osmSourceLineTagCollectionFieldIndex = sourceLineFeatureClass.FindField("osmTags");
 
                     // info about the source polygons
                     IFeatureClass sourcePolygonFeatureClass = gpUtilities.OpenFeatureClassFromString(sourcePolygonFeatureClassLocation);
                     comReleaser.ManageLifetime(sourcePolygonFeatureClass);
                     int osmSourcePolygonIDFieldIndex = sourcePolygonFeatureClass.FindField("OSMID");
                     string sourceSQLPolygonOSMID = sourcePolygonFeatureClass.SqlIdentifier("OSMID");
+                    int osmSourcePolygonTagCollectionFieldIndex = sourcePolygonFeatureClass.FindField("osmTags");
 
                     // info about the target lines
                     IFeatureClass targetLineFeatureClass = gpUtilities.OpenFeatureClassFromString(targetLineFeatureClassLocation);
@@ -5451,6 +5528,24 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             mainPolygonAttributeFieldIndices.Add(OSMToolHelper.convert2AttributeFieldName(fieldName, null), currentFieldIndex);
                         }
                     }
+
+
+                    // 
+                    IGeoProcessor geoprocessor = new GeoProcessorClass();
+                    IScratchWorkspaceFactory workspaceFactory = new FileGDBScratchWorkspaceFactoryClass();
+                    IWorkspace scratchTableWorkspace = workspaceFactory.DefaultScratchWorkspace;
+                    string tableName = "osm" + GenerateRandomString();
+                    string targetLocation = scratchTableWorkspace.PathName;
+                    string partCountTableLocation = System.IO.Path.Combine(targetLocation, tableName);
+                    ITable countingTable = CreatePartCountTable((IWorkspace2)scratchTableWorkspace, tableName, null, null);
+                    comReleaser.ManageLifetime(countingTable);
+                    int partCountField = countingTable.FindField("osmcount");
+                    int partIDField = countingTable.FindField("sourceID");
+                    IRowBuffer partCountBuffer = countingTable.CreateRowBuffer();
+                    comReleaser.ManageLifetime(partCountBuffer);
+                    ICursor partInsertCursor = countingTable.Insert(true);
+                    comReleaser.ManageLifetime(partInsertCursor);
+
 
                     relationFileXmlReader = XmlReader.Create(osmFileLocation);
                     relationFileXmlReader.ReadToFollowing("relation");
@@ -5618,6 +5713,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 List<string> idRequests = SplitOSMIDRequests(itemIDs);
                                 List<IGeometry> itemGeometries = new List<IGeometry>(itemIDs.Count);
                                 Dictionary<string, int> itemPositionDictionary = new Dictionary<string, int>(itemIDs.Count);
+                                Dictionary<string, bool> itemCanBeDeleted = new Dictionary<string, bool>();
 
                                 // build a list of way ids we can use to determine the order in the relation
                                 for (int index = 0; index < itemIDs.Count; index++)
@@ -5642,6 +5738,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         {
                                             // determine the ID of the line in with respect to the node position
                                             string lineOSMIDString = Convert.ToString(lineFeature.get_Value(osmSourceLineIDFieldIndex));
+                                            itemCanBeDeleted.Add(lineOSMIDString.Replace("w", "l"), !osmUtility.DoesHaveKeys(lineFeature, osmSourceLineTagCollectionFieldIndex, ((IDataset)sourceLineFeatureClass).Workspace));
 
                                             // remove the ID from the request string
                                             idCompareString = idCompareString.Replace(lineOSMIDString, String.Empty);
@@ -5653,7 +5750,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                     idCompareString = CleanReportedIDs(idCompareString);
 
-                                    // after removing the commas we should be left with only paranthesis left, meaning a string of length 2
+                                    // after removing the commas we should be left with only parenthesis left, meaning a string of length 2
                                     // if we have more then we have found a missing way as a line we still need to search the polygons
                                     if (idCompareString.Length > 2)
                                     {
@@ -5678,6 +5775,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         {
                                             // determine the ID of the polygon in with respect to the way position
                                             string polygonOSMIDString = Convert.ToString(polygonFeature.get_Value(osmSourcePolygonIDFieldIndex));
+                                            itemCanBeDeleted.Add(polygonOSMIDString.Replace("w", "p"), !osmUtility.DoesHaveKeys(polygonFeature, osmSourcePolygonTagCollectionFieldIndex, ((IDataset)sourcePolygonFeatureClass).Workspace));
 
                                             // remove the ID from the request string
                                             idCompareString = idCompareString.Replace(polygonOSMIDString, String.Empty);
@@ -5689,7 +5787,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                     idCompareString = CleanReportedIDs(idCompareString);
 
-                                    // after removing the commas we should be left with only paranthesis left, meaning a string of length 2
+                                    // after removing the commas we should be left with only parenthesis left, meaning a string of length 2
                                     // if we have more then we have found a missing way as a line we still need to search the polygons
                                     if (idCompareString.Length > 2)
                                     {
@@ -5702,13 +5800,13 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 {
                                     List<IGeometryCollection> relationParts = new List<IGeometryCollection>();
 
-                                    // special case for multipolygon
+                                    // special case for multi-polygon
                                     // in this case we know we are dealing with polygon -- in other words, we just need to piece it together
                                     if (hasMultiPolygonTag)
                                     {
                                         isArea = true;
 
-                                        #region multipolygon
+                                        #region multi-polygon
                                         // find the first polyline in the geometry collection
                                         int startIndex = 0;
                                         foreach (var itemGeometry in itemGeometries)
@@ -5882,11 +5980,19 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                     if (isArea)
                                     {
                                         #region transfer for outer tags to relation itself
-                                        // if needed to one more request to assemble the information of the outer rings to be transfer to the "empty"
+                                        // if needed do one more request to assemble the information of the outer rings to be transfer to the "empty"
                                         // relation entity
                                         if (checkOuter)
                                         {
                                             idRequests = SplitOSMIDRequests(outerIDs);
+
+                                            // if the outer way tags are considered, then we can delete the geometry
+                                            foreach (var outerItem in outerIDs)
+                                            {
+                                                string polygonRequest = outerItem.Replace("w", "p");
+                                                if (!itemCanBeDeleted.ContainsKey(polygonRequest))
+                                                    itemCanBeDeleted.Add(polygonRequest, true);
+                                            }
 
                                             foreach (string request in idRequests)
                                             {
@@ -5935,7 +6041,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                         }
 
-                                        // TE - 7/25/2016, the simplification moves verticies
+                                        // TE - 7/25/2016, the simplification moves vertices
                                         //((ITopologicalOperator2)relationPolygon).IsKnownSimple_2 = false;
                                         //((IPolygon4)relationPolygon).SimplifyEx(true, false, false);
 
@@ -6007,6 +6113,18 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         }
                                     }
                                 }
+
+                                // write the collected IDs of parts without tags or merged tags to the scratch table
+                                foreach (var item in itemCanBeDeleted)
+                                {
+                                    // if the id can be deleted add it into the scratch table
+                                    if (item.Value)
+                                    {
+                                        partCountBuffer.set_Value(partIDField, item.Key);
+                                        partInsertCursor.InsertRow(partCountBuffer);
+                                    }
+                                }
+
                             }
                         }
                         catch (Exception hmmEx)
@@ -6023,6 +6141,71 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             relationFileXmlReader.ReadToFollowing("relation");
 
                     } while (relationFileXmlReader.Name == "relation");
+
+                    // compute the OSM index on the part count table
+                    IVariantArray parameterArray = CreateAddIndexParameterArray(partCountTableLocation, "sourceID", "sourceID_IDX", "UNIQUE", "");
+                    IGeoProcessorResult gpResults = geoprocessor.Execute("AddIndex_management", parameterArray, new CancelTrackerClass());
+                    
+                    // count the items in the scratch table
+                    ICursor searchCursor = countingTable.Search(null, false);
+                    comReleaser.ManageLifetime(searchCursor);
+
+                    IRow countingRow = searchCursor.NextRow();
+                    comReleaser.ManageLifetime(countingRow);
+
+                    while (countingRow != null)
+                    {
+                        int countedRows = 0;
+                        string countID = countingRow.get_Value(partIDField) as string;
+                        ICursor counterCursor = countingTable.Search(new QueryFilterClass() { WhereClause = String.Format("sourceID = '{0}'", countID)}, true);
+
+                        while (counterCursor.NextRow() != null)
+                        {
+                            countedRows += 1;
+                        }
+
+                        countingRow.set_Value(partCountField, countedRows);
+                        countingRow.Store();
+
+                        countingRow = searchCursor.NextRow();
+                    }
+
+                    // delete the features with a count of 1, from the source line and source polygon feature class
+                    searchCursor = countingTable.Search(new QueryFilterClass() { WhereClause = "osmcount = 1" }, true);
+
+                    countingRow = searchCursor.NextRow();
+                    while (countingRow != null)
+                    {
+                        string osmID = countingRow.get_Value(partIDField) as string;
+
+                        IFeatureCursor deleteCursor = null;
+                        if (osmID[0] == 'l')
+                        {
+                            deleteCursor = sourceLineFeatureClass.Search(new QueryFilterClass() { WhereClause = String.Format("osmID = '{0}'", osmID.Replace("l", "w")) }, false);
+                        }
+                        else
+                        {
+                            deleteCursor = sourcePolygonFeatureClass.Search(new QueryFilterClass() { WhereClause = String.Format("osmID = '{0}'", osmID.Replace("p", "w")) }, false);
+                        }
+
+                        comReleaser.ManageLifetime(deleteCursor);
+                        IFeature deleteFeature = deleteCursor.NextFeature();
+                        comReleaser.ManageLifetime(deleteFeature);
+
+                        while (deleteFeature != null)
+                        {
+                            deleteFeature.Delete();
+
+                            deleteFeature = deleteCursor.NextFeature();
+                        }
+
+                        countingRow = searchCursor.NextRow();
+                    }
+
+
+                    //// delete the scratch table
+                    if (((IDataset)countingTable).CanDelete())
+                        ((IDataset)countingTable).Delete();
 
                 }
                 catch (Exception ex)
