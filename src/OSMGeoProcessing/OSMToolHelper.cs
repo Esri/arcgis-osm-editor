@@ -3158,6 +3158,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             geoProcessor.AddOutputsToMap = false;
             IGeoProcessorResult gpResults = null;
             IVariantArray parameterArray = null;
+            System.Object missingValue = System.Reflection.Missing.Value;
 
             Stopwatch executionStopwatch = System.Diagnostics.Stopwatch.StartNew();
             toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_loading_ways")));
@@ -3237,52 +3238,64 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 // we will need one less as the first osm file is loaded into the target feature classes
-                List<string> linesFCNamesArray = new List<string>(wayGDBNames.Count);
-                List<string> polygonFCNamesArray = new List<string>(wayGDBNames.Count);
+                List<string> linesFCNamesArray = new List<string>();
+                List<string> polygonFCNamesArray = new List<string>();
 
                 // append all lines into the target feature class
                 for (int gdbIndex = 0; gdbIndex < wayGDBNames.Count; gdbIndex++)
                 {
-                    linesFCNamesArray.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { wayGDBNames[gdbIndex], lineFeatureClassName }));
-                    polygonFCNamesArray.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { wayGDBNames[gdbIndex], polygonFeatureClassName }));
+                    string sourceLineLocation = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { wayGDBNames[gdbIndex], lineFeatureClassName });
+                    if (geoProcessor.Exists(sourceLineLocation, ref missingValue))
+                        linesFCNamesArray.Add(sourceLineLocation);
+
+                    string sourcePolygonLocation = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { wayGDBNames[gdbIndex], polygonFeatureClassName });
+                    if (geoProcessor.Exists(sourcePolygonLocation, ref missingValue))
+                        polygonFCNamesArray.Add(sourcePolygonLocation);
                 }
 
+                IGPMessages messages = null;
                 string[] pointFCElement = sourcePointFCName.Split(System.IO.Path.DirectorySeparatorChar);
                 string sourceFGDB = sourcePointFCName.Substring(0, sourcePointFCName.Length - pointFCElement[pointFCElement.Length - 1].Length - 1);
 
-                // append all the lines
-                parameterArray = new VarArrayClass();
-                parameterArray.Add(String.Join(";", linesFCNamesArray.ToArray()));
-                parameterArray.Add(targetLineFCName);
+                if (linesFCNamesArray.Count > 0)
+                {
+                    // append all the lines
+                    parameterArray = new VarArrayClass();
+                    parameterArray.Add(String.Join(";", linesFCNamesArray.ToArray()));
+                    parameterArray.Add(targetLineFCName);
 
-                gpResults = geoProcessor.Execute("Append_management", parameterArray, CancelTracker);
+                    gpResults = geoProcessor.Execute("Append_management", parameterArray, CancelTracker);
 
-                IGPMessages messages = gpResults.GetResultMessages();
-                toolMessages.AddMessages(gpResults.GetResultMessages());
+                    messages = gpResults.GetResultMessages();
+                    toolMessages.AddMessages(gpResults.GetResultMessages());
 
 #if DEBUG
-                for (int i = 0; i < messages.Count; i++)
-                {
-                    System.Diagnostics.Debug.WriteLine(messages.GetMessage(i).Description);
-                }
+                    for (int i = 0; i < messages.Count; i++)
+                    {
+                        System.Diagnostics.Debug.WriteLine(messages.GetMessage(i).Description);
+                    }
 #endif
+                }
 
-                // append all the polygons
-                parameterArray = new VarArrayClass();
-                parameterArray.Add(String.Join(";", polygonFCNamesArray.ToArray()));
-                parameterArray.Add(targetPolygonFCName);
+                if (polygonFCNamesArray.Count > 0)
+                {
+                    // append all the polygons
+                    parameterArray = new VarArrayClass();
+                    parameterArray.Add(String.Join(";", polygonFCNamesArray.ToArray()));
+                    parameterArray.Add(targetPolygonFCName);
 
-                gpResults = geoProcessor.Execute("Append_management", parameterArray, CancelTracker);
+                    gpResults = geoProcessor.Execute("Append_management", parameterArray, CancelTracker);
 
-                messages = gpResults.GetResultMessages();
-                toolMessages.AddMessages(gpResults.GetResultMessages());
+                    messages = gpResults.GetResultMessages();
+                    toolMessages.AddMessages(gpResults.GetResultMessages());
 
 #if DEBUG
-                for (int i = 0; i < messages.Count; i++)
-                {
-                    System.Diagnostics.Debug.WriteLine(messages.GetMessage(i).Description);
-                }
+                    for (int i = 0; i < messages.Count; i++)
+                    {
+                        System.Diagnostics.Debug.WriteLine(messages.GetMessage(i).Description);
+                    }
 #endif
+                }
 
                 // delete temp file geodatabases
                 for (int gdbIndex = 0; gdbIndex < wayGDBNames.Count; gdbIndex++)
@@ -3297,15 +3310,21 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
             }
 
-            // compute the OSM index on the target line featureclass
-            parameterArray = CreateAddIndexParameterArray(targetLineFCName, "OSMID", "osmID_IDX", "UNIQUE", "");
-            gpResults = geoProcessor.Execute("AddIndex_management", parameterArray, CancelTracker);
-            toolMessages.AddMessages(gpResults.GetResultMessages());
+            if (geoProcessor.Exists(targetLineFCName, ref missingValue))
+            {
+                // compute the OSM index on the target line featureclass
+                parameterArray = CreateAddIndexParameterArray(targetLineFCName, "OSMID", "osmID_IDX", "UNIQUE", "");
+                gpResults = geoProcessor.Execute("AddIndex_management", parameterArray, CancelTracker);
+                toolMessages.AddMessages(gpResults.GetResultMessages());
+            }
 
-            // compute the OSM index on the target polygon featureclass
-            parameterArray = CreateAddIndexParameterArray(targetPolygonFCName, "OSMID", "osmID_IDX", "UNIQUE", "");
-            gpResults = geoProcessor.Execute("AddIndex_management", parameterArray, CancelTracker);
-            toolMessages.AddMessages(gpResults.GetResultMessages());
+            if (geoProcessor.Exists(targetPolygonFCName, ref missingValue))
+            {
+                // compute the OSM index on the target polygon featureclass
+                parameterArray = CreateAddIndexParameterArray(targetPolygonFCName, "OSMID", "osmID_IDX", "UNIQUE", "");
+                gpResults = geoProcessor.Execute("AddIndex_management", parameterArray, CancelTracker);
+                toolMessages.AddMessages(gpResults.GetResultMessages());
+            }
 
             ComReleaser.ReleaseCOMObject(geoProcessor);
         }
@@ -3385,23 +3404,29 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 // we need one less as the first node is already loaded into the target feature class
-                List<string> fcNamesArray = new List<string>(osmNodeFileNames.Count - 1);
+                List<string> fcNamesArray = new List<string>();
                 // 
 
+                System.Object missingValue = System.Reflection.Missing.Value;
                 // append all points into the target feature class
                 for (int gdbIndex = 1; gdbIndex < nodeGDBNames.Count; gdbIndex++)
                 {
-                    fcNamesArray.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { nodeGDBNames[gdbIndex], featureClassName }));
+                    string sourceFCLocation = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { nodeGDBNames[gdbIndex], featureClassName });
+                    if (geoProcessor.Exists(sourceFCLocation, ref missingValue))
+                        fcNamesArray.Add(sourceFCLocation);
                 }
 
-                parameterArray = new VarArrayClass();
-                parameterArray.Add(String.Join(";", fcNamesArray.ToArray()));
-                parameterArray.Add(targetFeatureClass);
+                if (fcNamesArray.Count > 0)
+                {
+                    parameterArray = new VarArrayClass();
+                    parameterArray.Add(String.Join(";", fcNamesArray.ToArray()));
+                    parameterArray.Add(targetFeatureClass);
 
-                gpResults = geoProcessor.Execute("Append_management", parameterArray, CancelTracker);
+                    gpResults = geoProcessor.Execute("Append_management", parameterArray, CancelTracker);
 
-                IGPMessages messages = gpResults.GetResultMessages();
-                toolMessages.AddMessages(gpResults.GetResultMessages());
+                    IGPMessages messages = gpResults.GetResultMessages();
+                    toolMessages.AddMessages(gpResults.GetResultMessages());
+                }
 
                 // delete the temp loading fgdb for points
                 for (int gdbIndex = 1; gdbIndex < nodeGDBNames.Count; gdbIndex++)
@@ -5205,6 +5230,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             IGeoProcessor2 geoProcessor = new GeoProcessorClass() as IGeoProcessor2;
             geoProcessor.AddOutputsToMap = false;
             IGeoProcessorResult gpResults = null;
+            System.Object missingValue = System.Reflection.Missing.Value;
 
             Stopwatch executionStopwatch = System.Diagnostics.Stopwatch.StartNew();
             toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_loading_relations")));
@@ -5291,49 +5317,61 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 TimeSpan relationLoadingTimeSpan = executionStopwatch.Elapsed;
                 toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_doneloading_relations"), relationLoadingTimeSpan.Hours, relationLoadingTimeSpan.Minutes, relationLoadingTimeSpan.Seconds));
 
-                List<string> linesFCNamesArray = new List<string>(relationGDBNames.Count);
-                List<string> polygonFCNamesArray = new List<string>(relationGDBNames.Count);
+                List<string> linesFCNamesArray = new List<string>();
+                List<string> polygonFCNamesArray = new List<string>();
 
                 // append all lines into the target feature class
                 foreach (string  fileGDB in relationGDBNames)
                 {
-                    linesFCNamesArray.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { fileGDB, lineFeatureClassName }));
-                    polygonFCNamesArray.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { fileGDB, polygonFeatureClassName }));
-                }
+                    string sourceLineLocation = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { fileGDB, lineFeatureClassName });
+                    if (geoProcessor.Exists(sourceLineLocation, ref missingValue))
+                        linesFCNamesArray.Add(sourceLineLocation);
 
-                // append all the lines
+                    string sourcePolygonLocation = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { fileGDB, polygonFeatureClassName });
+                    if (geoProcessor.Exists(sourcePolygonLocation, ref missingValue))
+                        polygonFCNamesArray.Add(sourcePolygonLocation);
+                }
                 IVariantArray parameterArray = new VarArrayClass();
-                parameterArray.Add(String.Join(";", linesFCNamesArray.ToArray()));
-                parameterArray.Add(targetLineFCName);
+                IGPMessages messages = null;
 
-                gpResults = geoProcessor.Execute("Append_management", parameterArray, TrackCancel);
+                if (linesFCNamesArray.Count > 0)
+                {
+                    // append all the lines
+                    parameterArray.Add(String.Join(";", linesFCNamesArray.ToArray()));
+                    parameterArray.Add(targetLineFCName);
 
-                IGPMessages messages = gpResults.GetResultMessages();
-                toolMessages.AddMessages(gpResults.GetResultMessages());
+                    gpResults = geoProcessor.Execute("Append_management", parameterArray, TrackCancel);
+
+                    messages = gpResults.GetResultMessages();
+                    toolMessages.AddMessages(gpResults.GetResultMessages());
 
 #if DEBUG
-                for (int i = 0; i < messages.Count; i++)
-                {
-                    System.Diagnostics.Debug.WriteLine(messages.GetMessage(i).Description);
-                }
+                    for (int i = 0; i < messages.Count; i++)
+                    {
+                        System.Diagnostics.Debug.WriteLine(messages.GetMessage(i).Description);
+                    }
 #endif
+                }
 
-                // append all the polygons
-                parameterArray = new VarArrayClass();
-                parameterArray.Add(String.Join(";", polygonFCNamesArray.ToArray()));
-                parameterArray.Add(targetPolygonFCName);
+                if (polygonFCNamesArray.Count > 0)
+                {
+                    // append all the polygons
+                    parameterArray = new VarArrayClass();
+                    parameterArray.Add(String.Join(";", polygonFCNamesArray.ToArray()));
+                    parameterArray.Add(targetPolygonFCName);
 
-                gpResults = geoProcessor.Execute("Append_management", parameterArray, TrackCancel);
+                    gpResults = geoProcessor.Execute("Append_management", parameterArray, TrackCancel);
 
-                messages = gpResults.GetResultMessages();
-                toolMessages.AddMessages(gpResults.GetResultMessages());
+                    messages = gpResults.GetResultMessages();
+                    toolMessages.AddMessages(gpResults.GetResultMessages());
 
 #if DEBUG
-                for (int i = 0; i < messages.Count; i++)
-                {
-                    System.Diagnostics.Debug.WriteLine(messages.GetMessage(i).Description);
-                }
+                    for (int i = 0; i < messages.Count; i++)
+                    {
+                        System.Diagnostics.Debug.WriteLine(messages.GetMessage(i).Description);
+                    }
 #endif
+                }
 
                 // delete the temp loading fgdbs
                 for (int gdbIndex = 0; gdbIndex < relationGDBNames.Count; gdbIndex++)
@@ -5403,43 +5441,55 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 // append all lines into the target feature class
                 foreach (string fileGDB in relationGDBNames)
                 {
-                    linesFCNamesArray.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { fileGDB, lineFeatureClassName }));
-                    polygonFCNamesArray.Add(String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { fileGDB, polygonFeatureClassName }));
+                    string sourceLineLocation = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { fileGDB, lineFeatureClassName });
+                    if (geoProcessor.Exists(sourceLineLocation, ref missingValue))
+                        linesFCNamesArray.Add(sourceLineLocation);
+
+                    string sourcePolygonLocation = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { fileGDB, polygonFeatureClassName });
+                    if (geoProcessor.Exists(sourcePolygonFCName, ref missingValue))
+                        polygonFCNamesArray.Add(sourcePolygonLocation);
                 }
 
-                // append all the lines
-                parameterArray = new VarArrayClass();
-                parameterArray.Add(String.Join(";", linesFCNamesArray.ToArray()));
-                parameterArray.Add(targetLineFCName);
 
-                gpResults = geoProcessor.Execute("Append_management", parameterArray, TrackCancel);
+                if (linesFCNamesArray.Count > 0)
+                {
+                    // append all the lines
+                    parameterArray = new VarArrayClass();
+                    parameterArray.Add(String.Join(";", linesFCNamesArray.ToArray()));
+                    parameterArray.Add(targetLineFCName);
 
-                messages = gpResults.GetResultMessages();
-                toolMessages.AddMessages(gpResults.GetResultMessages());
+                    gpResults = geoProcessor.Execute("Append_management", parameterArray, TrackCancel);
+
+                    messages = gpResults.GetResultMessages();
+                    toolMessages.AddMessages(gpResults.GetResultMessages());
 
 #if DEBUG
-                for (int i = 0; i < messages.Count; i++)
-                {
-                    System.Diagnostics.Debug.WriteLine(messages.GetMessage(i).Description);
-                }
+                    for (int i = 0; i < messages.Count; i++)
+                    {
+                        System.Diagnostics.Debug.WriteLine(messages.GetMessage(i).Description);
+                    }
 #endif
+                }
 
-                // append all the polygons
-                parameterArray = new VarArrayClass();
-                parameterArray.Add(String.Join(";", polygonFCNamesArray.ToArray()));
-                parameterArray.Add(targetPolygonFCName);
+                if (polygonFCNamesArray.Count > 0)
+                {
+                    // append all the polygons
+                    parameterArray = new VarArrayClass();
+                    parameterArray.Add(String.Join(";", polygonFCNamesArray.ToArray()));
+                    parameterArray.Add(targetPolygonFCName);
 
-                gpResults = geoProcessor.Execute("Append_management", parameterArray, TrackCancel);
+                    gpResults = geoProcessor.Execute("Append_management", parameterArray, TrackCancel);
 
-                messages = gpResults.GetResultMessages();
-                toolMessages.AddMessages(gpResults.GetResultMessages());
+                    messages = gpResults.GetResultMessages();
+                    toolMessages.AddMessages(gpResults.GetResultMessages());
 
 #if DEBUG
-                for (int i = 0; i < messages.Count; i++)
-                {
-                    System.Diagnostics.Debug.WriteLine(messages.GetMessage(i).Description);
-                }
+                    for (int i = 0; i < messages.Count; i++)
+                    {
+                        System.Diagnostics.Debug.WriteLine(messages.GetMessage(i).Description);
+                    }
 #endif
+                }
 
                 // delete the temp loading fgdbs
                 for (int gdbIndex = 0; gdbIndex < relationGDBNames.Count; gdbIndex++)
