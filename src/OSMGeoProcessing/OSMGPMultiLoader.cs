@@ -616,76 +616,76 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 #region for local geodatabases enforce spatial integrity
-                //storedOriginalLocal = geoProcessor.AddOutputsToMap;
-                //geoProcessor.AddOutputsToMap = false;
+                storedOriginalLocal = geoProcessor.AddOutputsToMap;
+                geoProcessor.AddOutputsToMap = false;
 
-                //try
-                //{
-                //    osmLineFeatureClass = ((IFeatureWorkspace)lineFeatureWorkspace).OpenFeatureClass(lineFCNameElements[lineFCNameElements.Length - 1]);
+                try
+                {
+                    osmLineFeatureClass = ((IFeatureWorkspace)lineFeatureWorkspace).OpenFeatureClass(lineFCNameElements[lineFCNameElements.Length - 1]);
 
-                //    if (osmLineFeatureClass != null)
-                //    {
+                    if (osmLineFeatureClass != null)
+                    {
 
-                //        if (((IDataset)osmLineFeatureClass).Workspace.Type == esriWorkspaceType.esriLocalDatabaseWorkspace)
-                //        {
-                //            gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;
+                        if (((IDataset)osmLineFeatureClass).Workspace.Type == esriWorkspaceType.esriLocalDatabaseWorkspace)
+                        {
+                            gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;
 
-                //            IGPParameter outLinesParameter = paramvalues.get_Element(out_osmLinesNumber) as IGPParameter;
-                //            IGPValue lineFeatureClass = gpUtilities3.UnpackGPValue(outLinesParameter);
+                            IGPParameter outLinesParameter = paramvalues.get_Element(out_osmLinesNumber) as IGPParameter;
+                            IGPValue lineFeatureClass = gpUtilities3.UnpackGPValue(outLinesParameter);
 
-                //            DataManagementTools.RepairGeometry repairlineGeometry = new DataManagementTools.RepairGeometry(osmLineFeatureClass);
+                            DataManagementTools.RepairGeometry repairlineGeometry = new DataManagementTools.RepairGeometry(osmLineFeatureClass);
 
-                //            IVariantArray repairGeometryParameterArray = new VarArrayClass();
-                //            repairGeometryParameterArray.Add(lineFeatureClass.GetAsText());
-                //            repairGeometryParameterArray.Add("DELETE_NULL");
+                            IVariantArray repairGeometryParameterArray = new VarArrayClass();
+                            repairGeometryParameterArray.Add(lineFeatureClass.GetAsText());
+                            repairGeometryParameterArray.Add("DELETE_NULL");
 
-                //            gpResults2 = geoProcessor.Execute(repairlineGeometry.ToolName, repairGeometryParameterArray, TrackCancel) as IGeoProcessorResult2;
-                //            message.AddMessages(gpResults2.GetResultMessages());
+                            gpResults2 = geoProcessor.Execute(repairlineGeometry.ToolName, repairGeometryParameterArray, TrackCancel) as IGeoProcessorResult2;
+                            message.AddMessages(gpResults2.GetResultMessages());
 
-                //            ComReleaser.ReleaseCOMObject(gpUtilities3);
-                //        }
-                //    }
-                //}
-                //catch { }
-                //finally
-                //{
-                //    ComReleaser.ReleaseCOMObject(osmLineFeatureClass);
-                //}
+                            ComReleaser.ReleaseCOMObject(gpUtilities3);
+                        }
+                    }
+                }
+                catch { }
+                finally
+                {
+                    ComReleaser.ReleaseCOMObject(osmLineFeatureClass);
+                }
 
 
-                //try
-                //{
-                //    osmPolygonFeatureClass = ((IFeatureWorkspace)polygonFeatureWorkspace).OpenFeatureClass(polygonFCNameElements[polygonFCNameElements.Length - 1]);
+                try
+                {
+                    osmPolygonFeatureClass = ((IFeatureWorkspace)polygonFeatureWorkspace).OpenFeatureClass(polygonFCNameElements[polygonFCNameElements.Length - 1]);
 
-                //    if (osmPolygonFeatureClass != null)
-                //    {
-                //        if (((IDataset)osmPolygonFeatureClass).Workspace.Type == esriWorkspaceType.esriLocalDatabaseWorkspace)
-                //        {
-                //            gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;
+                    if (osmPolygonFeatureClass != null)
+                    {
+                        if (((IDataset)osmPolygonFeatureClass).Workspace.Type == esriWorkspaceType.esriLocalDatabaseWorkspace)
+                        {
+                            gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;
 
-                //            IGPParameter outPolygonParameter = paramvalues.get_Element(out_osmPolygonsNumber) as IGPParameter;
-                //            IGPValue polygonFeatureClass = gpUtilities3.UnpackGPValue(outPolygonParameter);
+                            IGPParameter outPolygonParameter = paramvalues.get_Element(out_osmPolygonsNumber) as IGPParameter;
+                            IGPValue polygonFeatureClass = gpUtilities3.UnpackGPValue(outPolygonParameter);
 
-                //            DataManagementTools.RepairGeometry repairpolygonGeometry = new DataManagementTools.RepairGeometry(osmPolygonFeatureClass);
+                            DataManagementTools.RepairGeometry repairpolygonGeometry = new DataManagementTools.RepairGeometry(osmPolygonFeatureClass);
 
-                //            IVariantArray repairGeometryParameterArray = new VarArrayClass();
-                //            repairGeometryParameterArray.Add(polygonFeatureClass.GetAsText());
-                //            repairGeometryParameterArray.Add("DELETE_NULL");
+                            IVariantArray repairGeometryParameterArray = new VarArrayClass();
+                            repairGeometryParameterArray.Add(polygonFeatureClass.GetAsText());
+                            repairGeometryParameterArray.Add("DELETE_NULL");
 
-                //            gpResults2 = geoProcessor.Execute(repairpolygonGeometry.ToolName, repairGeometryParameterArray, TrackCancel) as IGeoProcessorResult2;
-                //            message.AddMessages(gpResults2.GetResultMessages());
+                            gpResults2 = geoProcessor.Execute(repairpolygonGeometry.ToolName, repairGeometryParameterArray, TrackCancel) as IGeoProcessorResult2;
+                            message.AddMessages(gpResults2.GetResultMessages());
 
-                //            ComReleaser.ReleaseCOMObject(gpUtilities3);
-                //        }
-                //    }
-                //}
-                //catch { }
-                //finally
-                //{
-                //    ComReleaser.ReleaseCOMObject(osmPolygonFeatureClass);
-                //}
+                            ComReleaser.ReleaseCOMObject(gpUtilities3);
+                        }
+                    }
+                }
+                catch { }
+                finally
+                {
+                    ComReleaser.ReleaseCOMObject(osmPolygonFeatureClass);
+                }
 
-                //geoProcessor.AddOutputsToMap = storedOriginalLocal;
+                geoProcessor.AddOutputsToMap = storedOriginalLocal;
 
                 #endregion
 
