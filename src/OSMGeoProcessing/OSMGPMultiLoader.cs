@@ -540,12 +540,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;
 
                             IGPParameter outLinesParameter = paramvalues.get_Element(out_osmLinesNumber) as IGPParameter;
-                            IGPValue lineFeatureClass = gpUtilities3.UnpackGPValue(outLinesParameter);
+                            IGPValue lineFeatureClassGPValue = gpUtilities3.UnpackGPValue(outLinesParameter);
 
                             DataManagementTools.RepairGeometry repairlineGeometry = new DataManagementTools.RepairGeometry(osmLineFeatureClass);
 
                             IVariantArray repairGeometryParameterArray = new VarArrayClass();
-                            repairGeometryParameterArray.Add(lineFeatureClass.GetAsText());
+                            repairGeometryParameterArray.Add(lineFeatureClassGPValue.GetAsText());
                             repairGeometryParameterArray.Add("DELETE_NULL");
 
                             gpResults2 = geoProcessor.Execute(repairlineGeometry.ToolName, repairGeometryParameterArray, TrackCancel) as IGeoProcessorResult2;
@@ -573,12 +573,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;
 
                             IGPParameter outPolygonParameter = paramvalues.get_Element(out_osmPolygonsNumber) as IGPParameter;
-                            IGPValue polygonFeatureClass = gpUtilities3.UnpackGPValue(outPolygonParameter);
+                            IGPValue polygonFeatureClassGPValue = gpUtilities3.UnpackGPValue(outPolygonParameter);
 
                             DataManagementTools.RepairGeometry repairpolygonGeometry = new DataManagementTools.RepairGeometry(osmPolygonFeatureClass);
 
                             IVariantArray repairGeometryParameterArray = new VarArrayClass();
-                            repairGeometryParameterArray.Add(polygonFeatureClass.GetAsText());
+                            repairGeometryParameterArray.Add(polygonFeatureClassGPValue.GetAsText());
                             repairGeometryParameterArray.Add("DELETE_NULL");
 
                             gpResults2 = geoProcessor.Execute(repairpolygonGeometry.ToolName, repairGeometryParameterArray, TrackCancel) as IGeoProcessorResult2;
