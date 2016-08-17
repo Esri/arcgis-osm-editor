@@ -453,7 +453,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     return;
                 }
 
-                // split the original OSM xml file into smaller pieces for the python processes
+                // split the original OSM XML file into smaller pieces for the python processes
                 osmToolHelper.splitOSMFile(osmFileLocationString.GetAsText(), scratchWorkspaceFolder, nodeCapacity, wayCapacity, relationCapacity, numberOfThreads,
                     out nodeOSMFileNames, out nodeGDBFileNames, out wayOSMFileNames, out wayGDBFileNames, out relationOSMFileNames, out relationGDBFileNames);
 
@@ -503,6 +503,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 // define variables helping to invoke core tools for data management
                 IGeoProcessorResult2 gpResults2 = null;
                 IGeoProcessor2 geoProcessor = new GeoProcessorClass();
+                geoProcessor.AddToResults = false;
 
                 IGPParameter deleteSupportingNodesParameter = paramvalues.get_Element(in_deleteSupportNodesNumber) as IGPParameter;
                 IGPBoolean deleteSupportingNodesGPValue = gpUtilities3.UnpackGPValue(deleteSupportingNodesParameter) as IGPBoolean;

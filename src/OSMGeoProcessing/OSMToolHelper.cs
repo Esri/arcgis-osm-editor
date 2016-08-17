@@ -146,6 +146,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 _osmUtility = null;
         }
 
+        public static string CountingTableName()
+        {
+            return "osmCountingTable";
+        }
+
         public static List<String> OSMSmallFeatureClassFields()
         {
             return new List<string>(){"name", "highway", "building", "natural", "waterway", "amenity", "landuse", "place", "railway", "boundary", "power", "leisure",
@@ -686,7 +691,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         ///</remarks>
         internal ESRI.ArcGIS.Geodatabase.ITable CreateRelationTable(ESRI.ArcGIS.Geodatabase.IWorkspace2 workspace, System.String tableName, ESRI.ArcGIS.Geodatabase.IFields fields, string storageKeyword, string metadataAbstract, string metadataPurpose)
         {
-            // create the behavior clasid for the featureclass
+            // create the behavior classid for the featureclass
             ESRI.ArcGIS.esriSystem.UID uid = new ESRI.ArcGIS.esriSystem.UIDClass();
 
             if (workspace == null) return null; // valid feature workspace not passed in as an argument to the method
@@ -834,7 +839,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 table = featureWorkspace.CreateTable(tableName, validatedFields, uid, null, storageKeyword);
 
 
-                // create the openstreetmap spcific metadata
+                // create the openstreetmap specific metadata
                 _osmUtility.CreateOSMMetadata((IDataset)table, metadataAbstract, metadataPurpose);
             }
             catch
@@ -849,7 +854,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         #region create revision table
         internal ESRI.ArcGIS.Geodatabase.ITable CreateRevisionTable(ESRI.ArcGIS.Geodatabase.IWorkspace2 workspace, System.String tableName, ESRI.ArcGIS.Geodatabase.IFields fields, string storageKeyword)
         {
-            // create the behavior clasid for the featureclass
+            // create the behavior classid for the featureclass
             ESRI.ArcGIS.esriSystem.UID uid = new ESRI.ArcGIS.esriSystem.UIDClass();
 
             if (workspace == null) return null; // valid feature workspace not passed in as an argument to the method
@@ -1006,13 +1011,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 if (workspace.get_NameExists(ESRI.ArcGIS.Geodatabase.esriDatasetType.esriDTTable, tableName))
                 {
-                    // if a table with the same name already exists delete it....if that is not possible return the current instance
+                    // if a table with the same name already ...
                     table = featureWorkspace.OpenTable(tableName);
 
-                    if (!DeleteDataset((IDataset)table))
-                    {
+                   // if (!DeleteDataset((IDataset)table))
                         return table;
-                    }
                 }
 
                 uid.Value = "esriGeoDatabase.Object";
@@ -1355,7 +1358,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     ((IClassSchemaEdit2)featureClass).AlterClassExtensionProperties(extensionPropertySet);
                 }
 
-                // create the openstreetmap spcific metadata
+                // create the openstreetmap specific metadata
                 _osmUtility.CreateOSMMetadata((IDataset)featureClass, metadataAbstract, metadataPurpose);
 
                 // the change at release 2.1 requires a new model name
@@ -1508,7 +1511,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 // finally create and return the feature class
                     featureClass = featureWorkspace.CreateFeatureClass(featureClassName, validatedFields, CLSID, null, ESRI.ArcGIS.Geodatabase.esriFeatureType.esriFTSimple, strShapeField, strConfigKeyword);
 
-                // create the openstreetmap spcific metadata
+                // create the openstreetmap specific metadata
                 _osmUtility.CreateOSMMetadata((IDataset)featureClass, metadataAbstract, metadataPurpose);
             }
             catch
@@ -1815,7 +1818,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     ((IClassSchemaEdit2)featureClass).AlterClassExtensionProperties(extensionPropertySet);
                 }
 
-                // create the openstreetmap spcific metadata
+                // create the openstreetmap specific metadata
                 _osmUtility.CreateOSMMetadata((IDataset)featureClass, metadataAbstract, metadataPurpose);
 
                 // the change at release 2.1 requires a new model name
@@ -1983,7 +1986,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         /// Deletes the dataset if possible
         /// </summary>
         /// <remarks>
-        /// - Checks for a shcema lock before deleting (CanDelete returns true even if the dataset is locked)
+        /// - Checks for a schema lock before deleting (CanDelete returns true even if the dataset is locked)
         /// - Returns true if the dataset was deleted, else false
         /// </remarks>
         private static bool DeleteDataset(IDataset ds)
@@ -3155,6 +3158,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             // create the point feature classes in the temporary loading fgdbs
             OSMToolHelper toolHelper = new OSMToolHelper();
             IGeoProcessor2 geoProcessor = new GeoProcessorClass() as IGeoProcessor2;
+            geoProcessor.AddToResults = false;
             geoProcessor.AddOutputsToMap = false;
             IGeoProcessorResult gpResults = null;
             IVariantArray parameterArray = null;
@@ -3337,6 +3341,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             // create the point feature classes in the temporary loading fgdbs
             OSMToolHelper toolHelper = new OSMToolHelper();
             IGeoProcessor2 geoProcessor = new GeoProcessorClass() as IGeoProcessor2;
+            geoProcessor.AddToResults = false;
             geoProcessor.AddOutputsToMap = false;
             IGeoProcessorResult gpResults = null;
             IVariantArray parameterArray = null;
@@ -3554,7 +3559,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                     if (osmFileXmlReader.Name == "node")
                                     {
                                         string currentNodeString = osmFileXmlReader.ReadOuterXml();
-                                        // turn the xml node representation into a node class representation
+                                        // turn the XML node representation into a node class representation
                                         ESRI.ArcGIS.OSM.OSMClassExtension.node currentNode = null;
                                         using (StringReader nodeReader = new System.IO.StringReader(currentNodeString))
                                         {
@@ -3802,6 +3807,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
 
                         IGeoProcessor2 geoProcessor = new GeoProcessorClass();
+                        geoProcessor.AddToResults = false;
                         bool storedOriginal = geoProcessor.AddOutputsToMap;
 
                         try
@@ -4211,7 +4217,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                             currentWay = waySerializer.Deserialize(wayReader) as way;
                                         }
 
-                                        // if the deserialization fails then go ahead and read the next xml element
+                                        // if the deserialization fails then go ahead and read the next XML element
                                         if (currentWay == null)
                                         {
                                             continue;
@@ -4367,7 +4373,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                                         idCompareString = CleanReportedIDs(idCompareString);
 
-                                                        // after removing the commas we should be left with only paranthesis left, meaning a string of length 2
+                                                        // after removing the commas we should be left with only parenthesis left, meaning a string of length 2
                                                         // if we have more then we have found a missing node, resulting in an incomplete way geometry
                                                         if (idCompareString.Length > 2)
                                                         {
@@ -4814,6 +4820,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 IGeoProcessor2 geoProcessor = new GeoProcessorClass();
+                geoProcessor.AddToResults = false;
                 IGPUtilities3 gpUtilities3 = new GPUtilitiesClass();
                 bool storedOriginal = geoProcessor.AddOutputsToMap;
                 IVariantArray parameterArrary = null;
@@ -4835,7 +4842,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         {
                             message.AddMessage(_resourceManager.GetString("GPTools_buildinglineidx"));
 
-                            // Addd index for osmid column
+                            // Add index for osmid column
                             parameterArrary = CreateAddIndexParameterArray(fcLocation, "OSMID", "osmID_IDX", "UNIQUE", "");
                             gpResults2 = geoProcessor.Execute("AddIndex_management", parameterArrary, TrackCancel) as IGeoProcessorResult2;
                         }
@@ -4866,7 +4873,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                             if (polygonFeatureClassGPValue != null)
                             {
-                                // Addd index for osmid column
+                                // Add index for osmid column
                                 parameterArrary = CreateAddIndexParameterArray(fcLocation, "OSMID", "osmID_IDX", "UNIQUE", "");
                                 gpResults2 = geoProcessor.Execute("AddIndex_management", parameterArrary, TrackCancel) as IGeoProcessorResult2;
                             }
@@ -5099,7 +5106,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 {
                                     case "node":
                                         string currentNodeString = osmFileXmlReader.ReadOuterXml();
-                                        // turn the xml node representation into a node class representation
+                                        // turn the XML node representation into a node class representation
                                         ESRI.ArcGIS.OSM.OSMClassExtension.node currentNode = null;
                                         using (StringReader nodeReader = new System.IO.StringReader(currentNodeString))
                                         {
@@ -5130,7 +5137,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                         wayCapacity++;
 
                                         string currentWayString = osmFileXmlReader.ReadOuterXml();
-                                        // turn the xml node representation into a node class representation
+                                        // turn the XML node representation into a node class representation
                                         ESRI.ArcGIS.OSM.OSMClassExtension.way currentWay = null;
                                         using (StringReader wayReader = new System.IO.StringReader(currentWayString))
                                         {
@@ -5163,7 +5170,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                     case "relation":
                                         relationCapacity++;
 
-                                        // for relation let's NOT do an exhaustive determine if we have a polygon or maybe a multipart polyline
+                                        // for relation let's NOT do an exhaustive determine if we have a polygon or maybe a multi-part polyline
                                         // or maybe a super relation
                                         string currentRelationString = osmFileXmlReader.ReadOuterXml();
 
@@ -5231,10 +5238,13 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             // create the point feature classes in the temporary loading fgdbs
             OSMToolHelper toolHelper = new OSMToolHelper();
             IGeoProcessor2 geoProcessor = new GeoProcessorClass() as IGeoProcessor2;
+            geoProcessor.AddToResults = false;
             geoProcessor.AddOutputsToMap = false;
             IGeoProcessorResult gpResults = null;
             IGPUtilities4 gpUtilities = new GPUtilitiesClass() as IGPUtilities4;
-
+            List<string> countingTableNamesArray = new List<string>();
+            IVariantArray parameterArray = new VarArrayClass();
+            IGPMessages messages = null;
 
             Stopwatch executionStopwatch = System.Diagnostics.Stopwatch.StartNew();
             toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_loading_relations")));
@@ -5246,6 +5256,19 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             string lineFeatureClassName = sourceLineNameElements[sourceLineNameElements.Length - 1];
             string[] sourcePolygonNameElements = sourcePolygonFCName.Split(System.IO.Path.DirectorySeparatorChar);
             string polygonFeatureClassName = sourcePolygonNameElements[sourcePolygonNameElements.Length - 1];
+
+            string[] targetPolygonNameElements = targetPolygonFCName.Split(System.IO.Path.DirectorySeparatorChar);
+            string[] targetCountingTableElements = new string[targetPolygonNameElements.Length];
+            targetPolygonNameElements.CopyTo(targetCountingTableElements, 0);
+            targetCountingTableElements[targetPolygonNameElements.Length - 1] = OSMToolHelper.CountingTableName();
+            string countingTableLocation = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), targetCountingTableElements);
+
+            IFeatureClass targetPolygonFC = gpUtilities.OpenFeatureClassFromString(targetPolygonFCName);
+            IWorkspace2 targetWorkspace = ((IDataset) targetPolygonFC).Workspace as IWorkspace2;
+            ITable countTable = CreatePartCountTable(targetWorkspace, OSMToolHelper.CountingTableName(), null, null);
+            //ComReleaser.ReleaseCOMObject(countTable);
+            //ComReleaser.ReleaseCOMObject(targetWorkspace);
+            //ComReleaser.ReleaseCOMObject(targetPolygonFC);
 
             // in the case of a single thread we can use the parent process directly to convert the osm to the target featureclass
             if (osmRelationFileNames.Count == 1)
@@ -5323,10 +5346,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 List<string> linesFCNamesArray = new List<string>();
                 List<string> polygonFCNamesArray = new List<string>();
-                object deFeatureClassDataType = new DEFeatureClassTypeClass();
 
-                // append all lines into the target feature class
-                foreach (string  fileGDB in relationGDBNames)
+
+                // build an array of polygon and line featureclasses and counting tables across the various loading gdbs
+                foreach (string fileGDB in relationGDBNames)
                 {
                     string sourceLineLocation = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { fileGDB, lineFeatureClassName });
                     IFeatureClass src_ln_fc = null;
@@ -5337,7 +5360,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         if (src_ln_fc != null)
                             linesFCNamesArray.Add(sourceLineLocation);
                     }
-                    catch {}
+                    catch { }
                     finally
                     {
                         ComReleaser.ReleaseCOMObject(src_ln_fc);
@@ -5358,16 +5381,30 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         ComReleaser.ReleaseCOMObject(src_ply_fc);
                     }
+
+
+                    ITable countingTableCheck = null;
+                    string intermediateCountTableLocation = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { fileGDB, OSMToolHelper.CountingTableName() });
+
+                    try
+                    {
+                        countingTableCheck = gpUtilities.OpenTableFromString(intermediateCountTableLocation);
+
+                        if (countingTableCheck != null)
+                            countingTableNamesArray.Add(intermediateCountTableLocation);
+                    }
+                    catch { }
+                    finally
+                    {
+                        ComReleaser.ReleaseCOMObject(countingTableCheck);
+                    }
                 }
-                IVariantArray parameterArray = new VarArrayClass();
-                IGPMessages messages = null;
 
                 if (linesFCNamesArray.Count > 0)
                 {
                     // append all the lines
                     parameterArray.Add(String.Join(";", linesFCNamesArray.ToArray()));
                     parameterArray.Add(targetLineFCName);
-
                     gpResults = geoProcessor.Execute("Append_management", parameterArray, TrackCancel);
 
                     messages = gpResults.GetResultMessages();
@@ -5401,6 +5438,17 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 #endif
                 }
 
+
+                if (countingTableNamesArray.Count > 0)
+                {
+                    // append all the polygons
+                    parameterArray = new VarArrayClass();
+                    parameterArray.Add(String.Join(";", countingTableNamesArray.ToArray()));
+                    parameterArray.Add(countingTableLocation);
+
+                    geoProcessor.Execute("Append_management", parameterArray, TrackCancel);
+                }
+
                 // delete the temp loading fgdbs
                 for (int gdbIndex = 0; gdbIndex < relationGDBNames.Count; gdbIndex++)
                 {
@@ -5408,6 +5456,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     parameterArray.Add(relationGDBNames[gdbIndex]);
                     geoProcessor.Execute("Delete_management", parameterArray, new CancelTrackerClass());
                 }
+
                 #endregion
 
                 #region load super-relations
@@ -5465,6 +5514,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 linesFCNamesArray = new List<string>(relationGDBNames.Count);
                 polygonFCNamesArray = new List<string>(relationGDBNames.Count);
+                countingTableNamesArray = new List<string>(relationGDBNames.Count);
 
                 // append all lines into the target feature class
                 foreach (string fileGDB in relationGDBNames)
@@ -5484,7 +5534,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         ComReleaser.ReleaseCOMObject(src_ln_fc);
                     }
-                        
+
 
                     string sourcePolygonLocation = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { fileGDB, polygonFeatureClassName });
 
@@ -5501,7 +5551,22 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         ComReleaser.ReleaseCOMObject(src_ply_fc);
                     }
-                        
+
+                    ITable countingTableCheck = null;
+                    string intermediateCountTableLocation = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), new string[] { fileGDB, OSMToolHelper.CountingTableName() });
+
+                    try
+                    {
+                        countingTableCheck = gpUtilities.OpenTableFromString(intermediateCountTableLocation);
+
+                        if (countingTableCheck != null)
+                            countingTableNamesArray.Add(intermediateCountTableLocation);
+                    }
+                    catch { }
+                    finally
+                    {
+                        ComReleaser.ReleaseCOMObject(countingTableCheck);
+                    }
                 }
 
 
@@ -5545,6 +5610,16 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 #endif
                 }
 
+                if (countingTableNamesArray.Count > 0)
+                {
+                    // append all the polygons
+                    parameterArray = new VarArrayClass();
+                    parameterArray.Add(String.Join(";", countingTableNamesArray.ToArray()));
+                    parameterArray.Add(countingTableLocation);
+
+                    geoProcessor.Execute("Append_management", parameterArray, TrackCancel);
+                }
+
                 // delete the temp loading fgdbs
                 for (int gdbIndex = 0; gdbIndex < relationGDBNames.Count; gdbIndex++)
                 {
@@ -5552,24 +5627,90 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     parameterArray.Add(relationGDBNames[gdbIndex]);
                     geoProcessor.Execute("Delete_management", parameterArray, new CancelTrackerClass());
                 }
-
                 #endregion
+            }
 
-                // delete the temp loading relation osm files
-                foreach (string osmFile in osmRelationFileNames)
+
+            #region remove geometries that were used in support to build a relation (multi-part geometry)
+
+            // delete the outer ways from relations that are no longer needed as they are now part of the multi-part geometry
+            // compute the OSM index on the part count table
+            parameterArray = CreateAddIndexParameterArray(countingTableLocation, "sourceID", "countID_IDX", "UNIQUE", "");
+            geoProcessor.AddToResults = false;
+            geoProcessor.Execute("AddIndex_management", parameterArray, new CancelTrackerClass());
+
+            ComReleaser comReleaser1 = new ComReleaser();
+            gpUtilities = new GPUtilitiesClass() as IGPUtilities4;
+            ITable targetCountingTable = gpUtilities.OpenTableFromString(countingTableLocation);
+            comReleaser1.ManageLifetime(targetCountingTable);
+            int partIDFieldIndex = targetCountingTable.FindField("sourceID");
+
+            IFeatureClass targetLineFeatureClass = gpUtilities.OpenFeatureClassFromString(targetLineFCName);
+            comReleaser1.ManageLifetime(targetLineFeatureClass);
+
+            IFeatureClass targetPolygonFeatureClass = gpUtilities.OpenFeatureClassFromString(targetPolygonFCName);
+            comReleaser1.ManageLifetime(targetPolygonFeatureClass);
+
+            // delete the features with a count of 1, from the source line and source polygon feature class
+            ICursor searchCursor = targetCountingTable.Search(new QueryFilterClass() { WhereClause = "osmcount = 1" }, true);
+            comReleaser1.ManageLifetime(searchCursor);
+
+            IRow countingRow = searchCursor.NextRow();
+            comReleaser1.ManageLifetime(countingRow);
+
+            while (countingRow != null)
+            {
+                string osmID = countingRow.get_Value(partIDFieldIndex) as string;
+
+                IFeatureCursor deleteCursor = null;
+                if (osmID[0] == 'l')
                 {
-                    try
-                    {
-                        System.IO.File.Delete(osmFile);
-                    }
-                    catch { }
+                    deleteCursor = targetLineFeatureClass.Search(new QueryFilterClass() { WhereClause = String.Format("osmID = '{0}'", osmID.Replace("l", "w")) }, false);
+                }
+                else
+                {
+                    deleteCursor = targetPolygonFeatureClass.Search(new QueryFilterClass() { WhereClause = String.Format("osmID = '{0}'", osmID.Replace("p", "w")) }, false);
                 }
 
-                if (gpUtilities != null)
-                    gpUtilities.ReleaseInternals();
+                comReleaser1.ManageLifetime(deleteCursor);
+                IFeature deleteFeature = deleteCursor.NextFeature();
+                comReleaser1.ManageLifetime(deleteFeature);
 
-                ComReleaser.ReleaseCOMObject(gpUtilities);
+                while (deleteFeature != null)
+                {
+                    deleteFeature.Delete();
+
+                    deleteFeature = deleteCursor.NextFeature();
+                }
+
+                countingRow = searchCursor.NextRow();
             }
+
+
+            // delete the internal counting table
+            if (((IDataset)targetCountingTable).CanDelete())
+                ((IDataset)targetCountingTable).Delete();
+
+
+
+            #endregion
+
+
+            // delete the temp loading relation osm files
+            foreach (string osmFile in osmRelationFileNames)
+            {
+                try
+                {
+                    System.IO.File.Delete(osmFile);
+                }
+                catch { }
+            }
+
+            if (gpUtilities != null)
+                gpUtilities.ReleaseInternals();
+
+            ComReleaser.ReleaseCOMObject(gpUtilities);
+
         }
 
         internal void smallLoadOSMRelations(string osmFileLocation, string sourceLineFeatureClassLocation, string sourcePolygonFeatureClassLocation, string targetLineFeatureClassLocation, string targetPolygonFeatureClassLocation, List<string> lineFieldNames, List<string> polygonFieldNames, bool includeSuperRelations)
@@ -5638,13 +5779,17 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
 
                     // 
-                    IGeoProcessor geoprocessor = new GeoProcessorClass();
-                    IScratchWorkspaceFactory workspaceFactory = new FileGDBScratchWorkspaceFactoryClass();
-                    IWorkspace scratchTableWorkspace = workspaceFactory.DefaultScratchWorkspace;
-                    string tableName = "osm" + GenerateRandomString();
-                    string targetLocation = scratchTableWorkspace.PathName;
-                    string partCountTableLocation = System.IO.Path.Combine(targetLocation, tableName);
-                    ITable countingTable = CreatePartCountTable((IWorkspace2)scratchTableWorkspace, tableName, null, null);
+                    IWorkspace scratchTableWorkspace = ((IDataset)targetLineFeatureClass).Workspace;
+                    ITable countingTable = CreatePartCountTable((IWorkspace2)scratchTableWorkspace, CountingTableName(), null, null);
+                    string partCountTableLocation = System.IO.Path.Combine(scratchTableWorkspace.PathName, CountingTableName());
+                    IGeoProcessor2 geoprocessor = new GeoProcessorClass();
+                    geoprocessor.AddToResults = false;
+                    //IScratchWorkspaceFactory workspaceFactory = new FileGDBScratchWorkspaceFactoryClass();
+                    //IWorkspace scratchTableWorkspace = workspaceFactory.DefaultScratchWorkspace;
+                    //string tableName = "osm" + GenerateRandomString();
+                    //string targetLocation = scratchTableWorkspace.PathName;
+                    //string partCountTableLocation = System.IO.Path.Combine(targetLocation, tableName);
+                    //ITable countingTable = CreatePartCountTable((IWorkspace2)scratchTableWorkspace, tableName, null, null);
                     comReleaser.ManageLifetime(countingTable);
                     int partCountField = countingTable.FindField("osmcount");
                     int partIDField = countingTable.FindField("sourceID");
@@ -5652,7 +5797,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     comReleaser.ManageLifetime(partCountBuffer);
                     ICursor partInsertCursor = countingTable.Insert(true);
                     comReleaser.ManageLifetime(partInsertCursor);
-                    System.Diagnostics.Debug.WriteLine(workspaceFactory.DefaultScratchWorkspace.PathName);
 
 
                     relationFileXmlReader = XmlReader.Create(osmFileLocation);
@@ -6258,10 +6402,16 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                     } while (relationFileXmlReader.Name == "relation");
 
+                    // delete the outer ways from relations that are no longer needed as they are now part of the multi-part geometry
                     // compute the OSM index on the part count table
-                    IVariantArray parameterArray = CreateAddIndexParameterArray(partCountTableLocation, "sourceID", "sourceID_IDX", "UNIQUE", "");
-                    IGeoProcessorResult gpResults = geoprocessor.Execute("AddIndex_management", parameterArray, new CancelTrackerClass());
                     
+                    if (countingTable.Indexes.IndexCount == 0)
+                    {
+                        IVariantArray parameterArray = CreateAddIndexParameterArray(partCountTableLocation, "sourceID", "sourceID_IDX", "UNIQUE", "");
+                        ((IGeoProcessor2)geoprocessor).AddToResults = false;
+                        IGeoProcessorResult gpResults = geoprocessor.Execute("AddIndex_management", parameterArray, new CancelTrackerClass());
+                    }
+
                     // count the items in the scratch table
                     ICursor searchCursor = countingTable.Search(null, false);
                     comReleaser.ManageLifetime(searchCursor);
@@ -6273,7 +6423,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         int countedRows = 0;
                         string countID = countingRow.get_Value(partIDField) as string;
-                        ICursor counterCursor = countingTable.Search(new QueryFilterClass() { WhereClause = String.Format("sourceID = '{0}'", countID)}, true);
+                        ICursor counterCursor = countingTable.Search(new QueryFilterClass() { WhereClause = String.Format("sourceID = '{0}'", countID) }, true);
 
                         while (counterCursor.NextRow() != null)
                         {
@@ -6285,44 +6435,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                         countingRow = searchCursor.NextRow();
                     }
-
-                    // delete the features with a count of 1, from the source line and source polygon feature class
-                    searchCursor = countingTable.Search(new QueryFilterClass() { WhereClause = "osmcount = 1" }, true);
-
-                    countingRow = searchCursor.NextRow();
-                    while (countingRow != null)
-                    {
-                        string osmID = countingRow.get_Value(partIDField) as string;
-
-                        IFeatureCursor deleteCursor = null;
-                        if (osmID[0] == 'l')
-                        {
-                            deleteCursor = targetLineFeatureClass.Search(new QueryFilterClass() { WhereClause = String.Format("osmID = '{0}'", osmID.Replace("l", "w")) }, false);
-                        }
-                        else
-                        {
-                            deleteCursor = targetPolygonFeatureClass.Search(new QueryFilterClass() { WhereClause = String.Format("osmID = '{0}'", osmID.Replace("p", "w")) }, false);
-                        }
-
-                        comReleaser.ManageLifetime(deleteCursor);
-                        IFeature deleteFeature = deleteCursor.NextFeature();
-                        comReleaser.ManageLifetime(deleteFeature);
-
-                        while (deleteFeature != null)
-                        {
-                            deleteFeature.Delete();
-
-                            deleteFeature = deleteCursor.NextFeature();
-                        }
-
-                        countingRow = searchCursor.NextRow();
-                    }
-
-
-                    // delete the scratch table
-                    if (((IDataset)countingTable).CanDelete())
-                        ((IDataset)countingTable).Delete();
-
                 }
                 catch (Exception ex)
                 {
@@ -6699,7 +6811,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                             using (StringReader relationReader = new System.IO.StringReader(currentrelationString))
                                             {
-                                                // de-serialize the xml into to the class instance
+                                                // deserialize the XML into to the class instance
                                                 currentRelation = relationSerializer.Deserialize(relationReader) as relation;
                                             }
 
@@ -6926,10 +7038,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                                 }
                                             }
 
-                                            // if there is a defined geometry type use it to generate a multipart geometry
+                                            // if there is a defined geometry type use it to generate a multi-part geometry
                                             if (detectedGeometryType == esriGeometryType.esriGeometryPolygon)
                                             {
-                                                #region create multipart polygon geometry
+                                                #region create multi-part polygon geometry
                                                 IPolygon relationMPPolygon = new PolygonClass();
                                                 relationMPPolygon.SpatialReference = ((IGeoDataset)osmPolygonFeatureClass).SpatialReference;
 
@@ -7226,7 +7338,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                             }
                                             else if (detectedGeometryType == esriGeometryType.esriGeometryPolyline)
                                             {
-                                                #region create multipart polyline geometry
+                                                #region create multi-part polyline geometry
                                                 IPolyline relationMPPolyline = new PolylineClass();
                                                 relationMPPolyline.SpatialReference = ((IGeoDataset)osmLineFeatureClass).SpatialReference;
 
@@ -7614,8 +7726,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         stepProgressor.Hide();
                     }
 
-                    // Addd index for osmid column as well
+                    // Add index for osmid column as well
                     IGeoProcessor2 geoProcessor = new GeoProcessorClass();
+                    geoProcessor.AddToResults = false;
                     bool storedOriginalLocal = geoProcessor.AddOutputsToMap;
                     IGPUtilities3 gpUtilities3 = new GPUtilitiesClass();
 
@@ -8305,7 +8418,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         }
 
         /// <summary>
-        /// determine if the relation is considered a multipart geometry
+        /// determine if the relation is considered a multi-part geometry
         /// </summary>
         /// <param name="currentRelation"></param>
         /// <returns></returns>
@@ -8330,7 +8443,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             {
                                 detectedGeometryType = esriGeometryType.esriGeometryPolygon;
                                 // now , it could be argued that the descriptive tag of 'polygon' is not sufficient to ensure 
-                                // or guarantuee that the geometry is indeed a 'polygon'
+                                // or guarantee that the geometry is indeed a 'polygon'
                                 return detectedGeometryType;
                             }
 
@@ -8347,7 +8460,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             {
                                 detectedGeometryType = esriGeometryType.esriGeometryPolygon;
                                 // now , it could be argued that the descriptive tag of 'polygon' is not sufficient to ensure 
-                                // or guarantuee that the geometry is indeed a 'polygon'
+                                // or guarantee that the geometry is indeed a 'polygon'
                                 return detectedGeometryType;
                             }
                         }
@@ -8377,7 +8490,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 }
                             }
 
-                            // check for the existence of of the referenced node/way
+                            // check for the existence of the referenced node/way
                             // because if it doesn't exist, we will keep it as a relation only and not turn it into a multi-part geometry
                             // unfortunately it also means more queries
                             // in this case we are using the method call to determine the geometry of the referenced OSM ID, if we determine the 
@@ -8400,12 +8513,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     }
 
                     // just in case
-                    // if we have polygon tag and a mixture of way and nodes, then let's say the the geometry is unknown
+                    // if we have polygon tag and a mixture of way and nodes, then let's say the geometry is unknown
                     if (isUniform == false)
                     {
                         detectedGeometryType = esriGeometryType.esriGeometryNull;
                     }
-                    else if (detectedGeometryType != esriGeometryType.esriGeometryPolygon) // if there was no tag identifying a multipart polygon we need to "walk" it to find what it is
+                    else if (detectedGeometryType != esriGeometryType.esriGeometryPolygon) // if there was no tag identifying a multi-part polygon we need to "walk" it to find what it is
                     {
                         osmRelationGeometryType walkedGeometryType = walkRelationGeometry(osmLineFeatureClass, osmPolygonFeatureClass, relationTable, currentRelation);
 

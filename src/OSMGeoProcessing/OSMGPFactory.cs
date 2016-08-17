@@ -24,7 +24,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
     [ProgId("OSMEditor.OSMGPFactory")]
     public sealed class OSMGPFactory : ESRI.ArcGIS.Geoprocessing.IGPFunctionFactory
     {
-        //private static readonly OSMGPFactory factoryInstance = new OSMGPFactory();
+        //private static read-only OSMGPFactory factoryInstance = new OSMGPFactory();
 
         string m_FactoryName = "OpenStreetMap Tools";
         string m_FactoryAlias = "OSMTools";
@@ -733,8 +733,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         }
                     }
                 }
-                //else
-                //    throw new Exception("Config file missing osmeditor.config at osm directory"); 
 
                 if (configurationSettings.ContainsKey("osmbaseurl") == false)
                 {

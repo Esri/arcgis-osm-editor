@@ -104,7 +104,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     return;
                 }
 
-                // find the field that holds tag binary/xml field
+                // find the field that holds tag binary/XML field
                 int osmTagCollectionFieldIndex = osmInputTable.FindField("osmTags");
 
 
