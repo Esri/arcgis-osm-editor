@@ -252,7 +252,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                     foreach (var item in hourReplicateDictionary)
                     {
-                        // if difference between current hour and next url is more 1 hour continue
+                        // if difference between current hour and next URL is more 1 hour continue
                         TimeSpan currentTimespan = DateTime.Now.ToUniversalTime().Subtract(item.Value);
 
                         if (currentTimespan.TotalHours > 1)
@@ -382,7 +382,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                     foreach (var item in minuteReplicateDictionary)
                     {
-                        // if difference between current minute and next url is more then 10 minutes continue
+                        // if difference between current minute and next URL is more then 10 minutes continue
                         TimeSpan currentTimespan = DateTime.Now.ToUniversalTime().Subtract(item.Value);
 
                         //message.AddMessage("now: " + DateTime.Now.ToUniversalTime() + " item.value: " + item.Value.ToString() + " timespan (min): " + currentTimespan.TotalMinutes);
@@ -708,7 +708,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
             }
 
-            // check if there is a valid url -- just a simple syntax check
+            // check if there is a valid URL -- just a simple syntax check
             IGPParameter downloadURLParameter = paramvalues.get_Element(in_downloadURLNumber) as IGPParameter;
             IGPValue downloadURLGPValue = gpUtilities3.UnpackGPValue(downloadURLParameter);
 
@@ -1337,7 +1337,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
         }
 
-
         private string GetName<T>(T item) where T : class
         {
             string returnName = String.Empty;
@@ -1518,10 +1517,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
 
-                // if there is a defined geometry type use it to generate a multipart geometry
+                // if there is a defined geometry type use it to generate a multi-part geometry
                 if (detectedGeometryType == esriGeometryType.esriGeometryPolygon)
                 {
-                    #region create multipart polygon geometry
+                    #region create multi-part polygon geometry
 
                     ISpatialFilter osmIDQueryFilter = new SpatialFilterClass();
                     string sqlPolyOSMID = osmPolygonFeatureClass.SqlIdentifier("OSMID");
@@ -1668,7 +1667,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
                 else if (detectedGeometryType == esriGeometryType.esriGeometryPolyline)
                 {
-                    #region create multipart polyline geometry
+                    #region create multi-part polyline geometry
                     IFeature mpFeature = null;
 
                     if (action == "create")
@@ -2132,7 +2131,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     if (trackCancel.Continue() == false)
                         return;
 
-                    // a relation can be multiple things, multipart polyline or polygon is one we would like to treat special
+                    // a relation can be multiple things, multi-part polyline or polygon is one we would like to treat special
                     esriGeometryType detectedGeoType = osmToolHelper.determineRelationGeometryType(osmLineFeatureClass, osmPolygonFeatureClass, relationTable, item.Value);
 
                     IGeometry relationGeometry = null;
@@ -2647,7 +2646,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
         }
 
-
         private void manipulateLinePolyFeatures(string action, Dictionary<string, KeyValuePair<way, IGeometry>> elementsInAOI, IFeatureClass insertFeatureClass, IPropertySet wayFieldIndexes, OSMDomains availableDomains, int domainFieldLength, int extensionVersion, ComReleaser comReleaser, ref ITrackCancel cancelTracker, ref IGPMessages message, bool useVerboseLogging)
         {
             try
@@ -2795,7 +2793,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 #endif
             }
         }
-
 
         void insertWay(way currentWay, string action, IFeatureClass insertFeatureClass, IGeometry featureGeometry, IGeometry filterGeometry, IFeatureClass osmPointFeatureClass, IPropertySet pointFieldIndexes, OSMDomains availableDomains, int domainFieldLength, IPropertySet wayFieldIndexes, ref IGPMessages message, int extensionVersion, ComReleaser comReleaser)
         {
@@ -3172,199 +3169,190 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
             //try
             //{
-                string sqlPointOSMID = osmPointFeatureClass.SqlIdentifier("OSMID");
+            string sqlPointOSMID = osmPointFeatureClass.SqlIdentifier("OSMID");
 
-                if (insertFeatureClass.ShapeType == esriGeometryType.esriGeometryPolyline)
+            if (insertFeatureClass.ShapeType == esriGeometryType.esriGeometryPolyline)
+            {
+                IPolyline wayPolyline = new PolylineClass();
+
+                IPointIDAware polylineIDAware = wayPolyline as IPointIDAware;
+                polylineIDAware.PointIDAware = true;
+
+                wayPointCollection = wayPolyline as IPointCollection;
+                for (int pointIndex = 0; pointIndex < currentWay.nd.Length; pointIndex++)
                 {
-                    IPolyline wayPolyline = new PolylineClass();
-
-                    IPointIDAware polylineIDAware = wayPolyline as IPointIDAware;
-                    polylineIDAware.PointIDAware = true;
-
-                    wayPointCollection = wayPolyline as IPointCollection;
-                    for (int pointIndex = 0; pointIndex < currentWay.nd.Length; pointIndex++)
-                    {
-                        wayPointCollection.AddPoint(new PointClass());
-                    }
-
-                    List<string> idRequests = osmToolHelper.SplitOSMIDRequests(currentWay, extensionVersion);
-
-                    // build a list of node ids we can use to determine the point index in the line geometry
-                    // as well as a dictionary to determine the position in the list in case of duplicates nodes
-                    Dictionary<string, int> nodePositionDictionary = new Dictionary<string, int>(currentWay.nd.Length);
-                    List<string> nodeIDs = new List<string>(currentWay.nd.Length);
-
-                    foreach (nd wayNode in currentWay.nd)
-                    {
-                        nodeIDs.Add(wayNode.@ref);
-
-                        if (nodePositionDictionary.ContainsKey(wayNode.@ref) == false)
-                        {
-                            nodePositionDictionary.Add(wayNode.@ref, 0);
-                        }
-                    }
-
-                    foreach (string request in idRequests)
-                    {
-                        string tempRequest = request;
-
-                        osmIDQueryFilter.WhereClause = sqlPointOSMID + " IN " + request;
-                        osmIDQueryFilter.SubFields = osmPointFeatureClass.OIDFieldName + ",OSMID," + osmPointFeatureClass.ShapeFieldName;
-
-                        //using (ComReleaser comReleaser = new ComReleaser())
-                        //{
-                            searchPointCursor = osmPointFeatureClass.Search(osmIDQueryFilter, false);
-                            comReleaser.ManageLifetime(searchPointCursor);
-
-                            IFeature nodeFeature = searchPointCursor.NextFeature();
-
-                            while (nodeFeature != null)
-                            {
-                                // determine the index of the point in with respect to the node position
-                                if (osmPointIDFieldIndex > -1)
-                                {
-                                    string nodeOSMIDString = Convert.ToString(nodeFeature.get_Value(osmPointIDFieldIndex));
-                                    int nodePositionIndex = nodeIDs.IndexOf(nodeOSMIDString, nodePositionDictionary[nodeOSMIDString]);
-
-                                    // update the new position start search index
-                                    if ((nodePositionIndex + 1) < nodeIDs.Count)
-                                    {
-                                        nodePositionDictionary[nodeOSMIDString] = nodePositionIndex + 1;
-                                    }
-
-                                    IPoint currentPoint = nodeFeature.Shape as IPoint;
-                                    currentPoint.ID = nodeFeature.OID;
-
-                                    wayPointCollection.UpdatePoint(nodePositionIndex, currentPoint);
-
-                                    // remove the current osmid from the request string to indicate that we handled this feature
-                                    tempRequest = tempRequest.Replace(nodeOSMIDString, "");
-
-                                    nodeFeature = searchPointCursor.NextFeature();
-                                }
-                            }
-                        //}
-
-                        if (regex.IsMatch(tempRequest))
-                        {
-                            // if we still find a number in the request string then is way OSM feature contains a node that is currently not 
-                            // in the point feature class
-                            // if this is the case then let's abandon the geometry creation as opposed to creating invalid geometry due to missing nodes
-                            return null;
-                        }
-                    }
-
-                    featureGeometry = wayPolyline;
-                }
-                else
-                {
-                    IPolygon wayPolygon = new PolygonClass();
-                    wayPolygon.SpatialReference = ((IGeoDataset)insertFeatureClass).SpatialReference;
-
-                    IPointIDAware polygonIDAware = wayPolygon as IPointIDAware;
-                    polygonIDAware.PointIDAware = true;
-
-                    wayPointCollection = wayPolygon as IPointCollection;
-
-                    // populate the point collection with the number of nodes
-                    for (int pointIndex = 0; pointIndex < currentWay.nd.Length; pointIndex++)
-                    {
-                        wayPointCollection.AddPoint(new PointClass());
-                    }
-
-                    List<string> idRequests = osmToolHelper.SplitOSMIDRequests(currentWay, extensionVersion);
-
-                    // build a list of node ids we can use to determine the point index in the line geometry
-                    // as well as a dictionary to determine the position in the list in case of duplicates nodes
-                    Dictionary<string, int> nodePositionDictionary = new Dictionary<string, int>(currentWay.nd.Length);
-                    List<string> nodeIDs = new List<string>(currentWay.nd.Length);
-
-                    foreach (nd wayNode in currentWay.nd)
-                    {
-                        nodeIDs.Add(wayNode.@ref);
-
-                        if (nodePositionDictionary.ContainsKey(wayNode.@ref) == false)
-                        {
-                            nodePositionDictionary.Add(wayNode.@ref, 0);
-                        }
-                    }
-
-                    foreach (string osmIDRequest in idRequests)
-                    {
-                        string tempRequest = osmIDRequest;
-
-                        //using (ComReleaser innercomReleaser = new ComReleaser())
-                        //{
-                            osmIDQueryFilter.WhereClause = sqlPointOSMID + " IN " + osmIDRequest;
-                            osmIDQueryFilter.SubFields = osmPointFeatureClass.OIDFieldName + ",OSMID," + osmPointFeatureClass.ShapeFieldName;
-
-                            searchPointCursor = osmPointFeatureClass.Update(osmIDQueryFilter, false);
-                            comReleaser.ManageLifetime(searchPointCursor);
-
-                            IFeature nodeFeature = searchPointCursor.NextFeature();
-
-                            while (nodeFeature != null)
-                            {
-                                if (osmPointIDFieldIndex > -1)
-                                {
-                                    // determine the index of the point in with respect to the node position
-                                    string nodeOSMIDString = Convert.ToString(nodeFeature.get_Value(osmPointIDFieldIndex));
-                                    int nodePositionIndex = nodeIDs.IndexOf(nodeOSMIDString, nodePositionDictionary[nodeOSMIDString]);
-
-                                    // update the new position start search index
-                                    if ((nodePositionIndex + 1) < nodeIDs.Count)
-                                    {
-                                        nodePositionDictionary[nodeOSMIDString] = nodePositionIndex + 1;
-                                    }
-
-                                    IPoint currentPoint = nodeFeature.Shape as IPoint;
-                                    currentPoint.ID = nodeFeature.OID;
-
-                                    wayPointCollection.UpdatePoint(nodePositionIndex, currentPoint);
-
-                                    //// increase the reference counter
-                                    //if (osmWayRefCountFieldIndex != -1)
-                                    //{
-                                    //    nodeFeature.set_Value(osmWayRefCountFieldIndex, ((int)nodeFeature.get_Value(osmWayRefCountFieldIndex)) + 1);
-
-                                    //    searchPointCursor.UpdateFeature(nodeFeature);
-                                    //}
-
-                                    // remove the current osmid from the request string to indicate that we handled this feature
-                                    tempRequest = tempRequest.Replace(nodeOSMIDString, "");
-                                }
-
-                                nodeFeature = searchPointCursor.NextFeature();
-                            }
-                        //}
-
-                        if (regex.IsMatch(tempRequest))
-                        {
-                            // if we still find a number in the request string then is way OSM feature contains a node that is currently not 
-                            // in the point feature class
-                            // if this is the case then let's abandon the geometry creation as opposed to creating invalid geometry due to missing nodes
-                            return null;
-                        }
-
-                    }
-
-                    // remove the last point as OSM considers them to be coincident
-                    wayPointCollection.RemovePoints(wayPointCollection.PointCount - 1, 1);
-                    ((IPolygon)wayPointCollection).Close();
-
-
-                    featureGeometry = wayPointCollection as IGeometry;
+                    wayPointCollection.AddPoint(new PointClass());
                 }
 
+                List<string> idRequests = osmToolHelper.SplitOSMIDRequests(currentWay, extensionVersion);
 
-//            }
-//            catch (Exception ex) 
-//            {
-//#if DEBUG
-//                System.Diagnostics.Debug.WriteLine(ex.Message);
-//                System.Diagnostics.Debug.WriteLine(ex.StackTrace);
-//#endif
-//            }
+                // build a list of node ids we can use to determine the point index in the line geometry
+                // as well as a dictionary to determine the position in the list in case of duplicates nodes
+                Dictionary<string, int> nodePositionDictionary = new Dictionary<string, int>(currentWay.nd.Length);
+                List<string> nodeIDs = new List<string>(currentWay.nd.Length);
+
+                foreach (nd wayNode in currentWay.nd)
+                {
+                    nodeIDs.Add(wayNode.@ref);
+
+                    if (nodePositionDictionary.ContainsKey(wayNode.@ref) == false)
+                    {
+                        nodePositionDictionary.Add(wayNode.@ref, 0);
+                    }
+                }
+
+                foreach (string request in idRequests)
+                {
+                    string tempRequest = request;
+
+                    osmIDQueryFilter.WhereClause = sqlPointOSMID + " IN " + request;
+                    osmIDQueryFilter.SubFields = osmPointFeatureClass.OIDFieldName + ",OSMID," + osmPointFeatureClass.ShapeFieldName;
+
+                    //using (ComReleaser comReleaser = new ComReleaser())
+                    //{
+                    searchPointCursor = osmPointFeatureClass.Search(osmIDQueryFilter, false);
+                    comReleaser.ManageLifetime(searchPointCursor);
+
+                    IFeature nodeFeature = searchPointCursor.NextFeature();
+
+                    while (nodeFeature != null)
+                    {
+                        // determine the index of the point in with respect to the node position
+                        if (osmPointIDFieldIndex > -1)
+                        {
+                            string nodeOSMIDString = Convert.ToString(nodeFeature.get_Value(osmPointIDFieldIndex));
+                            int nodePositionIndex = nodeIDs.IndexOf(nodeOSMIDString, nodePositionDictionary[nodeOSMIDString]);
+
+                            // update the new position start search index
+                            if ((nodePositionIndex + 1) < nodeIDs.Count)
+                            {
+                                nodePositionDictionary[nodeOSMIDString] = nodePositionIndex + 1;
+                            }
+
+                            IPoint currentPoint = nodeFeature.Shape as IPoint;
+                            currentPoint.ID = nodeFeature.OID;
+
+                            wayPointCollection.UpdatePoint(nodePositionIndex, currentPoint);
+
+                            // remove the current osmid from the request string to indicate that we handled this feature
+                            tempRequest = tempRequest.Replace(nodeOSMIDString, "");
+
+                            nodeFeature = searchPointCursor.NextFeature();
+                        }
+                    }
+                    //}
+
+                    if (regex.IsMatch(tempRequest))
+                    {
+                        // if we still find a number in the request string then is way OSM feature contains a node that is currently not 
+                        // in the point feature class
+                        // if this is the case then let's abandon the geometry creation as opposed to creating invalid geometry due to missing nodes
+                        return null;
+                    }
+                }
+
+                featureGeometry = wayPolyline;
+            }
+            else
+            {
+                IPolygon wayPolygon = new PolygonClass();
+                wayPolygon.SpatialReference = ((IGeoDataset)insertFeatureClass).SpatialReference;
+
+                IPointIDAware polygonIDAware = wayPolygon as IPointIDAware;
+                polygonIDAware.PointIDAware = true;
+
+                wayPointCollection = wayPolygon as IPointCollection;
+
+                // populate the point collection with the number of nodes
+                for (int pointIndex = 0; pointIndex < currentWay.nd.Length; pointIndex++)
+                {
+                    wayPointCollection.AddPoint(new PointClass());
+                }
+
+                List<string> idRequests = osmToolHelper.SplitOSMIDRequests(currentWay, extensionVersion);
+
+                // build a list of node ids we can use to determine the point index in the line geometry
+                // as well as a dictionary to determine the position in the list in case of duplicates nodes
+                Dictionary<string, int> nodePositionDictionary = new Dictionary<string, int>(currentWay.nd.Length);
+                List<string> nodeIDs = new List<string>(currentWay.nd.Length);
+
+                foreach (nd wayNode in currentWay.nd)
+                {
+                    nodeIDs.Add(wayNode.@ref);
+
+                    if (nodePositionDictionary.ContainsKey(wayNode.@ref) == false)
+                    {
+                        nodePositionDictionary.Add(wayNode.@ref, 0);
+                    }
+                }
+
+                foreach (string osmIDRequest in idRequests)
+                {
+                    string tempRequest = osmIDRequest;
+
+                    //using (ComReleaser innercomReleaser = new ComReleaser())
+                    //{
+                    osmIDQueryFilter.WhereClause = sqlPointOSMID + " IN " + osmIDRequest;
+                    osmIDQueryFilter.SubFields = osmPointFeatureClass.OIDFieldName + ",OSMID," + osmPointFeatureClass.ShapeFieldName;
+
+                    searchPointCursor = osmPointFeatureClass.Update(osmIDQueryFilter, false);
+                    comReleaser.ManageLifetime(searchPointCursor);
+
+                    IFeature nodeFeature = searchPointCursor.NextFeature();
+
+                    while (nodeFeature != null)
+                    {
+                        if (osmPointIDFieldIndex > -1)
+                        {
+                            // determine the index of the point in with respect to the node position
+                            string nodeOSMIDString = Convert.ToString(nodeFeature.get_Value(osmPointIDFieldIndex));
+                            int nodePositionIndex = nodeIDs.IndexOf(nodeOSMIDString, nodePositionDictionary[nodeOSMIDString]);
+
+                            // update the new position start search index
+                            if ((nodePositionIndex + 1) < nodeIDs.Count)
+                            {
+                                nodePositionDictionary[nodeOSMIDString] = nodePositionIndex + 1;
+                            }
+
+                            IPoint currentPoint = nodeFeature.Shape as IPoint;
+                            currentPoint.ID = nodeFeature.OID;
+
+                            wayPointCollection.UpdatePoint(nodePositionIndex, currentPoint);
+
+                            //// increase the reference counter
+                            //if (osmWayRefCountFieldIndex != -1)
+                            //{
+                            //    nodeFeature.set_Value(osmWayRefCountFieldIndex, ((int)nodeFeature.get_Value(osmWayRefCountFieldIndex)) + 1);
+
+                            //    searchPointCursor.UpdateFeature(nodeFeature);
+                            //}
+
+                            // remove the current osmid from the request string to indicate that we handled this feature
+                            tempRequest = tempRequest.Replace(nodeOSMIDString, "");
+                        }
+
+                        nodeFeature = searchPointCursor.NextFeature();
+                    }
+                    //}
+
+                    if (regex.IsMatch(tempRequest))
+                    {
+                        // if we still find a number in the request string then is way OSM feature contains a node that is currently not 
+                        // in the point feature class
+                        // if this is the case then let's abandon the geometry creation as opposed to creating invalid geometry due to missing nodes
+                        return null;
+                    }
+
+                }
+
+                // remove the last point as OSM considers them to be coincident
+                wayPointCollection.RemovePoints(wayPointCollection.PointCount - 1, 1);
+                ((IPolygon)wayPointCollection).Close();
+
+
+                featureGeometry = wayPointCollection as IGeometry;
+            }
+
 
             return featureGeometry;
         }
@@ -4150,7 +4138,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 List<tag> relationTagList = new List<tag>();
                 List<member> relationMemberList = new List<member>();
 
-                // create a list of members and tags to be along in attribute fields for the multipart features
+                // create a list of members and tags to be along in attribute fields for the multi-part features
                 foreach (var item in createRelation.Items)
                 {
                     if (item is member)
@@ -4323,7 +4311,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 List<tag> relationTagList = new List<tag>();
                 List<member> relationMemberList = new List<member>();
 
-                // create a list of members and tags to be along in attribute fields for the multipart features
+                // create a list of members and tags to be along in attribute fields for the multi-part features
                 foreach (var item in createRelation.Items)
                 {
                     if (item is member)

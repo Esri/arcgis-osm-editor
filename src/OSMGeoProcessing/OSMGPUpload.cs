@@ -452,7 +452,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     osmChangeDocument.generator = m_Generator;
                     osmChangeDocument.version = "0.6";
 
-                    // xml elements to describe the changeset
+                    // XML elements to describe the changeset
                     create uploadCreates = null;
                     modify uploadModify = null;
                     delete uploadDelete = null;
@@ -1546,7 +1546,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 }
 
                                 osm createRelation = null;
-                                // the relation is acutally multi-part line
+                                // the relation is actually multi-part line
                                 if (sourceFCName.Contains("_osm_ln"))
                                 {
                                     createRelation = CreateOSMRelationRepresentation((ITable)lineFeatureClass, action, osmOldID, changeSetID, -1, nodeosmIDLookup, wayosmIDLookup, relationosmIDLookup, internalExtensionVersion);
@@ -2673,7 +2673,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         {
             IGPUtilities3 gpUtilities3 = new GPUtilitiesClass();
 
-            // check for a valid download url
+            // check for a valid download URL
             IGPParameter uploadURLParameter = paramvalues.get_Element(in_uploadURLNumber) as IGPParameter;
             IGPString uploadURLGPString = uploadURLParameter.Value as IGPString;
 
@@ -2689,7 +2689,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         Uri downloadURI = new Uri(uploadURLGPString.Value);
 
-                        // check base url
+                        // check base URL
                         api osmAPICapabilities = OSMGPDownload.CheckValidServerURL(uploadURLGPString.Value);
 
                         // if we can construct a valid URI  class then we are accepting the value and store it in the user settings as well
@@ -3575,7 +3575,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
             node simpleNode = CreateNodeRepresentation(pointFeatureClass, action, osmID, osmChangeSetID, osmVersion, deletePoint, extensionVersion);
 
-            // if the node representation is unsuccessfull then return a null pointer
+            // if the node representation is unsuccessful then return a null pointer
             if (simpleNode != null)
             {
                 nodeOSMPresentation = new ESRI.ArcGIS.OSM.OSMClassExtension.osm();

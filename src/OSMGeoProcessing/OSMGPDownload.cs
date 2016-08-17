@@ -237,7 +237,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 string requestURL = baseURLString.Value + "/api/0.6/map?bbox=" + downloadEnvelope.XMin.ToString("f5", enUSCultureInfo) + "," + downloadEnvelope.YMin.ToString("f5", enUSCultureInfo) + "," + downloadEnvelope.XMax.ToString("f5", enUSCultureInfo) + "," + downloadEnvelope.YMax.ToString("f5", enUSCultureInfo);
                 string osmMasterDocument = downloadOSMDocument(ref message, requestURL, apiCapabilities);
 
-                // check if the initial request was successfull
+                // check if the initial request was successful
                 // it might have failed at this point because too many nodes were requested or because of something else
                 if (String.IsNullOrEmpty(osmMasterDocument))
                 {
@@ -552,6 +552,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 #region clean any existing data from loading targets
                 ESRI.ArcGIS.Geoprocessing.IGeoProcessor2 gp = new ESRI.ArcGIS.Geoprocessing.GeoProcessorClass();
+                gp.AddToResults = false;
                 IGeoProcessorResult gpResult = new GeoProcessorResultClass();
 
                 try
@@ -650,7 +651,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         return;
                     }
-                    ESRI.ArcGIS.Geoprocessor.Geoprocessor geoProcessor = new ESRI.ArcGIS.Geoprocessor.Geoprocessor();
+                    IGeoProcessor2 geoProcessor = new GeoProcessorClass() as IGeoProcessor2;
+                    geoProcessor.AddToResults = false;
 
                     #region for local geodatabases enforce spatial integrity
                     bool storedOriginal = geoProcessor.AddOutputsToMap;
@@ -690,8 +692,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     }
                     geoProcessor.AddOutputsToMap = storedOriginal;
                     #endregion
-
-
 
                     #region load relations
                     if (relationCapacity > 0)
@@ -931,7 +931,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         }
 
         /// <summary>
-        /// Checks if the baseURL can be used to retrieve the OSM server capabilities. All exceptions will be rethrown to the caller.
+        /// Checks if the baseURL can be used to retrieve the OSM server capabilities. All exceptions will be re-thrown to the caller.
         /// </summary>
         /// <param name="baseURL"></param>
         /// <returns></returns>
@@ -1234,7 +1234,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         {
             IGPUtilities3 gpUtilities3 = new GPUtilitiesClass();
 
-            // check for a valid download url
+            // check for a valid download URL
             IGPParameter downloadURLParameter = paramvalues.get_Element(in_downloadURLNumber) as IGPParameter;
 
             if (downloadURLParameter.HasBeenValidated == false)
@@ -1469,7 +1469,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             if (osmFileXmlReader.Name == "node")
                             {
                                 string currentNodeString = osmFileXmlReader.ReadOuterXml();
-                                // turn the xml node representation into a node class representation
+                                // turn the XML node representation into a node class representation
                                 node currentNode = nodeSerializer.Deserialize(new System.IO.StringReader(currentNodeString)) as node;
                                 if (!nodeList.Contains(currentNode.id))
                                 {
@@ -1479,7 +1479,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             else if (osmFileXmlReader.Name == "way")
                             {
                                 string currentWayString = osmFileXmlReader.ReadOuterXml();
-                                // turn the xml way representation into a way class representation
+                                // turn the XML way representation into a way class representation
                                 way currentWay = waySerializer.Deserialize(new System.IO.StringReader(currentWayString)) as way;
                                 if (!wayList.Contains(currentWay.id))
                                 {
@@ -1505,7 +1505,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             else if (osmFileXmlReader.Name == "relation")
                             {
                                 string currentRelationString = osmFileXmlReader.ReadOuterXml();
-                                // turn the xml way representation into a way class representation
+                                // turn the XML way representation into a way class representation
                                 relation currentRelation = relationSerializer.Deserialize(new System.IO.StringReader(currentRelationString)) as relation;
                                 if (!relationList.Contains(currentRelation.id))
                                 {
