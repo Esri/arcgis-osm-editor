@@ -538,7 +538,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                         if (((IDataset)osmLineFeatureClass).Workspace.Type == esriWorkspaceType.esriLocalDatabaseWorkspace)
                         {
-                            gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;
+                            //gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;
 
                             IGPParameter outLinesParameter = paramvalues.get_Element(out_osmLinesNumber) as IGPParameter;
                             IGPValue lineFeatureClassGPValue = gpUtilities3.UnpackGPValue(outLinesParameter);
@@ -552,7 +552,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             gpResults2 = geoProcessor.Execute(repairlineGeometry.ToolName, repairGeometryParameterArray, TrackCancel) as IGeoProcessorResult2;
                             message.AddMessages(gpResults2.GetResultMessages());
 
-                            ComReleaser.ReleaseCOMObject(gpUtilities3);
+                            //ComReleaser.ReleaseCOMObject(gpUtilities3);
                         }
                     }
                 }
@@ -571,7 +571,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         if (((IDataset)osmPolygonFeatureClass).Workspace.Type == esriWorkspaceType.esriLocalDatabaseWorkspace)
                         {
-                            gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;
+                            //gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;
 
                             IGPParameter outPolygonParameter = paramvalues.get_Element(out_osmPolygonsNumber) as IGPParameter;
                             IGPValue polygonFeatureClassGPValue = gpUtilities3.UnpackGPValue(outPolygonParameter);
@@ -585,7 +585,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             gpResults2 = geoProcessor.Execute(repairpolygonGeometry.ToolName, repairGeometryParameterArray, TrackCancel) as IGeoProcessorResult2;
                             message.AddMessages(gpResults2.GetResultMessages());
 
-                            ComReleaser.ReleaseCOMObject(gpUtilities3);
+                            //ComReleaser.ReleaseCOMObject(gpUtilities3);
                         }
                     }
                 }
@@ -629,7 +629,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                         if (((IDataset)osmLineFeatureClass).Workspace.Type == esriWorkspaceType.esriLocalDatabaseWorkspace)
                         {
-                            gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;
+                            //gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;
 
                             IGPParameter outLinesParameter = paramvalues.get_Element(out_osmLinesNumber) as IGPParameter;
                             IGPValue lineFeatureClass = gpUtilities3.UnpackGPValue(outLinesParameter);
@@ -643,7 +643,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             gpResults2 = geoProcessor.Execute(repairlineGeometry.ToolName, repairGeometryParameterArray, TrackCancel) as IGeoProcessorResult2;
                             message.AddMessages(gpResults2.GetResultMessages());
 
-                            ComReleaser.ReleaseCOMObject(gpUtilities3);
+                            //ComReleaser.ReleaseCOMObject(gpUtilities3);
                         }
                     }
                 }
@@ -662,7 +662,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         if (((IDataset)osmPolygonFeatureClass).Workspace.Type == esriWorkspaceType.esriLocalDatabaseWorkspace)
                         {
-                            gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;
+                            //gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;
 
                             IGPParameter outPolygonParameter = paramvalues.get_Element(out_osmPolygonsNumber) as IGPParameter;
                             IGPValue polygonFeatureClass = gpUtilities3.UnpackGPValue(outPolygonParameter);
@@ -676,7 +676,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             gpResults2 = geoProcessor.Execute(repairpolygonGeometry.ToolName, repairGeometryParameterArray, TrackCancel) as IGeoProcessorResult2;
                             message.AddMessages(gpResults2.GetResultMessages());
 
-                            ComReleaser.ReleaseCOMObject(gpUtilities3);
+                            //ComReleaser.ReleaseCOMObject(gpUtilities3);
                         }
                     }
                 }
@@ -703,57 +703,74 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     storedOriginalLocal = geoProcessor.AddOutputsToMap;
                     geoProcessor.AddOutputsToMap = false;
 
-                    gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;
-                    workspaceName = gpUtilities3.CreateParentFromCatalogPath(pointFCName);
-                    pointFeatureWorkspace = workspaceName.Open() as IWorkspace2;
-
+                    gpUtilities3 = new GPUtilitiesClass();
                     // create a layer file to select the points that have attributes
-                    osmPointFeatureClass = ((IFeatureWorkspace)pointFeatureWorkspace).OpenFeatureClass(pointFCNameElements[pointFCNameElements.Length - 1]);
+                    osmPointFeatureClass = gpUtilities3.OpenFeatureClassFromString(pointFCName);
 
-                    IVariantArray makeFeatureLayerParameterArray = new VarArrayClass();
-                    makeFeatureLayerParameterArray.Add(pointFCName);
+                    IQueryFilter supportElementQueryFilter = new QueryFilterClass();
+                    supportElementQueryFilter.WhereClause = String.Format("{0} = 'yes'", osmPointFeatureClass.SqlIdentifier("osmSupportingElement"));
 
-                    string tempLayerFile = System.IO.Path.GetTempFileName();
-                    makeFeatureLayerParameterArray.Add(tempLayerFile);
-                    makeFeatureLayerParameterArray.Add(String.Format("{0} = 'no'", osmPointFeatureClass.SqlIdentifier("osmSupportingElement")));
+                    IWorkspace pointWorkspace = ((IDataset)osmPointFeatureClass).Workspace;
 
-                    geoProcessor.Execute("MakeFeatureLayer_management", makeFeatureLayerParameterArray, TrackCancel);
+                    if (pointWorkspace.Type == esriWorkspaceType.esriLocalDatabaseWorkspace)
+                    {
+                        ((ITable)osmPointFeatureClass).DeleteSearchedRows(supportElementQueryFilter);
+                    }
+                    else
+                    {
+                        using (ComReleaser  comReleaser = new ComReleaser())
+                        {
+                            IFeatureCursor deleteCursor = osmPointFeatureClass.Search(supportElementQueryFilter, false);
+                            comReleaser.ManageLifetime(deleteCursor);
 
-                    // copy the features into its own feature class
-                    IVariantArray copyFeatureParametersArray = new VarArrayClass();
-                    copyFeatureParametersArray.Add(tempLayerFile);
+                            IFeature deleteFeature = null;
+                            while ((deleteFeature = deleteCursor.NextFeature()) != null )
+                            {
+                                deleteFeature.Delete();
+                            }
+                        }
+                    }
+                    //IVariantArray makeFeatureLayerParameterArray = new VarArrayClass();
+                    //makeFeatureLayerParameterArray.Add(pointFCName);
 
-                    string tempFeatureClass = String.Join("\\", new string[] { 
-                        ((IWorkspace)pointFeatureWorkspace).PathName, "t_" + pointFCNameElements[pointFCNameElements.Length - 1] });
-                    copyFeatureParametersArray.Add(tempFeatureClass);
+                    //string tempLayerFile = System.IO.Path.GetTempFileName();
+                    //makeFeatureLayerParameterArray.Add(tempLayerFile);
+                    //makeFeatureLayerParameterArray.Add();
 
-                    geoProcessor.Execute("CopyFeatures_management", copyFeatureParametersArray, TrackCancel);
+                    //geoProcessor.Execute("MakeFeatureLayer_management", makeFeatureLayerParameterArray, TrackCancel);
 
-                    // delete the temp file
-                    System.IO.File.Delete(tempLayerFile);
+                    //// copy the features into its own feature class
+                    //IVariantArray copyFeatureParametersArray = new VarArrayClass();
+                    //copyFeatureParametersArray.Add(tempLayerFile);
 
-                    // delete the original feature class
-                    IVariantArray deleteParameterArray = new VarArrayClass();
-                    deleteParameterArray.Add(osmPointsFeatureClassGPValue.GetAsText());
+                    //pointFCNameElements[pointFCNameElements.Length - 1] = "t_" + pointFCNameElements[pointFCNameElements.Length - 1];
+                    //string tempFeatureClass = String.Join("\\", pointFCNameElements);
+                    //copyFeatureParametersArray.Add(tempFeatureClass);
 
-                    geoProcessor.Execute("Delete_management", deleteParameterArray, TrackCancel);
+                    //geoProcessor.Execute("CopyFeatures_management", copyFeatureParametersArray, TrackCancel);
 
-                    // rename the temp feature class back to the original
-                    IVariantArray renameParameterArray = new VarArrayClass();
-                    renameParameterArray.Add(tempFeatureClass);
-                    renameParameterArray.Add(osmPointsFeatureClassGPValue.GetAsText());
+                    //// delete the temp file
+                    //System.IO.File.Delete(tempLayerFile);
 
-                    geoProcessor.Execute("Rename_management", renameParameterArray, TrackCancel);
+                    //// delete the original feature class
+                    //IVariantArray deleteParameterArray = new VarArrayClass();
+                    //deleteParameterArray.Add(osmPointsFeatureClassGPValue.GetAsText());
 
-                    geoProcessor.AddOutputsToMap = storedOriginalLocal;
+                    //geoProcessor.Execute("Delete_management", deleteParameterArray, TrackCancel);
 
-                    ComReleaser.ReleaseCOMObject(pointFeatureWorkspace);
-                    ComReleaser.ReleaseCOMObject(workspaceName);
+                    //// rename the temp feature class back to the original
+                    //IVariantArray renameParameterArray = new VarArrayClass();
+                    //renameParameterArray.Add(tempFeatureClass);
+                    //renameParameterArray.Add(osmPointsFeatureClassGPValue.GetAsText());
+
+                    //geoProcessor.Execute("Rename_management", renameParameterArray, TrackCancel);
+
+                    //geoProcessor.AddOutputsToMap = storedOriginalLocal;
+
+                    ComReleaser.ReleaseCOMObject(pointWorkspace);
                     ComReleaser.ReleaseCOMObject(osmPointFeatureClass);
                     ComReleaser.ReleaseCOMObject(geoProcessor);
                 }
-
-                gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;
 
                 // repackage the feature class into their respective gp values
                 IGPParameter pointFeatureClassParameter = paramvalues.get_Element(out_osmPointsNumber) as IGPParameter;
