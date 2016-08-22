@@ -696,6 +696,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
 
+                gpUtilities3 = new GPUtilitiesClass();
+
                 if (deleteSupportingNodesGPValue.Value)
                 {
                     message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPMultiLoader_remove_supportNodes")));
@@ -703,7 +705,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     storedOriginalLocal = geoProcessor.AddOutputsToMap;
                     geoProcessor.AddOutputsToMap = false;
 
-                    gpUtilities3 = new GPUtilitiesClass();
                     // create a layer file to select the points that have attributes
                     osmPointFeatureClass = gpUtilities3.OpenFeatureClassFromString(pointFCName);
 
@@ -730,42 +731,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             }
                         }
                     }
-                    //IVariantArray makeFeatureLayerParameterArray = new VarArrayClass();
-                    //makeFeatureLayerParameterArray.Add(pointFCName);
 
-                    //string tempLayerFile = System.IO.Path.GetTempFileName();
-                    //makeFeatureLayerParameterArray.Add(tempLayerFile);
-                    //makeFeatureLayerParameterArray.Add();
-
-                    //geoProcessor.Execute("MakeFeatureLayer_management", makeFeatureLayerParameterArray, TrackCancel);
-
-                    //// copy the features into its own feature class
-                    //IVariantArray copyFeatureParametersArray = new VarArrayClass();
-                    //copyFeatureParametersArray.Add(tempLayerFile);
-
-                    //pointFCNameElements[pointFCNameElements.Length - 1] = "t_" + pointFCNameElements[pointFCNameElements.Length - 1];
-                    //string tempFeatureClass = String.Join("\\", pointFCNameElements);
-                    //copyFeatureParametersArray.Add(tempFeatureClass);
-
-                    //geoProcessor.Execute("CopyFeatures_management", copyFeatureParametersArray, TrackCancel);
-
-                    //// delete the temp file
-                    //System.IO.File.Delete(tempLayerFile);
-
-                    //// delete the original feature class
-                    //IVariantArray deleteParameterArray = new VarArrayClass();
-                    //deleteParameterArray.Add(osmPointsFeatureClassGPValue.GetAsText());
-
-                    //geoProcessor.Execute("Delete_management", deleteParameterArray, TrackCancel);
-
-                    //// rename the temp feature class back to the original
-                    //IVariantArray renameParameterArray = new VarArrayClass();
-                    //renameParameterArray.Add(tempFeatureClass);
-                    //renameParameterArray.Add(osmPointsFeatureClassGPValue.GetAsText());
-
-                    //geoProcessor.Execute("Rename_management", renameParameterArray, TrackCancel);
-
-                    //geoProcessor.AddOutputsToMap = storedOriginalLocal;
+                    geoProcessor.AddOutputsToMap = storedOriginalLocal;
 
                     ComReleaser.ReleaseCOMObject(pointWorkspace);
                     ComReleaser.ReleaseCOMObject(osmPointFeatureClass);
