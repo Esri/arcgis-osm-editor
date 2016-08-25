@@ -535,11 +535,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                     if (osmLineFeatureClass != null)
                     {
-
                         if (((IDataset)osmLineFeatureClass).Workspace.Type == esriWorkspaceType.esriLocalDatabaseWorkspace)
                         {
-                            //gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;
-
                             IGPParameter outLinesParameter = paramvalues.get_Element(out_osmLinesNumber) as IGPParameter;
                             IGPValue lineFeatureClassGPValue = gpUtilities3.UnpackGPValue(outLinesParameter);
 
@@ -551,8 +548,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                             gpResults2 = geoProcessor.Execute(repairlineGeometry.ToolName, repairGeometryParameterArray, TrackCancel) as IGeoProcessorResult2;
                             message.AddMessages(gpResults2.GetResultMessages());
-
-                            //ComReleaser.ReleaseCOMObject(gpUtilities3);
                         }
                     }
                 }
@@ -571,8 +566,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         if (((IDataset)osmPolygonFeatureClass).Workspace.Type == esriWorkspaceType.esriLocalDatabaseWorkspace)
                         {
-                            //gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;
-
                             IGPParameter outPolygonParameter = paramvalues.get_Element(out_osmPolygonsNumber) as IGPParameter;
                             IGPValue polygonFeatureClassGPValue = gpUtilities3.UnpackGPValue(outPolygonParameter);
 
@@ -584,8 +577,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                             gpResults2 = geoProcessor.Execute(repairpolygonGeometry.ToolName, repairGeometryParameterArray, TrackCancel) as IGeoProcessorResult2;
                             message.AddMessages(gpResults2.GetResultMessages());
-
-                            //ComReleaser.ReleaseCOMObject(gpUtilities3);
                         }
                     }
                 }
@@ -620,6 +611,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 storedOriginalLocal = geoProcessor.AddOutputsToMap;
                 geoProcessor.AddOutputsToMap = false;
 
+                gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;
+
                 try
                 {
                     osmLineFeatureClass = ((IFeatureWorkspace)lineFeatureWorkspace).OpenFeatureClass(lineFCNameElements[lineFCNameElements.Length - 1]);
@@ -629,8 +622,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                         if (((IDataset)osmLineFeatureClass).Workspace.Type == esriWorkspaceType.esriLocalDatabaseWorkspace)
                         {
-                            //gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;
-
                             IGPParameter outLinesParameter = paramvalues.get_Element(out_osmLinesNumber) as IGPParameter;
                             IGPValue lineFeatureClass = gpUtilities3.UnpackGPValue(outLinesParameter);
 
@@ -642,8 +633,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                             gpResults2 = geoProcessor.Execute(repairlineGeometry.ToolName, repairGeometryParameterArray, TrackCancel) as IGeoProcessorResult2;
                             message.AddMessages(gpResults2.GetResultMessages());
-
-                            //ComReleaser.ReleaseCOMObject(gpUtilities3);
                         }
                     }
                 }
@@ -662,8 +651,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         if (((IDataset)osmPolygonFeatureClass).Workspace.Type == esriWorkspaceType.esriLocalDatabaseWorkspace)
                         {
-                            //gpUtilities3 = new GPUtilitiesClass() as IGPUtilities3;
-
                             IGPParameter outPolygonParameter = paramvalues.get_Element(out_osmPolygonsNumber) as IGPParameter;
                             IGPValue polygonFeatureClass = gpUtilities3.UnpackGPValue(outPolygonParameter);
 
@@ -675,8 +662,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                             gpResults2 = geoProcessor.Execute(repairpolygonGeometry.ToolName, repairGeometryParameterArray, TrackCancel) as IGeoProcessorResult2;
                             message.AddMessages(gpResults2.GetResultMessages());
-
-                            //ComReleaser.ReleaseCOMObject(gpUtilities3);
                         }
                     }
                 }
