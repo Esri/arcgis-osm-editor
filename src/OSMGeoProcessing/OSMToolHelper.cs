@@ -3153,6 +3153,75 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             return String.Format(@"""{0}""", inputString);
         }
 
+        private string FormatCompleteMessage(string osmType, TimeSpan elapsedLoadingTime)
+        {
+            string completedMessage = string.Empty;
+
+            try
+            {
+                List<string> arguments = new List<string>();
+                arguments.Add(osmType);
+
+                if (elapsedLoadingTime.Days > 0)
+                {
+                    arguments.Add(elapsedLoadingTime.Days.ToString());
+                    arguments.Add(elapsedLoadingTime.Days == 1 ? _resourceManager.GetString("GPTools_OSMGPMultiLoader_day") : _resourceManager.GetString("GPTools_OSMGPMultiLoader_days"));
+                    arguments.Add(elapsedLoadingTime.Hours.ToString());
+                    arguments.Add(elapsedLoadingTime.Hours == 1 ? _resourceManager.GetString("GPTools_OSMGPMultiLoader_hour") : _resourceManager.GetString("GPTools_OSMGPMultiLoader_hours"));
+                    arguments.Add(elapsedLoadingTime.Minutes.ToString());
+                    arguments.Add(elapsedLoadingTime.Minutes == 1 ? _resourceManager.GetString("GPTools_OSMGPMultiLoader_minute") : _resourceManager.GetString("GPTools_OSMGPMultiLoader_minutes"));
+                    arguments.Add(elapsedLoadingTime.Seconds.ToString());
+                    arguments.Add(elapsedLoadingTime.Seconds == 1 ? _resourceManager.GetString("GPTools_OSMGPMultiLoader_second") : _resourceManager.GetString("GPTools_OSMGPMultiLoader_seconds"));
+                }
+                else if (elapsedLoadingTime.Hours > 0)
+                {
+                    arguments.Add(elapsedLoadingTime.Hours.ToString());
+                    arguments.Add(elapsedLoadingTime.Hours == 1 ? _resourceManager.GetString("GPTools_OSMGPMultiLoader_hour") : _resourceManager.GetString("GPTools_OSMGPMultiLoader_hours"));
+                    arguments.Add(elapsedLoadingTime.Minutes.ToString());
+                    arguments.Add(elapsedLoadingTime.Minutes == 1 ? _resourceManager.GetString("GPTools_OSMGPMultiLoader_minute") : _resourceManager.GetString("GPTools_OSMGPMultiLoader_minutes"));
+                    arguments.Add(elapsedLoadingTime.Seconds.ToString());
+                    arguments.Add(elapsedLoadingTime.Seconds == 1 ? _resourceManager.GetString("GPTools_OSMGPMultiLoader_second") : _resourceManager.GetString("GPTools_OSMGPMultiLoader_seconds"));
+                }
+                else if (elapsedLoadingTime.Minutes > 0)
+                {
+                    arguments.Add(elapsedLoadingTime.Minutes.ToString());
+                    arguments.Add(elapsedLoadingTime.Minutes == 1 ? _resourceManager.GetString("GPTools_OSMGPMultiLoader_minute") : _resourceManager.GetString("GPTools_OSMGPMultiLoader_minutes"));
+                    arguments.Add(elapsedLoadingTime.Seconds.ToString());
+                    arguments.Add(elapsedLoadingTime.Seconds == 1 ? _resourceManager.GetString("GPTools_OSMGPMultiLoader_second") : _resourceManager.GetString("GPTools_OSMGPMultiLoader_seconds"));
+                }
+                else if (elapsedLoadingTime.Seconds > 0)
+                {
+                    arguments.Add(elapsedLoadingTime.Seconds.ToString());
+                    arguments.Add(elapsedLoadingTime.Seconds == 1 ? _resourceManager.GetString("GPTools_OSMGPMultiLoader_second") : _resourceManager.GetString("GPTools_OSMGPMultiLoader_seconds"));
+                }
+                else
+                {
+                    completedMessage = String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_doneloading"), osmType);
+                }
+
+                switch (arguments.Count)
+                {
+                    case 3:
+                        completedMessage = string.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_doneloading_s"), arguments.ToArray());
+                        break;
+                    case 5:
+                        completedMessage = string.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_doneloading_ms"), arguments.ToArray());
+                        break;
+                    case 7:
+                        completedMessage = string.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_doneloading_hms"), arguments.ToArray());
+                        break;
+                    case 9:
+                        completedMessage = string.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_doneloading_dhms"), arguments.ToArray());
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch { }
+
+            return completedMessage;
+        }
+
         internal void loadOSMWays(List<string> osmWayFileNames, string sourcePointFCName, string targetLineFCName, string targetPolygonFCName, List<string> wayGDBNames, string lineFeatureClassName, string polygonFeatureClassName, List<string> lineFieldNames, List<string> polygonFieldNames, ref IGPMessages toolMessages, ref ITrackCancel CancelTracker)
         {
             // create the point feature classes in the temporary loading fgdbs
@@ -3164,7 +3233,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             IVariantArray parameterArray = null;
 
             Stopwatch executionStopwatch = System.Diagnostics.Stopwatch.StartNew();
-            toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_loading_ways")));
+            toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_loading"), _resourceManager.GetString("GPTools_OSM_ways")));
 
             // in the case of a single thread we can use the parent process directly to convert the osm to the target featureclass
             if (osmWayFileNames.Count == 1)
@@ -3184,7 +3253,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 executionStopwatch.Stop();
                 TimeSpan wayLoadingTimeSpan = executionStopwatch.Elapsed;
-                toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_doneloading_ways"), wayLoadingTimeSpan.Hours, wayLoadingTimeSpan.Minutes, wayLoadingTimeSpan.Seconds));
+                toolMessages.AddMessage(FormatCompleteMessage(_resourceManager.GetString("GPTools_OSM_ways"), wayLoadingTimeSpan));
             }
             else
             {
@@ -3227,7 +3296,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 executionStopwatch.Stop();
                 TimeSpan wayLoadingTimeSpan = executionStopwatch.Elapsed;
-                toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_doneloading_ways"), wayLoadingTimeSpan.Hours, wayLoadingTimeSpan.Minutes, wayLoadingTimeSpan.Seconds));
+                toolMessages.AddMessage(FormatCompleteMessage(_resourceManager.GetString("GPTools_OSM_ways"), wayLoadingTimeSpan));
 
 
                 // delete the temp osm files from disk
@@ -3370,7 +3439,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
             Stopwatch executionStopwatch = System.Diagnostics.Stopwatch.StartNew();
 
-            toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_loading_nodes")));
+            toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_loading"), _resourceManager.GetString("GPTools_OSM_nodes")));
 
             string useCacheString = "USE_CACHE";
             if (!deleteNodes)
@@ -3384,8 +3453,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 executionStopwatch.Stop();
                 TimeSpan nodeLoadingTimeSpan = executionStopwatch.Elapsed;
-
-                toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_doneloading_nodes"), nodeLoadingTimeSpan.Hours, nodeLoadingTimeSpan.Minutes, nodeLoadingTimeSpan.Seconds));
+                toolMessages.AddMessage(FormatCompleteMessage(_resourceManager.GetString("GPTools_OSM_nodes"), nodeLoadingTimeSpan));
+                
             }
             else
             {
@@ -3421,7 +3490,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 executionStopwatch.Stop();
                 TimeSpan nodeLoadingTimeSpan = executionStopwatch.Elapsed;
-                toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_doneloading_nodes"), nodeLoadingTimeSpan.Hours, nodeLoadingTimeSpan.Minutes, nodeLoadingTimeSpan.Seconds));
+                toolMessages.AddMessage(FormatCompleteMessage(_resourceManager.GetString("GPTools_OSM_nodes"), nodeLoadingTimeSpan));
 
                 // we done using the osm files for loading
                 foreach (string osmFile in osmNodeFileNames)
@@ -5297,7 +5366,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             IGPMessages messages = null;
 
             Stopwatch executionStopwatch = System.Diagnostics.Stopwatch.StartNew();
-            toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_loading_relations")));
+            toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_loading"), _resourceManager.GetString("GPTools_OSM_relations")));
 
             string loadSuperRelationParameterValue = "DO_NOT_LOAD_SUPER_RELATION";
 
@@ -5330,10 +5399,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 executionStopwatch.Stop();
                 TimeSpan relationLoadingTimeSpan = executionStopwatch.Elapsed;
-                toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_doneloading_relations"), relationLoadingTimeSpan.Hours, relationLoadingTimeSpan.Minutes, relationLoadingTimeSpan.Seconds));
+                toolMessages.AddMessage(FormatCompleteMessage(_resourceManager.GetString("GPTools_OSM_relations"), relationLoadingTimeSpan));
 
 
-                toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_loading_super_relations")));
+                toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_loading"), _resourceManager.GetString("GPTools_OSM_superrelations")));
                 executionStopwatch.Reset();
                 executionStopwatch.Start();
 
@@ -5344,7 +5413,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 executionStopwatch.Stop();
                 relationLoadingTimeSpan = executionStopwatch.Elapsed;
-                toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_doneloading_super_relations"), relationLoadingTimeSpan.Hours, relationLoadingTimeSpan.Minutes, relationLoadingTimeSpan.Seconds));
+                toolMessages.AddMessage(FormatCompleteMessage(_resourceManager.GetString("GPTools_OSM_superrelations"), relationLoadingTimeSpan));
             }
             else
             {
@@ -5392,7 +5461,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 executionStopwatch.Stop();
                 TimeSpan relationLoadingTimeSpan = executionStopwatch.Elapsed;
-                toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_doneloading_relations"), relationLoadingTimeSpan.Hours, relationLoadingTimeSpan.Minutes, relationLoadingTimeSpan.Seconds));
+                toolMessages.AddMessage(FormatCompleteMessage(_resourceManager.GetString("GPTools_OSM_relations"), relationLoadingTimeSpan));
 
                 List<string> linesFCNamesArray = new List<string>();
                 List<string> polygonFCNamesArray = new List<string>();
@@ -5530,7 +5599,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
 
                 loadSuperRelationParameterValue = "LOAD_SUPER_RELATION";
-                toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_loading_super_relations")));
+                toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_loading"), _resourceManager.GetString("GPTools_OSM_superrelations")));
                 executionStopwatch.Reset();
                 executionStopwatch.Start();
 
@@ -5560,7 +5629,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 executionStopwatch.Stop();
                 relationLoadingTimeSpan = executionStopwatch.Elapsed;
-                toolMessages.AddMessage(String.Format(_resourceManager.GetString("GPTools_OSMGPMultiLoader_doneloading_super_relations"), relationLoadingTimeSpan.Hours, relationLoadingTimeSpan.Minutes, relationLoadingTimeSpan.Seconds));
+                toolMessages.AddMessage(FormatCompleteMessage(_resourceManager.GetString("GPTools_OSM_superrelations"), relationLoadingTimeSpan));
 
                 linesFCNamesArray = new List<string>(relationGDBNames.Count);
                 polygonFCNamesArray = new List<string>(relationGDBNames.Count);
