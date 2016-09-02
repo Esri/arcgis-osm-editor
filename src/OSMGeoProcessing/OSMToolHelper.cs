@@ -5053,8 +5053,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         /// <param name="wayCapacity"></param>
         /// <param name="relationCapacity"></param>
         /// <param name="CancelTracker"></param>
-        internal void countOSMStuffFast(string osmFileLocation, ref long nodeCapacity, ref long wayCapacity, ref long relationCapacity, ref ITrackCancel CancelTracker)
+        internal List<string> countOSMStuffFast(string osmFileLocation, ref long nodeCapacity, ref long wayCapacity, ref long relationCapacity, ref ITrackCancel CancelTracker)
         {
+            List<string> miscList = new List<string>();
             using (System.IO.FileStream fStream = new System.IO.FileStream(osmFileLocation, FileMode.Open, FileAccess.Read))
             {
                 using (StreamReader sReader = new StreamReader(fStream))
@@ -5071,13 +5072,17 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             wayCapacity++;
                         else if (line.Contains("<relation"))
                             relationCapacity++;
+                        else if (line.Contains("<remark"))
+                            miscList.Add(line);
                     }
                 }
             }
+            return miscList;
         }
 
-        internal void countOSMStuff(string osmFileLocation, ref long nodeCapacity, ref long wayCapacity, ref long relationCapacity, ref ITrackCancel CancelTracker)
+        internal List<string> countOSMStuff(string osmFileLocation, ref long nodeCapacity, ref long wayCapacity, ref long relationCapacity, ref ITrackCancel CancelTracker)
         {
+            List<string> miscList = new List<string>();
             using (System.Xml.XmlReader osmFileXmlReader = System.Xml.XmlReader.Create(osmFileLocation))
             {
                 osmFileXmlReader.MoveToContent();
@@ -5101,14 +5106,18 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 case "relation":
                                     relationCapacity++;
                                     break;
+                                case "remark":
+                                    miscList.Add(osmFileXmlReader.ReadOuterXml());
+                                    break;
                             }
                         }
                     }
                     else
-                        return;
+                        return miscList;
                 }
 
                 osmFileXmlReader.Close();
+                return miscList;
             }
         }
 
@@ -5125,6 +5134,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 List<string> pointTags = new List<string>();
                 List<string> lineTags = new List<string>();
                 List<string> polygonTags = new List<string>();
+                List<string> misc = new List<string>();
 
                 using (System.Xml.XmlReader osmFileXmlReader = System.Xml.XmlReader.Create(osmFileLocation))
                 {
@@ -5251,6 +5261,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                             }
                                         }
                                         break;
+                                    case "remark":
+                                        misc.Add(osmFileXmlReader.ReadOuterXml());
+                                        break;
                                 }
                             }
                         }
@@ -5262,6 +5275,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 attributesDictionary.Add(esriGeometryType.esriGeometryPoint, pointTags);
                 attributesDictionary.Add(esriGeometryType.esriGeometryPolyline, lineTags);
                 attributesDictionary.Add(esriGeometryType.esriGeometryPolygon, polygonTags);
+                attributesDictionary.Add(esriGeometryType.esriGeometryNull, misc);
             }
 
             catch { }

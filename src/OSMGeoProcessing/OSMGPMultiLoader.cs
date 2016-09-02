@@ -197,11 +197,18 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 long relationCapacity = 0;
 
                 // this assume a clean, tidy XML file - if this is not the case, there will by sync issues later on
-                osmToolHelper.countOSMStuffFast(osmFileLocationString.GetAsText(), ref nodeCapacity, ref wayCapacity, ref relationCapacity, ref TrackCancel);
+                List<string> remarks = osmToolHelper.countOSMStuffFast(osmFileLocationString.GetAsText(), ref nodeCapacity, ref wayCapacity, ref relationCapacity, ref TrackCancel);
 
                 if (nodeCapacity == 0 && wayCapacity == 0 && relationCapacity == 0)
                 {
                     return;
+                }
+
+                // report any remarks in the OSM file 
+                if (remarks.Count > 0)
+                {
+                    foreach (string remark in remarks)
+                        message.AddWarning(remark);
                 }
 
                 message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPMultiLoader_countedElements"), nodeCapacity, wayCapacity, relationCapacity));
@@ -687,37 +694,44 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 {
                     message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPMultiLoader_remove_supportNodes")));
 
+                    geoProcessor = new GeoProcessorClass();
                     storedOriginalLocal = geoProcessor.AddOutputsToMap;
                     geoProcessor.AddOutputsToMap = false;
+                    geoProcessor.AddToResults = false;
 
                     // create a layer file to select the points that have attributes
                     osmPointFeatureClass = gpUtilities3.OpenFeatureClassFromString(pointFCName);
 
                     IQueryFilter supportElementQueryFilter = new QueryFilterClass();
-                    supportElementQueryFilter.WhereClause = String.Format("{0} = 'yes'", osmPointFeatureClass.SqlIdentifier("osmSupportingElement"));
+                    supportElementQueryFilter.WhereClause = String.Format("{0} = 'no'", osmPointFeatureClass.SqlIdentifier("osmSupportingElement"));
 
                     IWorkspace pointWorkspace = ((IDataset)osmPointFeatureClass).Workspace;
 
-                    if (pointWorkspace.Type == esriWorkspaceType.esriLocalDatabaseWorkspace)
-                    {
-                        ((ITable)osmPointFeatureClass).DeleteSearchedRows(supportElementQueryFilter);
-                    }
-                    else
-                    {
-                        using (ComReleaser  comReleaser = new ComReleaser())
-                        {
-                            IFeatureCursor deleteCursor = osmPointFeatureClass.Search(supportElementQueryFilter, false);
-                            comReleaser.ManageLifetime(deleteCursor);
+                    string tempFeatureClass = pointFCName + "_tmp";
+                    string shapeFieldName = osmPointFeatureClass.ShapeFieldName;
+                    int shapeFieldIndex = osmPointFeatureClass.FindField(shapeFieldName);
+                    IField shapeField = osmPointFeatureClass.Fields.get_Field(shapeFieldIndex);
+                    IGeometryDef geometryDef = ((IClone)shapeField.GeometryDef).Clone() as IGeometryDef;
 
-                            IFeature deleteFeature = null;
-                            while ((deleteFeature = deleteCursor.NextFeature()) != null )
-                            {
-                                deleteFeature.Delete();
-                            }
-                        }
-                    }
+                    IFeatureDataConverter2 featureDataConverter = new FeatureDataConverterClass() as IFeatureDataConverter2;
+                    featureDataConverter.ConvertFeatureClass(gpUtilities3.CreateFeatureClassName(pointFCName) as IDatasetName,
+                        supportElementQueryFilter, null, null, 
+                        gpUtilities3.CreateFeatureClassName(tempFeatureClass) as IFeatureClassName,
+                        geometryDef,
+                        osmPointFeatureClass.Fields, "", 50000, 0);
 
-                    geoProcessor.AddOutputsToMap = storedOriginalLocal;
+                    // delete the original feature class
+                    IVariantArray deleteParameterArray = new VarArrayClass();
+                    deleteParameterArray.Add(osmPointsFeatureClassGPValue.GetAsText());
+                    geoProcessor.Execute("Delete_management", deleteParameterArray, TrackCancel);
+
+                    // rename the temp feature class back to the original
+                    IVariantArray renameParameterArray = new VarArrayClass();
+                    renameParameterArray.Add(tempFeatureClass);
+                    renameParameterArray.Add(osmPointsFeatureClassGPValue.GetAsText());
+                    geoProcessor.Execute("Rename_management", renameParameterArray, TrackCancel);
+
+                    storedOriginalLocal = geoProcessor.AddOutputsToMap;
 
                     ComReleaser.ReleaseCOMObject(pointWorkspace);
                     ComReleaser.ReleaseCOMObject(osmPointFeatureClass);
