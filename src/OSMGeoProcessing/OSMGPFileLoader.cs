@@ -159,10 +159,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     if (tagstoExtract.Count > 0)
                     {
                         // if the number of tags is > 0 then do a simple feature count and take name tags names from the gp value
-                        osmToolHelper.countOSMStuff(osmFileLocationString.GetAsText(), ref nodeCapacity, ref wayCapacity, ref relationCapacity, ref TrackCancel);
+                        List<string> remarks = osmToolHelper.countOSMStuff(osmFileLocationString.GetAsText(), ref nodeCapacity, ref wayCapacity, ref relationCapacity, ref TrackCancel);
                         attributeTags.Add(esriGeometryType.esriGeometryPoint, tagstoExtract);
                         attributeTags.Add(esriGeometryType.esriGeometryPolyline, tagstoExtract);
                         attributeTags.Add(esriGeometryType.esriGeometryPolygon, tagstoExtract);
+                        attributeTags.Add(esriGeometryType.esriGeometryNull, remarks);
                     }
                     else
                     {
@@ -176,10 +177,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 {
                     // no tags we defined, hence we do a simple count and create an empty list indicating that no additional fields
                     // need to be created
-                    osmToolHelper.countOSMStuff(osmFileLocationString.GetAsText(), ref nodeCapacity, ref wayCapacity, ref relationCapacity, ref TrackCancel);
+                    List<string> remarks = osmToolHelper.countOSMStuff(osmFileLocationString.GetAsText(), ref nodeCapacity, ref wayCapacity, ref relationCapacity, ref TrackCancel);
                     attributeTags.Add(esriGeometryType.esriGeometryPoint, new List<string>());
                     attributeTags.Add(esriGeometryType.esriGeometryPolyline, new List<string>());
                     attributeTags.Add(esriGeometryType.esriGeometryPolygon, new List<string>());
+                    attributeTags.Add(esriGeometryType.esriGeometryNull, remarks);
                 }
 
                 if (nodeCapacity == 0 && wayCapacity == 0 && relationCapacity == 0)
@@ -190,6 +192,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 if (conserveMemoryGPValue.Value == false)
                 {
                     osmNodeDictionary = new Dictionary<string, OSMToolHelper.simplePointRef>(Convert.ToInt32(nodeCapacity));
+                }
+
+                if (attributeTags[esriGeometryType.esriGeometryNull].Count > 0)
+                {
+                    foreach (string remark in attributeTags[esriGeometryType.esriGeometryNull])
+                        message.AddWarning(remark);
                 }
 
                 message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPFileReader_countedElements"), nodeCapacity, wayCapacity, relationCapacity));
