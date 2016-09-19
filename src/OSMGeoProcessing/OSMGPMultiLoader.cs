@@ -157,10 +157,30 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         else if (deWorkspace.WorkspaceType == esriWorkspaceType.esriFileSystemWorkspace)
                         {
                             scratchWorkspaceFolder = ((IDataElement)deWorkspace).CatalogPath;
+<<<<<<< HEAD
+=======
+
+                            // check if the path indeed does exist
+                            if (System.IO.Directory.Exists(scratchWorkspaceFolder) == false)
+                            {
+                                message.AddWarning(resourceManager.GetString("GPTools_OSMGPMultiLoader_scratch_replace"));
+                                scratchWorkspaceFolder = System.IO.Path.GetTempPath();
+                            }
+>>>>>>> 23ba1d2... added more detailed timing messages and additional checks for #155
                         }
                         else
                         {
                             scratchWorkspaceFolder = (new System.IO.FileInfo(((IDataElement)deWorkspace).CatalogPath)).DirectoryName;
+<<<<<<< HEAD
+=======
+
+                            // check if the path indeed does exist
+                            if (System.IO.Directory.Exists(scratchWorkspaceFolder) == false)
+                            {
+                                message.AddWarning(resourceManager.GetString("GPTools_OSMGPMultiLoader_scratch_replace"));
+                                scratchWorkspaceFolder = System.IO.Path.GetTempPath();
+                            }
+>>>>>>> 23ba1d2... added more detailed timing messages and additional checks for #155
                         }
                     }
                 }

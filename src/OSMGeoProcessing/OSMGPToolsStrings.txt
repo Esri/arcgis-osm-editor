@@ -322,3 +322,4 @@ GPTools_OSMGPMultiLoader_minutes=minutes
 GPTools_OSMGPMultiLoader_second=second
 GPTools_OSMGPMultiLoader_seconds=seconds
 GPTools_OSMGPMultiLoader_loading=Loading {0}...
+GPTools_OSMGPMultiLoader_scratch_replace=The scratch workspace doesn't exist. Using the system temp directory instead.
