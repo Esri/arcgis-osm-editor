@@ -5289,7 +5289,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             OSMToolHelper toolHelper = new OSMToolHelper();
             IGeoProcessor2 geoProcessor = new GeoProcessorClass() as IGeoProcessor2;
             geoProcessor.AddToResults = false;
+            bool originalAddOutputsToMap  = geoProcessor.AddOutputsToMap;
             geoProcessor.AddOutputsToMap = false;
+
             IGeoProcessorResult gpResults = null;
             IGPUtilities4 gpUtilities = new GPUtilitiesClass() as IGPUtilities4;
             List<string> countingTableNamesArray = new List<string>();
@@ -5687,6 +5689,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             // compute the OSM index on the part count table
             ComReleaser comReleaser1 = new ComReleaser();
             gpUtilities = new GPUtilitiesClass() as IGPUtilities4;
+            geoProcessor = new GeoProcessorClass() as IGeoProcessor2;
+            geoProcessor.AddToResults = false;
             ITable targetCountingTable = gpUtilities.OpenTableFromString(countingTableLocation);
             comReleaser1.ManageLifetime(targetCountingTable);
 
@@ -5700,7 +5704,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             if (indexRequired)
             {
                 parameterArray = CreateAddIndexParameterArray(countingTableLocation, "sourceID", "countID_IDX", "UNIQUE", "");
-                geoProcessor.AddToResults = false;
                 geoProcessor.Execute("AddIndex_management", parameterArray, new CancelTrackerClass());
             }
 
@@ -5748,9 +5751,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
 
 
-            // delete the internal counting table
-            if (((IDataset)targetCountingTable).CanDelete())
-                ((IDataset)targetCountingTable).Delete();
+            //// delete the internal counting table
+            //if (((IDataset)targetCountingTable).CanDelete())
+            //    ((IDataset)targetCountingTable).Delete();
 
 
 
@@ -5770,7 +5773,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             if (gpUtilities != null)
                 gpUtilities.ReleaseInternals();
 
+            geoProcessor.AddOutputsToMap = originalAddOutputsToMap;
+
             ComReleaser.ReleaseCOMObject(gpUtilities);
+            ComReleaser.ReleaseCOMObject(geoProcessor);
 
         }
 
@@ -5889,7 +5895,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     // the line query filter for updates will not changes, so let's do that ahead of time
                     try
                     {
-                        polygonOSMIDQueryFilter.SubFields = sourcePolygonFeatureClass.ShapeFieldName + "," + sourcePolygonFeatureClass.Fields.get_Field(osmSourcePolygonIDFieldIndex).Name + "," + sourceLineFeatureClass.Fields.get_Field(osmSourcePolygonTagCollectionFieldIndex).Name;
+                        polygonOSMIDQueryFilter.SubFields = sourcePolygonFeatureClass.ShapeFieldName + "," + sourcePolygonFeatureClass.Fields.get_Field(osmSourcePolygonIDFieldIndex).Name + "," + sourcePolygonFeatureClass.Fields.get_Field(osmSourcePolygonTagCollectionFieldIndex).Name;
                     }
                     catch
                     { }
@@ -6026,7 +6032,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 List<string> idRequests = SplitOSMIDRequests(itemIDs);
                                 List<IGeometry> itemGeometries = new List<IGeometry>(itemIDs.Count);
                                 Dictionary<string, int> itemPositionDictionary = new Dictionary<string, int>(itemIDs.Count);
-                                Dictionary<string, bool> itemCanBeDeleted = new Dictionary<string, bool>();
+                                List<string> itemCanBeDeleted = new List<string>();
 
                                 // build a list of way ids we can use to determine the order in the relation
                                 for (int index = 0; index < itemIDs.Count; index++)
@@ -6050,18 +6056,20 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                     comReleaser.ManageLifetime(innerLineFeature);
 
                                     while (innerLineFeature != null)
-                                        {
-                                            // determine the ID of the line in with respect to the node position
-                                            string lineOSMIDString = Convert.ToString(innerLineFeature.get_Value(osmSourceLineIDFieldIndex));
-                                            itemCanBeDeleted.Add(lineOSMIDString.Replace("w", "l"), !_osmUtility.DoesHaveKeys(innerLineFeature, osmSourceLineTagCollectionFieldIndex, null));
+                                    {
+                                        // determine the ID of the line in with respect to the node position
+                                        string lineOSMIDString = Convert.ToString(innerLineFeature.get_Value(osmSourceLineIDFieldIndex));
 
-                                            // remove the ID from the request string
-                                            idCompareString = idCompareString.Replace(lineOSMIDString, String.Empty);
+                                        if (_osmUtility.DoesHaveKeys(innerLineFeature, osmSourceLineTagCollectionFieldIndex, null))
+                                            itemCanBeDeleted.Add(lineOSMIDString.Replace("w", "l"));
 
-                                            itemGeometries[itemPositionDictionary[lineOSMIDString]] = innerLineFeature.ShapeCopy;
+                                        // remove the ID from the request string
+                                        idCompareString = idCompareString.Replace(lineOSMIDString, String.Empty);
 
-                                            innerLineFeature = innerSearchLineCursor.NextFeature();
-                                        }
+                                        itemGeometries[itemPositionDictionary[lineOSMIDString]] = innerLineFeature.ShapeCopy;
+
+                                        innerLineFeature = innerSearchLineCursor.NextFeature();
+                                    }
 
                                     idCompareString = CleanReportedIDs(idCompareString);
 
@@ -6089,18 +6097,20 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                     comReleaser.ManageLifetime(innerPolygonFeature);
 
                                     while (innerPolygonFeature != null)
-                                        {
-                                            // determine the ID of the polygon in with respect to the way position
-                                            string polygonOSMIDString = Convert.ToString(innerPolygonFeature.get_Value(osmSourcePolygonIDFieldIndex));
-                                            itemCanBeDeleted.Add(polygonOSMIDString.Replace("w", "p"), !_osmUtility.DoesHaveKeys(innerPolygonFeature, osmSourcePolygonTagCollectionFieldIndex, null));
+                                    {
+                                        // determine the ID of the polygon in with respect to the way position
+                                        string polygonOSMIDString = Convert.ToString(innerPolygonFeature.get_Value(osmSourcePolygonIDFieldIndex));
 
-                                            // remove the ID from the request string
-                                            idCompareString = idCompareString.Replace(polygonOSMIDString, String.Empty);
+                                        if (_osmUtility.DoesHaveKeys(innerPolygonFeature, osmSourcePolygonTagCollectionFieldIndex, null))
+                                            itemCanBeDeleted.Add(polygonOSMIDString.Replace("w", "p"));
 
-                                            itemGeometries[itemPositionDictionary[polygonOSMIDString]] = innerPolygonFeature.ShapeCopy;
+                                        // remove the ID from the request string
+                                        idCompareString = idCompareString.Replace(polygonOSMIDString, String.Empty);
 
-                                            innerPolygonFeature = innerSearchPolygonCursor.NextFeature();
-                                        }
+                                        itemGeometries[itemPositionDictionary[polygonOSMIDString]] = innerPolygonFeature.ShapeCopy;
+
+                                        innerPolygonFeature = innerSearchPolygonCursor.NextFeature();
+                                    }
 
                                     idCompareString = CleanReportedIDs(idCompareString);
 
@@ -6307,12 +6317,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                             foreach (var outerItem in outerIDs)
                                             {
                                                 string polygonRequest = outerItem.Replace("w", "p");
-                                                if (itemCanBeDeleted.ContainsKey(polygonRequest))
-                                                    // if the feature does already exist, set the delete flag to true
-                                                    itemCanBeDeleted[polygonRequest] = true;
-                                                else
-                                                    // otherwise add it to the collection
-                                                    itemCanBeDeleted.Add(polygonRequest, true);
+                                                itemCanBeDeleted.Add(polygonRequest);
                                             }
 
                                             foreach (string request in idRequests)
@@ -6438,14 +6443,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                 // write the collected IDs of parts without tags or merged tags to the scratch table
                                 foreach (var item in itemCanBeDeleted)
                                 {
-                                    // if the id can be deleted add it into the scratch table
-                                    if (item.Value)
-                                    {
-                                        partCountBuffer.set_Value(partIDField, item.Key);
-                                        partInsertCursor.InsertRow(partCountBuffer);
-                                    }
+                                    partCountBuffer.set_Value(partIDField, item);
+                                    partInsertCursor.InsertRow(partCountBuffer);
                                 }
-
                             }
                         }
                         catch (Exception hmmEx)

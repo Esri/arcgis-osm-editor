@@ -157,10 +157,24 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         else if (deWorkspace.WorkspaceType == esriWorkspaceType.esriFileSystemWorkspace)
                         {
                             scratchWorkspaceFolder = ((IDataElement)deWorkspace).CatalogPath;
+
+                            // check if the path indeed does exist
+                            if (System.IO.Directory.Exists(scratchWorkspaceFolder) == false)
+                            {
+                                message.AddWarning(resourceManager.GetString(""));
+                                scratchWorkspaceFolder = System.IO.Path.GetTempPath();
+                            }
                         }
                         else
                         {
                             scratchWorkspaceFolder = (new System.IO.FileInfo(((IDataElement)deWorkspace).CatalogPath)).DirectoryName;
+
+                            // check if the path indeed does exist
+                            if (System.IO.Directory.Exists(scratchWorkspaceFolder) == false)
+                            {
+                                message.AddWarning(resourceManager.GetString(""));
+                                scratchWorkspaceFolder = System.IO.Path.GetTempPath();
+                            }
                         }
                     }
                 }
