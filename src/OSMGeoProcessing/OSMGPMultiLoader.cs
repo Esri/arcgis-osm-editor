@@ -161,7 +161,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             // check if the path indeed does exist
                             if (System.IO.Directory.Exists(scratchWorkspaceFolder) == false)
                             {
-                                message.AddWarning(resourceManager.GetString(""));
+                                message.AddWarning(resourceManager.GetString("GPTools_OSMGPMultiLoader_scratch_replace"));
                                 scratchWorkspaceFolder = System.IO.Path.GetTempPath();
                             }
                         }
@@ -172,7 +172,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             // check if the path indeed does exist
                             if (System.IO.Directory.Exists(scratchWorkspaceFolder) == false)
                             {
-                                message.AddWarning(resourceManager.GetString(""));
+                                message.AddWarning(resourceManager.GetString("GPTools_OSMGPMultiLoader_scratch_replace"));
                                 scratchWorkspaceFolder = System.IO.Path.GetTempPath();
                             }
                         }
