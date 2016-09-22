@@ -5820,9 +5820,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
 
 
-            //// delete the internal counting table
-            //if (((IDataset)targetCountingTable).CanDelete())
-            //    ((IDataset)targetCountingTable).Delete();
+            // delete the internal counting table
+            if (((IDataset)targetCountingTable).CanDelete())
+                ((IDataset)targetCountingTable).Delete();
 
 
 
@@ -5985,12 +5985,13 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     comReleaser.ManageLifetime(searchLineCursor);
 
                     TagKeyValueComparer routeTagComparer = new TagKeyValueComparer();
+                    string relationOSMID = string.Empty;
 
                     do {
 
                         try
                         {
-                            string relationOSMID = "r" + relationFileXmlReader.GetAttribute("id");
+                            relationOSMID = "r" + relationFileXmlReader.GetAttribute("id");
 
                             string membersAndTags = relationFileXmlReader.ReadInnerXml();
 
@@ -6112,83 +6113,89 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                                 List<string> polygonIDs = new List<string>();
 
-                                // check in the line feature class first
-                                foreach (string request in idRequests)
+                                using (ComReleaser innerComReleaser = new ComReleaser())
                                 {
-                                    string idCompareString = request;
-                                    lineOSMIDQueryFilter.WhereClause = sourceSQLLineOSMID + " IN " + request;
-
-                                    IFeatureCursor innerSearchLineCursor = sourceLineFeatureClass.Search(lineOSMIDQueryFilter, false);
-                                    comReleaser.ManageLifetime(innerSearchLineCursor);
-
-                                    IFeature innerLineFeature = innerSearchLineCursor.NextFeature();
-                                    comReleaser.ManageLifetime(innerLineFeature);
-
-                                    while (innerLineFeature != null)
+                                    // check in the line feature class first
+                                    foreach (string request in idRequests)
                                     {
-                                        // determine the ID of the line in with respect to the node position
-                                        string lineOSMIDString = Convert.ToString(innerLineFeature.get_Value(osmSourceLineIDFieldIndex));
+                                        string idCompareString = request;
+                                        lineOSMIDQueryFilter.WhereClause = sourceSQLLineOSMID + " IN " + request;
 
-                                        if (_osmUtility.DoesHaveKeys(innerLineFeature, osmSourceLineTagCollectionFieldIndex, null))
-                                            itemCanBeDeleted.Add(lineOSMIDString.Replace("w", "l"));
+                                        IFeatureCursor innerSearchLineCursor = sourceLineFeatureClass.Search(lineOSMIDQueryFilter, false);
+                                        innerComReleaser.ManageLifetime(innerSearchLineCursor);
 
-                                        // remove the ID from the request string
-                                        idCompareString = idCompareString.Replace(lineOSMIDString, String.Empty);
+                                        IFeature innerLineFeature = innerSearchLineCursor.NextFeature();
+                                        innerComReleaser.ManageLifetime(innerLineFeature);
 
-                                        itemGeometries[itemPositionDictionary[lineOSMIDString]] = innerLineFeature.ShapeCopy;
+                                        while (innerLineFeature != null)
+                                        {
+                                            // determine the ID of the line in with respect to the node position
+                                            string lineOSMIDString = Convert.ToString(innerLineFeature.get_Value(osmSourceLineIDFieldIndex));
 
-                                        innerLineFeature = innerSearchLineCursor.NextFeature();
-                                    }
+                                            if (!_osmUtility.DoesHaveKeys(innerLineFeature, osmSourceLineTagCollectionFieldIndex, null))
+                                                itemCanBeDeleted.Add(lineOSMIDString.Replace("w", "l"));
 
-                                    idCompareString = CleanReportedIDs(idCompareString);
+                                            // remove the ID from the request string
+                                            idCompareString = idCompareString.Replace(lineOSMIDString, String.Empty);
 
-                                    // after removing the commas we should be left with only parenthesis left, meaning a string of length 2
-                                    // if we have more then we have found a missing way as a line we still need to search the polygons
-                                    if (idCompareString.Length > 2)
-                                    {
-                                        string[] wayIDs = idCompareString.Substring(1, idCompareString.Length - 2).Split(",".ToCharArray());
-                                        polygonIDs.AddRange(wayIDs);
+                                            itemGeometries[itemPositionDictionary[lineOSMIDString]] = innerLineFeature.ShapeCopy;
+
+                                            innerLineFeature = innerSearchLineCursor.NextFeature();
+                                        }
+
+                                        idCompareString = CleanReportedIDs(idCompareString);
+
+                                        // after removing the commas we should be left with only parenthesis left, meaning a string of length 2
+                                        // if we have more then we have found a missing way as a line we still need to search the polygons
+                                        if (idCompareString.Length > 2)
+                                        {
+                                            string[] wayIDs = idCompareString.Substring(1, idCompareString.Length - 2).Split(",".ToCharArray());
+                                            polygonIDs.AddRange(wayIDs);
+                                        }
                                     }
                                 }
 
                                 // next collect the polygon geometries
                                 idRequests = SplitOSMIDRequests(polygonIDs);
 
-                                foreach (string request in idRequests)
+                                using (ComReleaser innerComReleaser = new ComReleaser())
                                 {
-                                    string idCompareString = request;
-                                    polygonOSMIDQueryFilter.WhereClause = sourceSQLPolygonOSMID + " IN " + request;
-
-                                    IFeatureCursor innerSearchPolygonCursor = sourcePolygonFeatureClass.Search(polygonOSMIDQueryFilter, false);
-                                    comReleaser.ManageLifetime(innerSearchPolygonCursor);
-
-                                    IFeature innerPolygonFeature = innerSearchPolygonCursor.NextFeature();
-                                    comReleaser.ManageLifetime(innerPolygonFeature);
-
-                                    while (innerPolygonFeature != null)
+                                    foreach (string request in idRequests)
                                     {
-                                        // determine the ID of the polygon in with respect to the way position
-                                        string polygonOSMIDString = Convert.ToString(innerPolygonFeature.get_Value(osmSourcePolygonIDFieldIndex));
+                                        string idCompareString = request;
+                                        polygonOSMIDQueryFilter.WhereClause = sourceSQLPolygonOSMID + " IN " + request;
 
-                                        if (_osmUtility.DoesHaveKeys(innerPolygonFeature, osmSourcePolygonTagCollectionFieldIndex, null))
-                                            itemCanBeDeleted.Add(polygonOSMIDString.Replace("w", "p"));
+                                        IFeatureCursor innerSearchPolygonCursor = sourcePolygonFeatureClass.Search(polygonOSMIDQueryFilter, false);
+                                        innerComReleaser.ManageLifetime(innerSearchPolygonCursor);
 
-                                        // remove the ID from the request string
-                                        idCompareString = idCompareString.Replace(polygonOSMIDString, String.Empty);
+                                        IFeature innerPolygonFeature = innerSearchPolygonCursor.NextFeature();
+                                        innerComReleaser.ManageLifetime(innerPolygonFeature);
 
-                                        itemGeometries[itemPositionDictionary[polygonOSMIDString]] = innerPolygonFeature.ShapeCopy;
+                                        while (innerPolygonFeature != null)
+                                        {
+                                            // determine the ID of the polygon in with respect to the way position
+                                            string polygonOSMIDString = Convert.ToString(innerPolygonFeature.get_Value(osmSourcePolygonIDFieldIndex));
 
-                                        innerPolygonFeature = innerSearchPolygonCursor.NextFeature();
-                                    }
+                                            if (!_osmUtility.DoesHaveKeys(innerPolygonFeature, osmSourcePolygonTagCollectionFieldIndex, null))
+                                                itemCanBeDeleted.Add(polygonOSMIDString.Replace("w", "p"));
 
-                                    idCompareString = CleanReportedIDs(idCompareString);
+                                            // remove the ID from the request string
+                                            idCompareString = idCompareString.Replace(polygonOSMIDString, String.Empty);
 
-                                    // after removing the commas we should be left with only parenthesis left, meaning a string of length 2
-                                    // if we have more then we have found a missing way as a line we still need to search the polygons
-                                    if (idCompareString.Length > 2)
-                                    {
-                                        relationIsComplete = false;
-                                        break;
+                                            itemGeometries[itemPositionDictionary[polygonOSMIDString]] = innerPolygonFeature.ShapeCopy;
+
+                                            innerPolygonFeature = innerSearchPolygonCursor.NextFeature();
+                                        }
+
+                                        idCompareString = CleanReportedIDs(idCompareString);
+
+                                        // after removing the commas we should be left with only parenthesis left, meaning a string of length 2
+                                        // if we have more then we have found a missing way as a line we still need to search the polygons
+                                        if (idCompareString.Length > 2)
+                                        {
+                                            relationIsComplete = false;
+                                            break;
+                                        }
                                     }
                                 }
 
@@ -6521,6 +6528,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         {
 #if DEBUG
                             System.Diagnostics.Debug.WriteLine("Unexpected error : !!!!!!");
+                            System.Diagnostics.Debug.WriteLine(relationOSMID);
                             System.Diagnostics.Debug.WriteLine(hmmEx.Message);
                             System.Diagnostics.Debug.WriteLine(hmmEx.StackTrace);
 #endif
@@ -6562,8 +6570,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     {
                         int countedRows = 0;
                         string countID = countingRow.get_Value(partIDField) as string;
-                        ICursor counterCursor = countingTable.Search(new QueryFilterClass() 
-                        { WhereClause = String.Format("{0} = '{1}'", countingTable.SqlIdentifier("sourceID"), countID) }, false);
+                        IQueryFilter qF = new QueryFilterClass() { WhereClause = String.Format("{0} = '{1}'", countingTable.SqlIdentifier("sourceID"), countID) };
+                        ICursor counterCursor = countingTable.Search(qF, false);
 
                         while (counterCursor.NextRow() != null)
                         {
