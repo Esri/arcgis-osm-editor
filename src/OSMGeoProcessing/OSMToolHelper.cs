@@ -3264,10 +3264,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                     for (int gdbIndex = 0; gdbIndex < wayGDBNames.Count; gdbIndex++)
                     {
-                        FileInfo gdbFileInfo = new FileInfo(wayGDBNames[gdbIndex]);
+                        DirectoryInfo gdbDirectoryInfo = new DirectoryInfo(wayGDBNames[gdbIndex]);
 
-                        if (!gdbFileInfo.Exists)
+                        if (!gdbDirectoryInfo.Exists)
                         {
+                            FileInfo gdbFileInfo = new FileInfo(wayGDBNames[gdbIndex]);
+
                             IWorkspaceName workspaceName = workspaceFactory.Create(gdbFileInfo.DirectoryName, gdbFileInfo.Name, new PropertySetClass(), 0);
                             comReleaser.ManageLifetime(workspaceName);
                         }
@@ -3465,10 +3467,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                     for (int gdbIndex = 1; gdbIndex < nodeGDBNames.Count; gdbIndex++)
                     {
-                        FileInfo gdbFileInfo = new FileInfo(nodeGDBNames[gdbIndex]);
+                        DirectoryInfo gdbDirectoryInfo = new DirectoryInfo(nodeGDBNames[gdbIndex]);
 
-                        if (!gdbFileInfo.Exists)
+                        if (!gdbDirectoryInfo.Exists)
                         {
+                            FileInfo gdbFileInfo = new FileInfo(nodeGDBNames[gdbIndex]);
+
                             IWorkspaceName workspaceName = workspaceFactory.Create(gdbFileInfo.DirectoryName, gdbFileInfo.Name, new PropertySetClass(), 0);
                             comReleaser.ManageLifetime(workspaceName);
                         }
@@ -5427,10 +5431,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                     for (int gdbIndex = 0; gdbIndex < relationGDBNames.Count; gdbIndex++)
                     {
-                        FileInfo gdbFileInfo = new FileInfo(relationGDBNames[gdbIndex]);
+                        DirectoryInfo gdbDirectoryInfo = new DirectoryInfo(relationGDBNames[gdbIndex]);
 
-                        if (!gdbFileInfo.Exists)
+                        if (!gdbDirectoryInfo.Exists)
                         {
+                            FileInfo gdbFileInfo = new FileInfo(relationGDBNames[gdbIndex]);
+
                             IWorkspaceName workspaceName = workspaceFactory.Create(gdbFileInfo.DirectoryName, gdbFileInfo.Name, new PropertySetClass(), 0);
                             comReleaser.ManageLifetime(workspaceName);
                         }
@@ -5589,10 +5595,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                     for (int gdbIndex = 0; gdbIndex < relationGDBNames.Count; gdbIndex++)
                     {
-                        FileInfo gdbFileInfo = new FileInfo(relationGDBNames[gdbIndex]);
+                        DirectoryInfo gdbDirectoryInfo = new DirectoryInfo(relationGDBNames[gdbIndex]);
 
-                        if (!gdbFileInfo.Exists)
+                        if (!gdbDirectoryInfo.Exists)
                         {
+                            FileInfo gdbFileInfo = new FileInfo(relationGDBNames[gdbIndex]);
+
                             IWorkspaceName workspaceName = workspaceFactory.Create(gdbFileInfo.DirectoryName, gdbFileInfo.Name, new PropertySetClass(), 0);
                             comReleaser.ManageLifetime(workspaceName);
                         }
