@@ -5759,7 +5759,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 #endregion
             }
 
-
             #region remove geometries that were used in support to build a relation (multi-part geometry)
 
             // delete the outer ways from relations that are no longer needed as they are now part of the multi-part geometry
@@ -5836,7 +5835,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
             #endregion
 
-
             // delete the temp loading relation osm files
             foreach (string osmFile in osmRelationFileNames)
             {
@@ -5854,7 +5852,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
             ComReleaser.ReleaseCOMObject(gpUtilities);
             ComReleaser.ReleaseCOMObject(geoProcessor);
-
         }
 
         internal void smallLoadOSMRelations(string osmFileLocation, string sourceLineFeatureClassLocation, string sourcePolygonFeatureClassLocation, string targetLineFeatureClassLocation, string targetPolygonFeatureClassLocation, List<string> lineFieldNames, List<string> polygonFieldNames, bool includeSuperRelations)
@@ -6707,84 +6704,90 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         {
             IGeometry mergedPart = null;
 
-                IPoint partOneFromPoint = null;
-                IPoint partOneToPoint = null;
+            IPoint partOneFromPoint = null;
+            IPoint partOneToPoint = null;
 
-                if (partOne == null)
-                    throw new NullReferenceException("partOne is Null");
+            if (partOne == null)
+                throw new NullReferenceException("partOne is Null");
 
-                if (partTwo == null)
-                    throw new NullReferenceException("partTwo is Null");
+            if (partOne.IsEmpty)
+                return mergedPart;
 
-                partOneFromPoint = partOne.FromPoint;
-                partOneToPoint = partOne.ToPoint;
+            if (partTwo == null)
+                throw new NullReferenceException("partTwo is Null");
 
-                bool FromPointConnect = ((IRelationalOperator)partOneToPoint).Equals(partTwo.FromPoint);
-                bool ToPointConnect = ((IRelationalOperator)partOneToPoint).Equals(partTwo.ToPoint);
+            if (partTwo.IsEmpty)
+                return mergedPart;
 
-                if (FromPointConnect || ToPointConnect)
-                {
+            partOneFromPoint = partOne.FromPoint;
+            partOneToPoint = partOne.ToPoint;
+
+            bool FromPointConnect = ((IRelationalOperator)partOneToPoint).Equals(partTwo.FromPoint);
+            bool ToPointConnect = ((IRelationalOperator)partOneToPoint).Equals(partTwo.ToPoint);
+
+            if (FromPointConnect || ToPointConnect)
+            {
                 if (FromPointConnect)
                 {
                     mergedPart = new PolylineClass();
-                    ((IGeometryCollection) mergedPart).AddGeometryCollection(partOne as IGeometryCollection);
-                    ((IGeometryCollection) mergedPart).AddGeometryCollection(partTwo as IGeometryCollection);
+                    ((IGeometryCollection)mergedPart).AddGeometryCollection(partOne as IGeometryCollection);
+                    ((IGeometryCollection)mergedPart).AddGeometryCollection(partTwo as IGeometryCollection);
                 }
 
                 if (ToPointConnect)
                 {
                     mergedPart = new PolylineClass();
-                    ((IGeometryCollection) mergedPart).AddGeometryCollection(partOne as IGeometryCollection);
+                    ((IGeometryCollection)mergedPart).AddGeometryCollection(partOne as IGeometryCollection);
 
-                    IPolyline flippedPartTwoGeometry = ((IClone) partTwo).Clone() as IPolyline;
+                    IPolyline flippedPartTwoGeometry = ((IClone)partTwo).Clone() as IPolyline;
                     flippedPartTwoGeometry.ReverseOrientation();
 
-                    ((IGeometryCollection) mergedPart).AddGeometryCollection(((IClone)flippedPartTwoGeometry).Clone() as IGeometryCollection);
+                    ((IGeometryCollection)mergedPart).AddGeometryCollection(((IClone)flippedPartTwoGeometry).Clone() as IGeometryCollection);
                 }
-                }
+            }
 
-                FromPointConnect = ((IRelationalOperator)partOneFromPoint).Equals(partTwo.FromPoint);
-                ToPointConnect = ((IRelationalOperator)partOneFromPoint).Equals(partTwo.ToPoint);
+            FromPointConnect = ((IRelationalOperator)partOneFromPoint).Equals(partTwo.FromPoint);
+            ToPointConnect = ((IRelationalOperator)partOneFromPoint).Equals(partTwo.ToPoint);
 
-                if (FromPointConnect || ToPointConnect)
-                {
+            if (FromPointConnect || ToPointConnect)
+            {
                 if (FromPointConnect)
                 {
                     mergedPart = new PolylineClass();
 
-                    IPolyline flippedPartOneGeometry = ((IClone) partOne).Clone() as IPolyline;
+                    IPolyline flippedPartOneGeometry = ((IClone)partOne).Clone() as IPolyline;
                     flippedPartOneGeometry.ReverseOrientation();
 
-                    ((IGeometryCollection) mergedPart).AddGeometryCollection(((IClone)flippedPartOneGeometry).Clone() as IGeometryCollection);
-                    ((IGeometryCollection) mergedPart).AddGeometryCollection(partTwo as IGeometryCollection);
+                    ((IGeometryCollection)mergedPart).AddGeometryCollection(((IClone)flippedPartOneGeometry).Clone() as IGeometryCollection);
+                    ((IGeometryCollection)mergedPart).AddGeometryCollection(partTwo as IGeometryCollection);
                 }
 
                 if (ToPointConnect)
                 {
                     mergedPart = new PolylineClass();
-                    ((IGeometryCollection) mergedPart).AddGeometryCollection(partTwo as IGeometryCollection);
-                    ((IGeometryCollection) mergedPart).AddGeometryCollection(partOne as IGeometryCollection);
+                    ((IGeometryCollection)mergedPart).AddGeometryCollection(partTwo as IGeometryCollection);
+                    ((IGeometryCollection)mergedPart).AddGeometryCollection(partOne as IGeometryCollection);
                 }
-                }
+            }
 
-                if (!isLinear)
+            if (!isLinear)
+            {
+                // now check if from and to points on the merged polyline are coincident
+                if (mergedPart != null)
                 {
-                    // now check if from and to points on the merged polyline are coincident
-                    if (mergedPart != null)
+                    IPolyline mergedPolyline = mergedPart as IPolyline;
+
+                    if (((IRelationalOperator)mergedPolyline.FromPoint).Equals(mergedPolyline.ToPoint))
                     {
-                        IPolyline mergedPolyline = mergedPart as IPolyline;
+                        IPolygon tempPolygon = new PolygonClass();
+                        ((ISegmentCollection)tempPolygon).AddSegmentCollection(mergedPart as ISegmentCollection);
 
-                        if (((IRelationalOperator)mergedPolyline.FromPoint).Equals(mergedPolyline.ToPoint))
-                        {
-                            IPolygon tempPolygon = new PolygonClass();
-                            ((ISegmentCollection)tempPolygon).AddSegmentCollection(mergedPart as ISegmentCollection);
+                        tempPolygon.Close();
 
-                            tempPolygon.Close();
-
-                            mergedPart = ((IClone)tempPolygon).Clone() as IGeometry;
-                        }
+                        mergedPart = ((IClone)tempPolygon).Clone() as IGeometry;
                     }
                 }
+            }
 
 
             return mergedPart;
