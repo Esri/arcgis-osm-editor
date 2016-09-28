@@ -5800,30 +5800,33 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
             while (countingRow != null)
             {
-                string osmID = countingRow.get_Value(partIDFieldIndex) as string;
-
-                IFeatureCursor deleteCursor = null;
-                if (osmID[0] == 'l')
+                using (ComReleaser innerComReleaser = new ComReleaser())
                 {
-                    deleteCursor = targetLineFeatureClass.Search(new QueryFilterClass() { WhereClause = String.Format("osmID = '{0}'", osmID.Replace("l", "w")) }, false);
+                    string osmID = countingRow.get_Value(partIDFieldIndex) as string;
+
+                    IFeatureCursor deleteCursor = null;
+                    if (osmID[0] == 'l')
+                    {
+                        deleteCursor = targetLineFeatureClass.Search(new QueryFilterClass() { WhereClause = String.Format("osmID = '{0}'", osmID.Replace("l", "w")) }, false);
+                    }
+                    else
+                    {
+                        deleteCursor = targetPolygonFeatureClass.Search(new QueryFilterClass() { WhereClause = String.Format("osmID = '{0}'", osmID.Replace("p", "w")) }, false);
+                    }
+
+                    innerComReleaser.ManageLifetime(deleteCursor);
+                    IFeature deleteFeature = deleteCursor.NextFeature();
+                    innerComReleaser.ManageLifetime(deleteFeature);
+
+                    while (deleteFeature != null)
+                    {
+                        deleteFeature.Delete();
+
+                        deleteFeature = deleteCursor.NextFeature();
+                    }
+
+                    countingRow = searchCursor.NextRow();
                 }
-                else
-                {
-                    deleteCursor = targetPolygonFeatureClass.Search(new QueryFilterClass() { WhereClause = String.Format("osmID = '{0}'", osmID.Replace("p", "w")) }, false);
-                }
-
-                comReleaser1.ManageLifetime(deleteCursor);
-                IFeature deleteFeature = deleteCursor.NextFeature();
-                comReleaser1.ManageLifetime(deleteFeature);
-
-                while (deleteFeature != null)
-                {
-                    deleteFeature.Delete();
-
-                    deleteFeature = deleteCursor.NextFeature();
-                }
-
-                countingRow = searchCursor.NextRow();
             }
 
 
