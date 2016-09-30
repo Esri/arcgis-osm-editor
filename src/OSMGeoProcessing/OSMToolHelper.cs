@@ -8175,10 +8175,17 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         isALine = true;
                 }
 
-                if (tags.Contains(areaTag, new TagKeyValueComparer()))
+                if (tags.Contains(areaTag, new TagKeyComparer()))
                 {
+                    tag areaTagFromWay = tags.Where(i => i.k.Equals("area")).FirstOrDefault();
+
                     if (startAndEndCoincide)
-                        isALine = false;
+                    {
+                        if (areaTagFromWay.v.ToLower().Equals("no"))
+                            isALine = true;
+                        else
+                            isALine = false;
+                    }
                     else
                         isALine = true;
                 }
@@ -8254,14 +8261,19 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             isALine = true;
                     }
 
-                    if (currentway.tag.Contains(areaTag, new TagKeyValueComparer()))
+                    if (currentway.tag.Contains(areaTag, new TagKeyComparer()))
                     {
                         if (isCoastline == false)
                         {
-                            // only consider the area=yes combination if the way closes onto itself
-                            // otherwise it is most likely an attribute error
+                            tag areaTagFromWay = currentway.tag.Where(i => i.k.Equals("area")).FirstOrDefault();
+
                             if (startAndEndCoincide)
-                                isALine = false;
+                            {
+                                if (areaTagFromWay.v.ToLower().Equals("no"))
+                                    isALine = true;
+                                else
+                                    isALine = false;
+                            }
                             else
                                 isALine = true;
                         }
