@@ -951,7 +951,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 deleteSupportNodesDomain.AddCode((IGPValue)deleteSupportNodesTrue, "DELETE_NODES");
                 deleteSupportNodesDomain.AddCode((IGPValue)deleteSupportNodesFalse, "DO_NOT_DELETE_NODES");
                 deleteSupportNodesParameter.Domain = (IGPDomain)deleteSupportNodesDomain;
-                deleteSupportNodesParameter.Value = (IGPValue)deleteSupportNodesFalse;
+                deleteSupportNodesParameter.Value = (IGPValue)deleteSupportNodesTrue;
 
                 deleteSupportNodesParameter.DataType = new GPBooleanTypeClass();
                 deleteSupportNodesParameter.Direction = esriGPParameterDirection.esriGPParameterDirectionInput;
