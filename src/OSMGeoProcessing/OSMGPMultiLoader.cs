@@ -257,8 +257,19 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 IName lineWorkspaceName = gpUtilities3.CreateParentFromCatalogPath(osmLineFeatureClassGPValue.GetAsText());
                 IWorkspace2 lineFeatureWorkspace = lineWorkspaceName.Open() as IWorkspace2;
 
-                string[] lineFCNameElements = osmLineFeatureClassGPValue.GetAsText().Split(System.IO.Path.DirectorySeparatorChar);
+                string targetLineFeatureClassLocation = osmLineFeatureClassGPValue.GetAsText();
+                string[] lineFCNameElements = targetLineFeatureClassLocation.Split(System.IO.Path.DirectorySeparatorChar);
 
+                string dbName = String.Empty;
+                string ownerName = String.Empty;
+                string lineFeatureClassName = String.Empty;
+
+                ISQLSyntax lineFCSQLSyntax = lineFeatureWorkspace as ISQLSyntax;
+
+                if (lineFCSQLSyntax != null)
+                    lineFCSQLSyntax.ParseTableName(lineFCNameElements[lineFCNameElements.Length - 1], out dbName, out ownerName, out lineFeatureClassName);
+                else
+                    lineFeatureClassName = lineFCNameElements[lineFCNameElements.Length - 1];
 
                 IGPParameter tagLineCollectionParameter = paramvalues.get_Element(in_lineFieldNamesNumber) as IGPParameter;
                 IGPMultiValue tagLineCollectionGPValue = gpUtilities3.UnpackGPValue(tagLineCollectionParameter) as IGPMultiValue;
@@ -320,7 +331,17 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 IName polygonWorkspaceName = gpUtilities3.CreateParentFromCatalogPath(osmPolygonFeatureClassGPValue.GetAsText());
                 IWorkspace2 polygonFeatureWorkspace = polygonWorkspaceName.Open() as IWorkspace2;
 
-                string[] polygonFCNameElements = osmPolygonFeatureClassGPValue.GetAsText().Split(System.IO.Path.DirectorySeparatorChar);
+                string targetPolygonFeatureClassLocation = osmPolygonFeatureClassGPValue.GetAsText();
+                string[] polygonFCNameElements = targetPolygonFeatureClassLocation.Split(System.IO.Path.DirectorySeparatorChar);
+
+                string polygonFeatureClassName = String.Empty;
+
+                ISQLSyntax polygonFCSQLSyntax = polygonFeatureWorkspace as ISQLSyntax;
+
+                if (polygonFCSQLSyntax != null)
+                    polygonFCSQLSyntax.ParseTableName(polygonFCNameElements[polygonFCNameElements.Length - 1], out dbName, out ownerName, out polygonFeatureClassName);
+                else
+                    polygonFeatureClassName = polygonFCNameElements[polygonFCNameElements.Length - 1];
 
                 IGPParameter tagPolygonCollectionParameter = paramvalues.get_Element(in_polygonFieldNamesNumber) as IGPParameter;
                 IGPMultiValue tagPolygonCollectionGPValue = gpUtilities3.UnpackGPValue(tagPolygonCollectionParameter) as IGPMultiValue;
@@ -459,7 +480,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 #region load ways
-                osmToolHelper.loadOSMWays(wayOSMFileNames, osmPointsFeatureClassGPValue.GetAsText(), wayGDBFileNames, lineFCNameElements[lineFCNameElements.Length - 1], polygonFCNameElements[polygonFCNameElements.Length - 1], lineTagstoExtract, polygonTagstoExtract, ref message,  ref TrackCancel);
+                osmToolHelper.loadOSMWays(wayOSMFileNames, osmPointsFeatureClassGPValue.GetAsText(), wayGDBFileNames, lineFeatureClassName, targetLineFeatureClassLocation, polygonFeatureClassName, targetPolygonFeatureClassLocation, lineTagstoExtract, polygonTagstoExtract, ref message,  ref TrackCancel);
                 #endregion
 
                 #region for local geodatabases enforce spatial integrity
@@ -543,7 +564,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 #region load relations
-                osmToolHelper.loadOSMRelations(relationOSMFileNames, osmLineFeatureClassGPValue.GetAsText(), osmPolygonFeatureClassGPValue.GetAsText(), relationGDBFileNames, lineTagstoExtract, polygonTagstoExtract, ref TrackCancel, ref message);
+                osmToolHelper.loadOSMRelations(relationOSMFileNames, lineFeatureClassName, targetLineFeatureClassLocation, polygonFeatureClassName, 
+                    targetPolygonFeatureClassLocation, relationGDBFileNames, lineTagstoExtract, polygonTagstoExtract, ref TrackCancel, ref message);
                 #endregion
 
                 // check for user interruption
