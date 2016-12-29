@@ -97,7 +97,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
             IFeatureClass osmLineFeatureClass = null;
 
-
             IGPParameter tagLineCollectionParameter = paramvalues.get_Element(2) as IGPParameter;
             IGPMultiValue tagLineCollectionGPValue = gpUtilities3.UnpackGPValue(tagLineCollectionParameter) as IGPMultiValue;
 
@@ -119,7 +118,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 lineTagstoExtract = OSMToolHelper.OSMSmallFeatureClassFields();
             }
 
-
             // lines
             try
             {
@@ -135,7 +133,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             {
                 return;
             }
-
 
             IGPParameter osmPolygonFeatureClassParameter = paramvalues.get_Element(5) as IGPParameter;
             IGPValue osmPolygonFeatureClassGPValue = gpUtilities3.UnpackGPValue(osmPolygonFeatureClassParameter) as IGPValue;
@@ -171,7 +168,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 polygonTagstoExtract = OSMToolHelper.OSMSmallFeatureClassFields();
             }
 
-
             // polygons
             try
             {
@@ -198,6 +194,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             osmToolHelper.smallLoadOSMWay(osmFileLocationString.GetAsText(), osmPointFeatureClassGPValue.GetAsText(), lineFileGDBLocation, 
                 lineFCNameElements[lineFCNameElements.Length - 1], polygonFileGDBLocation, polygonFCNameElements[polygonFCNameElements.Length - 1], 
                 lineTagstoExtract, polygonTagstoExtract);
+
         }
 
         public ESRI.ArcGIS.esriSystem.IName FullName

@@ -323,3 +323,5 @@ GPTools_OSMGPMultiLoader_second=second
 GPTools_OSMGPMultiLoader_seconds=seconds
 GPTools_OSMGPMultiLoader_loading=Loading {0}...
 GPTools_OSMGPMultiLoader_scratch_replace=The scratch workspace doesn't exist. Using the system temp directory instead.
+# 2.6
+GPTools_OSMGPMultiLoader_remote_gdb_not_supported=Please choose a file geodatabase as the target.

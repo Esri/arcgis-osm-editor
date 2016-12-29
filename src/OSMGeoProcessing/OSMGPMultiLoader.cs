@@ -242,6 +242,16 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             pointFCNameElements[pointFCNameElements.Length - 1]));
                         return;
                     }
+
+                    if (workspaceName is IWorkspaceName)
+                    {
+                        IWorkspaceName workspaceNameItself = workspaceName as IWorkspaceName;
+                        if (workspaceNameItself.Type != esriWorkspaceType.esriLocalDatabaseWorkspace)
+                        {
+                            message.AddError(120202, String.Format(resourceManager.GetString("GPTools_OSMGPMultiLoader_remote_gdb_not_supported")));
+                            return;
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -254,6 +264,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 IGPParameter tagPointCollectionParameter = paramvalues.get_Element(in_pointFieldNamesNumber) as IGPParameter;
                 IGPMultiValue tagPointCollectionGPValue = gpUtilities3.UnpackGPValue(tagPointCollectionParameter) as IGPMultiValue;
+                string targetPointFeatureClassLocation = String.Empty;
 
                 List<String> pointTagstoExtract = null;
 
@@ -279,6 +290,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     osmPointFeatureClass = osmToolHelper.CreateSmallPointFeatureClass(pointFeatureWorkspace, 
                         pointFCNameElements[pointFCNameElements.Length - 1], storageKeyword, metadataAbstract,
                         metadataPurpose, pointTagstoExtract);
+                    targetPointFeatureClassLocation = System.IO.Path.Combine(((IDataset)osmPointFeatureClass).Workspace.PathName, ((IDataset)osmPointFeatureClass).BrowseName);
                 }
                 catch (Exception ex)
                 {
@@ -307,13 +319,30 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 int tagCollectionPointFieldIndex = osmPointFeatureClass.FindField("osmTags");
                 int osmSupportingElementPointFieldIndex = osmPointFeatureClass.FindField("osmSupportingElement");
 
-                string lineFCName = osmLineFeatureClassGPValue.GetAsText();
-                string[] lineFCNameElements = lineFCName.Split(System.IO.Path.DirectorySeparatorChar);
+                string targetLineFeatureClassLocation = osmLineFeatureClassGPValue.GetAsText();
+                string[] lineFCNameElements = targetLineFeatureClassLocation.Split(System.IO.Path.DirectorySeparatorChar);
 
                 IName lineWorkspaceName = null;
                 try
                 {
-                    lineWorkspaceName = gpUtilities3.CreateParentFromCatalogPath(lineFCName);
+                    lineWorkspaceName = gpUtilities3.CreateParentFromCatalogPath(targetLineFeatureClassLocation);
+
+                    if (lineWorkspaceName is IDatasetName)
+                    {
+                        message.AddError(120200, String.Format(resourceManager.GetString("GPTools_OSMGPMultiLoader_fc_only"),
+                            lineFCNameElements[lineFCNameElements.Length - 1]));
+                        return;
+                    }
+
+                    if (lineWorkspaceName is IWorkspaceName)
+                    {
+                        IWorkspaceName workspaceNameItself = lineWorkspaceName as IWorkspaceName;
+                        if (workspaceNameItself.Type != esriWorkspaceType.esriLocalDatabaseWorkspace)
+                        {
+                            message.AddError(120202, String.Format(resourceManager.GetString("GPTools_OSMGPMultiLoader_remote_gdb_not_supported")));
+                            return;
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -322,6 +351,18 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     return;
                 }
                 IWorkspace2 lineFeatureWorkspace = lineWorkspaceName.Open() as IWorkspace2;
+
+                string dbName = String.Empty;
+                string ownerName = String.Empty;
+                string lineFeatureClassName = String.Empty;
+
+                ISQLSyntax lineFCSQLSyntax = lineFeatureWorkspace as ISQLSyntax;
+
+                if (lineFCSQLSyntax != null)
+                    lineFCSQLSyntax.ParseTableName(lineFCNameElements[lineFCNameElements.Length - 1], out dbName, out ownerName, out lineFeatureClassName);
+                else
+                    lineFeatureClassName = lineFCNameElements[lineFCNameElements.Length - 1];
+
 
                 IGPParameter tagLineCollectionParameter = paramvalues.get_Element(in_lineFieldNamesNumber) as IGPParameter;
                 IGPMultiValue tagLineCollectionGPValue = gpUtilities3.UnpackGPValue(tagLineCollectionParameter) as IGPMultiValue;
@@ -349,6 +390,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 {
                     osmLineFeatureClass = osmToolHelper.CreateSmallLineFeatureClass(lineFeatureWorkspace, lineFCNameElements[lineFCNameElements.Length -1],
                         storageKeyword, metadataAbstract, metadataPurpose, lineTagstoExtract);
+                    targetLineFeatureClassLocation = System.IO.Path.Combine(((IDataset)osmLineFeatureClass).Workspace.PathName, ((IDataset)osmLineFeatureClass).BrowseName);
+
                 }
                 catch (Exception ex)
                 {
@@ -377,14 +420,31 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 int tagCollectionPolylineFieldIndex = osmLineFeatureClass.FindField("osmTags");
                 int osmSupportingElementPolylineFieldIndex = osmLineFeatureClass.FindField("osmSupportingElement");
 
-                string polygonFCName = osmPolygonFeatureClassGPValue.GetAsText();
-                string[] polygonFCNameElements = polygonFCName.Split(System.IO.Path.DirectorySeparatorChar);
+                string targetPolygonFeatureClassLocation = osmPolygonFeatureClassGPValue.GetAsText();
+                string[] polygonFCNameElements = targetPolygonFeatureClassLocation.Split(System.IO.Path.DirectorySeparatorChar);
 
                 IName polygonWorkspaceName = null;
 
                 try
                 {
-                    polygonWorkspaceName = gpUtilities3.CreateParentFromCatalogPath(polygonFCName);
+                    polygonWorkspaceName = gpUtilities3.CreateParentFromCatalogPath(targetPolygonFeatureClassLocation);
+
+                    if (polygonWorkspaceName is IDatasetName)
+                    {
+                        message.AddError(120200, String.Format(resourceManager.GetString("GPTools_OSMGPMultiLoader_fc_only"),
+                            polygonFCNameElements[polygonFCNameElements.Length - 1]));
+                        return;
+                    }
+
+                    if (polygonWorkspaceName is IWorkspaceName)
+                    {
+                        IWorkspaceName workspaceNameItself = polygonWorkspaceName as IWorkspaceName;
+                        if (workspaceNameItself.Type != esriWorkspaceType.esriLocalDatabaseWorkspace)
+                        {
+                            message.AddError(120202, String.Format(resourceManager.GetString("GPTools_OSMGPMultiLoader_remote_gdb_not_supported")));
+                            return;
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -394,6 +454,15 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 IWorkspace2 polygonFeatureWorkspace = polygonWorkspaceName.Open() as IWorkspace2;
+
+                string polygonFeatureClassName = String.Empty;
+
+                ISQLSyntax polygonFCSQLSyntax = polygonFeatureWorkspace as ISQLSyntax;
+
+                if (polygonFCSQLSyntax != null)
+                    polygonFCSQLSyntax.ParseTableName(polygonFCNameElements[polygonFCNameElements.Length - 1], out dbName, out ownerName, out polygonFeatureClassName);
+                else
+                    polygonFeatureClassName = polygonFCNameElements[polygonFCNameElements.Length - 1];
 
                 IGPParameter tagPolygonCollectionParameter = paramvalues.get_Element(in_polygonFieldNamesNumber) as IGPParameter;
                 IGPMultiValue tagPolygonCollectionGPValue = gpUtilities3.UnpackGPValue(tagPolygonCollectionParameter) as IGPMultiValue;
@@ -422,6 +491,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     osmPolygonFeatureClass = osmToolHelper.CreateSmallPolygonFeatureClass(polygonFeatureWorkspace, 
                         polygonFCNameElements[polygonFCNameElements.Length -1], storageKeyword, metadataAbstract, 
                         metadataPurpose, polygonTagstoExtract);
+                    targetPolygonFeatureClassLocation = System.IO.Path.Combine(((IDataset)osmPolygonFeatureClass).Workspace.PathName, ((IDataset)osmPolygonFeatureClass).BrowseName);
                 }
                 catch (Exception ex)
                 {
@@ -540,9 +610,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 #region load ways
-                osmToolHelper.loadOSMWays(wayOSMFileNames, pointFCName, lineFCName,
-                    polygonFCName, wayGDBFileNames, lineFCNameElements[lineFCNameElements.Length - 1], 
-                    polygonFCNameElements[polygonFCNameElements.Length - 1], lineTagstoExtract, polygonTagstoExtract, ref message,  ref TrackCancel);
+                osmToolHelper.loadOSMWays(wayOSMFileNames, targetPointFeatureClassLocation, wayGDBFileNames, lineFeatureClassName, 
+                    targetLineFeatureClassLocation, polygonFeatureClassName, targetPolygonFeatureClassLocation, lineTagstoExtract, polygonTagstoExtract, 
+                    ref message, ref TrackCancel);
                 #endregion
 
                 #region for local geodatabases enforce spatial integrity
@@ -617,9 +687,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 #region load relations
-                osmToolHelper.loadOSMRelations(relationOSMFileNames, lineFCName, polygonFCName,
-                    lineFCName, polygonFCName, relationGDBFileNames, lineTagstoExtract, 
-                    polygonTagstoExtract, ref message, ref TrackCancel);
+                osmToolHelper.loadOSMRelations(relationOSMFileNames, lineFeatureClassName, targetLineFeatureClassLocation,
+                    polygonFeatureClassName, targetPolygonFeatureClassLocation, relationGDBFileNames, lineTagstoExtract, 
+                    polygonTagstoExtract, ref TrackCancel, ref message);
                 #endregion
 
                 // check for user interruption
@@ -1028,117 +1098,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
         public void UpdateMessages(ESRI.ArcGIS.esriSystem.IArray paramvalues, ESRI.ArcGIS.Geoprocessing.IGPEnvironmentManager pEnvMgr, ESRI.ArcGIS.Geodatabase.IGPMessages Messages)
         {
-            //IGPUtilities3 gpUtilities3 = new GPUtilitiesClass();
-
-            //IGPParameter targetDatasetParameter = paramvalues.get_Element(out_targetDatasetNumber) as IGPParameter;
-            //try
-            //{
-            //    gpUtilities3.QualifyOutputDataElement(gpUtilities3.UnpackGPValue(targetDatasetParameter));
-            //}
-            //catch
-            //{
-            //    Messages.ReplaceError(out_targetDatasetNumber, -2, resourceManager.GetString("GPTools_OSMGPFileReader_targetDataset_notexist"));
-            //}
-
-            //// check for valid geodatabase path
-            //// if the user is pointing to a valid directory on disk, flag it as an error
-            //IGPValue targetDatasetGPValue = gpUtilities3.UnpackGPValue(targetDatasetParameter);
-
-            //if (targetDatasetGPValue.IsEmpty() == false)
-            //{
-            //    if (System.IO.Directory.Exists(targetDatasetGPValue.GetAsText()))
-            //    {
-            //        Messages.ReplaceError(out_targetDatasetNumber, -4, resourceManager.GetString("GPTools_OSMGPDownload_directory_is_not_target_dataset"));
-            //    }
-            //}
-
-            //gpUtilities3.ReleaseInternals();
-
-            //if (gpUtilities3 != null)
-            //    ComReleaser.ReleaseCOMObject(gpUtilities3);
-
         }
 
         public void UpdateParameters(ESRI.ArcGIS.esriSystem.IArray paramvalues, ESRI.ArcGIS.Geoprocessing.IGPEnvironmentManager pEnvMgr)
         {
-            //IGPUtilities3 gpUtilities3 = new GPUtilitiesClass();
-
-            //IGPParameter targetDatasetParameter = paramvalues.get_Element(out_targetDatasetNumber) as IGPParameter;
-            //IGPValue targetDatasetGPValue = gpUtilities3.UnpackGPValue(targetDatasetParameter);
-
-            //IDEFeatureDataset targetDEFeatureDataset = targetDatasetGPValue as IDEFeatureDataset;
-
-            //IGPParameter3 outPointsFeatureClassParameter = null;
-            //IGPValue outPointsFeatureClass = null;
-            //string outpointsPath = String.Empty;
-
-            //IGPParameter3 outLinesFeatureClassParameter = null;
-            //IGPValue outLinesFeatureClass = null;
-            //string outlinesPath = String.Empty;
-
-            //IGPParameter3 outPolygonFeatureClassParameter = null;
-            //IGPValue outPolygonFeatureClass = null;
-            //string outpolygonsPath = String.Empty;
-
-            //if (((IGPValue)targetDEFeatureDataset).GetAsText().Length != 0)
-            //{
-            //    IDataElement dataElement = targetDEFeatureDataset as IDataElement;
-            //    try
-            //    {
-            //        gpUtilities3.QualifyOutputDataElement(gpUtilities3.UnpackGPValue(targetDatasetParameter));
-            //    }
-            //    catch
-            //    {
-            //        return;
-            //    }
-
-            //    string nameOfPointFeatureClass = dataElement.GetBaseName() + "_osm_pt";
-            //    string nameOfLineFeatureClass = dataElement.GetBaseName() + "_osm_ln";
-            //    string nameOfPolygonFeatureClass = dataElement.GetBaseName() + "_osm_ply";
-
-
-            //    try
-            //    {
-            //        outpointsPath = dataElement.CatalogPath + System.IO.Path.DirectorySeparatorChar + nameOfPointFeatureClass;
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        System.Diagnostics.Debug.WriteLine(ex.Message);
-            //    }
-            //    outPointsFeatureClassParameter = paramvalues.get_Element(out_osmPointsNumber) as IGPParameter3;
-            //    outPointsFeatureClass = gpUtilities3.UnpackGPValue(outPointsFeatureClassParameter);
-
-            //    outlinesPath = dataElement.CatalogPath + System.IO.Path.DirectorySeparatorChar + nameOfLineFeatureClass;
-            //    outLinesFeatureClassParameter = paramvalues.get_Element(out_osmLinesNumber) as IGPParameter3;
-            //    outLinesFeatureClass = gpUtilities3.UnpackGPValue(outLinesFeatureClassParameter);
-
-            //    outpolygonsPath = dataElement.CatalogPath + System.IO.Path.DirectorySeparatorChar + nameOfPolygonFeatureClass;
-            //    outPolygonFeatureClassParameter = paramvalues.get_Element(out_osmPolygonsNumber) as IGPParameter3;
-            //    outPolygonFeatureClass = gpUtilities3.UnpackGPValue(outPolygonFeatureClassParameter);
-            //}
-
-            //if (outPointsFeatureClassParameter != null)
-            //{
-            //    outPointsFeatureClass.SetAsText(outpointsPath);
-            //    gpUtilities3.PackGPValue(outPointsFeatureClass, outPointsFeatureClassParameter);
-            //}
-
-            //if (outLinesFeatureClassParameter != null)
-            //{
-            //    outLinesFeatureClass.SetAsText(outlinesPath);
-            //    gpUtilities3.PackGPValue(outLinesFeatureClass, outLinesFeatureClassParameter);
-            //}
-
-            //if (outPolygonFeatureClassParameter != null)
-            //{
-            //    outPolygonFeatureClass.SetAsText(outpolygonsPath);
-            //    gpUtilities3.PackGPValue(outPolygonFeatureClass, outPolygonFeatureClassParameter);
-            //}
-
-            //gpUtilities3.ReleaseInternals();
-
-            //if (gpUtilities3 != null)
-            //    ComReleaser.ReleaseCOMObject(gpUtilities3);
         }
 
         public ESRI.ArcGIS.Geodatabase.IGPMessages Validate(ESRI.ArcGIS.esriSystem.IArray paramvalues, bool updateValues, ESRI.ArcGIS.Geoprocessing.IGPEnvironmentManager envMgr)
