@@ -69,7 +69,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 gpUtil = new GPUtilitiesClass();
 
-                // OSM Dataset Param
+                // OSM Dataset Parameter
                 IGPParameter osmDatasetParam = paramvalues.get_Element(in_osmFeatureDataset) as IGPParameter;
                 IDEDataset2 osmDEDataset = gpUtil.UnpackGPValue(osmDatasetParam) as IDEDataset2;
                 if (osmDEDataset == null)
@@ -80,7 +80,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 osmDataset = gpUtil.OpenDatasetFromLocation(((IDataElement)osmDEDataset).CatalogPath) as IDataset;
 
-                // Network Config File Param
+                // Network Configuration File Parameter
                 IGPParameter osmNetConfigParam = paramvalues.get_Element(in_NetworkConfigurationFile) as IGPParameter;
                 IGPValue osmNetConfigFile = gpUtil.UnpackGPValue(osmNetConfigParam) as IGPValue;
                 if ((osmNetConfigFile == null) || (string.IsNullOrEmpty(osmNetConfigFile.GetAsText())))
@@ -89,7 +89,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     return;
                 }
 
-                // Target Network Dataset Param
+                // Target Network Dataset Parameter
                 IGPParameter ndsParam = paramvalues.get_Element(out_NetworkDataset) as IGPParameter;
                 IDataElement deNDS = gpUtil.UnpackGPValue(ndsParam) as IDataElement;
                 if (deNDS == null)
@@ -240,7 +240,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 in_osmFeatureDataset = 0;
                 parameterArray.Add(inputOSMFeatureDataset);
 
-                // input configurationfile
+                // input configuration file
                 IGPParameterEdit3 inputNetworkConfiurationFile = new GPParameterClass() as IGPParameterEdit3;
                 inputNetworkConfiurationFile.DataType = new DEFileTypeClass();
                 inputNetworkConfiurationFile.Direction = esriGPParameterDirection.esriGPParameterDirectionInput;
