@@ -352,7 +352,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
                 IWorkspace2 lineFeatureWorkspace = lineWorkspaceName.Open() as IWorkspace2;
 
-<<<<<<< HEAD
                 string dbName = String.Empty;
                 string ownerName = String.Empty;
                 string lineFeatureClassName = String.Empty;
@@ -363,21 +362,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     lineFCSQLSyntax.ParseTableName(lineFCNameElements[lineFCNameElements.Length - 1], out dbName, out ownerName, out lineFeatureClassName);
                 else
                     lineFeatureClassName = lineFCNameElements[lineFCNameElements.Length - 1];
-=======
-                string targetLineFeatureClassLocation = osmLineFeatureClassGPValue.GetAsText();
-                string[] lineFCNameElements = targetLineFeatureClassLocation.Split(System.IO.Path.DirectorySeparatorChar);
->>>>>>> master
 
-                string dbName = String.Empty;
-                string ownerName = String.Empty;
-                string lineFeatureClassName = String.Empty;
-
-                ISQLSyntax lineFCSQLSyntax = lineFeatureWorkspace as ISQLSyntax;
-
-                if (lineFCSQLSyntax != null)
-                    lineFCSQLSyntax.ParseTableName(lineFCNameElements[lineFCNameElements.Length - 1], out dbName, out ownerName, out lineFeatureClassName);
-                else
-                    lineFeatureClassName = lineFCNameElements[lineFCNameElements.Length - 1];
 
                 IGPParameter tagLineCollectionParameter = paramvalues.get_Element(in_lineFieldNamesNumber) as IGPParameter;
                 IGPMultiValue tagLineCollectionGPValue = gpUtilities3.UnpackGPValue(tagLineCollectionParameter) as IGPMultiValue;
@@ -470,12 +455,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 IWorkspace2 polygonFeatureWorkspace = polygonWorkspaceName.Open() as IWorkspace2;
 
-<<<<<<< HEAD
-=======
-                string targetPolygonFeatureClassLocation = osmPolygonFeatureClassGPValue.GetAsText();
-                string[] polygonFCNameElements = targetPolygonFeatureClassLocation.Split(System.IO.Path.DirectorySeparatorChar);
-
->>>>>>> master
                 string polygonFeatureClassName = String.Empty;
 
                 ISQLSyntax polygonFCSQLSyntax = polygonFeatureWorkspace as ISQLSyntax;
@@ -631,13 +610,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 #region load ways
-<<<<<<< HEAD
                 osmToolHelper.loadOSMWays(wayOSMFileNames, targetPointFeatureClassLocation, wayGDBFileNames, lineFeatureClassName, 
                     targetLineFeatureClassLocation, polygonFeatureClassName, targetPolygonFeatureClassLocation, lineTagstoExtract, polygonTagstoExtract, 
                     ref message, ref TrackCancel);
-=======
-                osmToolHelper.loadOSMWays(wayOSMFileNames, osmPointsFeatureClassGPValue.GetAsText(), wayGDBFileNames, lineFeatureClassName, targetLineFeatureClassLocation, polygonFeatureClassName, targetPolygonFeatureClassLocation, lineTagstoExtract, polygonTagstoExtract, ref message,  ref TrackCancel);
->>>>>>> master
                 #endregion
 
                 #region for local geodatabases enforce spatial integrity
@@ -712,14 +687,9 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 }
 
                 #region load relations
-<<<<<<< HEAD
                 osmToolHelper.loadOSMRelations(relationOSMFileNames, lineFeatureClassName, targetLineFeatureClassLocation,
                     polygonFeatureClassName, targetPolygonFeatureClassLocation, relationGDBFileNames, lineTagstoExtract, 
                     polygonTagstoExtract, ref TrackCancel, ref message);
-=======
-                osmToolHelper.loadOSMRelations(relationOSMFileNames, lineFeatureClassName, targetLineFeatureClassLocation, polygonFeatureClassName, 
-                    targetPolygonFeatureClassLocation, relationGDBFileNames, lineTagstoExtract, polygonTagstoExtract, ref TrackCancel, ref message);
->>>>>>> master
                 #endregion
 
                 // check for user interruption

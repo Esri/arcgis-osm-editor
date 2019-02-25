@@ -1518,10 +1518,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 if (sqlSyntax != null)
                     sqlSyntax.ParseTableName(featureClassName, out dbName, out ownerName, out featureClassName);
-<<<<<<< HEAD
-=======
-
->>>>>>> master
 
                 // finally create and return the feature class
                 featureClass = featureWorkspace.CreateFeatureClass(featureClassName, validatedFields, CLSID, null, ESRI.ArcGIS.Geodatabase.esriFeatureType.esriFTSimple, strShapeField, strConfigKeyword);
@@ -1985,11 +1981,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 if (sqlSyntax != null)
                     sqlSyntax.ParseTableName(featureClassName, out dbName, out ownerName, out featureClassName);
 
-                string dbName = String.Empty;
-                string ownerName = String.Empty;
-
-                if (sqlSyntax != null)
-                    sqlSyntax.ParseTableName(featureClassName, out dbName, out ownerName, out featureClassName);
 
                 // finally create and return the feature class
                 featureClass = featureWorkspace.CreateFeatureClass(featureClassName, validatedFields, CLSID, null, ESRI.ArcGIS.Geodatabase.esriFeatureType.esriFTSimple, strShapeField, strConfigKeyword);
@@ -2420,20 +2411,13 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     IFeatureWorkspace tempLineWorkspace = lineWorkspaceFactory.OpenFromFile(lineGDBLocation, 0) as IFeatureWorkspace;
                     comReleaser.ManageLifetime(tempLineWorkspace);
 
-<<<<<<< HEAD
                     ISQLSyntax sqlSyntax = tempLineWorkspace as ISQLSyntax;
                     string dbName = String.Empty;
                     string ownerName = String.Empty;
-=======
-                    ISQLSyntax sqlSyntax = tempWorkspace as ISQLSyntax;
-                    string dbName = String.Empty;
-                    string ownerName = string.Empty;
->>>>>>> master
 
                     if (sqlSyntax != null)
                         sqlSyntax.ParseTableName(lineFeatureClassName, out dbName, out ownerName, out lineFeatureClassName);
 
-<<<<<<< HEAD
                     IFeatureClass lineFeatureClass = tempLineWorkspace.OpenFeatureClass(lineFeatureClassName);
                     comReleaser.ManageLifetime(lineFeatureClass);
 
@@ -2450,15 +2434,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
 
                     IFeatureClass polygonFeatureClass = tempPolygonWorkspace.OpenFeatureClass(polygonFeatureClassName);
-=======
-                    IFeatureClass lineFeatureClass = tempWorkspace.OpenFeatureClass(lineFeatureClassName);
-                    comReleaser.ManageLifetime(lineFeatureClass);
-
-                    if (sqlSyntax != null)
-                        sqlSyntax.ParseTableName(polygonFeatureClassName, out dbName, out ownerName, out polygonFeatureClassName);
-
-                    IFeatureClass polygonFeatureClass = tempWorkspace.OpenFeatureClass(polygonFeatureClassName);
->>>>>>> master
                     comReleaser.ManageLifetime(polygonFeatureClass);
 
                     IFeatureWorkspace sourceWorkspace = null;
@@ -2483,10 +2458,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     }
 
                     sqlSyntax = sourceWorkspace as ISQLSyntax;
-<<<<<<< HEAD
 
-=======
->>>>>>> master
                     if (sqlSyntax != null)
                         sqlSyntax.ParseTableName(sourceFCNameString, out dbName, out ownerName, out sourceFCNameString);
 
@@ -2839,11 +2811,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                     ISQLSyntax sqlSyntax = nodeWorkspace as ISQLSyntax;
                     string dbName = String.Empty;
-<<<<<<< HEAD
                     string ownerName = String.Empty;
-=======
-                    string ownerName = string.Empty;
->>>>>>> master
 
                     if (sqlSyntax != null)
                         sqlSyntax.ParseTableName(featureClassName, out dbName, out ownerName, out featureClassName);
@@ -3266,7 +3234,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
         }
 
-<<<<<<< HEAD
         private string doubleQuote(string inputString)
         {
             return String.Format(@"""{0}""", inputString);
@@ -3342,9 +3309,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         }
 
         internal void loadOSMWays(List<string> osmWayFileNames, string sourcePointFCName, List<string> wayGDBNames, string lineFeatureClassName, string targetLineFeatureClassLocation, string polygonFeatureClassName, string targetPolygonFeatureClassLocation, List<string> lineFieldNames, List<string> polygonFieldNames, ref IGPMessages toolMessages, ref ITrackCancel CancelTracker)
-=======
-        internal void loadOSMWays(List<string> osmWayFileNames, string sourcePointFCName, List<string> wayGDBNames, string lineFeatureClassName, string targetLineFeatureClassLocation, string polygonFeatureClassName, string targetPolygonFeatureClassLocation,List<string> lineFieldNames, List<string> polygonFieldNames, ref IGPMessages toolMessages, ref ITrackCancel CancelTracker)
->>>>>>> master
         {
             // create the point feature classes in the temporary loading fgdbs
             OSMToolHelper toolHelper = new OSMToolHelper();
@@ -3476,21 +3440,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 string[] pointFCElement = sourcePointFCName.Split(System.IO.Path.DirectorySeparatorChar);
                 string sourceFGDB = sourcePointFCName.Substring(0, sourcePointFCName.Length - pointFCElement[pointFCElement.Length - 1].Length - 1);
 
-<<<<<<< HEAD
                 if (linesFCNamesArray.Count > 0)
                 {
                     // append all the lines
                     parameterArray = new VarArrayClass();
                     parameterArray.Add(String.Join(";", linesFCNamesArray.ToArray()));
                     parameterArray.Add(targetLineFeatureClassLocation);
-=======
-                // append all the lines
-                IVariantArray parameterArray = new VarArrayClass();
-                parameterArray.Add(String.Join(";", linesFCNamesArray.ToArray()));
-                toolMessages.AddMessage(String.Join(";", linesFCNamesArray.ToArray()));
-                parameterArray.Add(targetLineFeatureClassLocation);
-                toolMessages.AddMessage(targetLineFeatureClassLocation);
->>>>>>> master
 
                     gpResults = geoProcessor.Execute("Append_management", parameterArray, CancelTracker);
 
@@ -3505,19 +3460,12 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 #endif
                 }
 
-<<<<<<< HEAD
                 if (polygonFCNamesArray.Count > 0)
                 {
                     // append all the polygons
                     parameterArray = new VarArrayClass();
                     parameterArray.Add(String.Join(";", polygonFCNamesArray.ToArray()));
                     parameterArray.Add(targetPolygonFeatureClassLocation);
-=======
-                // append all the polygons
-                parameterArray = new VarArrayClass();
-                parameterArray.Add(String.Join(";", polygonFCNamesArray.ToArray()));
-                parameterArray.Add(targetPolygonFeatureClassLocation);
->>>>>>> master
 
                     gpResults = geoProcessor.Execute("Append_management", parameterArray, CancelTracker);
 
@@ -3605,7 +3553,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                     FileInfo targetGDBFileInfo = new FileInfo(nodeGDBNames[0]);
 
-<<<<<<< HEAD
                     ISQLSyntax sqlSyntax = null;
                     try
                     {
@@ -3620,9 +3567,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         sqlSyntax = ((IDataset)fc).Workspace as ISQLSyntax;
                     }
 
-=======
-                    ISQLSyntax sqlSyntax = targetPointWorkspaceFactory.OpenFromFile(nodeGDBNames[0], 0) as ISQLSyntax;
->>>>>>> master
                     string dbName = String.Empty;
                     string ownerName = String.Empty;
                     if (sqlSyntax != null)
@@ -3633,7 +3577,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                     for (int gdbIndex = 1; gdbIndex < nodeGDBNames.Count; gdbIndex++)
                     {
-<<<<<<< HEAD
                         DirectoryInfo gdbDirectoryInfo = new DirectoryInfo(nodeGDBNames[gdbIndex]);
 
                         if (!gdbDirectoryInfo.Exists)
@@ -3643,12 +3586,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                             IWorkspaceName workspaceName = workspaceFactory.Create(gdbFileInfo.DirectoryName, gdbFileInfo.Name, new PropertySetClass(), 0);
                             comReleaser.ManageLifetime(workspaceName);
                         }
-=======
-                        FileInfo gdbFileInfo = new FileInfo(nodeGDBNames[gdbIndex]);
-
-                        IWorkspaceName workspaceName = workspaceFactory.Create(gdbFileInfo.DirectoryName, gdbFileInfo.Name, new PropertySetClass(), 0);
-                        comReleaser.ManageLifetime(workspaceName);
->>>>>>> master
                     }
                 }
 
@@ -5529,11 +5466,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             return attributesDictionary;
         }
 
-<<<<<<< HEAD
         internal void loadOSMRelations(List<string> osmRelationFileNames, string lineFeatureClassName, string sourceLineFCLocation, string polygonFeatureClassName, string sourcePolygonFCLocation, List<string> relationGDBNames, List<string> lineFieldNames, List<string> polygonFieldNames, ref ITrackCancel TrackCancel, ref IGPMessages toolMessages)
-=======
-        internal void loadOSMRelations(List<string> osmRelationFileNames, string lineFeatureClassName, string sourceLineFCName, string polygonFeatureClassName, string sourcePolygonFCName, List<string> relationGDBNames, List<string> lineFieldNames, List<string> polygonFieldNames, ref ITrackCancel TrackCancel, ref IGPMessages toolMessages)
->>>>>>> master
         {
             // create the point feature classes in the temporary loading fgdbs
             OSMToolHelper toolHelper = new OSMToolHelper();
@@ -5554,7 +5487,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             string loadSuperRelationParameterValue = "DO_NOT_LOAD_SUPER_RELATION";
 
             // take the name of the temp line and polygon featureclass from the source names
-<<<<<<< HEAD
             string[] sourceLineNameElements = sourceLineFCLocation.Split(System.IO.Path.DirectorySeparatorChar);
             string[] sourcePolygonNameElements = sourcePolygonFCLocation.Split(System.IO.Path.DirectorySeparatorChar);
 
@@ -5567,12 +5499,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             IFeatureClass targetPolygonFC = gpUtilities.OpenFeatureClassFromString(sourcePolygonFCLocation);
             IWorkspace2 targetWorkspace = ((IDataset) targetPolygonFC).Workspace as IWorkspace2;
             ITable countTable = CreatePartCountTable(targetWorkspace, OSMToolHelper.CountingTableName(), null, null);
-=======
-            //string[] sourceLineNameElements = sourceLineFCName.Split(System.IO.Path.DirectorySeparatorChar);
-            //string lineFeatureClassName = sourceLineNameElements[sourceLineNameElements.Length - 1];
-            //string[] sourcePolygonNameElements = sourcePolygonFCName.Split(System.IO.Path.DirectorySeparatorChar);
-            //string polygonFeatureClassName = sourcePolygonNameElements[sourcePolygonNameElements.Length - 1];
->>>>>>> master
 
             // in the case of a single thread we can use the parent process directly to convert the osm to the target featureclass
             if (osmRelationFileNames.Count == 1)
