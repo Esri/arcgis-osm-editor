@@ -425,7 +425,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     }
                 }
 
-                // lastly let's serialize the collected multi-part geometries back into relation elements
+                // lastly let's serialize the collected multipart-geometries back into relation elements
                 foreach (relation currentRelation in multiPartElements)
                 {
                     if (TrackCancel.Continue() == false)

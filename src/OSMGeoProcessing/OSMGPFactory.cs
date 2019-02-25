@@ -24,7 +24,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
     [ProgId("OSMEditor.OSMGPFactory")]
     public sealed class OSMGPFactory : ESRI.ArcGIS.Geoprocessing.IGPFunctionFactory
     {
-        //private static read-only OSMGPFactory factoryInstance = new OSMGPFactory();
+        //private static readonly OSMGPFactory factoryInstance = new OSMGPFactory();
 
         string m_FactoryName = "OpenStreetMap Tools";
         string m_FactoryAlias = "OSMTools";
@@ -496,192 +496,58 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
         /// <returns></returns>
         public static string GetArcGIS10InstallLocation()
         {
-           RegistryKey localMachineKey = null;  
-            RegistryKey softwareKey = null;  
-            RegistryKey esriKey = null;
-            RegistryKey wow6432Key = null;
-            RegistryKey arcgisKey = null;
-            RegistryKey desktopKey = null;
-
+           
             System.Object installationDirectory = null;
             string m_foundInstallationDirectory = String.Empty;
-            System.Object realVersion = null;
-            string majorMinorVersion = String.Empty;
+            IEnumerable<ESRI.ArcGIS.RuntimeInfo> installedRuntimes = null;
 
             try
             {
-                // read the general registry key for installed ArcGIS software
-                localMachineKey = Registry.LocalMachine;
-                softwareKey = localMachineKey.OpenSubKey("SOFTWARE");
-                esriKey = softwareKey.OpenSubKey("ESRI");
-                arcgisKey = esriKey.OpenSubKey("ArcGIS");
+                //bool succeeded = ESRI.ArcGIS.RuntimeManager.Bind(ProductCode.EngineOrDesktop);
+                //if (succeeded)
+                //{
+                //    RuntimeInfo activeRunTimeInfo = RuntimeManager.ActiveRuntime;
+                //    System.Diagnostics.Debug.Print(activeRunTimeInfo.Product.ToString());
+                //}
 
-                if (arcgisKey == null)
+                // Get installed runtimes
+                installedRuntimes = ESRI.ArcGIS.RuntimeManager.InstalledRuntimes;
+
+                // Check for Desktop first
+                foreach (RuntimeInfo item in installedRuntimes)
                 {
-                    wow6432Key = softwareKey.OpenSubKey("Wow6432Node");
-
-                    if (wow6432Key == null)
-                        return m_foundInstallationDirectory;
-
-                    esriKey = wow6432Key.OpenSubKey("ESRI");
-
-                    if (esriKey == null)
-                        return m_foundInstallationDirectory;
-
-                    arcgisKey = esriKey.OpenSubKey("ArcGIS");
-
-                    if (arcgisKey == null)
-                        return m_foundInstallationDirectory;
+                    if (String.Compare(item.Product.ToString(), "Desktop", true) == 0)
+                        installationDirectory = item.Path;
                 }
 
-
-                realVersion = arcgisKey.GetValue("RealVersion");
-                string realVersionAsString = realVersion as String;
-
-                if (!string.IsNullOrEmpty(realVersionAsString))
+                // Check for Engine if installationDirectory is null
+                if (installationDirectory == null)
                 {
-                    string [] versionNumberComponents = realVersionAsString.Split('.');
-                    if (versionNumberComponents.Length > 2)
-                        majorMinorVersion = string.Join(".", new string[]{versionNumberComponents[0], versionNumberComponents[1]});
+                    foreach (RuntimeInfo item in installedRuntimes)
+                    {
+
+                        if (String.Compare(item.Product.ToString(), "Engine", true) == 0)
+                            installationDirectory = item.Path;
+                    }
                 }
 
-                string desktopKeyName = "Desktop" + majorMinorVersion;
-
-                desktopKey = esriKey.OpenSubKey(desktopKeyName);
-
-                if (desktopKey != null)
+                // Check for Server if installationDirectory is null
+                if (installationDirectory == null)
                 {
-                    installationDirectory = desktopKey.GetValue("InstallDir");
-                    if (installationDirectory != null)
-                        m_foundInstallationDirectory = Convert.ToString(installationDirectory);
+                    foreach (RuntimeInfo item in installedRuntimes)
+                    {
+
+                        if (String.Compare(item.Product.ToString(), "Server", true) == 0)
+                            installationDirectory = item.Path;
+                    }
                 }
-                else
-                {
-                    wow6432Key = softwareKey.OpenSubKey("Wow6432Node");
-
-                    if (wow6432Key == null)
-                        return m_foundInstallationDirectory;
-
-                    esriKey = wow6432Key.OpenSubKey("ESRI");
-
-                    if (esriKey == null)
-                        return m_foundInstallationDirectory;
-
-                    desktopKey = esriKey.OpenSubKey(desktopKeyName);
-
-                    installationDirectory = desktopKey.GetValue("InstallDir");
-                    if (installationDirectory != null)
-                        m_foundInstallationDirectory = Convert.ToString(installationDirectory);
-                }
+                
+                if (installationDirectory != null)
+                    m_foundInstallationDirectory = Convert.ToString(installationDirectory);
             }
             catch
             {
             }            
-
-            return m_foundInstallationDirectory;
-        }
-
-        /// <summary>
-        /// reads the ArcGIS runtime information from the registry
-        /// </summary>
-        /// <returns></returns>
-        public static string GetPythonArcGISInstallLocation()
-        {
-            RegistryKey localMachineKey = null;
-            RegistryKey softwareKey = null;
-            RegistryKey esriKey = null;
-            RegistryKey arcgisKey = null;
-            RegistryKey pythonKey = null;
-            RegistryKey wow6432Key = null;
-
-            System.Object installationDirectory = null;
-            string m_foundInstallationDirectory = String.Empty;
-            System.Object realVersion = null;
-            string majorMinorVersion = String.Empty;
-            string pythonCoreDirectory = String.Empty;
-
-            try
-            {
-                // read the general registry key for installed ArcGIS software
-                localMachineKey = Registry.LocalMachine;
-                softwareKey = localMachineKey.OpenSubKey("SOFTWARE");
-                esriKey = softwareKey.OpenSubKey("ESRI");
-                arcgisKey = esriKey.OpenSubKey("ArcGIS");
-
-                if (arcgisKey == null)
-                {
-                    wow6432Key = softwareKey.OpenSubKey("Wow6432Node");
-
-                    if (wow6432Key == null)
-                        return m_foundInstallationDirectory;
-
-                    esriKey = wow6432Key.OpenSubKey("ESRI");
-
-                    if (esriKey == null)
-                        return m_foundInstallationDirectory;
-
-                    arcgisKey = esriKey.OpenSubKey("ArcGIS");
-
-                    if (arcgisKey == null)
-                        return m_foundInstallationDirectory;
-                }
-
-
-                realVersion = arcgisKey.GetValue("RealVersion");
-                string realVersionAsString = realVersion as String;
-
-                if (!string.IsNullOrEmpty(realVersionAsString))
-                {
-                    string[] versionNumberComponents = realVersionAsString.Split('.');
-                    if (versionNumberComponents.Length > 2)
-                        majorMinorVersion = string.Join(".", new string[]{versionNumberComponents[0], versionNumberComponents[1]});
-                }
-
-                string pythonKeyName = "Python" + majorMinorVersion;
-                string python32bitFolderName = "ArcGIS" + majorMinorVersion;
-
-                pythonKey = esriKey.OpenSubKey(pythonKeyName);
-
-                if (pythonKey != null)
-                {
-                    installationDirectory = pythonKey.GetValue("PythonDir");
-
-                    if (installationDirectory != null)
-                        pythonCoreDirectory = Convert.ToString(installationDirectory);
-
-                    string estimatedPythonDirectory = System.IO.Path.Combine(pythonCoreDirectory, python32bitFolderName);
-
-                    if (System.IO.Directory.Exists(estimatedPythonDirectory))
-                        m_foundInstallationDirectory = estimatedPythonDirectory;
-                }
-                else
-                {
-                    wow6432Key = softwareKey.OpenSubKey("Wow6432Node");
-
-                    if (wow6432Key == null)
-                        return m_foundInstallationDirectory;
-
-                    esriKey = wow6432Key.OpenSubKey("ESRI");
-
-                    if (esriKey == null)
-                        return m_foundInstallationDirectory;
-
-                    pythonKey = esriKey.OpenSubKey(pythonKeyName);
-
-                    installationDirectory = pythonKey.GetValue("PythonDir");
-
-                    if (installationDirectory != null)
-                        pythonCoreDirectory = Convert.ToString(installationDirectory);
-
-                    string estimatedPythonDirectory = System.IO.Path.Combine(pythonCoreDirectory, python32bitFolderName);
-
-                    if (System.IO.Directory.Exists(estimatedPythonDirectory))
-                        m_foundInstallationDirectory = estimatedPythonDirectory;
-                }
-            }
-            catch
-            {
-            }
 
             return m_foundInstallationDirectory;
         }
@@ -733,6 +599,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         }
                     }
                 }
+                //else
+                //    throw new Exception("Config file missing osmeditor.config at osm directory"); 
 
                 if (configurationSettings.ContainsKey("osmbaseurl") == false)
                 {

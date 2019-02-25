@@ -66,17 +66,14 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 TrackCancel = new CancelTrackerClass();
             }
 
+            IGPEnvironment configKeyword = OSMToolHelper.getEnvironment(envMgr, "configKeyword");
+            IGPString gpString = configKeyword.Value as IGPString;
+
             string storageKeyword = String.Empty;
 
-            IGPEnvironment configKeyword = OSMToolHelper.getEnvironment(envMgr, "configKeyword");
-            if (configKeyword != null)
+            if (gpString != null)
             {
-                IGPString gpString = configKeyword.Value as IGPString;
-
-                if (gpString != null)
-                {
-                    storageKeyword = gpString.Value;
-                }
+                storageKeyword = gpString.Value;
             }
 
             IGPParameter osmFileParameter = paramvalues.get_Element(0) as IGPParameter;
@@ -85,17 +82,13 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             IGPParameter osmLineFeatureClassParameter = paramvalues.get_Element(4) as IGPParameter;
             IGPValue osmLineFeatureClassGPValue = gpUtilities3.UnpackGPValue(osmLineFeatureClassParameter) as IGPValue;
 
-            string sdfg = osmLineFeatureClassGPValue.GetAsText();
-
             IName workspaceName = gpUtilities3.CreateParentFromCatalogPath(osmLineFeatureClassGPValue.GetAsText());
             IWorkspace2 lineFeatureWorkspace = workspaceName.Open() as IWorkspace2;
 
             string[] lineFCNameElements = osmLineFeatureClassGPValue.GetAsText().Split(System.IO.Path.DirectorySeparatorChar);
-            string[] lineGDBComponents = new string[lineFCNameElements.Length - 1];
-            System.Array.Copy(lineFCNameElements, lineGDBComponents, lineFCNameElements.Length - 1);
-            string lineFileGDBLocation = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), lineGDBComponents);
 
             IFeatureClass osmLineFeatureClass = null;
+
 
             IGPParameter tagLineCollectionParameter = paramvalues.get_Element(2) as IGPParameter;
             IGPMultiValue tagLineCollectionGPValue = gpUtilities3.UnpackGPValue(tagLineCollectionParameter) as IGPMultiValue;
@@ -118,6 +111,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 lineTagstoExtract = OSMToolHelper.OSMSmallFeatureClassFields();
             }
 
+
             // lines
             try
             {
@@ -134,6 +128,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 return;
             }
 
+
             IGPParameter osmPolygonFeatureClassParameter = paramvalues.get_Element(5) as IGPParameter;
             IGPValue osmPolygonFeatureClassGPValue = gpUtilities3.UnpackGPValue(osmPolygonFeatureClassParameter) as IGPValue;
 
@@ -141,9 +136,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             IWorkspace2 polygonFeatureWorkspace = workspaceName.Open() as IWorkspace2;
 
             string[] polygonFCNameElements = osmPolygonFeatureClassGPValue.GetAsText().Split(System.IO.Path.DirectorySeparatorChar);
-            string[] polygonGDBComponents = new string[polygonFCNameElements.Length - 1];
-            System.Array.Copy(polygonFCNameElements, polygonGDBComponents, polygonFCNameElements.Length - 1);
-            string polygonFileGDBLocation = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), polygonGDBComponents);
 
             IFeatureClass osmPolygonFeatureClass = null;
 
@@ -168,11 +160,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 polygonTagstoExtract = OSMToolHelper.OSMSmallFeatureClassFields();
             }
 
+
             // polygons
             try
             {
-                osmPolygonFeatureClass = osmToolHelper.CreateSmallPolygonFeatureClass(polygonFeatureWorkspace, 
-                    polygonFCNameElements[polygonFCNameElements.Length - 1], storageKeyword, "", "", polygonTagstoExtract);
+                osmPolygonFeatureClass = osmToolHelper.CreateSmallPolygonFeatureClass(polygonFeatureWorkspace, polygonFCNameElements[polygonFCNameElements.Length - 1], storageKeyword, "", "", polygonTagstoExtract);
             }
             catch (Exception ex)
             {
@@ -191,10 +183,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             IGPParameter osmPointFeatureClassParameter = paramvalues.get_Element(1) as IGPParameter;
             IGPValue osmPointFeatureClassGPValue = gpUtilities3.UnpackGPValue(osmPointFeatureClassParameter) as IGPValue;
 
-            osmToolHelper.smallLoadOSMWay(osmFileLocationString.GetAsText(), osmPointFeatureClassGPValue.GetAsText(), lineFileGDBLocation, 
-                lineFCNameElements[lineFCNameElements.Length - 1], polygonFileGDBLocation, polygonFCNameElements[polygonFCNameElements.Length - 1], 
-                lineTagstoExtract, polygonTagstoExtract);
+            string[] gdbComponents = new string[polygonFCNameElements.Length - 1];
+            System.Array.Copy(lineFCNameElements, gdbComponents, lineFCNameElements.Length - 1);
+            string fileGDBLocation = String.Join(System.IO.Path.DirectorySeparatorChar.ToString(), gdbComponents);
 
+            osmToolHelper.smallLoadOSMWay(osmFileLocationString.GetAsText(), osmPointFeatureClassGPValue.GetAsText(), fileGDBLocation, lineFCNameElements[lineFCNameElements.Length - 1], polygonFCNameElements[polygonFCNameElements.Length - 1], lineTagstoExtract, polygonTagstoExtract);
         }
 
         public ESRI.ArcGIS.esriSystem.IName FullName

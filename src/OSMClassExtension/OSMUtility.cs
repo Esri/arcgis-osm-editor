@@ -335,7 +335,7 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                 return retrievedTags;
             }
 
-            // if there is no valid field index return an empty tag array
+            // if there is no valid field index return an emptry tag array
             if (osmTagFieldIndex == -1)
             {
                 return retrievedTags;

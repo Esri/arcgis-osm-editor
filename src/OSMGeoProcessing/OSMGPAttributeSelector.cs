@@ -132,7 +132,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     return;
                 }
 
-                // find the field that holds tag binary/XML field
+                // find the field that holds tag binary/xml field
                 int osmTagCollectionFieldIndex = osmInputTable.FindField("osmTags");
 
 
@@ -209,6 +209,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     try
                     {
                         string tagKey = String.Empty;
+                        ESRI.ArcGIS.Geoprocessing.IGeoProcessor2 gp = new ESRI.ArcGIS.Geoprocessing.GeoProcessorClass();
 
                         switch (whatTagsToExtract)
                         {
@@ -658,31 +659,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
         public void UpdateMessages(ESRI.ArcGIS.esriSystem.IArray paramvalues, ESRI.ArcGIS.Geoprocessing.IGPEnvironmentManager pEnvMgr, ESRI.ArcGIS.Geodatabase.IGPMessages Messages)
         {
-            IGPUtilities3 gpUtilities3 = new GPUtilitiesClass();
-
-            IGPParameter3 inputOSMParameter = paramvalues.get_Element(in_osmFeatureClass) as IGPParameter3;
-            IGPValue inputOSMGPValue = null;
-
-            // check if the input is of type variable
-            if (inputOSMParameter.Value is IGPVariable)
-            {
-                // also check if the variable contains a derived value
-                // -- which in this context means a featureclass that will be produced during execution but 
-                // doesn't exist yet
-                IGPVariable inputOSMVariable = inputOSMParameter.Value as IGPVariable;
-                if (!inputOSMVariable.Derived)
-                    inputOSMGPValue = gpUtilities3.UnpackGPValue(paramvalues.get_Element(in_osmFeatureClass));
-            }
-            else
-            {
-                inputOSMGPValue = gpUtilities3.UnpackGPValue(paramvalues.get_Element(in_osmFeatureClass));
-            }
-
-            if (inputOSMGPValue != null)
-            {
-                if (string.IsNullOrEmpty(inputOSMGPValue.GetAsText()))
-                    Messages.ReplaceMessage(1, "Parameter required.");
-            }
         }
 
         public void UpdateParameters(ESRI.ArcGIS.esriSystem.IArray paramvalues, ESRI.ArcGIS.Geoprocessing.IGPEnvironmentManager pEnvMgr)
@@ -743,7 +719,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                         illegalCharacters = sqlSyntax.GetInvalidCharacters();
                     }
 
-                    // find the field that holds tag binary/XML field
+                    // find the field that holds tag binary/xml field
                     int osmTagCollectionFieldIndex = osmInputTable.FindField("osmTags");
 
 
@@ -773,7 +749,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     }
 
                     // Get the derived output feature class schema and empty the additional fields. This ensures 
-                    // that you don't get duplicate entries. 
+                    // that you don't get dublicate entries. 
                     // Derived output is the third parameter, so use index 2 for get_Element.
                     IGPParameter3 derivedFeatures = (IGPParameter3)paramvalues.get_Element(out_osmFeatureClass);
                     IGPFeatureSchema schema = (IGPFeatureSchema)derivedFeatures.Schema;
@@ -849,7 +825,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 //        }
 
                 //        // Get the derived output feature class schema and empty the additional fields. This ensures 
-                //        // that you don't get duplicate entries. 
+                //        // that you don't get dublicate entries. 
                 //        // Derived output is the third parameter, so use index 2 for get_Element.
                 //        IGPParameter3 derivedFeatures = (IGPParameter3)paramvalues.get_Element(out_osmFeatureClass);
                 //        IGPFeatureSchema schema = (IGPFeatureSchema)derivedFeatures.Schema;

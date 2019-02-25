@@ -159,17 +159,16 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                     if (tagstoExtract.Count > 0)
                     {
                         // if the number of tags is > 0 then do a simple feature count and take name tags names from the gp value
-                        List<string> remarks = osmToolHelper.countOSMStuff(osmFileLocationString.GetAsText(), ref nodeCapacity, ref wayCapacity, ref relationCapacity, ref TrackCancel);
+                        osmToolHelper.countOSMStuff(osmFileLocationString.GetAsText(), ref nodeCapacity, ref wayCapacity, ref relationCapacity, ref TrackCancel);
                         attributeTags.Add(esriGeometryType.esriGeometryPoint, tagstoExtract);
                         attributeTags.Add(esriGeometryType.esriGeometryPolyline, tagstoExtract);
                         attributeTags.Add(esriGeometryType.esriGeometryPolygon, tagstoExtract);
-                        attributeTags.Add(esriGeometryType.esriGeometryNull, remarks);
                     }
                     else
                     {
                         // the count should be zero if we encountered the "ALL" keyword 
                         // in this case count the features and create a list of unique tags
-                        // this is a slow process - be patient for large files
+                        // this is a slow process process - be patient for large files
                         attributeTags = osmToolHelper.countOSMCapacityAndTags(osmFileLocationString.GetAsText(), ref nodeCapacity, ref wayCapacity, ref relationCapacity, ref TrackCancel);
                     }
                 }
@@ -177,11 +176,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 {
                     // no tags we defined, hence we do a simple count and create an empty list indicating that no additional fields
                     // need to be created
-                    List<string> remarks = osmToolHelper.countOSMStuff(osmFileLocationString.GetAsText(), ref nodeCapacity, ref wayCapacity, ref relationCapacity, ref TrackCancel);
+                    osmToolHelper.countOSMStuff(osmFileLocationString.GetAsText(), ref nodeCapacity, ref wayCapacity, ref relationCapacity, ref TrackCancel);
                     attributeTags.Add(esriGeometryType.esriGeometryPoint, new List<string>());
                     attributeTags.Add(esriGeometryType.esriGeometryPolyline, new List<string>());
                     attributeTags.Add(esriGeometryType.esriGeometryPolygon, new List<string>());
-                    attributeTags.Add(esriGeometryType.esriGeometryNull, remarks);
                 }
 
                 if (nodeCapacity == 0 && wayCapacity == 0 && relationCapacity == 0)
@@ -192,12 +190,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 if (conserveMemoryGPValue.Value == false)
                 {
                     osmNodeDictionary = new Dictionary<string, OSMToolHelper.simplePointRef>(Convert.ToInt32(nodeCapacity));
-                }
-
-                if (attributeTags[esriGeometryType.esriGeometryNull].Count > 0)
-                {
-                    foreach (string remark in attributeTags[esriGeometryType.esriGeometryNull])
-                        message.AddWarning(remark);
                 }
 
                 message.AddMessage(String.Format(resourceManager.GetString("GPTools_OSMGPFileReader_countedElements"), nodeCapacity, wayCapacity, relationCapacity));
@@ -578,7 +570,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 #region clean any existing data from loading targets
                 ESRI.ArcGIS.Geoprocessing.IGeoProcessor2 gp = new ESRI.ArcGIS.Geoprocessing.GeoProcessorClass();
-                gp.AddToResults = false;
                 IGeoProcessorResult gpResult = new GeoProcessorResultClass();
 
                 try
@@ -612,7 +603,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 bool fastLoad = false;
 
                 #region load points
-                // hard coded the value for conserving memory - TE, 11/2015
+                // hardcoded the value for conserving memory - TE, 11/2015
                 // the reasoning here is that the speed is difference is only about 20% for smaller datasets and it shouldn't be used for larger datasets
                 // due to the 32bit memory limit
                 osmToolHelper.loadOSMNodes(osmFileLocationString.GetAsText(), ref TrackCancel, ref message, targetDatasetGPValue, osmPointFeatureClass, true, fastLoad, Convert.ToInt32(nodeCapacity), ref osmNodeDictionary, featureWorkspace, downloadSpatialReference, availableDomains, false);
@@ -638,7 +629,6 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 IGeoProcessorResult2 gpResults2 = null;
 
                 IGeoProcessor2 geoProcessor = new GeoProcessorClass();
-                geoProcessor.AddToResults = false;
 
                 bool storedOriginalLocal = geoProcessor.AddOutputsToMap;
                 geoProcessor.AddOutputsToMap = false;
@@ -1161,7 +1151,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                         // TE - 01/22/2016
                         // skip the anticipation of a propertyset off a feature class
-                        // with the change from last year not to apply the extension automatically this check is confusing users more than benefiting them
+                        // with the change from last year not to apply the extension automatically this check is confusing users more than benefitting them
                         if (osmExtensionPropertySet == null)
                         {
                         //    Messages.ReplaceError(out_targetDatasetNumber, -5, string.Format(resourceManager.GetString("GPTools_IncompatibleExtensionVersion"), 1, OSMClassExtensionManager.Version));
@@ -1303,7 +1293,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 IFields fields = fieldsEdit as IFields;
 
                 // Get the derived output feature class schema and empty the additional fields. This ensures 
-                // that you don't get duplicate entries. 
+                // that you don't get dublicate entries. 
                 if (outPointsFeatureClassParameter != null)
                 {
                     IGPFeatureSchema polySchema = outPolygonFeatureClassParameter.Schema as IGPFeatureSchema;
