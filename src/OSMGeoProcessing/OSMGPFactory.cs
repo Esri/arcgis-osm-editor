@@ -737,13 +737,13 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 if (configurationSettings.ContainsKey("osmbaseurl") == false)
                 {
                     // let's start with the very first default settings
-                    configurationSettings.Add("osmbaseurl", "http://www.openstreetmap.org");
+                    configurationSettings.Add("osmbaseurl", "https://www.openstreetmap.org");
                 }
 
                 if (configurationSettings.ContainsKey("osmdiffsurl") == false)
                 {
                     // let's start with the very first default settings
-                    configurationSettings.Add("osmdiffsurl", "http://planet.openstreetmap.org/replication");
+                    configurationSettings.Add("osmdiffsurl", "https://planet.openstreetmap.org/replication");
                 }
 
                 string path = Assembly.GetExecutingAssembly().Location;
