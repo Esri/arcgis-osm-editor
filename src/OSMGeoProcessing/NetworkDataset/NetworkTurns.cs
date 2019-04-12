@@ -62,7 +62,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             paramArray.Add("TEXT");
             paramArray.Add("");
             paramArray.Add("");
-            paramArray.Add(30);
+            paramArray.Add(50);
             paramArray.Add("");
             paramArray.Add("NULLABLE");
 
