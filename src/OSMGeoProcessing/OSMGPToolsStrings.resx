@@ -285,6 +285,9 @@
   <data name="GPTools_OSMGPUpload_comment_displayName" xml:space="preserve">
     <value>Comment describing the upload content</value>
   </data>
+  <data name="GPTools_OSMGPUpload_source_displayName" xml:space="preserve">
+    <value>Source tag for the changeset</value>
+  </data>
   <data name="GPTools_OSMGPUpload_authentication_caption" xml:space="preserve">
     <value>OSM login credentials</value>
   </data>

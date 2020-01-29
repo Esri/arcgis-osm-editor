@@ -198,6 +198,14 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                                     tagsUpdated = true;
                                 }
                             }
+                            else
+                            {
+                                if (tagsDictionary.ContainsKey(fieldItem.Key))
+                                {
+                                    tagsDictionary.Remove(fieldItem.Key);
+                                    tagsUpdated = true;
+                                }
+                            }
                         }
 
                         if (tagsUpdated)
