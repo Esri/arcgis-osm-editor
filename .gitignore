@@ -214,3 +214,4 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 
+/src/.vs/OSMEditor32/v15/Server/sqlite3
