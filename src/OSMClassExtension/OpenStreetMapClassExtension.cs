@@ -2671,7 +2671,7 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                 int revActionFieldIndex = revisionTable.Fields.FindField("osmaction");
                 int revElementTypeFieldIndex = revisionTable.Fields.FindField("osmelementtype");
                 int revFCNameFieldIndex = revisionTable.Fields.FindField("sourcefcname");
-                int revOldIdFieldIndex = revisionTable.Fields.FindField("osmoldid"); ;
+                int revOldIdFieldIndex = revisionTable.Fields.FindField("osmoldid");
 
                 // if the feature is a point treat it separately
                 if (newlyCreatedFeature.Shape.GeometryType == esriGeometryType.esriGeometryPoint)
@@ -2723,6 +2723,8 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
 
                     long featureOSMID = -1;
 
+                    IGeometryCollection existingGeometryCollection = pointCollection as IGeometryCollection;
+
                     // set some initial metadata on the newly created feature
                     if (osmNewFeatureIDFieldIndex > -1)
                     {
@@ -2745,7 +2747,7 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
 
                             // if the code in instructed to create a new feature with a negative OSMID then something else duplicating a new feature with
                             // existing attributes - that is not allowed by definition hence to decrement the temporary index by 1 to indicate a new feature
-                            if (featureOSMID < 0)
+                            if ((featureOSMID < 0) && newlyCreatedFeature.get_Value(osmNewFeatureSupportElementFieldIndex).Equals("no"))
                             {
                                 featureOSMID = _temporaryIndex;
                                 DecrementTemporaryIndex();
@@ -2757,9 +2759,6 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                     {
                         newlyCreatedFeature.set_Value(osmNewFeatureVersionFieldIndex, 1);
                     }
-
-
-                    IGeometryCollection existingGeometryCollection = pointCollection as IGeometryCollection;
 
                     // ensure that the incoming geometry are conforming to the node limit of OSM as well as multi-part geometries being prepared to be 
                     // represented as relations
