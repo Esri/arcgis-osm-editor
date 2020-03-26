@@ -325,6 +325,29 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
             return members;
         }
 
+        /// <summary>
+        /// Removes tags with an empty or NULL value
+        /// </summary>
+        /// <param name="inputTags"></param>
+        /// <returns>An array of tags where each key has a value associated with it.</returns>
+        internal tag[] removeEmptyValueKeys(tag[] inputTags)
+        {
+            List<tag> returnTags = new List<tag>();
+
+            if (inputTags == null)
+                return returnTags.ToArray();
+
+            foreach (tag currentTag in inputTags)
+            {
+                if (currentTag != null && !String.IsNullOrEmpty(currentTag.v))
+                {
+                    returnTags.Add(currentTag);
+                }
+            }
+
+            return returnTags.ToArray();
+        }
+
         public tag[] retrieveOSMTags(IRow row, int osmTagFieldIndex, IWorkspace workspace)
         {
             tag[] retrievedTags = null;
@@ -458,6 +481,7 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
 
                 if (String.IsNullOrEmpty(extensionString))
                 {
+                    retrievedTags = removeEmptyValueKeys(retrievedTags);
                     return retrievedTags;
                 }
 
@@ -509,6 +533,8 @@ namespace ESRI.ArcGIS.OSM.OSMClassExtension
                     tagDictionary.Values.CopyTo(retrievedTags, 0);
                 }
             }
+
+            retrievedTags = removeEmptyValueKeys(retrievedTags);
             return retrievedTags;
         }
 

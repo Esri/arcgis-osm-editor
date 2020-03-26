@@ -458,6 +458,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
             }
             catch (Exception ex)
             {
+                message.AddError(11111, ex.StackTrace);
                 message.AddError(120026, ex.Message);
             }
         }
@@ -1099,20 +1100,20 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 tag[] tags = null;
                 tags = _osmUtility.retrieveOSMTags((IRow)currentRow, tagsFieldIndex, featureWorkspace);
 
-                // if the row is of type IFeature and a polygon then add the type=multipolygon tag
-                if (currentRow is IFeature)
-                {
-                    IFeature currentFeature = currentRow as IFeature;
+                //// if the row is of type IFeature and a polygon then add the type=multipolygon tag
+                //if (currentRow is IFeature)
+                //{
+                //    IFeature currentFeature = currentRow as IFeature;
 
-                    if (currentFeature.Shape.GeometryType == esriGeometryType.esriGeometryPolygon)
-                    {
-                        tag mpTag = new tag();
-                        mpTag.k = "type";
-                        mpTag.v = "multipolygon";
+                //    if (currentFeature.Shape.GeometryType == esriGeometryType.esriGeometryPolygon)
+                //    {
+                //        tag mpTag = new tag();
+                //        mpTag.k = "type";
+                //        mpTag.v = "multipolygon";
 
-                        relationItems.Add(mpTag);
-                    }
-                }
+                //        relationItems.Add(mpTag);
+                //    }
+                //}
 
                 if (tags.Length != 0)
                 {
