@@ -1,0 +1,7 @@
+Update registry setting according to: https://support.esri.com/en/technical-article/000006967
+
+Example: HKEY_CURRENT_USER\Software\ESRI\Desktop10.8\ArcToolbox   DWORD CanEditMetadata value: 1
+
+Open ArcCatalog as Admin
+
+	
