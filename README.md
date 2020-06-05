@@ -17,6 +17,7 @@ ArcGIS Editor for OpenStreetMap is a toolset for GIS users to access and contrib
  - For the **10.5** installer, download from here http://www.arcgis.com/home/item.html?id=4533407decd94428817a228cb36964cf
  - For the **10.6** installer, download from here http://www.arcgis.com/home/item.html?id=0c4b24608fc94542ba5d1130c0606802
  - For the **10.7** installer, download from here http://www.arcgis.com/home/item.html?id=e646719bc3284a3d9d81e02b3d5abc53
+ - For the **10.8** installer, download from here https://www.arcgis.com/home/item.html?id=2f58a77a65c546149dd1ea425a680ad3
 
 2. Read documentation at http://github.com/Esri/arcgis-osm-editor/wiki/Documentation on how to use the tools
 
@@ -36,7 +37,7 @@ ArcGIS Editor for OpenStreetMap is a toolset for GIS users to access and contrib
 ## Requirements
 
 * An OpenStreetMap login (create at https://www.openstreetmap.org/user/new)
-* ArcGIS for Desktop 10.3, 10.4, 10.5, 10.6 or 10.7
+* ArcGIS for Desktop 10.3, 10.4, 10.5, 10.6, 10.7 or 1.8
 * Visual Studio 2010 (if you're working with the code)
 
 ## Resources
