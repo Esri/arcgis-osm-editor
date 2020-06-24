@@ -214,7 +214,11 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 
+<<<<<<< HEAD
 src/.vs/OSMEditor32/v15/Server/sqlite3/db.lock
 src/.vs/OSMEditor32/v15/Server/sqlite3/storage.ide
 src/.vs/OSMEditor32/v15/Server/sqlite3/storage.ide-shm
 src/.vs/OSMEditor32/v15/Server/sqlite3/storage.ide-wal
+=======
+/src/.vs/OSMEditor32/v15/Server/sqlite3
+>>>>>>> dev

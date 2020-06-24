@@ -54,6 +54,7 @@ GPTools_OSMGPUpload_inputnotvalidduringedit=The selected table cannot participat
 GPTools_OSMGPUpload_notarevisiontable=The selected table is not a valid revision table.
 GPTools_OSMGPUpload_oauth_category=OSM Login credentials
 GPTools_OSMGPUpload_comment_displayName=Comment describing the upload content
+GPTools_OSMGPUpload_source_displayName=Source of changeset data
 GPTools_OSMGPUpload_authentication_caption=OSM login credentials
 GPTools_OSMGPUpload_invalid_osmlogin=Invalid OpenStreetMap user credentials for user {0}.
 GPTools_OSMGPUpload_invaliduploadurl=Invalid upload URL. Please enter a valid OSM address and ensure that the URL does not contain a trailing slash.

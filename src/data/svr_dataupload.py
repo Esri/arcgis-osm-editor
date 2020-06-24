@@ -16,8 +16,11 @@ revisionTableName = arcpy.os.path.join(env.workspace,validatedTableName + '_osm_
 # comment describing the upload feature dataset
 upload_comment = arcpy.GetParameterAsText(1)
 
+# comment for source tag
+upload_source = arcpy.GetParameterAsText(2)
+
 # OSM Server login credentials (username and password)
-osm_credentials = arcpy.GetParameterAsText(2)
+osm_credentials = arcpy.GetParameterAsText(3)
 
 # retrieve the deltas from the OpenStreetMap server and load them into the local geodatabase
-arcpy.OSMGPUpload_osmtools(r'http://www.openstreetmap.org',revisionTableName,upload_comment,'OSMCHANGE_FORMAT',osm_credentials)
+arcpy.OSMGPUpload_osmtools(r'https://www.openstreetmap.org',revisionTableName,upload_comment,upload_source,'OSMCHANGE_FORMAT',osm_credentials)

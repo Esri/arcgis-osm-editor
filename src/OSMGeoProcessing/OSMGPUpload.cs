@@ -34,7 +34,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
     {
         string m_DisplayName = String.Empty;
         string m_Generator = "ArcGIS";
-        int in_uploadURLNumber, in_changesTablesNumber, in_uploadCommentNumber, in_uploadFormatNumber, in_userNameNumber, in_passwordNumber;
+        int in_uploadURLNumber, in_changesTablesNumber, in_uploadCommentNumber, in_uploadSourceNumber, in_uploadFormatNumber, in_userNameNumber, in_passwordNumber;
         ResourceManager resourceManager = null;
         OSMUtility _osmUtility = null;
         OSMGPFactory osmGPFactory = null;
@@ -161,6 +161,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 IGPParameter commentParameter = paramvalues.get_Element(in_uploadCommentNumber) as IGPParameter;
                 IGPString uploadCommentGPString = gpUtilities3.UnpackGPValue(commentParameter) as IGPString;
 
+                IGPParameter sourceParameter = paramvalues.get_Element(in_uploadSourceNumber) as IGPParameter;
+                IGPString uploadSourceGPString = gpUtilities3.UnpackGPValue(sourceParameter) as IGPString;
 
                 ISpatialReferenceFactory spatialReferenceFactory = new SpatialReferenceEnvironmentClass() as ISpatialReferenceFactory;
                 m_wgs84 = spatialReferenceFactory.CreateGeographicCoordinateSystem((int)esriSRGeoCSType.esriSRGeoCS_WGS1984) as ISpatialReference;
@@ -198,6 +200,11 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 commentTag.k = "comment";
                 commentTag.v = uploadCommentGPString.Value;
                 changeSetTags.Add(commentTag);
+
+                tag sourceTag = new tag();
+                sourceTag.k = "source";
+                sourceTag.v = uploadSourceGPString.Value; 
+                changeSetTags.Add(sourceTag);
 
                 createChangeSet.tag = changeSetTags.ToArray();
                 createChangeSetOSM.Items = new object[] { createChangeSet };
@@ -2608,7 +2615,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 in_changesTablesNumber = 1;
                 parameters.Add((IGPParameter)changesTableParameter);
 
-
+                // comment describing the upload content
                 IGPParameterEdit3 commentParameter = new GPParameterClass() as IGPParameterEdit3;
                 commentParameter.DataType = new GPStringTypeClass();
                 commentParameter.Direction = esriGPParameterDirection.esriGPParameterDirectionInput;
@@ -2618,6 +2625,17 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 in_uploadCommentNumber = 2;
                 parameters.Add((IGPParameter)commentParameter);
+
+                // comment describing the source
+                IGPParameterEdit3 sourceParameter = new GPParameterClass() as IGPParameterEdit3;
+                sourceParameter.DataType = new GPStringTypeClass();
+                sourceParameter.Direction = esriGPParameterDirection.esriGPParameterDirectionInput;
+                sourceParameter.DisplayName = resourceManager.GetString("GPTools_OSMGPUpload_source_displayName");
+                sourceParameter.Name = "in_sourcecomment";
+                sourceParameter.ParameterType = esriGPParameterType.esriGPParameterTypeRequired;
+
+                in_uploadSourceNumber = 3;
+                parameters.Add((IGPParameter)sourceParameter);
 
                 // option to use OSMChange format or individual requests
                 IGPParameterEdit3 uploadFormatParameter = new GPParameterClass() as IGPParameterEdit3;
@@ -2639,7 +2657,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 uploadFormatParameter.DisplayName = resourceManager.GetString("GPTools_OSMGPUpload_uploadFormat_displayName");
                 uploadFormatParameter.Name = "in_uploadformat";
 
-                in_uploadFormatNumber = 3;
+                in_uploadFormatNumber = 4;
                 parameters.Add((IGPParameter)uploadFormatParameter);
 
                 // user name
@@ -2651,7 +2669,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 userNameParameter.Name = "in_osm_username";
                 userNameParameter.ParameterType = esriGPParameterType.esriGPParameterTypeRequired;
 
-                in_userNameNumber = 4;
+                in_userNameNumber = 5;
                 parameters.Add((IGPParameter)userNameParameter);
 
                  // password
@@ -2663,7 +2681,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 passwordParameter.Name = "in_osm_password";
                 passwordParameter.ParameterType = esriGPParameterType.esriGPParameterTypeRequired;
 
-                in_passwordNumber = 5;
+                in_passwordNumber = 6;
                 parameters.Add((IGPParameter)passwordParameter);
                 return parameters;
             }
