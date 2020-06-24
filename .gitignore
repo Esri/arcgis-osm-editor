@@ -222,3 +222,5 @@ src/.vs/OSMEditor32/v15/Server/sqlite3/storage.ide-wal
 =======
 /src/.vs/OSMEditor32/v15/Server/sqlite3
 >>>>>>> dev
+.vs/slnx.sqlite
+.vs/VSWorkspaceState.json
