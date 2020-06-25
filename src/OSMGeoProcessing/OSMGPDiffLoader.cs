@@ -112,8 +112,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
                 TrackCancel = new CancelTrackerClass();
             }
 
-            string hourReplicateURL = "http://planet.openstreetmap.org/replication/hour/";
-            string minuteReplicateURL = "http://planet.openstreetmap.org/replication/minute/";
+            string hourReplicateURL = "https://planet.openstreetmap.org/replication/hour/";
+            string minuteReplicateURL = "https://planet.openstreetmap.org/replication/minute/";
 
             try
             {
@@ -201,8 +201,8 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
                 // determine the current state of the server holding the diff files - the OpenStreetMap perception of time
                 // it is assumed that the diff files are at the following location
-                // hourly diffs at http://planet.openstreetmap.org/replication/hour/
-                // minutes diffs at http://planet.openstreetmap.org/replication/minute/
+                // hourly diffs at https://planet.openstreetmap.org/replication/hour/
+                // minutes diffs at https://planet.openstreetmap.org/replication/minute/
 
                 string urlAddition = String.Empty;
 
@@ -714,7 +714,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
             if (downloadURLGPValue.IsEmpty() == false)
             {
-                Regex regex = new Regex(@"^((http:\/\/www\.)|(www\.)|(http:\/\/))[a-zA-Z0-9._-]+\.[a-zA-Z.]{2,5}");
+                Regex regex = new Regex(@"^((https:\/\/www\.)|(www\.)|(https:\/\/))[a-zA-Z0-9._-]+\.[a-zA-Z.]{2,5}");
                 MatchCollection matches = regex.Matches(downloadURLGPValue.GetAsText());
 
                 if (matches.Count < 1)
@@ -750,7 +750,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
         private string GetDirectoryListingRegexForUrl(string url)
         {
-            if (url.Contains("http://planet.openstreetmap.org/"))
+            if (url.Contains("https://planet.openstreetmap.org/"))
             {
                 return "<a href=\".*\">(?<name>.*/+)</a>";
 
@@ -760,7 +760,7 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
         private string GetStateFileListingRegexForUrl(string url)
         {
-            if (url.Contains("http://planet.openstreetmap.org/"))
+            if (url.Contains("https://planet.openstreetmap.org/"))
             {
                 return "<a href=\".*\">(?<name>.*.txt)</a>";
 
