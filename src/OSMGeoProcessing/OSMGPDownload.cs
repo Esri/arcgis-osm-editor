@@ -52,6 +52,10 @@ namespace ESRI.ArcGIS.OSM.GeoProcessing
 
             m_editorConfigurationSettings = OSMGPFactory.ReadOSMEditorSettings();
 
+            // Used to handle SSL/TLS 1.2
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
         }
 
         #region "IGPFunction2 Implementations"
